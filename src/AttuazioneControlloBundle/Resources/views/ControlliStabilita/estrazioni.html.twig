@@ -1,0 +1,11 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	
+{% include 'AttuazioneControlloBundle:ControlliStabilita:menu_principale.html.twig' %}		
+<br>
+				
+<h4>Estrazioni disponibili</h4>
+<a href="{{ path('estrazione_universo_stabilita') }}" class="btn btn-primary"><span class="fa"></span>Estrazione universo</a>
+				
+{% endblock %}

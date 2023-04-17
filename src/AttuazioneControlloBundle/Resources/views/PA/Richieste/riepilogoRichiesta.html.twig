@@ -1,0 +1,60 @@
+{% extends '::base.html.twig' %}
+
+
+{% block body %}
+
+	{% include 'AttuazioneControlloBundle:PA/Richieste:menu.html.twig' with {'attuazione_controllo' : attuazione_controllo }%}	
+
+	<br>
+	<h4>Riepilogo</h4>
+	<h6>Dati operazione</h6>
+	<div class="row">
+		<div class="col-md-12">
+			<table class="table table-striped table-hover table-bordered">
+				<tr>
+					<th>Numero operazione</th><td>{{ attuazione_controllo.richiesta.id }}</td>
+				</tr>
+				<tr>
+					<th>Numero protocollo</th><td>{{ attuazione_controllo.richiesta.protocollo }}</td>
+				</tr>
+				<tr>
+					<th>CUP</th><td>{{ attuazione_controllo.richiesta.istruttoria.codiceCup }}</td>
+				</tr>
+				{% if attuazione_controllo.UltimaVariazioneApprovata is not null and attuazione_controllo.UltimaVariazioneApprovata.contributoammesso is not null %}
+					{% set contributo = attuazione_controllo.UltimaVariazioneApprovata.contributoammesso %}
+				{% else %}
+					{% set contributo = attuazione_controllo.richiesta.istruttoria.contributoammesso %}
+				{% endif %}
+				<tr>
+					<td>Contributo concesso</td><td>{{ contributo|number_format(2, ',', '.') }}</td>
+				</tr>
+				<tr>
+					<td>Impegno Concesso</td><td>{{ attuazione_controllo.richiesta.istruttoria.impegnoammesso|number_format(2, ',', '.') }}</td>
+				</tr>
+				<tr>
+					<th>Titolo operazione</th><td>{{ attuazione_controllo.richiesta.titolo is not null ?attuazione_controllo.richiesta.titolo : "-" }}</td>
+				</tr>
+				<tr>
+					<th>Soggetto mandatario</th><td>{{ attuazione_controllo.richiesta.mandatario.soggetto }}</td>
+				</tr>
+				<tr>
+					<th>Proponenti</th><td>{{ attuazione_controllo.richiesta.proponenti|length == 1 ? "Singolo soggetto" : "Rete di soggetti" }}</td>
+				</tr>
+				<tr>
+					<th>Abstract</th><td>{{ attuazione_controllo.richiesta.abstract }}</td>
+				</tr>
+				<tr>
+					<th>Aiuto di stato</th><td>{{ attuazione_controllo.richiesta.getAiutoDiStato == 0 ? 'NO' : 'SI' }}</td>
+				</tr>
+				<tr>
+					<th>Generatore di entrate nette</th><td>{{ attuazione_controllo.richiesta.procedura.isGeneratoreEntrate == 0 ? 'NO' : 'SI' }}</td>
+				</tr>
+				<tr>
+					<th>Spesa totale ammissibile superiore a 1.0 mln</th><td>{{ attuazione_controllo.costoammessoistruttoria > 1000000 ? 'SI' : 'NO' }}</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	{{ mostra_sede_intervento(attuazione_controllo.richiesta) }}
+{% endblock %}
+

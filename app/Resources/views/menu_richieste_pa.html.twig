@@ -1,0 +1,136 @@
+{% if is_granted("ROLE_VALUTATORE_FESR") == false and is_granted("ROLE_CONSULENTE_FESR") == false and is_granted("ROLE_OPERATORE_COGEA") == false %}
+    <li class="">
+        <a href="javascript:;">
+            <span class="fa fa-file"></span>
+            <span class="title">Presentazioni</span>
+            <span class="arrow "></span>
+        </a>
+        <ul class="sub-menu">
+            <li id="elencoRichieste">
+                <a href="{{ path("elenco_richieste") }}">Elenco richieste</a>
+            </li>
+        </ul>
+    </li>
+    <li class="">
+        <a href="javascript:;">
+            <span class="fa fa-file"></span>
+            <span class="title">Istruttoria/Valutazione</span>
+            <span class="arrow "></span>
+        </a>
+        <ul class="sub-menu">
+            {% if is_granted("ROLE_ISTRUTTORE_SUPERVISORE") or is_granted("ROLE_SUPER_ADMIN") %}
+                <li id="elencoIstruttoriRichieste">
+                    <a href="{{ path("elenco_istruttori_richieste") }}">Elenco istruttori richieste</a>
+                </li>
+            {% endif %}
+            <li id="elencoRichiesteInviate">
+                <a href="{{ path("elenco_richieste_inviate") }}">Elenco richieste</a>
+            </li>
+        </ul>
+    </li>
+
+    <li class="">
+        <a href="javascript:;">
+            <span class="fa fa-file"></span>
+            <span class="title">Comunicazioni</span>
+            <span class="arrow "></span>
+        </a>
+        <ul class="sub-menu">
+            <li id="elencoComunicazioniInviate">
+                <a href="{{ path("elenco_comunicazioni_inviate_da_pa_esito") }}">Elenco comunicazioni</a>
+            </li>
+        </ul>
+    </li>
+{% endif %}
+<li class="">
+    <a href="javascript:;">
+        <span class="fa fa-file"></span>
+        <span class="title">Liquidazione</span>
+        <span class="arrow "></span>
+    </a>
+    <ul class="sub-menu">
+        <li id="elencoRichiesteAttuazione">
+            <a href="{{ path("elenco_gestione_pa") }}">Elenco operazioni</a>
+        </li>
+        {% if is_granted("ROLE_ISTRUTTORE_ATC") or is_granted("ROLE_SUPER_ADMIN") or is_granted("ROLE_PAGAMENTI_READONLY") or is_granted("ROLE_OPERATORE_COGEA") %}
+            <li id="elencoIstruttoriaPagamenti">
+                <a href="{{ path("elenco_istruttoria_pagamenti") }}">Elenco pagamenti</a>
+            </li>
+        {% endif %}
+        {% if is_granted("ROLE_SUPER_ADMIN")%}
+            <li id="estrazioneAtc">
+                <a href="{{ path("estrazione_universo_progetti_atc") }}">Estrazione volantino</a>
+                <a href="{{ path("estrazione_valutatori") }}">Estrazione procedure</a>
+            </li>
+        {% endif %}
+    </ul>
+</li>
+
+{% if is_granted("ROLE_ISTRUTTORE_ATC") or is_granted("ROLE_SUPER_ADMIN") or is_granted("ROLE_ISTRUTTORE_CONTROLLI") or is_granted("ROLE_AUDIT") %}
+    <li class="">
+        <a href="javascript:;">
+            <span class="fa fa-file"></span>
+            <span class="title">Attuazione/Controlli</span>
+            <span class="arrow "></span>
+        </a>
+        <ul class="sub-menu">
+            {% if is_granted("ROLE_ISTRUTTORE_SUPERVISORE_ATC") or is_granted("ROLE_SUPER_ADMIN") %}
+                <li id="elencoIstruttoriPagamenti">
+                    <a href="{{ path("elenco_istruttori_pagamenti") }}">Elenco istruttori pagamenti</a>
+                </li>
+            {% endif %}
+            <li id="elencoIstruttoriaVariazioni">
+                <a href="{{ path("elenco_istruttoria_variazioni") }}">Elenco variazioni</a>
+            </li>
+            <li id="elencoControlli">
+                <a href="{{ path("home_controlli") }}">Controlli</a>
+            </li>
+            <li id="elencoControlliStabilita">
+                <a href="{{ path("home_controlli_stabilita") }}">Controlli ex-post</a>
+            </li>
+            {% if is_granted("ROLE_SUPER_ADMIN") %}
+                <li id="elenco-proroghe-rendicontazione">
+                    <a href="{{ path("elenco_proroghe_rendicontazione") }}">Elenco proroghe di rendicontazione</a>
+                </li>
+            {% endif %}
+
+            {% if (is_granted("ROLE_SUPERVISORE_CONTROLLI") or is_granted("ROLE_SUPER_ADMIN")) and not is_granted("ROLE_ISTRUTTORE_INVITALIA")%}
+                <li id="gestione-checklist-specifiche">
+                    <a href="{{ path("gestione_checklist_specifiche") }}">Gestione checklist</a>
+                </li>
+            {% endif %}
+            {% if (is_granted("ROLE_SUPERVISORE_CONTROLLI") or is_granted("ROLE_SUPER_ADMIN")) and not is_granted("ROLE_ISTRUTTORE_INVITALIA")%}
+                <li id="gestione-checklist-specifiche-post">
+                    <a href="{{ path("gestione_checklist_specifiche_stabilita") }}">Gestione checklist ex-post stabilità</a>
+                </li>
+            {% endif %}
+            {% if (is_granted("ROLE_SUPERVISORE_CONTROLLI") or is_granted("ROLE_SUPER_ADMIN")) and not is_granted("ROLE_ISTRUTTORE_INVITALIA")%}
+                <li id="gestione-checklist-puntuali-post">
+                    <a href="{{ path("gestione_checklist_specifiche_puntuali") }}">Gestione checklist ex-post</a>
+                </li>
+            {% endif %}
+
+        </ul>
+    </li>
+{% endif %}
+
+{% if is_granted("ROLE_ISTRUTTORE") or is_granted("ROLE_SUPER_ADMIN") or is_granted("ROLE_GESTIONE_PROCEDURA_PA") %}
+    <li class="">
+        <a href="javascript:;">
+            <span class="fa fa-file"></span>
+            <span class="title">Organismi intermedi</span>
+            <span class="arrow "></span>
+        </a>
+        {% set assi_con_au = assi_con_au() %}
+        {% if assi_con_au|length > 0 %}
+            <ul class="sub-menu">
+                {% for a in assi_con_au %}
+                    <li id="asseOrganismoIntermedio{{a.id}}">
+                        <a href="{{ path("elenco_autorita_urbane", {'id_asse' : a.id} ) }}">{{a.titolo}}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </li>
+
+{% endif %}

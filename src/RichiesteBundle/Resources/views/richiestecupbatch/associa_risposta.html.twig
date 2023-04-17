@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>RichiestaCupBatch edit</h1>
+
+    {{ form_start(edit_form) }}
+        {{ form_widget(edit_form) }}
+    {{ form_end(edit_form) }}
+
+	<a class="btn btn-default btn-page-action btn-form-back pull-left" role="button" href="{{ path('richiestacupbatch_index') }}"><span class="fa fa-arrow-left"></span>Torna ad elenco</a>
+       
+{% endblock %}

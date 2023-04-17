@@ -1,0 +1,120 @@
+{% trans_default_domain 'FOSUserBundle' %}
+<!DOCTYPE html>
+
+<!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
+    <!-- BEGIN HEAD -->
+    <head>
+        <meta charset="utf-8" />
+        <title>Sfinge 2020 | Accedi al sistema</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <meta name="MobileOptimized" content="320">
+       
+        <link href="{{ asset('node_modules/@fortawesome/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css"/>
+         <link href="{{ asset('node_modules/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css"/>
+
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,300italic,300,600,600italic,700,700italic' rel='stylesheet' type='text/css'>
+
+        <link href="{{ asset('assets/css/style-metronic.css')}}" rel="stylesheet" type="text/css"/>
+        <link href="{{ asset('assets/css/style.css')}}" rel="stylesheet" type="text/css"/>
+        <link href="{{ asset('assets/css/pages/login.css')}}" rel="stylesheet" type="text/css"/>
+        <link href="{{ asset('favicon.ico')}}" rel="shortcut icon" />
+            
+        <link rel="stylesheet" href="{{ asset('node_modules/bootstrap-datetime-picker/css/bootstrap-datetimepicker.min.css') }}" type="text/css" />
+    
+    </head>
+
+    <body class="login">
+
+        <!-- BEGIN LOGO -->
+        <div class="logo light">
+            <br>
+            <br>
+            <br>
+        </div>
+        <!-- END LOGO -->
+
+        <!-- BEGIN LOGIN -->
+        <div class="content">
+            <!-- BEGIN LOGIN FORM -->
+
+            <form class="login-form" action="{{ path("fos_user_security_check") }}" method="post">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
+                <h2 class="form-title">Accedi al sistema</h2>
+
+                {% if error %}
+                    <div class="alert alert-danger">{{ error.message|trans({'Bad credentials.': 'Credenziali errate.'}, "app") }}</div>
+                {% endif %}
+
+                <div class="form-group">
+                    <!--ie8, ie9 does not support html5 placeholder, so we just show field title for that-->
+                    <label for="username" class="control-label visible-ie8 visible-ie9">{{ 'security.login.username'|trans }}</label>
+                    <div class="input-icon">
+                        <span class="fa fa-user"></span>
+                        <input tabindex="1" class="form-control placeholder-no-fix" type="text" autocomplete="off" placeholder="Username" id="username" name="_username" value="{{ last_username }}" required="required"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label visible-ie8 visible-ie9" for="password">{{ 'security.login.password'|trans }}</label>
+
+                    <div class="text-right"><a class="" href="{{ path('fos_user_resetting_request') }}" >Password dimenticata?</a></div>
+                    
+                    <div class="input-icon">
+                        <span class="fa fa-lock"></span>
+                        <input tabindex="2" class="form-control placeholder-no-fix" type="password" autocomplete="off" placeholder="Password" id="password" name="_password" required="required"/>
+                    </div>
+                </div>
+                <div>
+                    <div class="checkbox">
+                        <label>
+                            <input tabindex="3" type="checkbox" id="remember_me" name="_remember_me" value="on"/> 
+                            Ricorda i miei dati
+                            {# {{ 'security.login.remember_me'|trans }} #}
+                        </label>
+                    </div>
+                    
+                    <br>
+                    <input tabindex="4" type="submit" class="btn btn-lg btn-primary" value="Accedi" />
+
+                    <span class="text18">
+                        &nbsp; o &nbsp;
+                        <a tabindex="5" class="" role="button" href="{{ path('fos_user_registration_register') }}" >Registrati</a>
+                    </span>
+
+
+                    <br>
+                    <br>
+                    <br>
+                </div>
+
+            </form>
+            <!-- END LOGIN FORM -->
+        </div>
+        <!-- END LOGIN -->
+        
+        <!-- BEGIN COPYRIGHT -->
+        <div class="copyright">
+
+        </div>
+        <!-- END COPYRIGHT -->
+
+        <!-- BEGIN JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) -->
+        <script src="{{ asset('node_modules/jquery/dist/jquery.min.js') }}" type="text/javascript"></script>
+        <script src="{{ asset('node_modules/jquery-migrate/dist/jquery-migrate.min.js') }}" type="text/javascript"></script>
+        <script src="{{ asset('node_modules/jquery.cookie/jquery.cookie.js') }}" type="text/javascript"></script>
+        <script src="{{ asset('node_modules/bootstrap/dist/js/bootstrap.min.js') }}" type="text/javascript"></script>
+        <script src="{{ asset('assets/scripts/app.js')}}" type="text/javascript"></script>
+        
+        <script src="{{ asset('node_modules/moment/min/moment-with-locales.min.js') }}"></script>
+        <script src="{{ asset('node_modules/bootstrap-datetime-picker/js/bootstrap-datetimepicker.min.js') }}"></script>
+        <script src="{{ asset('node_modules/bootstrap-datetime-picker/js/locales/bootstrap-datetimepicker.it.js') }}"></script>
+        <script>
+            jQuery(document).ready(function() {
+                App.init();
+            });
+        </script>
+
+    </body>
+</html>

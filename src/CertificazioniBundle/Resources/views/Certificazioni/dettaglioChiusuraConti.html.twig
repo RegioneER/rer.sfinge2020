@@ -1,0 +1,63 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+
+    <table class="table table-striped table-hover table-bordered" id="certificazioni-elenco">
+        <thead>
+            <tr>
+                <th>Numero certificazione</th>
+                <th>Anno contabile</th>				
+                <th>Stato</th>			
+            </tr>
+        </thead>
+        <tbody>
+            {% for certificazione in chiusura.certificazioni %}
+                <tr>
+                    <td>{{ certificazione.numero }}</td>
+                    <td>{{ certificazione.anno }}</td>
+                    <td>{{ certificazione.stato.descrizione }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if is_granted('ROLE_CERTIFICATORE') or is_granted('ROLE_SUPER_ADMIN') %}
+        {% if not is_granted('ROLE_CERTIFICATORE_AGREA')%}
+            <h4>Documento</h4>			
+            <div class="form-body">
+                {{ form(form_upload_validazione_view) }}
+            </div>	
+        {% endif %}
+        {% if documenti_cert|length > 0 %}
+            <h4>Elenco documenti caricati AdG</h4>
+            {% for documento in documenti_cert %}
+                {% if chiusura.stato.codice != 'CHI_INVIATA' %}
+                    {{ mostra_file(documento.documentoFile, path('cancella_documento_chiusura', {'id_documento': documento.id}) ) }}
+                {% else %}
+                    {{ mostra_file(documento.documentoFile)}}
+                {% endif %}
+                <br/>
+            {% endfor %}
+        {% endif %}	
+    {% endif %}	
+
+    {% if is_granted('ROLE_CERTIFICATORE') or is_granted('ROLE_SUPER_ADMIN') %}
+
+        {# SE NON HO DOCUMENTI CHECK_LIST PROPONGO IL FORM DI UPLOAD, ALTRIMENTI PROPONGO IL DOC #}
+
+        {% if is_granted('ROLE_CERTIFICATORE_AGREA')%}
+            <h4>Documenti AdC</h4>
+            <div class="form-body">
+                {{ form(form_upload_checklist_view) }}
+            </div>
+            <h4>Elenco documenti caricati AdC</h4>
+            {% for doc in documenti_cert_agrea  %}
+                {{ mostra_file(doc.documentoFile, path('cancella_documento_chiusura', {'id_documento': doc.id}) ) }}
+            {% endfor %}	
+        {% endif %}
+
+    {% endif %}	
+
+    <a href="{{ path("elenco_certificazioni")}}" class="btn btn-default btn-page-action btn-form-back pull-left">Indietro</a>	
+
+{% endblock %}

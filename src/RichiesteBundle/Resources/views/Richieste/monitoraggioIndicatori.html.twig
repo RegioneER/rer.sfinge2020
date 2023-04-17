@@ -1,0 +1,53 @@
+{% extends '::base_ente.html.twig' %}
+
+{% form_theme form.mon_indicatore_output _self %}
+{% block intestazione %}
+    {{ parent() }}
+    {{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+{% block body %}
+    <div class="form-body">
+        <h4>Indicatori</h4>
+        {% if form.mon_indicatore_output|length > 0 %}
+        {{- form_errors(form) -}}
+        {{ form_start(form) }}
+        
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Indicatore</th>
+                    <th>Valore programmato</th>
+                    <th>Valore realizzato</th>
+                </tr>
+            </thead>
+            <tbody>            
+                {% for element in form.mon_indicatore_output %}
+
+                    {{ form_widget(element) }}
+                {% endfor %}
+            </tbody>
+        </table>
+        {{ form_rest(form) }}
+        {{form_end(form) }}
+        {% else %}
+            <h3>Non sono presenti indicatori</h3>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block form_row -%}
+
+    {{- not form.vars.compound ? '<td>' : '' -}}
+    {{- form_widget(form) -}}
+    {{- form_errors(form) -}}
+    {{- not form.vars.compound ? '</td>' : '' -}}
+
+{% endblock form_row %}
+
+{% block form_widget_compound %}
+    {% if form.vars.prototype is not defined %}
+        <tr id="{{- block('widget_container_attributes') -}}">
+            {{- block('form_rows') -}}
+        </tr>
+    {% endif %}
+{% endblock %}

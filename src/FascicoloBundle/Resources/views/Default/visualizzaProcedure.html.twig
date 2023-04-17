@@ -1,0 +1,30 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	{% if procedure|length > 0 %}
+    <table class="table table-striped table-hover table-bordered" id="bandi-elenco">
+        <thead>
+            <tr>
+				<th>ID Bando</th>
+                <th>Titolo</th>
+				<th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+			{% for bando in procedure %}
+                <tr>
+                    <td>
+                        {{ bando.id }}
+                    </td>
+                    <td>
+                        {{ bando.titolo }}
+                    </td>
+                	<td>
+                        <a href="{{ path('visualizza_istanze_fascicolo_per_bando',{'id_procedura':bando.id}) }}">
+                            Visualizza fascicoli
+                        </a></td>
+            {% endfor %}
+        </tbody>
+    </table>
+	{% endif %}
+{% endblock %}

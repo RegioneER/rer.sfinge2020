@@ -1,0 +1,36 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <ul class="list-group-item">
+		<li class="list-group-item">
+			<a href="{{- path('monitoraggio_elenco_importazioni_impegni_pagamenti') -}}">
+				Importazione impegni e pagamenti da ente gestore
+			</a>
+		</li>
+		{% for struttura in struttureEsportabili %}
+			<li class="list-group-item">
+				<a href="{{- path('monitoraggio_estrazione_strutture',{ struttura: struttura }) -}}">
+					Esportazione struttura {{ struttura }}
+				</a>
+			</li>
+		{% endfor %}
+
+		<li class="list-group-item">
+			<a href="{{- path('monitoraggio_elenco_validazione_progetti') -}}">
+				Visualizza validazione IGRUE
+			</a>
+		</li>
+
+		<li class="list-group-item">
+			<a href="{{- path('estrazione_assi_s3') -}}">
+				Esportazione S3
+			</a>
+		</li>
+
+		<li class="list-group-item">
+			<a href="{{- path('estrazione_pagamenti_monitoraggio') -}}">
+				Esportazione Pagamenti
+			</a>
+		</li>
+	</ul>
+{% endblock %}

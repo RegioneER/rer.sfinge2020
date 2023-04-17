@@ -1,0 +1,472 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://example.com/product.schema.json",
+  "title": "Product",
+  "description": "Importazione rendicontazione in SFINGE2020 per bandi sanità",
+  "type": "object",
+  "properties": {
+    "importo_richiesto": {
+      "description": "",
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "data_inizio_rendicontazione": {
+      "description": "",
+      "type": "string",
+      "pattern": "^\\d{4}-(1|0)\\d-\\d{2}$"
+    },
+    "data_fine_rendicontazione": {
+      "description": "",
+      "type": "string",
+      "pattern": "^\\d{4}-(1|0)\\d-\\d{2}$"
+    },
+    "importo_rendicontato": {
+      "description": "",
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "data_convenzione": {
+      "description": "",
+      "type": "string",
+      "pattern": "^\\d{4}-(1|0)\\d-\\d{2}$"
+    },
+    "contratti": {
+      "description": "",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/definitions/contratto" }
+    },
+    "documenti": {
+      "description": "",
+      "type": "array",
+      "minItems": 0,
+      "uniqueItems": true,
+      "items": { "$ref": "#/definitions/documento_pagamento" }
+    },
+    "procedure_aggiudicazione": {
+      "description": "",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/definitions/procedura_aggiudicazione" }
+    }
+  },
+  "required": [
+    "importo_richiesto",
+    "data_inizio_rendicontazione",
+    "data_fine_rendicontazione",
+    "importo_rendicontato",
+    "data_convenzione",
+    "contratti",
+    "documenti"
+  ],
+  "definitions": {
+    "contratto": {
+      "type": "object",
+      "required": [
+        "tipo_contratto",
+        "tipologia_fornitore",
+        "data_inizio",
+        "data_contratto",
+        "descrizione",
+        "fornitore",
+        "beneficiario_contratto",
+        "stazione_appaltante",
+        "piattaforma_committenza",
+        "numero",
+        "importo_contratto_complessivo",
+        "giustificativi",
+        "documenti",
+        "provvedimento_avvio_procedimento",
+        "tipologia_atto_aggiudicazione",
+        "num_atto_aggiudicazione",
+        "data_atto_aggiudicazione"
+      ],
+      "properties": {
+        "tipo_contratto": {
+          "description": "",
+          "type": "string",
+          "enum": ["CON", "CON_SUB", "ORD", "PREV", "CON_MEL","ALTRO"]
+        },
+        "tipologia_fornitore": {
+          "description": "",
+          "type": "string",
+          "enum": ["PG", "STRUTT_SS", "STRUTT_PVT", "IMPR", "PRF", "PF"]
+        },
+        "data_inizio": {
+          "description": "",
+          "type": "string",
+          "pattern": "^\\d{4}-(1|0)\\d-\\d{2}$"
+        },
+        "data_contratto":{
+          "description": "Data sottoscrizione contratto",
+          "type": "string",
+          "pattern": "^\\d{4}-(1|0)\\d-\\d{2}$"
+        },
+        "descrizione": {
+          "description": "",
+          "type": "string",
+          "maxLength": 1000          
+        },
+        "fornitore": {
+          "description": "",
+          "type": "string",
+          "maxLength": 255
+        },
+        "beneficiario_contratto": {
+          "description": "",
+          "type": "string",
+          "maxLength": 255
+        },
+        "stazione_appaltante": {
+          "description": "",
+          "type": "string",
+          "enum": ["ST1", "ST2", "ST3", "ST4", "ST5", "ST6", "ST7", "ST8", "ST9", "ST10", "ST11", "ST12", "ST13", "ST14", "ST15"]
+        },
+        "altro_stazione_appaltante": {
+          "description": "",
+          "type": "string",
+          "maxLength": 255
+        },
+        "piattaforma_committenza": {
+          "description": "",
+          "type": "string",
+          "enum": ["SI", "NO"]
+        },
+        "numero": {
+          "description": "",
+          "type": "string",
+          "maxLength": 255
+        },
+        "importo_contratto_complessivo": {
+          "description": "",
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "importo_contratto_complessivo_ivato": {
+          "description": "",
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "giustificativi": {
+          "description": "",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/definitions/giustificativo" }
+        },
+        "documenti": {
+          "description": "",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/definitions/documento_contratto" }
+        },
+        "provvedimento_avvio_procedimento": {
+          "description": "",
+          "type": "string",
+          "enum": ["Bando","Decreto","Determina","Avviso","Altro"]
+        },
+        "tipologia_atto_aggiudicazione": {
+          "description": "",
+          "type": "string",
+          "enum": ["Decreto","Determina","Ordine","Altro"]
+        },
+        "num_atto_aggiudicazione": {
+          "description": "",
+          "type": "string",
+          "maxLength": 255
+        },
+        "data_atto_aggiudicazione": {
+          "description": "",
+          "type": "string",
+          "pattern": "^\\d{4}-(1|0)\\d-\\d{2}$"
+        }
+      }
+    },
+    "giustificativo": {
+      "type": "object",
+      "properties": {
+        "documento_giustificativo": {
+          "description": "",
+          "type": "string",
+          "maxLength": 50
+        },
+        "denominazione_fornitore": {
+          "description": "",
+          "type": "string",
+          "maxLength": 255
+        },
+        "codice_fiscale_fornitore": {
+          "description": "",
+          "type": "string",
+          "maxLength": 16
+        },
+        "descrizione_giustificativo": {
+          "description": "",
+          "type": "string",
+          "maxLength": 1000
+        },
+        "numero_giustificativo": {
+          "description": "numero fattura/nota spesa",
+          "type": "string",
+          "maxLength": 255
+        },
+        "data_giustificativo": {
+          "description": "",
+          "type": "string",
+          "pattern": "^\\d{4}-(1|0)\\d-\\d{2}$"
+        },
+        "data_consegna": {
+          "description": "",
+          "type": "string",
+          "pattern": "^\\d{4}-(1|0)\\d-\\d{2}$"
+        },
+        "importo_giustificativo": {
+          "description": "",
+          "type": "number"
+        },
+        "importo_richiesto": {
+          "description": "",
+          "type": "number"
+        },
+        "nota_beneficiario": {
+          "type": "string",
+          "description": "eventuali descrizioni con n°unità o altro",
+          "maxLength": 1000
+        },
+        "luogo_consegna": {
+          "type": "string",
+          "description": "eventuali descrizioni consegna",
+          "maxLength": 1000
+        },
+        "tipologia_giustificativo": {
+          "description": "",
+          "type": "string",
+          "enum": [
+            "TIPOLOGIA_STANDARD_FATTURA_ELETTRONICA",
+            "TIPOLOGIA_STANDARD_1",
+            "TIPOLOGIA_STANDARD_8",
+            "TIPOLOGIA_STANDARD_12"
+          ]
+        },
+        "imputazioni": {
+          "description": "",
+          "type": "array",
+          "uniqueItems": true,
+          "minItems": 1,
+          "items": { "$ref": "#/definitions/imputazione" }
+        },
+        "quietanze": {
+          "description": "",
+          "type": "array",
+          "uniqueItems": true,
+          "minItems": 1,
+          "items": { "$ref": "#/definitions/quietanza" }
+        },
+        "documenti_aggiuntivi": {
+          "description": "",
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/definitions/documento_aggiuntivo" }
+        }
+      },
+      "required": [
+        "documento_giustificativo",
+        "denominazione_fornitore",
+        "codice_fiscale_fornitore",
+        "descrizione_giustificativo",
+        "numero_giustificativo",
+        "data_giustificativo",
+        "data_consegna",
+        "importo_giustificativo",
+        "importo_richiesto",
+        "tipologia_giustificativo",
+        "imputazioni",
+        "quietanze"
+      ]
+    },
+    "documento_contratto": {
+      "type": "object",
+      "properties": {
+        "sotto_cartella": {
+          "description": "",
+          "type": "string",
+          "maxLength": 50
+        },
+        "nome_file": {
+          "description": "",
+          "type": "string",
+          "maxLength": 50
+        },
+        "tipologia": {
+          "description": "",
+          "type": "string",
+          "enum": ["dc1_bando165", "dc2_bando165", "dc3_bando165", "dc4_bando165", "dc5_bando165", "dc6_bando165", "dc7_bando165", "dc8_bando165",
+            "dc9_bando165", "dc10_bando165", "dc11_bando165", "dc12_bando165", "dc13_bando165", "dc14_bando165", "dc15_bando165", "dc16_bando165",
+            "dc17_bando165", "dc18_bando165", "dc19_bando165", "dc20_bando165", "dc21_bando165", "dc22_bando165", "dc23_bando165", "dc24_bando165",
+            "dc25_bando165", "dc26_bando165", "dc27_bando165", "dc28_bando165", "dc29_bando165", "dc30_bando165", "dc31_bando165", "dc32_bando165",
+            "dc33_bando165", "dc34_bando165", "dc35_bando165", "dc36_bando165", "dc37_bando165", "dc38_bando165", "dc39_bando165", "dc40_bando165",
+            "dc41_bando165", "dc42_bando165", "dc43_bando165", "dc44_bando165", "dc45_bando165", "dc46_bando165", "dc47_bando165", "dc48_bando165", 
+            "dc49_bando165", "dc50_bando165", "dc51_bando165", "dc52_bando165", "dc53_bando165", "dc54_bando165", "dc55_bando165", "dc56_bando165", 
+            "dc57_bando165"]
+        },
+        "nota": {
+          "type": "string",
+          "maxLength": 255
+        }
+      },
+      "required": ["nome_file", "tipologia", "sotto_cartella"]
+    },
+    "documento_aggiuntivo": {
+      "type": "object",
+      "properties": {
+        "nome_file": {
+          "description": "",
+          "type": "string",
+          "maxLength": 50
+        },
+        "tipologia": {
+          "description": "",
+          "type": "string",
+          "enum": ["dg2_bando165","dg3_bando165","dg4_bando165","dg6_bando165","dg7_bando165","dg8_bando165","dg9_bando165",
+                   "dg10_bando165","dg11_bando165","dg12_bando165","dg13_bando165","dg14_bando165"]
+        }
+      },
+      "required": ["nome_file", "tipologia"]
+    },
+    "documento_pagamento": {
+      "type": "object",
+      "properties": {
+        "nome_file": {
+          "description": "",
+          "type": "string",
+          "maxLength": 50
+        },
+        "tipologia": {
+          "description": "",
+          "type": "string",
+          "enum": ["dp1_bando165","dp2_bando140","dp5_bando165","dp6_bando165"
+                    ,"dp7_bando165","dp8_bando165","dp9_bando165","dp10_bando165","dp11_bando165","dp12_bando165"]
+        }
+      },
+      "required": ["nome_file", "tipologia"]
+    },
+    "imputazione": {
+      "type": "object",
+      "properties": {
+        "voce_spesa": {
+          "description": "",
+          "type": "string",
+          "enum": ["A", "B", "C", "D", "E"]
+        },
+        "importo": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      },
+      "required": ["voce_spesa", "importo"]
+    },
+    "quietanza": {
+      "type": "object",
+      "properties": {
+        "numero": {
+          "type": "string",
+          "description": "",
+          "maxLength": 255
+        },
+        "documento": {
+          "type": "string",
+          "description": "",
+          "maxLength": 50
+        },
+        "tipologia": {
+          "type": "string",
+          "enum": [
+            "MANDATO_PAGAMENTO",
+            "MOD_F24_QUIETANZATO",
+            "ALTRO"
+          ]
+        },
+        "data_quietanza": {
+          "type": "string",
+          "pattern": "^\\d{4}-(1|0)\\d-\\d{2}$"
+        },
+        "importo": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "data_avvenuta_esecuzione": {
+          "type": "string",
+          "pattern": "^\\d{4}-(1|0)\\d-\\d{2}$"
+        },
+        "importo_mandato": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      },
+      "required": ["documento", "tipologia", "data_quietanza", "importo", "data_avvenuta_esecuzione", "importo_mandato"]
+    },
+    "procedura_aggiudicazione": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "cig": {
+          "type": "string",
+          "maxLength": 10
+        },
+        "motivo_assenza_cig": {
+          "type": "string",
+          "pattern": "^0[1-9]$",
+          "description": ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","99"]
+        },
+        "descrizione": {
+          "type": "string",
+          "maxLength": 1500,
+          "description": "Breve descrizone procedura aggiudicazione"
+        },
+        "tipo": {
+          "type": "string",
+          "pattern": "^[0-2]\\d$",
+          "description": ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19",
+                          "20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38"]
+        },
+        "importo_procedura": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Importo procedura a base d'asta. Per procedure di affidamento diretto o simili coincide l'import aggiudicato."
+        },
+        "data_pubblicazione": {
+          "type": "string",
+          "pattern": "^\\d{4}-(1|0)\\d-\\d{2}$",
+          "description": "Per procedure di affidamento diretto o simili coincide con la data di aggiudicazione."
+        },
+        "importo_aggiudicato": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "data_aggiudicazione": {
+          "type": "string",
+          "pattern": "^\\d{4}-(1|0)\\d-\\d{2}$"
+        }
+      },
+      "anyOf": [
+        {
+          "required": ["cig"]
+        },
+        {
+          "required": [
+            "motivo_assenza_cig",
+            "descrizione",
+            "tipo",
+            "importo_procedura",
+            "data_pubblicazione",
+            "importo_aggiudicato",
+            "data_aggiudicazione"
+          ]
+        }
+      ]
+    }
+  }
+}

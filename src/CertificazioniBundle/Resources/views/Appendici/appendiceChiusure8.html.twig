@@ -1,0 +1,272 @@
+{% extends '::base.html.twig' %}
+{% block begin_page_level_plugin_style %}
+	<style>
+		#appendice td:nth-child(3), 
+		#appendice td:nth-child(4), 
+		#appendice td:nth-child(5),
+		#appendice td:nth-child(6), 
+		#appendice td:nth-child(7), 
+		#appendice td:nth-child(8) 
+		{
+			text-align: right;
+		}
+	</style>
+{% endblock %}
+{% block body %}
+	{% include 'CertificazioniBundle:Appendici:menuAppendici.html.twig' with {'id_chiusura' : chiusura.id } %}	
+
+	<h4>APPENDICE 8: riconciliazione delle spese  </h4>
+
+	<table class="table table-striped table-hover table-bordered" id="appendice">
+		<thead>
+			<tr>
+				<th colspan="2"></th>
+				<th style="text-align: center" colspan="2">Spesa totale ammissibile inclusa nelle domande presentate alla commissione</th>				
+				<th style="text-align: center" colspan="2">Spesa dichiarata conforme all'articolo 137, paragrafo 1, lettera a) del regolamento (UE) No 1303/2013</th>
+				<th style="text-align: center" colspan="2">Differenza</th>
+				<th></th>
+			</tr>
+			<tr>
+				<th rowspan="2">Asse prioritario</th>
+				<th rowspan="2">Categoria di regioni</th>				
+				<th>Importo totale della spesa ammissibile sostenuta dai beneficiari e pagata nell’attuazione delle operazioni</th>					
+				<th>Importo totale della spesa pubblica sostenuta nell’attuazione delle operazioni</th>
+				<th>Importo totale della spesa ammissibile registrata nel sistema contabile dell’autorità di 
+					certificazione e che è stata inclusa nelle domande di pagamento presentate alla Commissione 
+				</th>
+				<th>Importo totale della spesa pubblica corrispondente sostenuta nell’attuazione delle operazioni</th>
+				<th rowspan="2" style="white-space: nowrap">(A-C)</th>
+				<th rowspan="2" style="white-space: nowrap">(B-D)</th>
+				<th rowspan="2">Osservazioni</th>
+			</tr>
+			<tr>
+				<th>(A)</th>
+				<th>(B)</th>
+				<th>(C)</th>
+				<th>(D)</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>1</td>
+				<td>Più sviluppate</td>
+				<td>{{importi_asse['A1']|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A1']|number_format(2, ',', '.')}}</td>
+				<td>{{(importi_asse['A1'] - importi_asse['A1INVIO'])|number_format(2, ',', '.')}}</td>
+				<td>{{(importi_asse['A1'] - importi_asse['A1INVIO'])|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A1INVIO']|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A1INVIO']|number_format(2, ',', '.')}}</td>
+				<td><a href="#" data-target="#osservazione1-modal" data-toggle="modal" class="btn btn-info"><span class="fa fa-search"></span>visualizza/modifica</a></td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td>Più sviluppate</td>
+				<td>{{importi_asse['A2']|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A2']|number_format(2, ',', '.')}}</td>
+				<td>{{(importi_asse['A2'] - importi_asse['A2INVIO'])|number_format(2, ',', '.')}}</td>
+				<td>{{(importi_asse['A2'] - importi_asse['A2INVIO'])|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A2INVIO']|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A2INVIO']|number_format(2, ',', '.')}}</td>
+				<td><a href="#" data-target="#osservazione2-modal" data-toggle="modal" class="btn btn-info"><span class="fa fa-search"></span>visualizza/modifica</a></td>
+			</tr>
+			<tr>
+				<td>3</td>
+				<td>Più sviluppate</td>
+				<td>{{importi_asse['A3']|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A3']|number_format(2, ',', '.')}}</td>
+				<td>{{(importi_asse['A3'] - importi_asse['A3INVIO'])|number_format(2, ',', '.')}}</td>
+				<td>{{(importi_asse['A3'] - importi_asse['A3INVIO'])|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A3INVIO']|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A3INVIO']|number_format(2, ',', '.')}}</td>
+				<td><a href="#" data-target="#osservazione3-modal" data-toggle="modal" class="btn btn-info"><span class="fa fa-search"></span>visualizza/modifica</a></td>
+			</tr>
+			<tr>
+				<td>4</td>
+				<td>Più sviluppate</td>
+				<td>{{importi_asse['A4']|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A4']|number_format(2, ',', '.')}}</td>
+				<td>{{(importi_asse['A4'] - importi_asse['A4INVIO'])|number_format(2, ',', '.')}}</td>
+				<td>{{(importi_asse['A4'] - importi_asse['A4INVIO'])|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A4INVIO']|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A4INVIO']|number_format(2, ',', '.')}}</td>
+				<td><a href="#" data-target="#osservazione4-modal" data-toggle="modal" class="btn btn-info"><span class="fa fa-search"></span>visualizza/modifica</a></td>
+			</tr>
+			<tr>
+				<td>5</td>
+				<td>Più sviluppate</td>
+				<td>{{importi_asse['A5']|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A5']|number_format(2, ',', '.')}}</td>
+				<td>{{(importi_asse['A5'] - importi_asse['A5INVIO'])|number_format(2, ',', '.')}}</td>
+				<td>{{(importi_asse['A5'] - importi_asse['A5INVIO'])|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A5INVIO']|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A5INVIO']|number_format(2, ',', '.')}}</td>
+				<td><a href="#" data-target="#osservazione5-modal" data-toggle="modal" class="btn btn-info"><span class="fa fa-search"></span>visualizza/modifica</a></td>
+			</tr>
+			<tr>
+				<td>6</td>
+				<td>Più sviluppate</td>
+				<td>{{importi_asse['A6']|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A6']|number_format(2, ',', '.')}}</td>
+				<td>{{(importi_asse['A6'] - importi_asse['A6INVIO'])|number_format(2, ',', '.')}}</td>
+				<td>{{(importi_asse['A6'] - importi_asse['A6INVIO'])|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A6INVIO']|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A6INVIO']|number_format(2, ',', '.')}}</td>
+				<td><a href="#" data-target="#osservazione6-modal" data-toggle="modal" class="btn btn-info"><span class="fa fa-search"></span>visualizza/modifica</a></td>
+			</tr>
+			<tr>
+				<td>7</td>
+				<td>Più sviluppate</td>
+				<td>{{importi_asse['A7']|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A7']|number_format(2, ',', '.')}}</td>
+				<td>{{(importi_asse['A7'] - importi_asse['A7INVIO'])|number_format(2, ',', '.')}}</td>
+				<td>{{(importi_asse['A7'] - importi_asse['A7INVIO'])|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A7INVIO']|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A7INVIO']|number_format(2, ',', '.')}}</td>
+				<td><a href="#" data-target="#osservazione7-modal" data-toggle="modal" class="btn btn-info"><span class="fa fa-search"></span>visualizza/modifica</a></td>
+			</tr>
+			<tr>
+				<td style="font-weight: bold">Totale</td>
+				<td style="font-weight: bold">Più sviluppate</td>
+				<td style="font-weight: bold">{{importi_asse['TOTALE']|number_format(2, ',', '.')}}</td>
+				<td style="font-weight: bold">{{importi_asse['TOTALE']|number_format(2, ',', '.')}}</td>
+				<td style="font-weight: bold">{{(importi_asse['TOTALE'] - importi_asse['TOTALEINVIO'])|number_format(2, ',', '.')}}</td>
+				<td style="font-weight: bold">{{(importi_asse['TOTALE'] - importi_asse['TOTALEINVIO'])|number_format(2, ',', '.')}}</td>
+				<td style="font-weight: bold">{{importi_asse['TOTALEINVIO']|number_format(2, ',', '.')}}</td>
+				<td style="font-weight: bold">{{importi_asse['TOTALEINVIO']|number_format(2, ',', '.')}}</td>
+				<td></td>
+			</tr>
+			{#<tr>
+				<td style="font-weight: bold" colspan="9">Importi ritirati e recuperati durante il periodo contabile suddivisi per periodo contabile di dichiarazione delle spese corrispondenti</td>
+			</tr>
+			<tr>
+				<td style="font-weight: bold" colspan="2">{{chiusura.maxAnnoContabile}}</td>
+				<td style="text-align: right">-</td>
+				<td>-</td>
+				<td>-</td>
+				<td>-</td>
+				<td>{{importi_asse['TOTALEDICUI']|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['TOTALEDICUI']|number_format(2, ',', '.')}}</td>
+				<td></td>
+			</tr>#}
+			<tr>
+				<td colspan="2">di cui importi rettificati in seguito ad audit relativi alle operazioni 
+					effettuati a norma dell'articolo 127, paragrafo 1, del regolamento (UE) n. 1303/2013
+				</td>
+				<td style="text-align: right">-</td>
+				<td>-</td>
+				<td>-</td>
+				<td>-</td>
+				<td>{{importi_asse['TOTALEDICUI127']|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['TOTALEDICUI127']|number_format(2, ',', '.')}}</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td colspan="2">di cui importi sospesi a norma dell'articolo 137, co 2, del regolamento (UE) n. 1303/2013
+				</td>
+				<td style="text-align: right">-</td>
+				<td>-</td>
+				<td>-</td>
+				<td>-</td>
+				<td>{{importi_asse['TOTALEDICUI137']|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['TOTALEDICUI137']|number_format(2, ',', '.')}}</td>
+				<td></td>
+			</tr>
+			<tr>
+			</tr>
+		</tbody>
+	</table>
+	<div id="osservazione1-modal" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3 id="osservazione-modal-titolo">Osservazione</h3>
+				</div>
+				<div class="modal-body">
+					{{ form(formAsse1) }}
+				</div>
+			</div>
+		</div>
+	</div>		
+	<div id="osservazione2-modal" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3 id="osservazione-modal-titolo">Osservazione</h3>
+				</div>
+				<div class="modal-body">
+					{{ form(formAsse2) }}
+				</div>
+			</div>
+		</div>
+	</div>		
+	<div id="osservazione3-modal" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3 id="osservazione-modal-titolo">Osservazione</h3>
+				</div>
+				<div class="modal-body">
+					{{ form(formAsse3) }}
+				</div>
+			</div>
+		</div>
+	</div>		
+	<div id="osservazione4-modal" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3 id="osservazione-modal-titolo">Osservazione</h3>
+				</div>
+				<div class="modal-body">
+					{{ form(formAsse4) }}
+				</div>
+			</div>
+		</div>
+	</div>		
+	<div id="osservazione5-modal" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3 id="osservazione-modal-titolo">Osservazione</h3>
+				</div>
+				<div class="modal-body">
+					{{ form(formAsse5) }}
+				</div>
+			</div>
+		</div>
+	</div>		
+	<div id="osservazione6-modal" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3 id="osservazione-modal-titolo">Osservazione</h3>
+				</div>
+				<div class="modal-body">
+					{{ form(formAsse6) }}
+				</div>
+			</div>
+		</div>
+	</div>		
+	<div id="osservazione7-modal" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3 id="osservazione-modal-titolo">Osservazione</h3>
+				</div>
+				<div class="modal-body">
+					{{ form(formAsse7) }}
+				</div>
+			</div>
+		</div>
+	</div>		
+
+
+	<a href="{{ path("elenco_certificazioni")}}" class="btn btn-default btn-page-action btn-form-back pull-left">Indietro</a>	
+{% endblock %}

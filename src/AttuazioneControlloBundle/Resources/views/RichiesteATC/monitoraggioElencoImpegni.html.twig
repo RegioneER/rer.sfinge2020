@@ -1,0 +1,60 @@
+{% extends '::base_ente.html.twig' %}
+{% block body %}
+<h4>Elenco degli impegni e dei disimpegni del progetto</h4>
+{% if impegni|length > 0 %}
+
+<table class="table table-striped table-hover table-bordered ">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Tipologia impegno</th>
+            <th>Data</th>
+            <th>Importo</th>
+            <th>Azioni</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for impegno in impegni %}
+        <tr>
+            <td>{{ impegno.id }}</td>
+            <td>{{ impegno.tipologiaimpegno is null ? '-' : impegno.descrizioneTipologiaImpegno }}</td>
+            <td>{{ impegno.dataimpegno|date('d/m/Y') }}</td>
+            <td>{{ impegno.importoimpegno|number_format(2, ',', '.') }}</td>
+            <td>
+            <div class="dropdown">
+							<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								Azioni
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+								<li>
+									<a href="{{- path('gestione_modifica_monitoraggio_impegni_ben', { id_richiesta:richiesta.id, id_impegno:impegno.id }) -}}">Modifica</a></li>
+                                    <li>
+                                        <a href="{{- path('gestione_elimina_monitoraggio_impegni_ben',{id_richiesta:richiesta.id, id_impegno:impegno.id, _token:csrfToken}) -}}" data-confirm="Confermi la cancellazione dell'impegno selezionato?">
+                                            Elimina impegno
+                                        </a>
+                                    </li>
+							</ul>
+						</div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% else %}
+<h3>Non sono presenti impegni o disimpegni caricati a sistema
+{% endif %}
+<div style="margin-top:5em;">
+    <div class="pull-left">
+        <a class="btn btn-default btn-page-action btn-form-back pull-left" href="{{- path('elenco_gestione_beneficiario')}}">
+            <span class="fa fa-arrow-left"></span>Indietro
+        </a>
+    </div>
+	<div class="pull-right">
+		<a class="btn btn-primary pull-right btn-page-action" href="{{- path('crea_monitoraggio_impegni_ben',{id_richiesta:richiesta.id}) -}}">
+			Aggiungi
+		</a>
+	</div>
+</div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+	
+	{% if istruttoria_relazione_tecnica is defined %}
+		{% include 'AttuazioneControlloBundle:RelazioneTecnica:Istruttoria/menu.html.twig' with {'pagamento' : pagamento } %}
+	{% endif %}
+	
+	{% if titolo_sezione is not defined %}
+		<h4>Istruttoria</h4>
+	{% else %}
+		<h4>{{titolo_sezione}}</h4>
+	{% endif %}
+		
+	{{ form_start(form_istruttoria) }}
+	{{ form_end(form_istruttoria) }}	
+	
+	
+{% endblock %}	

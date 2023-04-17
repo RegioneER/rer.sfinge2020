@@ -1,0 +1,7 @@
+<div class="clearfix">
+    <a href="{{ path(urlPrefix ~ '_visualizza', { 'id': id }) }}" class="btn btn-sm blue"><span class="fa fa-dashboard"></span></a>
+    <a href="{{ path(urlPrefix ~ '_modifica', { 'id': id }) }}" class="btn btn-sm purple"><span class="fa fa-edit"></span></a>
+    <a href="{{ path(urlPrefix ~ '_cancella', { 'id': id }) }}" class="btn btn-sm red" data-confirm="Confermi l'eliminazione?" data-target="#dataConfirmModal" data-toggle="modal"><span class="fa fa-trash-o"></span></a>
+    {% block more %}
+    {% endblock %}
+</div>

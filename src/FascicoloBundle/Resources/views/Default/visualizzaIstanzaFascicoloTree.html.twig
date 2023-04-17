@@ -1,0 +1,30 @@
+{% extends '::base.html.twig' %}
+
+{% block begin_page_level_plugin_style %}
+	<link rel="stylesheet" href="{{ asset('assets/plugins/jsTree/themes/default/style.min.css') }}" />
+{% endblock %}
+
+{% block  page_level_scripts %}
+	<script src="{{ asset('assets/plugins/jsTree/jstree.min.js') }}" type="text/javascript"></script>
+{% endblock %}
+
+{% block body %}
+	
+	<div id="html1">
+		<ul>
+			<li class="jstree-open"><a href="{{ path('modifica_fascicolo', {'id_fascicolo':istanzaFascicolo.fascicolo.id}) }}"><span style="color: red;">{{ istanzaFascicolo.fascicolo.indice.alias }}</span> - {{ istanzaFascicolo.fascicolo.indice.titolo }}</a>
+			{% if istanzaFascicolo.fascicolo.indice.frammenti|length > 0 %}
+				{% include 'FascicoloBundle:Default:_pagina_tree.html.twig' with { 'pagina' : istanzaFascicolo.indice, } %}
+			{% endif %}
+			</li>	
+		</ul>
+	</div>			
+{% endblock %}
+
+{% block  jquery_page_document_ready %}
+	<script>
+	jQuery(document).ready(function() {
+            $('#html1').jstree();
+        });
+	</script>
+{% endblock %}

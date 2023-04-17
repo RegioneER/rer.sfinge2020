@@ -1,0 +1,14 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	{% include 'AuditBundle:Audit:menu.html.twig' %}
+
+	{{ form_start(form) }}
+
+		<h4>Tipo Irregolarità</h4>
+
+		{{ form_row(form.denominazione) }}
+		
+	{{ form_end(form) }}
+
+{% endblock %}

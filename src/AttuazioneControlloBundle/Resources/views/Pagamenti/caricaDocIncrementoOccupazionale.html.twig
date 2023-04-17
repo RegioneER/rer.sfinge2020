@@ -1,0 +1,15 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+
+	<h4>
+		Carica documento incremento occupazionale
+	</h4>
+
+	{% if form is not null %}
+		<div class="form-body">
+			{{ form(form) }}
+	    </div>
+	{% endif %}	
+			
+{% endblock %}

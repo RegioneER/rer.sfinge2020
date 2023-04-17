@@ -1,0 +1,88 @@
+{% extends '::base.html.twig' %}
+
+{% block intestazione %}
+	{{ parent() }}
+	{{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% block body %}
+    <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+        <thead>
+            <tr>
+				<th>Id</th>
+                <th>Titolo procedura</th>
+				<th>Titolo progetto</th>
+				<th>Stato</th>
+				<th>Data invio</th>
+				<th>Protocollo</th>
+				<th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+			{% for richiesta in richieste %}
+				<tr>
+					<td>{{ richiesta.id }}</td>
+                    <td>{{ richiesta.procedura.titolo }}</td>
+					<td>
+                        {% if richiesta.procedura.id == 127 %}
+                            {{ richiesta.titolo is null ? "-" : richiesta.titolo|raw }}
+                        {% else %}
+                            {{ richiesta.titolo is null ? "-" : richiesta.titolo }}
+                        {% endif %}
+                    </td>
+
+					{#
+					Come richiesto dalla Scorri in data 14/02/2018 i beneficiari NON devono visualizzare lo stato delle loro pratiche, perchè questo risulterebbe visibile prima della pubblicazione della graduatoria formale
+
+					{% if richiesta.istruttoria is null %}
+						<td>{{ richiesta.stato is null ? "-" : richiesta.stato.descrizione}}</td>
+					{% else %}
+						<td>{{ richiesta.istruttoria.esito is null ? richiesta.stato.descrizione : richiesta.istruttoria.esito }}</td>
+					{% endif %}
+					#}
+
+					{#Quindi mostro solo lo stato della pratica e non l'esito dell'istruttoria#}
+					<td>
+                        {% if richiesta.stato is not null and not richiesta.procedura.richiestaFirmaDigitale and richiesta.stato.codice == 'PRE_FIRMATA' %}
+                            {% if richiesta.procedura.id == 127 %}
+                                Richiesta confermata
+                            {% else %}
+                                Richiesta validata
+                            {% endif %}
+                        {% else %}
+                            {{ richiesta.stato is null ? "-" : richiesta.stato.descrizione}}
+                        {% endif %}
+                    </td>
+					<td>{{ (richiesta.dataInvio is not null ? richiesta.dataInvio|date("d/m/Y H:i") : "-") }}</td>
+					<td>{{ richiesta.protocollo }}</td>
+					<td>
+						{% set vociMenu = voci_menu_presenzazione(richiesta.id) %}
+						{% if vociMenu | length > 0 %}
+						<div class="dropdown">
+							<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								Azioni
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+
+								{% for voceMenu in vociMenu %}
+                                    {% if voceMenu.label != 'Valida' and voceMenu.label != 'Invalida'
+                                        and voceMenu.label != 'Carica domanda firmata' and voceMenu.label !='Invia domanda' %}
+									    <li><a href="{{ voceMenu.path }}" {{ voceMenu.attr is defined ? (voceMenu.attr |raw) : "" }}>{{ voceMenu.label }}</a></li>
+								    {% endif %}
+                                {% endfor %}
+								{% set isUtentePrincipale = incarichiAttivi(richiesta)|filter(t => t.codice == "UTENTE_PRINCIPALE")|length > 0 %}
+								{% if isUtentePrincipale %}
+									<li>
+										<a href="{{path('seleziona_operatori_richiesta', {'richiesta_id':richiesta.id})}}">Incarica operatore progetto</a>
+									</li>
+								{% endif %}
+							</ul>
+						</div>
+						{% endif %}
+					</td>
+				</tr>
+			{% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

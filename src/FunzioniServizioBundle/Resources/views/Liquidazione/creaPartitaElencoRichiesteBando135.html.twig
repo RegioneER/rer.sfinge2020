@@ -1,0 +1,82 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <a href="{{ path('crea_partita_elenco_procedure') }}">Torna</a>
+    <br/>
+    <br/>
+
+    <h1>{{ procedura.titolo }} (ID {{ procedura.id }})</h1>
+
+    <br/>
+    <br/>
+    <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+        <thead>
+            <tr>
+                <th>Progressivo</th>
+                <th>Stabilimenti balneari</th>
+                <th>Id. richiesta</th>
+                <th>Protocollo</th>
+                <th>Beneficiario</th>
+                <th>Lifnr</th>
+                <th>Numero stabilimenti balneari</th>
+                <th>Partite create</th>
+                <th>Data atto di concessione</th>
+                <th>Determina di concessione</th>
+                <th>Numero impegno</th>
+                <th>Posizione impegno</th>
+                <th>Importo lordo</th>
+                <th>Centro di costo</th>
+                <th>Attuazione e controllo</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% set progressivo = 1 %}
+            {% for istruttoria_ammessa in istruttorie_ammesse %}
+                <tr>
+                    <td>{{ progressivo }}</td>
+                    <td>
+                        {% if istruttoria_ammessa.selezionabile %}
+                            <a href="{{ path('crea_partita_elenco_stabilimenti_balneari', {'richiesta_id' : istruttoria_ammessa.richiesta.id}) }}">
+                                Vedi stabilimenti
+                            </a>
+                        {% else %}
+                            Controllare le colonne successive per vedere i dati mancanti
+                        {% endif %}
+                    </td>
+                    <td style="text-align: center;">{{ istruttoria_ammessa.richiesta.id }}</td>
+                    <td style="text-align: center;">{{ istruttoria_ammessa.richiesta.protocollo }}</td>
+                    <td>{{ istruttoria_ammessa.richiesta.mandatario.soggetto.denominazione }}</td>
+                    <td>{{ istruttoria_ammessa.richiesta.mandatario.soggetto.lifnrSap }}</td>
+
+                    <td>{{ istruttoria_ammessa.numeroStabilimentiBalneari }}</td>
+                    <td>{{ istruttoria_ammessa.partiteCreate }}</td>
+
+                    {% if istruttoria_ammessa.richiesta.istruttoria.attoConcessioneAtc %}
+                        <td>{{ istruttoria_ammessa.richiesta.istruttoria.attoConcessioneAtc.dataPubblicazione|date("d/m/Y") }}</td>
+                        <td>{{ istruttoria_ammessa.richiesta.istruttoria.attoConcessioneAtc.numero }}</td>
+                    {% else %}
+                        <td></td>
+                        <td></td>
+                    {% endif %}
+
+                    <td>{{ istruttoria_ammessa.richiesta.istruttoria.numeroImpegno }}</td>
+                    <td>{{ istruttoria_ammessa.richiesta.istruttoria.posizioneImpegno }}</td>
+                    <td>{{ istruttoria_ammessa.richiesta.istruttoria.contributoAmmesso|number_format(2, ',', '.') }}€</td>
+                    <td>{{ istruttoria_ammessa.procedura.centroDiCosto }}</td>
+                    <td>
+                        {% if istruttoria_ammessa.richiesta.attuazioneControllo %}
+                            Sì
+                        {% else %}
+                            No
+                        {% endif %}
+                    </td>
+                </tr>
+                {% set progressivo = progressivo + 1 %}
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <br/>
+    <br/>
+    <a href="{{ path('crea_partita_elenco_procedure') }}">Torna</a>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends '::base.html.twig' %}
+
+
+{% block body %}
+
+    {% include 'MonitoraggioBundle:Progetti:menu.html.twig' with {'page_view' : page_view }%}
+
+    {{ form(form) }}
+{% endblock %}
+
+{% block jquery_page_document_ready %}
+<script>
+    'use strict';
+    var url = "{{- path('monitoraggio_cerca_soggetto') -}}";
+    $(document).ready(function(){
+        var soggettoElement = $("#{{- form.soggetto.vars.id -}}");
+        soggettoElement.select2({
+            ajax: {
+                url: url,
+                dataType: 'json',
+                    delay: 500,
+                    data: function (params) {
+                        return {
+                            q: params.term, // search term
+                            page: params.page
+                        };
+                    },
+                     processResults: function (data) {
+                        return {
+                        results: data
+                        };
+                    },
+                    cache: true    
+            }
+        });
+    });
+</script>
+{% endblock %}

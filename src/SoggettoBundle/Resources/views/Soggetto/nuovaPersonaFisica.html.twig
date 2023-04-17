@@ -1,0 +1,59 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+
+    {{ form_errors(form) }}
+    {{ form_start(form) }}
+    <h3>Persona fisica</h3>
+    <h4>Dati personali</h4>
+
+    {{ form_row(form.legaleRappresentante.codice_fiscale) }}
+    {{ form_row(form.legaleRappresentante.nome) }}
+    {{ form_row(form.legaleRappresentante.cognome) }}
+    {{ form_row(form.legaleRappresentante.sesso) }}
+    {{ form_row(form.legaleRappresentante.nazionalita) }}
+    {{ form_row(form.legaleRappresentante.data_nascita) }}
+    {% set persona = form.legaleRappresentante.vars.value %}
+    {% if not(persona.comune and persona.comune.cedutoLegge1989) %}
+        {{ form_row(form.legaleRappresentante.stato_nascita) }}
+    {% endif %}
+
+    {{ form_row(form.legaleRappresentante.provincia) }}
+    {{ form_row(form.legaleRappresentante.comune) }}
+
+    <h4>Indirizzo residenza</h4>
+
+    {{ form_row(form.legaleRappresentante.luogo_residenza.via) }}
+    {{ form_row(form.legaleRappresentante.luogo_residenza.numero_civico) }}
+    {{ form_row(form.legaleRappresentante.luogo_residenza.stato) }}
+    {{ form_row(form.legaleRappresentante.luogo_residenza.provincia, {'_id': 'luogo_residenza_provincia_row'}) }}
+    {{ form_row(form.legaleRappresentante.luogo_residenza.comune, {'_id': 'luogo_residenza_comune_row'}) }}
+
+    {{ form_row(form.legaleRappresentante.luogo_residenza.provinciaEstera, {'_id': 'luogo_residenza_provincia_estera_row'}) }}
+    {{ form_row(form.legaleRappresentante.luogo_residenza.comuneEstero, {'_id': 'luogo_residenza_comune_estero_row'}) }}
+
+    {{ form_row(form.legaleRappresentante.luogo_residenza.cap) }}
+    {{ form_row(form.legaleRappresentante.luogo_residenza.localita) }}
+
+    <h4>Recapito principale</h4>
+
+    {{ form_row(form.legaleRappresentante.telefono_principale) }}
+    {{ form_row(form.legaleRappresentante.fax_principale) }}
+    {{ form_row(form.legaleRappresentante.email_principale) }}
+    {{ form_row(form.email_pec) }}
+
+    {{ form_end(form) }}
+
+{% endblock %}
+
+{% block  jquery_page_document_ready %}
+    {% include "BaseBundle:Base:province_comuni_js.html.twig" with {
+        indirizzo: 'persona_luogo_residenza',
+        form : form.legaleRappresentante.luogo_residenza
+    } %}
+
+    {% include "BaseBundle:Base:persona_province_comuni_js.html.twig" with {
+        indirizzo: '',
+        form : form.legaleRappresentante,
+        stato_name : 'stato_nascita'
+    } %}
+{% endblock %}

@@ -1,0 +1,90 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <div class="table-toolbar">
+        <div class="btn-group">
+			{% if persone.getTotalItemCount == 0 %}
+				<a href="{{ path('crea_persona') }}"><button id="sample_editable_1_new" class="btn btn-primary"><span class="fa fa-plus"></span> Aggiungi persona</button></a>
+			{% endif%}
+			<a href="#"><button id="btn_ricerca_persone" data-target="#ricerca-persone-modal" data-toggle="modal" class="btn btn-info"><span class="fa fa-search"></span> Ricerca</button></a>
+        </div>
+    </div>
+	<div class="count">
+		Numero elementi trovati: {{ persone.getTotalItemCount }} - Filtro attivo: {{ filtro_attivo ? "Si" : "No" }}
+	</div>
+	{% if persone.getTotalItemCount == 0 %}
+        <div class="alert alert-warning">
+            Non è stata trovata alcuna persona, è possibile aggiungerla tramite il pulsante [Aggiungi persona].
+        </div>
+	{% endif%}
+
+    <table class="table table-striped table-hover table-bordered" id="notizie-elenco">
+        <thead>
+            <tr>
+				<th>{{ knp_pagination_sortable(persone, 'Id', 'a.id') }}</th>
+                <th>Nome</th>
+                <th>Cognome</th>
+                <th>Codice fiscale</th>
+                <th>Email</th>
+				<th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+			{% for persona in persone %}
+				<tr>
+                    <td><a href="{{ path('visualizza_persona_anagrafica', { 'id_persona': persona.id }) }}">{{ persona.id }}</a></td>
+					<td>{{ persona.nome }}</td>
+					<td>{{ persona.cognome }}</td>
+					<td>{{ persona.codicefiscale }}</td>
+					<td>{{ persona.emailPrincipale }}</td>
+					<td><div class="dropdown">
+							<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								Azioni
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+								<li><a href="{{ path('visualizza_persona_anagrafica', { 'id_persona': persona.id }) }}">Visualizza</a></li>
+								<li><a href="{{ path('modifica_persona_anagrafica', { 'id_persona': persona.id }) }}">Modifica</a></li>
+							</ul>
+						</div>
+					</td>
+				</tr>
+			{% endfor %}
+        </tbody>
+    </table>
+
+	{# display navigation #}
+	<div class="navigation">
+		{{ knp_pagination_render(persone) }}
+	</div>
+
+	<div id="ricerca-persone-modal" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3 id="ricerca-persone-modal-titolo">Ricerca Persone</h3>
+				</div>
+				<div class="modal-body">
+					{{ form(formRicercaPersone) }}
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Chiudi</button>
+					<a class="btn btn-default" href="{{ path("elenco_persone_pulisci") }}">Annulla Ricerca</a>
+					<a class="btn btn-primary" href="#" id="ricercaOk">Ricerca</a>
+                </div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}
+{%block  jquery_page_document_ready %}
+<script>
+	jQuery(document).ready(function() {
+		$("#ricercaOk").click(function(e){
+			e.preventDefault();
+			$(this).parents(".modal-content").find("form").submit();
+		})
+	});
+</script>
+{% endblock %}

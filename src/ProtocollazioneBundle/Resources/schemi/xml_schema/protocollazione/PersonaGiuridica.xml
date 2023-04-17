@@ -1,0 +1,8 @@
+<PersonaGiuridica ##tipo## ##id##>
+	##Denominazione##
+	##IndirizzoPostale##
+	##IndirizzoTelematico##
+	##ForzaIndirizzoTelematico##
+	##InvioPEC##
+	##Metadati##
+</PersonaGiuridica>

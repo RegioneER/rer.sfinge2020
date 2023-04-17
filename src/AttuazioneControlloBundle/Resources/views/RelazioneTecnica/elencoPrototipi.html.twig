@@ -1,0 +1,69 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	
+	{% if istruttoria is defined %}
+		{% include 'AttuazioneControlloBundle:RelazioneTecnica:Istruttoria/menu.html.twig' with {'pagamento' : pagamento } %}
+	{% else %}
+		{% include 'AttuazioneControlloBundle:RelazioneTecnica:menu.html.twig' with {'pagamento' : pagamento } %}
+	{% endif %}	
+
+	<h4>Prototipi, dimostratori e impianti pilota</h4>	
+	<div>
+        {{ form_start(form) }}
+        {{ form_end(form) }}
+    </div>
+	
+	<script type="text/javascript">		
+		$(document).ready(function(){
+			var nota = 'In relazione a quanto indicato nella proposta progettuale al par. 3.4, descrivere i prototipi o impianti pilota realizzati, con riferimento ai loro componenti o semilavorati e loro lavorazioni. Indicare brevemente le eventuali attività {{ pagamento.modalitaPagamento.codice == 'SALDO_FINALE' ? 'svolte' : 'ancora da svolgere' }}.';
+			$('textarea#descrizione_prototipi_descrizione_prototipo').parent('div').append('<span style="font-style: italic">' + nota + '</span>');
+		});
+		
+	</script>	
+		
+	<div class="alert alert-info" style="margin-top: 40px">
+		Elenco dei materiali e le lavorazioni (inclusi componenti, semilavorati e loro lavorazioni) direttamente imputabili alla produzione del prototipo, dimostratore o impianto pilota rendicontati nel periodo, facendo riferimento alla relazione attestante la pertinenza e l'utilizzo dei materiali
+	</div>
+	<h4>Spese per materiali e lavorazioni imputabili al prototipo</h4>
+	{% if prototipi | length > 0 %}
+		<table class="table table-striped table-hover table-bordered" id="proponenti-elenco">
+			<thead>
+				<tr>
+					<th style="text-align: center;">N.</th>
+					<th style="text-align: center;">Fornitore</th>
+					<th style="text-align: center;">Fattura</th>
+					<th style="text-align: center;">Denominazione componente</th>
+					<th style="text-align: center;">Utilizzata in OR</th>
+					<th style="text-align: center;">Azioni</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for prototipo in prototipi %}
+					<tr>
+						<td>{{prototipo.id}}</td>
+						<td>{{prototipo.giustificativopagamento.denominazionefornitore}}</td>
+						<td>{{prototipo.giustificativopagamento.datagiustificativo|date('d/m/Y')}} - {{prototipo.giustificativopagamento.numerogiustificativo}}</td>
+						<td>{{prototipo.giustificativopagamento.descrizionegiustificativo}}</td>
+						<td>{{prototipo.obiettivirealizzativi|join(' ')}}</td>
+						<td><div class="dropdown">
+								<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+									Azioni
+									<span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">						
+									{% if istruttoria is defined %}
+										<li><a href="{{ path("visualizza_prototipo_istruttoria", {'id_pagamento': pagamento.id, 'id_prototipo':prototipo.id}) }}">Visualizza</a></li>
+									{% else %}
+										<li><a href="{{ path("compila_prototipo", {'id_pagamento': pagamento.id, 'id_prototipo':prototipo.id}) }}">Compila</a></li>
+									{% endif %}										
+								</ul>
+							</div>
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% endif %}
+
+{% endblock %}

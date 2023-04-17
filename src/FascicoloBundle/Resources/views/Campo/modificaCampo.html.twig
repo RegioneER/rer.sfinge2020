@@ -1,0 +1,104 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet box green">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <span class="fa fa-reorder"></span>Modificare i dati
+                    </div>
+                </div>
+                <div class="portlet-body">
+					<div class="form-body">
+						{{ form_start(form) }}
+						<div>
+							{{ form_row(form.label) }}
+							{{ form_row(form.alias) }}
+							{{ form_row(form.tipoCampo) }}
+							<div id="textareaRows">
+								{{ form_row(form.righeTextArea) }}
+							</div>
+							{{ form_row(form.required) }}
+							{{ form_row(form.callbackPresenza) }}								
+							{% if evidenziato %}
+								{{ form_row(form.evidenziato) }}
+							{% endif %}
+							<div id='precisione'>
+								{{ form_row(form.precisione) }}
+							</div>
+							<div id="scelta">
+							{{ form_row(form.expanded) }}
+							{{ form_row(form.multiple) }}
+							{{ form_row(form.scelte) }}
+							{{ form_row(form.query) }}
+							</div>
+							{{ form_row(form.note) }}
+							{{ form_end(form) }}
+						</div>
+						
+					</div>
+				</div>
+			</div>
+		</div>
+						
+		{% set campo = form.vars.value %}
+		<div class="col-md-12">
+            <div class="portlet box green">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <span class="fa fa-reorder"></span>Vincoli
+                    </div>
+                </div>
+				<div class="portlet-body">
+					<div class="form-body">
+						<div>
+							<div class="table-toolbar">
+								<div class="btn-group">
+									<a href="{{ path('crea_vincolo', {'id_campo':campo.id}) }}"><button id="sample_editable_1_new" class="btn green"><span class="fa fa-plus"></span></button>
+									</a>
+								</div>
+							</div>
+							{% if campo.vincoli|length > 0 %}
+							<table class="table table-striped table-hover table-bordered" id="campi-frammento-elenco">
+								<thead>
+									<tr>
+										<th>Tipo</th>
+										<th>Parametri</th>
+										<th>Azioni</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for vincolo in campo.vincoli %}
+										<tr>
+											<td>{{ vincolo.tipoVincolo }}</td>
+											<td>{{ vincolo }}</td>
+											<td><div class="dropdown">
+													<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuCampi" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+														Azioni
+														<span class="caret"></span>
+													</button>
+													<ul class="dropdown-menu" aria-labelledby="dropdownMenuCampi">
+														<li><a href="{{ path('modifica_vincolo', {'id_vincolo':vincolo.id}) }}">Modifica</a></li>
+														<li><a href="{{ path('elimina_vincolo', {'id_vincolo':vincolo.id, '_token': csrfToken }) }}">Elimina</a></li>
+													</ul>
+												</div>
+											</td>
+										</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+						
+	{% endblock %}
+	
+	{%block  jquery_page_document_ready %}   
+		{% include "FascicoloBundle:Campo:scelta_js.html.twig" %}
+	{% endblock %}
+

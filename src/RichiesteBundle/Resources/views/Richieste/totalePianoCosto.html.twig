@@ -1,0 +1,176 @@
+{% extends '::base.html.twig' %}
+
+{% block intestazione %}
+    {{ parent() }}
+    {{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% block body %}
+    {% block headerPianoCosto %}{% endblock %}	
+    {{form_errors(form)}}
+    {{ form_start(form) }}
+    {% set numCol = form.voci_piano_costo.children|length %}
+    {% set primoChild = form.voci_piano_costo.children|first %}
+    {% if primoChild != false %}
+        {% set precedente = primoChild.vars.value.pianocosto.sezionepianocosto.codice %}
+        {{ mostra_validazione('piano_costi', primoChild.vars.value.richiesta.id) }}
+        {% block validazioneExtra %}{% endblock %}	
+        <h4 style="margin-bottom: 5px">{{ primoChild.vars.value.pianocosto.sezionepianocosto.titolosezione}}</h4>
+        <table class="sezione table table-bordered table-striped" id="{{precedente}}" style=" width: 100%">
+            <thead>
+                <tr>
+                    <th>
+                        <h5>Voci di spesa</h5>
+                    </th>
+                    {% for child in form.voci_piano_costo.children|first %}
+                        <th style="{% if width is defined and width[child.vars.name] is defined %}width: {{ width[child.vars.name] }};{% endif %} text-align: center;" >
+                            {{ child.vars.label }}		
+                        </th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for voce_piano_costo in form.voci_piano_costo.children %}
+                    {% set attuale = voce_piano_costo.vars.value.pianocosto.sezionepianocosto.codice %}
+                    {% if attuale != precedente%}
+                    </tbody></table><br/>
+                <h4 style="margin-bottom: 5px">{{ voce_piano_costo.vars.value.pianocosto.sezionepianocosto.titolosezione}}</h4>
+                <table class="sezione table table-bordered table-striped" id="{{attuale}}" style="width: 100%">
+                    <thead>
+                        <tr>
+                            <th>
+                                <h5>Voci di spesa</h5>
+                            </th>
+                            {% for child in form.voci_piano_costo.children|first %}
+                                <th style="{% if width is defined and width[child.vars.name] is defined %}width: {{ width[child.vars.name] }};{% endif %} text-align: center;" >
+                                    {{ child.vars.label }}		
+                                </th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% set precedente = voce_piano_costo.vars.value.pianocosto.sezionepianocosto.codice %}
+                    {% endif %}
+
+
+                    <tr>
+                        <td class="label-voce">
+                            {% if voce_piano_costo.vars.value.pianocosto.codice != 'TOT' %}
+                                {{ voce_piano_costo.vars.value.pianocosto.codice}}) 
+                            {% endif %}
+                            {{ voce_piano_costo.vars.value.pianocosto.titolo}}
+                        </td>
+                        {% for child in voce_piano_costo %}
+                            {% set codice = voce_piano_costo.vars.value.pianocosto.codice %}
+                            <td class="{{child.vars.name}}">
+                                {% set classe =  form_errors(child)|length > 0 ? 'cell-red-error' : '' %}
+                                {% set attr = { 
+										'class': classe,'data-totale': ( codice!= 'TOT' ? 'false' : 'true')
+									} %}
+                                {% if child.vars.name starts with 'importo' %}
+                                    {% set attr = attr|merge({ 'style': 'text-align: right' }) %}
+                                {% endif %}									
+                                {% if codice == 'TOT' or child.vars.name == 'importo_totale' %}
+                                    {% set attr = attr|merge({ 'readonly': 'readonly' }) %}
+                                {% endif %}
+                                {{ form_widget(child, {  'id': 'voce-spesa-'~voce_piano_costo.vars.value.pianocosto.identificativohtml|lower, 
+									'attr': attr
+								}) 
+                                }}
+                            </td>
+                        {% endfor %}
+
+                    </tr>
+
+
+                {% endfor %}
+            </tbody>
+        </table>
+        {% block totaliSezione %}{% endblock %}
+        {% if complessivo is not defined %}
+            {% set complessivo = true %}
+        {% endif %}
+
+        {% if complessivo == true  %}
+            <h4 style="margin-bottom: 5px">Complessivo</h4>
+            <table  class = "table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        {% if annualita > 1 %}
+                            {% for label_anno in labels_anno %}
+                                <th style="text-align: center" >
+                                    {{ label_anno }}		
+                                </th>
+                            {% endfor %}
+                        {% else %}
+                            <th>
+                                Totale
+                            </th>
+                        {% endif %}
+                        {% if annualita > 1 %}
+                            <th style="text-align: center" class="totale">
+                                Totale su {{annualita}} annualità
+                            </th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        {% for i in 1..annualita %}
+                            <td>
+                                <input readonly="readonly" id="complessivo_importo_{{i}}" class="form-control" type="text" value="{{ importi_anni[i]|number_format(2, ",", ".") }}">
+                            </td>
+                        {% endfor %}
+                        {% if annualita > 1 %}
+                            <td>
+                                <input readonly="readonly" id="complessivo_importo_totale" class="form-control" type="text" value="{{ importo_totale }}" >
+                            </td>
+                        {% endif %}
+                    </tr>
+                </tbody>
+            </table>
+        {% endif %}
+        {% if primoChild.vars.value.richiesta.procedura.modalitafinanziamentoattiva %}
+            <h4 style="margin-bottom: 5px">Modalità finanziamento</h4>
+            <table class="table table-bordered table-striped" id="modalita_fin" style=" width: 100%">
+                <thead>
+                    <tr>
+                        <th>
+                            <h5>{{ label_modalita_finanziamento is defined ? label_modalita_finanziamento : "Risorse" }}</h5>
+                        </th>
+                        {% for child in form.voci_modalita_finanziamento.children|first %}
+                            <th style="text-align: center" >
+                                {{ child.vars.label }}		
+                            </th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for voce_modalita_finanziamento in form.voci_modalita_finanziamento.children %}
+                        <tr>
+                            <td>
+                                {{voce_modalita_finanziamento.vars.value.modalitafinanziamento.titolo}}
+                            </td>
+                            {% for child in voce_modalita_finanziamento %}
+                                <td>
+                                    {% set classe =  form_errors(child)|length > 0 ? 'cell-red-error' : '' %}
+                                    {{ form_widget(child, { 
+									'attr': { 
+										'class': classe,
+										'style': 'text-align: right'
+									} 
+								}) 
+                                    }}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+        {% block extraForm %}{% endblock %}
+        {{ form_end(form) }}
+    {% else %}
+        <p>Non ci sono piani costo definiti per i singoli proponenti, accedere ad almeno un piano costi.</p>
+    {% endif %}
+{% endblock %}

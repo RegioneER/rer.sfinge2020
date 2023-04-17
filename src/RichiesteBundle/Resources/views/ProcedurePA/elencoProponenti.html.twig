@@ -1,0 +1,55 @@
+{% extends '::base.html.twig' %}
+
+{% block intestazione %}
+	{{ parent() }}
+	{{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% block body %}
+
+	{% include('RichiesteBundle:Richieste:mostraValidazione.html.twig') %}
+
+	{% if abilita_aggiungi_proponenti %}
+		<a href="{{ path('procedura_pa_sezione', {'parametro1':'cerca_proponente', nome_sezione:'proponente', 'id_richiesta':richiesta.id}) }}" class="btn btn-primary"><i class="fa fa-plus"></i> Aggiungi proponente</a>
+	{% endif %}
+	<h4>Proponenti inseriti</h4>
+    <table class="table table-striped table-hover table-bordered" id="proponenti-elenco">
+        <thead>
+            <tr>
+				<th>Id</th>
+                <th>Ragione sociale</th>
+                <th>Partita iva</th>
+				<th>Codice fiscale</th>
+				<th>Mandatario</th>
+				<th>Dati completi</th>
+				<th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+			{% for proponente in proponenti %}
+				<tr>
+					<td>{{ proponente.id }}</td>
+                    <td>{{ proponente.soggetto.denominazione }}</td>
+					<td>{{ proponente.soggetto.partitaiva }}</td>
+					<td>{{ proponente.soggetto.codicefiscale }}</td>
+					<td>{{ proponente.mandatario ? 'Sì' : 'No' }}</td>
+					<td>{{ proponente_completo(proponente.id) ? "Sì" : "No" }}</td>
+					<td><div class="dropdown">
+							<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								Azioni
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">								
+								<li><a href="{{ path('procedura_pa_sezione', {'parametro1':proponente.id, nome_sezione:'proponente', 'id_richiesta':richiesta.id}) }}">Visualizza</a></li>	
+							</ul>
+						</div>
+					</td>
+				</tr>
+			{% endfor %}
+        </tbody>
+    </table>
+	<div class="page-actions">
+			{{ pulsante_indietro(path("procedura_pa_dettaglio_richiesta", {"id_richiesta":richiesta.id})) }}							
+	</div>
+
+{% endblock %}

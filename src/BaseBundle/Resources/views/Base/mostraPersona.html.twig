@@ -1,0 +1,42 @@
+{% set residenzaEstero = false %}
+
+{% if  _persona.luogoResidenza is not null and  _persona.luogoResidenza.stato.codicecompleto != '11101' %}
+    {%  set residenzaEstero = true %}
+{% endif %}
+
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-striped table-hover table-bordered">
+            <tr>
+                <td>Nome cognome</td><td>{{ _persona.nome }} {{ _persona.cognome}}</td>
+            </tr>
+            <tr>
+                <td>Codice fiscale</td><td>{{ _persona.codiceFiscale }}</td>
+            </tr>
+            <tr>
+                <td>Dati nascita</td><td><b>nato il</b> {{ _persona.dataNascita | date("d/m/Y") }} <b>in</b> {{ _persona.comune}} <b>stato</b> {{ _persona.statoNascita }} </td>
+            </tr>
+            <tr>
+                <td>Dati residenza</td><td><b>residente in</b> {{ _persona.luogoResidenza.via }},{{ _persona.luogoResidenza.numeroCivico }} -
+                    {{ _persona.luogoResidenza.stato}} -
+                    {% if residenzaEstero == true %}
+                        {{ _persona.luogoResidenza.comuneEstero}}({{ _persona.luogoResidenza.provinciaEstera }})
+                    {% else %}
+                        {{ _persona.luogoResidenza.comune}}
+                    {% endif %}</td>
+            </tr>
+            <tr>
+                <td>Recapiti</td>
+				<td><b>telefono</b> {{ _persona.telefonoPrincipale }} <br />
+					{% if _persona.telefonoSecondario is not null and _persona.telefonoSecondario|trim != '' %}
+						<b>telefono secondario</b> {{ _persona.telefonoSecondario }} <br />
+					{% endif %} <br />
+					<b>email</b> {{ _persona.emailPrincipale }} <br />
+					{% if _persona.emailSecondario is not null and _persona.emailSecondario|trim != '' %}
+						<b>email secondaria</b> {{ _persona.emailSecondario }}
+					{% endif %}
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>

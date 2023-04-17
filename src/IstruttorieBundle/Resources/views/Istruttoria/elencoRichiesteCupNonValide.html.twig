@@ -1,0 +1,38 @@
+{% extends "::base.html.twig" %}
+
+{% block body %}
+    <div class="table-striped">
+        <table class="table table-striped table-hover table-bordered" id="elenco-richieste-non-valide">
+            <thead>
+                <tr>
+					<th>id</th>
+                    <th>Denominazione mandatario</th>
+                    <th>Protocollo</th>
+                    <th>Messaggi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for id, erroreRichiesta in listaErroriRichieste if erroreRichiesta['errori'] is not empty %}
+                    <tr>
+						<td>{{ id }}</td>
+                        <td>{{ erroreRichiesta['denominazione'] }}</td>
+                        <td>{{ erroreRichiesta['protocollo'] }}</td>
+                        <td>
+                            <ul class="list-group" style="font-size: 12px">
+                                {% for errore in erroreRichiesta['errori'] %}
+									
+                                    <li class="list-group-item">{{ errore }}</li>
+									
+                                {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+        <div>    
+            <a href="javascript: history.back()" class="btn btn-default pull-left" role="button"><span class="fa fa-arrow-left"></span> Indietro</a>            
+        </div>
+    </div>
+{% endblock %}

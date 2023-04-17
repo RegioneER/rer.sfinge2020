@@ -1,0 +1,28 @@
+<h4>
+    Piano dei Costi
+</h4>
+
+{% if piano_costi|length > 0 %}
+
+<table class="table table-striped table-hover table-bordered">
+    <thead>
+        <tr>
+            <th>Anno Piano</th>
+            <th>Importo da realizzare</th>
+            <th>Importo realizzato</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for piano in piano_costi %}
+            <tr>
+                <td>{{ piano.annopiano|replace({'"':''}) }}</td>
+                <td>{{ piano.impdarealizzare|number_format(2, ',', '.') }}&nbsp;&euro;</td>
+                <td>{{ piano.imprealizzato|number_format(2, ',', '.') }}&nbsp;&euro;</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% else %}
+    <h5>Nessun elemento trovato</h5></br>
+{% endif %}

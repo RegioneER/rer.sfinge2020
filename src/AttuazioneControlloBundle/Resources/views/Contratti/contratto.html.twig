@@ -1,0 +1,16 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+
+	{{ form_start(form) }}
+	{{ form_rest(form) }}
+	{{ form_end(form) }}
+	
+	{% if form_istruttoria is defined %}
+		<h4>Istruttoria</h4>
+		{{ form_start(form_istruttoria) }}
+		{{ form_rest(form_istruttoria) }}
+		{{ form_end(form_istruttoria) }}		
+	{% endif %}
+	
+{% endblock %}

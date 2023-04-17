@@ -1,0 +1,19 @@
+#services:
+#    funzioni_servizio.privacy_listener:
+#        class: FunzioniServizioBundle\EventListener\FunzioniServizioListener
+#        arguments: ['@security.token_storage', '@router']
+#        tags:
+#            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+
+services:
+    app.sap_service:
+        class: FunzioniServizioBundle\Service\SapService
+        arguments: ['@service_container']
+
+    app.liquidazione_service:
+        class: FunzioniServizioBundle\Service\LiquidazioneService
+        arguments: [ '@service_container']
+
+    app.proposta_impegno:
+        class: FunzioniServizioBundle\Service\PropostaImpegnoService
+        arguments: [ '@service_container' ]

@@ -1,0 +1,84 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+
+	{% if richiesta.isAssistenzaTecnica == true %}
+		{% set suffisso = "_at" %}
+	{% elseif richiesta.isIngegneriaFinanziaria == true %}
+		{% set suffisso = "_ing_fin" %}
+	{% elseif richiesta.isAcquisizioni == true %}
+		{% set suffisso = "_acquisizioni" %}
+	{% endif %}
+
+	{% set mostra_pulsante_aggiungi = 1 %}
+	{% if richiesta.attuazioneControllo.pagamenti is defined %}
+		{% for pagamento in richiesta.attuazioneControllo.pagamenti %}
+			{% if richiesta.attuazioneControllo.pagamenti | length > 0 and (pagamento.modalitaPagamento.codice == 'UNICA_SOLUZIONE' or pagamento.modalitaPagamento.codice == 'SALDO_FINALE') %}
+				{% set mostra_pulsante_aggiungi = 0 %}
+			{% endif %}
+		{% endfor %}
+	{% endif %}
+	{% if mostra_pulsante_aggiungi == 1 %}
+		<div class="table-toolbar">
+			<div>
+				<a class="btn btn-primary" href="{{ path('aggiungi_pagamento_at', {'id_richiesta' : richiesta.id }) }}">
+					<span class="fa fa-plus"></span> Aggiungi pagamento
+				</a>
+			</div>
+		</div>
+	{% endif %}
+	{% if richiesta.attuazioneControllo.pagamenti is defined and richiesta.attuazioneControllo.pagamenti|length > 0 %}			
+		<table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+			<thead>
+				<tr>
+					<th>Modalità pagamento</th>
+					<th>Stato</th>				
+					<th>Importo richiesto</th>
+					<th>Data invio</th>
+					<th>Esito</th>
+					<th>Importo pagamento</th>
+					<th>Azioni</th>
+				</tr>
+			</thead>	
+			<tbody>
+				{% for pagamento in richiesta.attuazioneControllo.pagamenti %}
+					<tr>
+						<td>{{ pagamento.modalitaPagamento }}</td>
+						<td>{{ pagamento.stato.codice == 'PAG_INVIATO_PA' ? 'Pagamento completato' : pagamento.stato}}</td>					
+						<td>{{ pagamento.importoRichiesto == 0 ? "-" : "€ " ~ pagamento.importoRichiesto|number_format(2, ',', '.') }}</td>
+						<td>{{ pagamento.dataInvio is null ? "-" : pagamento.dataInvio | date('d/m/Y') }}</td>
+						<td>{{ pagamento.descrizioneEsito }}</td>	
+						<td>{{ pagamento.mandatoPagamento is null ? "-" : "€ " ~ pagamento.mandatoPagamento.importoPagato|number_format(2, ',', '.') }}</td>
+						<td>
+							<div class="dropdown">
+								<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+									Azioni
+									<span class="caret"></span>
+								</button>
+
+								<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+									<li><a href="{{ path("dati_generali_pagamento"~suffisso, {"id_pagamento" : pagamento.id}) }}">Dati generali</a></li>	
+									<li><a href="{{ path("elenco_giustificativi"~suffisso, {"id_pagamento" : pagamento.id}) }}">Giustificativi</a></li>
+									{% if pagamento.procedura.isAssistenzaTecnica == true and pagamento.procedura.tipoassistenzatecnica.codice != 4 %}
+										<li><a href="{{ path("valuta_checklist_istruttoria_pagamenti"~suffisso, {'id_pagamento': pagamento.id}) }}">Checklist</a></li>
+									{% elseif pagamento.procedura.isAssistenzaTecnica == false%}
+										<li><a href="{{ path("valuta_checklist_istruttoria_pagamenti"~suffisso, {'id_pagamento': pagamento.id}) }}">Checklist</a></li>
+									{% endif %}									
+									<li><a href="{{ path("mandato_pagamento"~suffisso, {"id_pagamento" : pagamento.id}) }}">Mandato</a></li>
+									<li><a href="{{ path("elenco_documenti_caricati_pag"~suffisso, {"id_pagamento" : pagamento.id, "id_richiesta" : richiesta.id}) }}">Documenti</a></li>
+									{% if pagamento.isEliminabile %}
+										<li><a href="{{ path("elimina_pagamento"~suffisso, {"id_pagamento" : pagamento.id, '_token': csrfToken }) }}">Elimina</a></li>
+									{% endif %}
+									{% if not pagamento.inviato %}
+										<li><a href="{{ path("completa_pagamento"~suffisso, {"id_pagamento" : pagamento.id, '_token': csrfToken }) }}">Completa pagamento</a></li>
+									{% endif %}
+								</ul>
+
+							</div>
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% endif %}
+{% endblock %}

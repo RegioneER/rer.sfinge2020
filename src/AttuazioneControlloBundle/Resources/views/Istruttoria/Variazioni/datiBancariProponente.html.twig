@@ -1,0 +1,41 @@
+{% extends 'AttuazioneControlloBundle:Istruttoria/Variazioni:baseIstruttoria.html.twig' %}
+{% block content %}
+{% set datiBancari = variazione_dati.datiBancari %}
+<h4>{{ datiBancari.proponente.soggetto }}</h4>
+<table class="table table-striped table-hover table-bordered">
+    <thead>
+        <tr>
+            <th></th>
+            <th>Valore precendente</th>
+            <th>Valore variato</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>Banca</th>
+            <td>{{ variazione_dati.bancaPrecedente }}</td>
+            <td>{{ variazione_dati.banca }}</td>
+        </tr>
+        <tr>
+            <th>Intestatario</th>
+            <td>{{ variazione_dati.intestatarioPrecedente }}</td>
+            <td>{{ variazione_dati.intestatario }}</td>
+        </tr>
+        <tr>
+            <th>Agenzia</th>
+            <td>{{ variazione_dati.agenziaPrecedente }}</td>
+            <td>{{ variazione_dati.agenzia }}</td>
+        </tr>
+        <tr>
+            <th>IBAN</th>
+            <td>{{ variazione_dati.ibanPrecedente }}</td>
+            <td>{{ variazione_dati.iban }}</td>
+        </tr>
+        <tr>
+            <th>Conto tesoreria</th>
+            <td>{{ variazione_dati.contoTesoreriaPrecedente }}</td>
+            <td>{{ variazione_dati.contoTesoreria }}</td>
+        </tr>
+    </tbody>
+</table>
+{% endblock content %}

@@ -1,0 +1,107 @@
+imports:
+    - { resource: parameters.yml }
+    - { resource: doctrine.yml }
+    - { resource: security.yml }
+    - { resource: services.yml }
+    - { resource: mail_config.yml }
+    - { resource: "@SfingeBundle/Resources/config/services.yml" }
+    - { resource: "@PaginaBundle/Resources/config/services.yml" }
+    - { resource: "@NotizieBundle/Resources/config/services.yml" }
+    - { resource: "@AnagraficheBundle/Resources/config/services.yml" }
+    - { resource: "@GeoBundle/Resources/config/services.yml" }
+    - { resource: "@BaseBundle/Resources/config/services.yml" }
+    - { resource: "@SoggettoBundle/Resources/config/services.yml" }
+    - { resource: "@UtenteBundle/Resources/config/services.yml" }
+    - { resource: "@FascicoloBundle/Resources/config/services.yml" }
+    - { resource: "@MessaggiBundle/Resources/config/services.yml" }
+    - { resource: "@DocumentoBundle/Resources/config/services.yml" }
+    - { resource: "@ProtocollazioneBundle/Resources/config/services.yml" }
+    - { resource: "@CipeBundle/Resources/config/services.yml" }
+    - { resource: "@RichiesteBundle/Resources/config/services.yml" }
+    - { resource: "@PdfBundle/Resources/config/services.xml" }
+    - { resource: "@SegnalazioniBundle/Resources/config/services.yml" }
+    - { resource: "@IstruttorieBundle/Resources/config/services.yml" }
+    - { resource: "@AttuazioneControlloBundle/Resources/config/services.yml" }
+    - { resource: "@AuditBundle/Resources/config/services.yml" }
+    - { resource: "@CertificazioniBundle/Resources/config/services.yml" }
+    - { resource: "@FunzioniServizioBundle/Resources/config/services.yml" }
+
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
+parameters:
+    locale: it
+
+framework:
+    trusted_proxies:  ['%trusted_proxies%']
+    #esi:             ~
+    secret:          "%secret%"
+    router:
+        resource: "%kernel.root_dir%/config/routing.yml"
+        strict_requirements: ~
+    form:            ~
+    csrf_protection: ~
+    validation:      { enable_annotations: true }
+    #serializer:      { enable_annotations: true }
+    templating:
+        engines: ['twig']
+        #assets_version: SomeVersionScheme
+    default_locale:  "%locale%"
+    translator:      { fallback: "%locale%", logging: false }
+    trusted_hosts:   ~
+    # trusted_proxies: ~
+    session:
+        # handler_id set to null will use default session handler from php.ini
+        handler_id:  ~
+        cookie_secure: '%https%'
+        cookie_httponly: true
+    fragments:       ~
+    http_method_override: true
+
+# Twig Configuration
+twig:
+    debug:            "%kernel.debug%"
+    strict_variables: "%kernel.debug%"
+    exception_controller: sfinge.exception_controller:showAction
+    form_themes:
+            - ':Form:form_fields.html.twig'
+
+knp_paginator:
+    page_range: 5                      # default page range used in pagination control
+    default_options:
+        page_name: page                # page query parameter name
+        sort_field_name: sort          # sort field query parameter name
+        sort_direction_name: direction # sort direction query parameter name
+        distinct: true                 # ensure distinct results, useful when ORM queries are using GROUP BY statements
+    template:
+        pagination: :Paginatore:twitter_bootstrap_pagination.html.twig     # sliding pagination controls template
+        sortable: KnpPaginatorBundle:Pagination:sortable_link.html.twig
+
+fos_user:
+    db_driver: orm
+    firewall_name: main
+    user_class: SfingeBundle\Entity\Utente
+    from_email:
+        address: 'email@email.email'
+        sender_name: 'email@email.email'
+
+# configure dompdf library (trought PdfBundle wrapper)
+pdf:
+    defaultOptions:
+        dpi: 96
+        defaultPaperSize: A4
+        defaultFont: sans-serif
+        isHtml5ParserEnabled: true
+        
+monolog:
+    channels: ['schema31']        
+
+performer_pay_er:
+    codice_portale: 'SFINGE_2020'
+    iv: 'jd4ft2OI'
+    key: 'pm0g5nXKqsMtnNtsxm4Wfh44'
+    ebollo:
+        codice_servizio: 'SERV_SFINGE'
+        url_acquisto_carrello_mbd: 'https://payerbollostaging.lepida.it/ebollo/api/v1/AcquistoCarrelloMbd'
+        url_invio_carrello_mbd: 'https://payerbollostaging.lepida.it/ebollo/api/v1/InvioCarrelloMbd'
+        url_esito_carrello_mbd: 'https://payerbollostaging.lepida.it/ebollo/api/v1/EsitoCarrelloMbd'

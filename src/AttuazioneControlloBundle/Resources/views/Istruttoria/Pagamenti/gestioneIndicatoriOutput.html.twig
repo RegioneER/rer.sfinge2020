@@ -1,0 +1,16 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+<ul class="list-group list-checked">
+    {% for i in indicatori %}
+    <li class="list-group-item {{ i.valido ? 'complete' : '' }}">
+    <a href="{{- path('indicatore_istruttoria',{
+        id_pagamento: pagamento.id,
+        id_indicatore: i.indicatore.id
+    }) -}}">
+       {{ i.indicatore.indicatore }}
+    </a>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}

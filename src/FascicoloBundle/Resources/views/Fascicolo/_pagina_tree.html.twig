@@ -1,0 +1,18 @@
+<ul>
+	{% for frammento in pagina.frammenti %}
+	<li class="jstree-open frammento" data-jstree='{"icon":"fa fa-bars"}' data-element="{{frammento.path}}"><a href="{{ path('modifica_frammento', {'id_frammento':frammento.id}) }}"><span class="alias">{{ frammento.alias }}</span> - {{ frammento }}</a>
+			<ul>
+			{% for campo in frammento.campi %}
+				<li class="campo" data-jstree='{"icon":"fa fa-pencil-square-o"}' data-element="{{campo.path}}"><a href="{{ path('modifica_campo', {'id_campo':campo.id}) }}"><span class="alias">{{ campo.alias }}</span> - {{ campo }}</a></li>
+			{% endfor %}
+			</ul>
+			<ul>
+			{% for sottoPagina in frammento.sottoPagine %}
+				<li class="jstree-open pagina" data-jstree='{"icon":"fa fa-file-o"}' data-element="{{sottoPagina.path}}"><a href="{{ path('modifica_pagina', {'id_pagina':sottoPagina.id}) }}"><span class="alias">{{ sottoPagina.alias }}</span> - {{ sottoPagina.titolo }}</a>
+				{% include 'FascicoloBundle:Fascicolo:_pagina_tree.html.twig' with { 'pagina' : sottoPagina } %}
+				</li>	
+			{% endfor %}
+			</ul>
+		</li>
+	{% endfor %}
+</ul>

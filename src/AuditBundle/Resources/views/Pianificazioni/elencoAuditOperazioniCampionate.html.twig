@@ -1,0 +1,35 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	{% include 'AuditBundle:Audit:menu.html.twig' %}
+	
+	<h4>Lista Operazioni Campionate</h4>
+	
+	{% if campioni|length > 0 %}			
+		<table class="table table-striped table-hover table-bordered" id="operazioni-campionate-elenco">
+			<thead>
+				<tr>
+				<th>Cup richiesta</th>
+				<th>Protocollo</th>
+				<th>Ragione Sociale</th>
+				<th>Bando</th>
+				<th>Importo Certificato</th>
+			</tr>
+			</thead>
+			<tbody>
+				{% for pc in campioni %}
+					<tr>
+						<td>{{ pc.richiesta.istruttoria is not null ? pc.richiesta.istruttoria.codiceCup : "-" }}</td>
+						<td>{{ pc.richiesta.protocollo }}</td>
+						<td>{{ pc.richiesta.soggetto }}</td>
+						<td>{{ pc.richiesta.procedura.titolo }}</td>
+						<td style="text-align: right;">{{ pc.richiesta.totaleCertificato|number_format(2, ',', '.') }}</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>			
+	{% else %}		
+		Non ci sono progetti campionati.
+	{% endif %}	
+	
+{% endblock %}

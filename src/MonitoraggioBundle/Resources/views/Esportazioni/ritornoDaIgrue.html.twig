@@ -1,0 +1,55 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <div class="col-md-12 col-lg-12" style="margin-bottom:2em;">
+        <div class="col-md-4 col-lg-4">
+            <a style="display:block;margin:0 auto;" data-confirm="Sei sicuro di voler segnare tutti i record come ricevuti correttamente?" href="{{- path('monitoraggio_termina_con_successo_igrue',{esportazione_id: esportazione.id}) -}}" class="btn btn-default btn-primary">Termina con successo</a>
+        </div>
+        <div class="col-md-4 col-lg-4">
+            <a style="display:block;margin:0 auto;" data-confirm="Sei sicuro di voler segnare tutti i record come rifiutati?" href="{{- path('monitoraggio_respinta_igrue',{esportazione_id: esportazione.id}) -}}" class="btn btn-default btn-primary">Respinta</a>
+        </div>
+        <div class="col-md-4 col-lg-4">
+            <a style="display:block;margin:0 auto;" href="{{- path('monitoraggio_carica_errori_igrue',{ esportazione_id: esportazione.id }) -}}" class="btn btn-default btn-primary">Termina con errori</a>
+        </div>
+    </div>
+    <div class="pull-left">
+        <a href="{{- path('elenco_monitoraggio_esportazione') -}}" class="btn btn-default">Indietro</a>
+    </div>
+
+    <div class="modal fade " data-backdrop="static" tabindex="-1" role="dialog" id="modal-caricamento">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" style="text-align:center;">Aggiornamento esportazione</h3>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        <span id="modal-caricamento-body">Attendere elaborazione in corso...</span>
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                        </div>
+                    </div>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+{% endblock %}
+
+{% block jquery_page_document_ready %}
+    <script type="text/javascript">
+        'use strict';
+
+        function caricamentoModal(event) {
+            $('#dataConfirmModal').modal('hide' );
+            $('#modal-caricamento').modal('show');
+        }
+
+        $(document).ready(function () {
+            $('a#dataConfirmOK').click(caricamentoModal);
+        });
+    </script>
+{% endblock %}

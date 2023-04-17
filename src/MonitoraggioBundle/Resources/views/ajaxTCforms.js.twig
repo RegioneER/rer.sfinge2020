@@ -1,0 +1,59 @@
+'use strict';
+
+function aggiornaValori(input) {
+    var campoValore = $(input).attr('disabled', true);
+    App.initAjax();
+    var tabella = campoValore.attr('data-ajax-class');
+    var keys = new Object();
+    $('select[data-ajax-key]').each(function () {
+        var v = $(this);
+        keys[v.attr('data-ajax-class')] = v.val();
+    });
+
+    var url = decodeURI("{{ path( 'api_monitoraggio_tc',{ 'tabella': '' } ) }}") + tabella;
+
+    $.ajax({
+        'url': url,
+        'data': { 'keys': keys },
+        'type': 'GET',
+        'success': function (data) {
+            campoValore
+                .find('option')
+                .remove()
+                .end()
+                .trigger('change');
+
+            $.each(data, function (k, v) {
+            campoValore.append($('<option></option>', {
+                    value: v.id
+                })
+                    .text(v.value)
+                );
+            });
+            campoValore[0]
+                .removeAttribute('disabled');
+            campoValore.trigger('change');
+            App.initAjax();
+        }
+    });
+}
+
+function applicaValori(campoValore){
+    campoValore.each(function () {
+            aggiornaValori(this);
+        });
+}
+
+function initEntityChoice() {
+    var campoValore = $('select[data-ajax-value]');
+    applicaValori( campoValore );
+    
+    $('select[data-ajax-key]')
+        .change(function () {
+            applicaValori( campoValore );
+        });
+}
+
+$(document).ready(function () {
+    initEntityChoice();
+});

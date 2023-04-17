@@ -1,0 +1,137 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <div class="table-toolbar">
+        <div>
+            {% if isAccessibile('crea_soggetto_giuridico') %}
+                <a class="btn btn-primary" href="{{ path('crea_soggetto_giuridico') }}">
+                    <span class="fa fa-plus"></span> Aggiungi soggetto
+                </a>
+            {% endif %}
+            <a class="btn btn-info" href="#ricerca-soggetto-giuridico-modal" data-toggle="modal">
+                <span class="fa fa-search"></span> Ricerca
+            </a>
+        </div>
+    </div>
+    <div class="count">
+        Numero elementi trovati: {{ soggetti.getTotalItemCount }} - Filtro attivo: {{ filtro_attivo ? "Si" : "No" }}
+    </div>
+    <table class="table table-striped table-hover table-bordered" id="notizie-elenco">
+        <thead>
+        <tr>
+            <th class="text-center">{{ knp_pagination_sortable(soggetti, 'Id', 's.id') }}</th>
+            {% if app.user is not null and is_granted('ROLE_SUPER_ADMIN') %}
+                <th>Creato da</th>
+                <th>Data creazione</th>
+            {% endif %}
+            <th>Ragione sociale</th>
+            <th>Partita iva</th>
+            <th>Codice fiscale</th>
+            <th>Tipo</th>
+            <th>Azioni</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for soggetto in soggetti %}
+            <tr>
+                <td class="table-id">
+                    {% if soggetto.tipo == 'AZIENDA' %}
+                        {% if isAccessibile('azienda_visualizza', { 'id_soggetto': soggetto.id }) %}
+                            <a href="{{ path('azienda_visualizza', {'id_soggetto':soggetto.id}) }}">{{ soggetto.id }}</a>
+                        {% else %}
+                            {{ soggetto.id }}
+                        {% endif %}
+                    {% elseif soggetto.tipo == 'COMUNE' %}
+                        {% if isAccessibile('comune_unione_visualizza', { 'id_soggetto': soggetto.id }) %}
+                            <a href="{{ path('comune_unione_visualizza', {'id_soggetto':soggetto.id}) }}">{{ soggetto.id }}</a>
+                        {% else %}
+                            {{ soggetto.id }}
+                        {% endif %}
+                    {% elseif soggetto.tipo == 'SOGGETTO' %}
+                        {% if isAccessibile('soggetto_visualizza', { 'id_soggetto': soggetto.id }) %}
+                            <a href="{{ path('soggetto_visualizza', {'id_soggetto':soggetto.id}) }}">{{ soggetto.id }}</a>
+                        {% else %}
+                            {{ soggetto.id }}
+                        {% endif %}
+                    {% else %}
+                        {{ soggetto.id }}
+                    {% endif %}
+                </td>
+                {% if app.user is not null and is_granted('ROLE_SUPER_ADMIN') %}
+                    <td>{{ soggetto.creatoda }}</td>
+                    <td>{{ soggetto.datacreazione | date("d/m/Y") }}</td>
+                {% endif %}
+                <td>{{ soggetto.denominazione }}</td>
+                <td>{{ soggetto.partitaiva }}</td>
+                <td class="uppercase">{{ soggetto.codicefiscale }}</td>
+                <td>
+                    {{ soggetto.tipoByFormaGiuridica(1) }}
+                </td>
+                <td>
+                    <div class="dropdown">
+                        <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            Azioni
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                            {% if soggetto.tipo == 'AZIENDA' %}
+                                {% if isAccessibile('azienda_visualizza', { 'id_soggetto': soggetto.id }) %}
+                                    <li><a href="{{ path('azienda_visualizza', {'id_soggetto':soggetto.id}) }}">Visualizza</a></li>
+                                {% endif %}
+                                {% if isAccessibile('azienda_modifica', { 'id_soggetto': soggetto.id }) %}
+                                    <li><a href="{{ path('azienda_modifica', {'id_soggetto':soggetto.id}) }}">Modifica</a></li>
+                                {% endif %}
+                                <li><a href="{{ path('elenco_sedi_operative', {'id_soggetto':soggetto.id}) }}">Elenco sedi</a></li>
+                            {% elseif soggetto.tipo == 'COMUNE' %}
+                                {% if isAccessibile('comune_unione_visualizza', { 'id_soggetto': soggetto.id }) %}
+                                    <li><a href="{{ path('comune_unione_visualizza', {'id_soggetto':soggetto.id}) }}">Visualizza</a></li>
+                                {% endif %}
+                                {% if isAccessibile('comune_unione_modifica', { 'id_soggetto': soggetto.id }) %}
+                                    <li><a href="{{ path('comune_unione_modifica', {'id_soggetto':soggetto.id}) }}">Modifica</a></li>
+                                {% endif %}
+                                <li><a href="{{ path('elenco_sedi_operative_comune', {'id_soggetto':soggetto.id}) }}">Elenco sedi</a></li>
+                            {% elseif soggetto.tipo == 'SOGGETTO' %}
+                                {% if isAccessibile('soggetto_visualizza', { 'id_soggetto': soggetto.id }) %}
+                                    <li><a href="{{ path('soggetto_visualizza', {'id_soggetto':soggetto.id}) }}">Visualizza</a></li>
+                                {% endif %}
+                                {% if isAccessibile('soggetto_modifica', { 'id_soggetto': soggetto.id }) %}
+                                    <li><a href="{{ path('soggetto_modifica', {'id_soggetto':soggetto.id}) }}">Modifica</a></li>
+                                {% endif %}
+                                <li><a href="{{ path('elenco_sedi_operative_soggetto', {'id_soggetto':soggetto.id}) }}">Elenco sedi</a></li>
+                            {% elseif soggetto.tipo == 'PERSONA_FISICA' %}
+                                    {% if isAccessibile('persona_fisica_visualizza', { 'id_soggetto': soggetto.id }) %}
+                                        <li><a href="{{ path('persona_fisica_visualizza', {'id_soggetto':soggetto.id}) }}">Visualizza</a></li>
+                                    {% endif %}
+                                    {% if isAccessibile('azienda_modifica', { 'id_soggetto': soggetto.id }) %}
+                                        <li><a href="{{ path('persona_fisica_modifica', {'id_soggetto':soggetto.id}) }}">Modifica</a></li>
+                                    {% endif %}
+                                    <li><a href="{{ path('elenco_sedi_operative_persona_fisica', {'id_soggetto':soggetto.id}) }}">Elenco sedi</a></li>
+                            {% else %}
+                                {% if isAccessibile('soggetto_visualizza', { 'id_soggetto': soggetto.id }) %}
+                                    <li><a href="{{ path('soggetto_visualizza', {'id_soggetto':soggetto.id}) }}">Visualizza</a></li>
+                                {% endif %}
+                                {% if isAccessibile('soggetto_modifica', { 'id_soggetto': soggetto.id }) %}
+                                    <li><a href="{{ path('soggetto_modifica', {'id_soggetto':soggetto.id}) }}">Modifica</a></li>
+                                {% endif %}
+                                <li><a href="{{ path('elenco_sedi_operative_soggetto', {'id_soggetto':soggetto.id}) }}">Elenco sedi</a></li>
+                            {% endif %}
+                            {% if is_granted('ROLE_SUPER_ADMIN') %}
+                                    <li><a href="{{ path('selezione_incarico', {'soggetto_id':soggetto.id}) }}">Aggiungi incarico</a></li>
+                                    <li><a href="{{ path('cancella_soggetto', {'soggetto_id':soggetto.id, '_token': csrfToken}) }}">Cancella soggetto</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {# display navigation #}
+    <div class="navigation">
+        {{ knp_pagination_render(soggetti) }}
+    </div>
+
+    {{ modale_ricerca("Soggetti",form_ricerca_soggetti,"elenco_soggetti_giuridici_pulisci","ricerca-soggetto-giuridico-modal") }}
+
+{% endblock %}
+

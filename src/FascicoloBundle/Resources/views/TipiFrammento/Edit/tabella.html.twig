@@ -1,0 +1,48 @@
+{% import '@Fascicolo/TipiFrammento/macroCampo.html.twig' as m %}
+
+{% set sottoPagine = servizio.sottoPagineFrammento(istanza_frammento) %}
+
+{% for sottoPagina in sottoPagine %}
+	{% set istanzePagine = istanza_frammento.istanzeSottoPagineByAlias(sottoPagina.alias) %}
+	{% set messaggioMolteplicita = sottoPagina.messaggioMolteplicita %}
+	{% if messaggioMolteplicita is not null %}
+		<p class="alert alert-warning">{{ messaggioMolteplicita }}</p>
+	{% endif %}
+	{% if istanzePagine | length > 0 %}
+		<table class="table table-striped">
+			<thead>
+				<tr>
+				{% for campi_frammento in sottoPagina.getCampiEvidenziati %}
+					{% for campo in campi_frammento %}
+						<th>{{ campo.label }}</th>
+					{% endfor %}
+				{% endfor %}
+				</tr>	
+			</thead>
+			<tbody>
+				{% for istanza_pagina in istanzePagine %}
+				<tr>
+					{% for chiave_frammento, campi_frammento in sottoPagina.getCampiEvidenziati %}
+						{% set istanza_frammento_child = istanza_pagina.byAlias(chiave_frammento) %}					
+						{% for campo in campi_frammento %}
+							<td >
+									{{ m.valoreCampi(istanza_frammento_child, campo.alias) }}
+							</td>
+						{% endfor %}
+					{% endfor %}
+					<td>
+						<div class="pull-right">
+							<a class="btn btn-info" href="{{ path(servizio.routeIstanzaPagina, {'id_istanza_pagina' : istanza_pagina.id })}}" role="button">Modifica</a>
+							<a class="btn btn-danger" href="{{ path(servizio.routeIstanzaPagina, {'id_istanza_pagina' : istanza_pagina.id, 'azione' : 'elimina', '_token': csrfToken })}}" role="button">Elimina</a>
+						</div>
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>	
+		</table>
+	{% endif %}
+	{% if (sottoPagina.maxMolteplicita == 0) or (istanzePagine | length < sottoPagina.maxMolteplicita) %}
+		<a class="btn btn-default" href="{{ path(servizio.routeIstanzaPagina, {'id_istanza_frammento' : istanza_frammento.id, 'id_pagina' : sottoPagina.id, 'azione' : 'aggiungi' }) }}" role="button">Aggiungi</a>
+	{% endif %}
+	<br />
+{% endfor %}

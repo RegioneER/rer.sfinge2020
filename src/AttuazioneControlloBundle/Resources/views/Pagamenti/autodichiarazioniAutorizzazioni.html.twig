@@ -1,0 +1,23 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+	
+	{% for elencoProcedura in elenchiProcedura %}
+		{%set elenco = elencoProcedura.elenco %}
+		<h4 style="text-transform: uppercase">{{ elenco.testo }}</h4>
+		<ul style="text-align: justify">
+			{% for autodichiarazione in elenco.getAutodichiarazioni %}
+				<li>
+					{{ autodichiarazione.testo|raw }}
+				</li>
+			{% endfor %}
+		</ul>
+	{% endfor %}
+	
+	{{form_errors(form)}}
+	{{ form_start(form) }}
+
+	{{ form_end(form) }}
+
+
+{% endblock %}

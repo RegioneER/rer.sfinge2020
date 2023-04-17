@@ -1,0 +1,14 @@
+{% extends '::base.html.twig' %}
+ 
+{% block intestazione %}
+    {{ parent() }}
+ 
+    {{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+ 
+{% block body %}
+    <div class="form-body">
+            <h4>Inserisci la data di scadenza</h4>
+            {{ form(form) }}
+        </div>
+{% endblock %}

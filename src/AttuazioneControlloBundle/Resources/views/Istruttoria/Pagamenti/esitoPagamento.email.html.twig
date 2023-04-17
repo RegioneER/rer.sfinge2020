@@ -1,0 +1,15 @@
+{% extends ":email:base.email.html.twig" %}
+
+{% block content %}
+	{% set richiesta = pagamento.attuazioneControlloRichiesta.richiesta %}
+	L'istruttoria per un pagamento è stata completata.<br><br>
+	
+	Asse e procedura: {{ richiesta.procedura.asse }} / {{richiesta.procedura.titolo }}<br/>
+	Soggetto: {{ richiesta.proponenti.0.soggetto.denominazione|capitalize }}<br/> 
+	Protocollo richiesta: {{ richiesta.protocollo }}<br/>
+	Data invio pagamento: {{ pagamento.dataInvio | date("d/m/Y") }}<br/> 
+	Modalità pagamento: {{ pagamento.modalitaPagamento.descrizioneBreve }}<br/><br/>	
+	
+	È possibile vederne i dettagli sul portale. <br>
+
+{% endblock %}

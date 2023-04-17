@@ -1,0 +1,123 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <div class="table-toolbar">
+		<a href="#" data-target="#ricerca-istruttoria-modal" data-toggle="modal" class="btn btn-info"><span class="fa fa-search"></span> Ricerca</a>
+    </div>
+	<div class="count">
+		Numero elementi trovati: {{ risultati.getTotalItemCount }} - Filtro attivo: {{ filtro_attivo ? "Si" : "No" }}
+	</div>
+	
+	<table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+		<thead>
+			<tr>
+				<th>Id operazione</th>
+				<th>Id pagamento</th>
+				<th>Asse prioritario</th>
+				<th>Titolo procedura</th>
+				<th>Soggetto</th>
+				<th>Data invio pagamento</th>	
+				<th>Titolo progetto</th>
+				<th>Codice CUP</th>
+				<th>Anticipi Aiuto di Stato</th>					
+				<th>Strumenti Finanziari</th>					
+				<th>Importo certificabile</th>					
+				<th>Importo spesa pubblica</th>					
+				<th>Importo certificato</th>					
+				<th>Taglio</th>					
+				<th>Azioni</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for pagamento in risultati %}
+				{% set richiesta = pagamento.pagamento.attuazioneControlloRichiesta.richiesta %}
+				<tr>
+					<td>
+						{% if richiesta.isAssistenzaTecnica == true %}
+							<a href="{{ path("riepilogo_richiesta_attuazione_at", {'id_richiesta':richiesta.id}) }}">{{ richiesta.id }}</a>
+						{% elseif richiesta.isIngegneriaFinanziaria == true%}
+							<a href="{{ path("riepilogo_richiesta_attuazione_ing_fin", {'id_richiesta':richiesta.id}) }}">{{ richiesta.id }}</a>
+						{% elseif richiesta.isAcquisizioni == true%}
+							<a href="{{ path("riepilogo_richiesta_attuazione_acquisizioni", {'id_richiesta':richiesta.id}) }}">{{ richiesta.id }}</a>
+						{% else %}
+							<a href="{{ path("riepilogo_richiesta_attuazione", {'id_richiesta':richiesta.id}) }}">{{ richiesta.id }}</a>
+						{% endif %}
+					</td>
+					<td>{{ pagamento.pagamento.id }}</td>
+					<td>{{ richiesta.procedura.asse.titolo }}</td>
+					<td>{{ richiesta.procedura.titolo }}</td>
+					<td>{{ richiesta.mandatario.soggetto.denominazione|capitalize }}</td>
+					<td>{{ pagamento.pagamento.dataInvio|date("d/m/Y") }}</td>	
+					<td>{{ richiesta.titolo }}</td>
+					{% if pagamento.pagamento.attuazioneControlloRichiesta.cup is not null %}
+						<td>{{ pagamento.pagamento.attuazioneControlloRichiesta.cup }}</td>
+					{% elseif richiesta.istruttoria.codicecup is not null %}
+						<td>{{ richiesta.istruttoria.codicecup }}</td>
+					{% else %}
+						<td>-</td>
+					{% endif %}
+					<td>{{ pagamento.aiutoDiStato == 1 ? 'SI' : 'NO' }}</td>					
+					<td>{{ pagamento.strumentoFinanziario == 1 ? 'SI' : 'NO' }}</td>					
+					<td>{{ pagamento.importo | number_format(2,',', '.')}}</td>
+					{% if richiesta.proponenti.0.soggetto.formaGiuridica.soggettoPubblico is defined and richiesta.proponenti.0.soggetto.formaGiuridica.soggettoPubblico ==  1 %}
+						<td>{{ richiesta.istruttoria.costoAmmesso|number_format(2,',', '.')  }}</td>
+					{% else %}	
+						<td>{{ richiesta.istruttoria.contributoAmmesso|number_format(2,',', '.')  }}</td>
+					{% endif %}	
+					<td>{{ pagamento.pagamento.importoCertificato|number_format(2,',', '.')}}</td>
+					<td>{{ pagamento.importoTaglio|number_format(2,',', '.')}}</td>
+					<td>
+					<div class="dropdown">
+						<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+							Azioni
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+							{% if is_granted('ROLE_CERTIFICATORE_AGREA') %}
+							<li><a href="{{ path("valuta_certificazione_pagamento", {"id_certificazione" : pagamento.certificazione.id, "id_certificazione_pagamento" : pagamento.id }) }}">Valuta pagamento</a></li>
+							<li><a href="{{ path("carica_cl", {"id_certificazione": pagamento.certificazione.id, "id_pagamenti_certificati" : pagamento.id}) }}">Carica CL</a></li>
+							{% endif %}
+						</ul>
+					</div>
+				</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+
+	{# display navigation #}
+	<div class="navigation">
+		{{ knp_pagination_render(risultati) }}
+	</div>	
+
+	<div id="ricerca-istruttoria-modal" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3 id="ricerca-istruttoria-modal-titolo">Ricerca Pagamenti</h3>
+				</div>
+				<div class="modal-body">
+					{{ form(formRicerca) }}
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Chiudi</button>
+					<a class="btn btn-default" href="{{ path("elenco_pagamenti_pulisci", {'id_certificazione' : certificazione.id }) }}">Annulla Ricerca</a>
+					<a class="btn btn-primary" href="#" id="ricercaOk">Ricerca</a>
+				</div>
+			</div>
+		</div>
+	</div>			
+{% endblock %}
+
+{%block  jquery_page_document_ready %}
+<script>
+	jQuery(document).ready(function() {
+		$("#ricercaOk").click(function(e){
+			e.preventDefault();
+			$(this).parents(".modal-content").find("form").submit();
+		})
+	});
+</script>
+{% endblock %}

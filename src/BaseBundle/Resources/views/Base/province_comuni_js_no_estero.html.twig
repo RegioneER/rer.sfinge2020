@@ -1,0 +1,54 @@
+{{ form_row(form.disabilitaCombo) }}
+
+<script type="text/javascript">
+			$(document).ready(function () {
+				
+				var containerSelectorProv = '{{indirizzo}}_provincia_group';
+				var containerSelectorCom = '{{indirizzo}}_comune_group';
+				var containerCombo = '{{indirizzo}}_disabilitaCombo';
+
+				var provincia_input_id = '{{ form.children['provincia'].vars['id'] }}';
+				var comune_input_id = '{{ form.children['comune'].vars['id'] }}';
+
+				function abilitaCombo() {
+					
+					if($('#' + containerCombo).val() == 1) {
+						disabilitaTutto();
+					}
+					else {
+						mostraProvinciaComuneItaliane()
+					}
+				}
+
+				function mostraProvinciaComuneItaliane() {
+					$("#" + containerSelectorProv).show();
+					$("#" + containerSelectorCom).show();
+					$("#" + provincia_input_id).removeAttr("disabled");
+				}
+				
+				function disabilitaTutto() {
+					$("#" + provincia_input_id).attr("disabled", "disabled");
+					$("#" + comune_input_id).attr("disabled", "disabled");
+				}
+ 
+				var comuni_provincia_url = '{{ path("comuni_provincia_options", { 'provincia_id' : 'provincia_id' }) }}';
+
+				$("#" + provincia_input_id).change(function () {
+					$("#" + comune_input_id).attr("disabled", "disabled");
+					$("#" + comune_input_id).trigger("change");					
+					var url = comuni_provincia_url;
+					url = url.replace("provincia_id", $(this).val());
+					$.ajax({
+						url: url,
+						success: function (res) {
+							$("#" + comune_input_id).removeAttr("disabled");
+							$("#" + comune_input_id).html(res);
+							$("#" + comune_input_id).trigger("change");
+						}
+					});
+
+				});
+
+				abilitaCombo();
+			});
+		</script>

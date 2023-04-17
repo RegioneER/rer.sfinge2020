@@ -1,0 +1,66 @@
+{% extends "::base.html.twig" %}
+
+    {% block body %}        
+        <div class="table-striped">
+            
+            <h4 style="margin-top: 10px; margin-bottom: 10px;">Protocollazione manuale delle tipologie di richiesta</h4>
+
+            <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+                <thead>
+                    <tr>
+                        <th>Descrizione tipologia richiesta</th>
+                        <th>Totale richieste da elaborare</th>
+                        <th>Richiesta in elaborazione</th>
+                        <th class="text-center">Azioni</th>
+                    </tr>
+                </thead>
+                <tbody>
+                   {% for riga in righe %}
+                        <tr>
+                            <td>{{ riga.descrizione}}</td>
+                            <td>{{ riga.tot }}</td>
+                            <td><a href="{{ path('dati_protocollo_manuale', { 'id_richiesta_protocollo': riga.ricId }) }}">{{ riga.ricId }}</a></td>
+                            <td class="text-center">
+                                {% if riga.id == 1 %} {% set percorso %} {{ path('domande_contributo') }}  {% endset %} {% endif %}
+                                {% if riga.id == 2 %} {% set percorso %} {{ path('pagamenti') }} {% endset %} {% endif %}
+                                {% if riga.id == 3 %} {% set percorso %} {{ path('variazioni') }} {% endset %} {% endif %}
+                                {% if riga.id == 4 %} {% set percorso %} {{ path('integrazioni_istruttoria') }} {% endset %} {% endif %}
+                                {% if riga.id == 5 %} {% set percorso %} {{ path('integrazioni_istruttoria_risposta') }} {% endset %} {% endif %}
+                                {% if riga.id == 6 %} {% set percorso %} {{ path('integrazioni_pagamento') }} {% endset %} {% endif %}
+                                {% if riga.id == 7 %} {% set percorso %} {{ path('integrazioni_pagamento_risposta') }} {% endset %} {% endif %}
+                                {% if riga.id == 8 %} {% set percorso %} {{ path('comunicazioni_esiti_richiesta') }} {% endset %} {% endif %}
+                                {% if riga.id == 9 %} {% set percorso %} {{ path('comunicazioni_esiti_richiesta_risposta') }} {% endset %} {% endif %}
+                                {% if riga.id == 10 %} {% set percorso %} {{ path('esito_istruttoria_pagamento') }} {% endset %} {% endif %}
+                                {% if riga.id == 11 %} {% set percorso %} {{ path('richiesta_chiarimenti') }} {% endset %} {% endif %}
+                                {% if riga.id == 12 %} {% set percorso %} {{ path('risposta_richiesta_chiarimenti') }} {% endset %} {% endif %}
+                                {% if riga.id == 13 %} {% set percorso %} {{ path('proroga_progetto') }} {% endset %} {% endif %}
+                                {% if riga.id == 14 %} {% set percorso %} {{ path('comunicazioni_progetto_pa') }} {% endset %} {% endif %}
+                                {% if riga.id == 15 %} {% set percorso %} {{ path('comunicazioni_progetto_risposta') }} {% endset %} {% endif %}
+                                {% if riga.id == 16 %} {% set percorso %} {{ path('comunicazione_attuazione_pa') }} {% endset %} {% endif %}
+                                {% if riga.id == 17 %} {% set percorso %} {{ path('comunicazione_attuazione_risposta') }} {% endset %} {% endif %}
+								
+                                <a href="{{ percorso }}" class="btn btn-sm btn-primary button_protocolla" role="button">Protocolla</a> 
+                            </td>
+                        </tr>                            
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div id="screen" style="position: absolute; top: 0; left: 0; background: #000;">
+        </div>
+        <div id="box" style="position: absolute; width: 128px; height: 128px; top: 50%; left: 45%; background-color: transparent; z-index: 20; display: none;">
+            <img src="{{ asset('assets/img/wait.gif')}}" alt=""/>
+        </div>
+    {% endblock %}
+
+    {% block  jquery_page_document_ready %}
+        <script>
+            $(function(){
+            var pop = function(){
+                $('#screen').css({ opacity: 0.5, 'width':$(document).width(),'height':$(document).height()});
+                $('#box').css({'display': 'block'});
+            }
+            $('.button_protocolla').click(pop);           
+            });        
+        </script>
+    {% endblock %}

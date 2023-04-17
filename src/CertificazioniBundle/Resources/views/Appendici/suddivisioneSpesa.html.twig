@@ -1,0 +1,92 @@
+{% extends '::base.html.twig' %}
+{% block begin_page_level_plugin_style %}
+	<style>
+		#appendice td:nth-child(5), #appendice td:nth-child(6) {
+			text-align: right;
+		}
+	</style>
+{% endblock %}
+{% block body %}
+
+	<h4>Suddivisione spesa</h4>
+
+	<table class="table table-striped table-hover table-bordered" id="appendice">
+		<thead>
+			<tr>
+				<th>Asse prioritario</th>
+				<th>Fondo</th>
+				<th>Categoria di regioni</th>				
+				<th>Base di calcolo</th>					
+				<th>Importo totale delle spese ammissibili sostenute dai beneficiari e pagate nell'attuazione delle operazioni</th>					
+				<th>Importo totale della spesa pubblica relativa all'attuazione delle operazioni</th>					
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>1</td>
+				<td>FESR</td>
+				<td>Più sviluppate</td>
+				<td>Pubblico</td>
+				<td>{{importi_asse['A1']|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A1']|number_format(2, ',', '.')}}</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td>FESR</td>
+				<td>Più sviluppate</td>
+				<td>Pubblico</td>
+				<td>{{importi_asse['A2']|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A2']|number_format(2, ',', '.')}}</td>
+			</tr>
+			<tr>
+				<td>3</td>
+				<td>FESR</td>
+				<td>Più sviluppate</td>
+				<td>Pubblico</td>
+				<td>{{importi_asse['A3']|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A3']|number_format(2, ',', '.')}}</td>
+			</tr>
+			<tr>
+				<td>4</td>
+				<td>FESR</td>
+				<td>Più sviluppate</td>
+				<td>Pubblico</td>
+				<td>{{importi_asse['A4']|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A4']|number_format(2, ',', '.')}}</td>
+			</tr>
+			<tr>
+				<td>5</td>
+				<td>FESR</td>
+				<td>Più sviluppate</td>
+				<td>Pubblico</td>
+				<td>{{importi_asse['A5']|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A5']|number_format(2, ',', '.')}}</td>
+			</tr>
+			<tr>
+				<td>6</td>
+				<td>FESR</td>
+				<td>Più sviluppate</td>
+				<td>Pubblico</td>
+				<td>{{importi_asse['A6']|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A6']|number_format(2, ',', '.')}}</td>
+			</tr>
+			<tr>
+				<td>7</td><td>FESR</td>
+				<td>Più sviluppate</td>
+				<td>Pubblico</td>
+				<td>{{importi_asse['A7']|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A7']|number_format(2, ',', '.')}}</td>
+			</tr>
+			<tr>
+				<td style="font-weight: bold">Totale</td>
+				<td style="font-weight: bold">FESR</td>
+				<td style="font-weight: bold">Più sviluppate</td>
+				<td style="font-weight: bold">Pubblico</td>
+				<td style="font-weight: bold">{{importi_asse['TOTALE']|number_format(2, ',', '.')}}</td>
+				<td style="font-weight: bold">{{importi_asse['TOTALE']|number_format(2, ',', '.')}}</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<a href="{{ path("elenco_certificazioni")}}" class="btn btn-default btn-page-action btn-form-back pull-left">Indietro</a>	
+{% endblock %}

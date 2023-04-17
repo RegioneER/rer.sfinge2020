@@ -1,0 +1,109 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	
+    {% include 'IstruttorieBundle:Istruttoria:menu.html.twig' with {'nucleo' : istruttoria } %}
+    <h4>Dati Nucleo</h4>
+
+    {{ form_start(formDati) }}
+    {{ form_end(formDati) }}
+{#
+    {% if documentiCaricati is empty %}
+        <h4>Carica documenti</h4>
+
+
+        {{ form_start(formDoc) }}
+        {{ form_end(formDoc) }}
+    {% endif %}
+    {% if documentiCaricati is not empty %}
+        <h4>Documenti allegati</h4>
+        <table class="table table-striped table-hover table-bordered" id="documenti-nucleo">
+            <tbody>
+                {% for documento in documentiCaricati %}
+                        <tr>
+                            <td>{{ mostra_file(documento.documentoFile, path('elimina_documento_nucleo_istruttoria', {'id_documento_nucleo': documento.id,'id_richiesta': richiesta.id }) ) }}</td> 
+                        </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+            
+    {% endif %}
+#}
+{% endblock %}
+
+{#
+
+{% block file_widget %}
+    {% spaceless %}
+
+    {{ block('form_widget') }}
+    <h1>test</h1>
+    {% if estensione is not null %}
+        
+        <div class="label_estensioni_documenti">Formati ammessi: <span id="lista_estensioni">{{ estensione }}</span></div>
+    {% else %}
+        <div class="label_estensioni_documenti">Formati ammessi: 
+            <img id="loader_estensione" src="{{ asset('assets/img/ajax-loading.gif') }}"/>  
+            <span id="lista_estensioni"></span>
+        </div>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                console.log('start');
+                $("#documento_nucleo_istruttoria_documentoFile_tipologia_documento").change(function () {
+                    console.log(1);
+                    $('#documento_file_file').attr('disabled',true);
+                    var id_documento = $(this).val();
+                    if(id_documento){
+                        var url = '{{ path("mostra_estensione_documento", { 'id_documento' : 'id_documento' }) }}';
+                        url = url.replace("id_documento", id_documento);
+                        $("#lista_estensioni").html('');
+                        $("#loader_estensione").show();
+                        $.ajax({
+                            url: url,
+                            success: function (res) {
+                                $("#lista_estensioni").append(res);
+                                $("#loader_estensione").hide();
+                                $('#documento_file_file').attr('disabled', false);
+                            }
+                        });    
+                    }else{
+                        $("#lista_estensioni").html('');
+                    }
+                });
+            });
+        </script>
+    {% endif %}
+    {% endspaceless %}
+
+{% endblock %}
+#}
+{#
+ {% block  jquery_page_document_ready %}
+<script type="text/javascript">
+            $(document).ready(function () {
+                console.log('start');
+                $("#documento_nucleo_istruttoria_documentoFile_tipologia_documento").change(function () {
+                    console.log(1);
+                    $('#documento_file_file').attr('disabled',true);
+                    var id_documento = $(this).val();
+                    if(id_documento){
+                        var url = '{{ path("mostra_estensione_documento", { 'id_documento' : 'id_documento' }) }}';
+                        url = url.replace("id_documento", id_documento);
+                        $("#lista_estensioni").html('');
+                        $("#loader_estensione").show();
+                        $.ajax({
+                            url: url,
+                            success: function (res) {
+                                $("#lista_estensioni").append(res);
+                                $("#loader_estensione").hide();
+                                $('#documento_file_file').attr('disabled', false);
+                            }
+                        });    
+                    }else{
+                        $("#lista_estensioni").html('');
+                    }
+                });
+            });
+        </script>
+{% endblock %}	
+#}

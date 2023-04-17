@@ -1,0 +1,274 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+    <div class="modal-body">
+    </div>
+
+    {{ mostra_validazione_attuazione('incremento_occupazionale', null, null, pagamento) }}
+
+    <h4>Incremento occupazionale</h4>
+
+    {{ form_start(form) }}
+
+    {{ form_row(form.incremento_occupazionale_confermato) }}
+
+    {% if form.incremento_occupazionale is defined %}
+
+        <br/>
+
+        {{ avviso }}
+
+        <br/>
+
+        <div class="text text-center">
+            In merito alla richiesta di maggiorazione per l’incremento occupazionale registrato dall’impresa, 
+            i dati dovranno riferirsi esclusivamente alle assunzioni a tempo indeterminato al netto di eventuali trasferimenti 
+            da altre imprese dello stesso gruppo o in caso di acquisizioni o fusioni.
+            <br/>
+            <br/>
+            <strong>DICHIARA</strong>
+        </div>
+
+        <br/>
+        <br/>
+
+        {% if config.etichettaInizioIncrementoOccupazionale is not null %} 
+            {{ config.etichettaInizioIncrementoOccupazionale }}
+        {% else %}
+            1) Che alla data del {{ dataInizio|date('d/m/Y') }} il numero degli occupati a tempo indeterminato era:
+        {% endif %}
+        <br/><br/>
+        <table class="table table-striped table-bordered" >
+            <thead>
+                <tr>
+                    {% if form.incremento_occupazionale.children|length > 1 %}
+                        <th>Proponente</th>
+                        {% endif %}
+                    <th>
+                        {% if config.colonnaInizioIncrementoOccupazionale is not null %} 
+                            {{ config.colonnaInizioIncrementoOccupazionale }}
+                        {% else %}
+                            Occupati a tempo indeterminato nell’impresa al {{ dataInizio|date('d/m/Y') }}
+                        {% endif %}
+                    </th>
+                    <th>
+                        {% if config.etichettaInizioAllegareDM10 is not null %}
+                            {{ config.etichettaInizioAllegareDM10 }}
+                        {% else %}
+                            Allegare il modello DM 10 (da richiedere all’INPS)
+                        {% endif %}
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for f in form.incremento_occupazionale.children %}
+                    <tr>
+                        {% if form.incremento_occupazionale.children|length > 1 %}
+                            <td>{{f.vars.value.proponente}}</td>
+                        {% endif %}
+                        <td style="text-align: center;">{{form_row(f.occupati_in_data_a)}}</td>
+                        <td>
+                            {% if f.vars.value.allegatoDmA is null %}
+                                <a href="{{path('carica_documento_incremento_occupazionale', {'id_pagamento': pagamento.id, 'id_proponente': f.vars.value.proponente.id, 
+                                'tipo_documento': constant('AttuazioneControlloBundle\\Service\\GestoreIncrementoOccupazionaleBase::DM10_INIZIO')})}}" class="btn btn-primary">Carica</a>
+                            {% else %}
+                                {{ mostra_file(f.vars.value.allegatoDmA, disabled ? null : path('elimina_documento_incremento_occupazionale_dm10', {'id_incremento_occupazionale': f.vars.value.id, 'id_documento': f.vars.value.allegatoDmA.id }) ) }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <br/><br/>
+
+        {% if config.etichettaFineIncrementoOccupazionale is not null %} 
+            {{ config.etichettaFineIncrementoOccupazionale }}
+        {% else %}
+            2) Che alla data del {{ dataFine|date('d/m/Y') }} il numero degli occupati a tempo indeterminato era:
+        {% endif %}
+        <br/><br/>
+        <table class="table table-striped table-bordered" >
+            <thead>
+                <tr>
+                    {% if form.incremento_occupazionale.children|length > 1 %}
+                        <th>Proponente</th>
+                        {% endif %}
+                    <th>
+                        {% if config.colonnaFineIncrementoOccupazionale is not null %} 
+                            {{ config.colonnaFineIncrementoOccupazionale }}
+                        {% else %}
+                            Occupati a tempo indeterminato nell’impresa al {{ dataFine|date('d/m/Y') }}
+                        {% endif %}
+                    </th>
+                    <th>
+                        {% if config.etichettaFineAllegareDM10 is not null %}
+                            {{ config.etichettaFineAllegareDM10 }}
+                        {% else %}
+                            Allegare il modello DM 10 (da richiedere all’INPS)
+                        {% endif %}
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for f in form.incremento_occupazionale.children %}
+                    <tr>
+                        {% if form.incremento_occupazionale.children|length > 1 %}
+                            <td>{{f.vars.value.proponente}}</td>
+                        {% endif %}
+                        <td style="text-align: center;">{{form_row(f.occupati_in_data_b)}}</td>
+                        <td>
+                            {% if f.vars.value.allegatoDmB is null %}
+                                <a href="{{path('carica_documento_incremento_occupazionale', {'id_pagamento': pagamento.id, 'id_proponente': f.vars.value.proponente.id, 
+                                'tipo_documento': constant('AttuazioneControlloBundle\\Service\\GestoreIncrementoOccupazionaleBase::DM10_FINE')})}}" class="btn btn-primary">Carica</a>
+                            {% else %}
+                                {{ mostra_file(f.vars.value.allegatoDmB, disabled ? null : path('elimina_documento_incremento_occupazionale_dm10', {'id_incremento_occupazionale': f.vars.value.id, 'id_documento': f.vars.value.allegatoDmB.id }) ) }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h4>Documenti incremento occupazionale</h4>
+        {% for f in form.incremento_occupazionale.children %}
+            {% if form.incremento_occupazionale.children|length > 1 %}
+                <h6>{{ f.vars.value.proponente}}</h6>
+            {% endif %}
+
+            {% if not disabled %}
+                <div class="table-toolbar">
+                    <a href="{{path('carica_documento_incremento_occupazionale', {'id_pagamento': pagamento.id, 'id_proponente': f.vars.value.proponente.id, 
+                        'tipo_documento': 'ALTRO'})}}" class="btn btn-primary">Carica documento incremento occupazionale</a>
+                </div>
+            {% endif %}
+
+            {% for documento_incremento_occupazionale in f.vars.value.documentiIncrementoOccupazionale %}
+                {{ mostra_file(documento_incremento_occupazionale.documentoFile, disabled ? null : path('elimina_documento_incremento_occupazionale', {'id_incremento_occupazionale': f.vars.value.id, 'id_doc_incremento_occupazionale': documento_incremento_occupazionale.id}) ) }}
+
+                {% if not loop.last %}
+                    <br/>
+                {% endif %}
+            {% else %}
+                Nessun documento caricato
+            {% endfor %}
+
+            {% if not loop.last %}
+                <br><br><br>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    <br/>
+    <br/>
+
+    {{ form_end(form) }}
+
+    {% if form.incremento_occupazionale is defined and caricamentoNuoviDipendenti == true %}
+        <h4>Elenco nuovi dipendenti</h4>
+
+        {% if not form.vars.disabled %}
+            <div class="table-toolbar">
+                <div>
+                    <a class="btn btn-primary" href="{{ path('aggiungi_nuovo_dipendente', {'id_pagamento' : pagamento.id }) }}">
+                        <span class="fa fa-plus"></span> Nuovo dipendente
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+
+        {% if pagamento.personale|length > 0 %}
+            <table class="table table-striped table-hover table-bordered" id="dipendenti-elenco">
+                <thead>
+                    <tr>
+                        <th>Nome e cognome</th>
+                        <th>Data assunzione a tempo indeterminato</th>
+                        <th>Tipologia assunzione</th>
+                            {% if disabled == true %}
+                            <th>Contratto di assunzione</th>
+                            <th>Comunicazione al centro per l'impiego</th>
+                            <th>Altri documenti</th>
+                            {% else %}
+                            <th>Azioni</th>
+                            {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for nuovoDipendente in pagamento.personale %}
+                        <tr>
+                            <td>{{ nuovoDipendente }}</td>
+                            <td>{{ nuovoDipendente.dataAssunzione|date('d/m/Y') }}</td>
+                            <td>{{ nuovoDipendente.tipologiaAssunzione.descrizione }}</td>
+                            {% if disabled == true %}
+                                <td>
+                                    {% for documento in nuovoDipendente.documentiPersonale %}
+                                        {% if documento.documentoFile.tipologiaDocumento.codice == constant('AttuazioneControlloBundle\\Service\\GestoreIncrementoOccupazionaleBase::CONTRATTO_ASSUNZIONE') %}
+                                            {{ scarica_file(documento.documentoFile.id) }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    {% for documento in nuovoDipendente.documentiPersonale %}
+                                        {% if documento.documentoFile.tipologiaDocumento.codice == constant('AttuazioneControlloBundle\\Service\\GestoreIncrementoOccupazionaleBase::COMUNICAZIONE_CENTRO_IMPIEGO') %}
+                                            {{ scarica_file(documento.documentoFile.id) }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    {% for documento in nuovoDipendente.documentiPersonale %}
+                                        {% if documento.documentoFile.tipologiaDocumento.codice == constant('AttuazioneControlloBundle\\Service\\GestoreIncrementoOccupazionaleBase::ALTRO_DOCUMENTO_PERSONALE') %}
+                                            {{ scarica_file(documento.documentoFile.id) }}
+                                            <br/>
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                            {% else %}
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                            Azioni
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                            <li><a href="{{ path('modifica_nuovo_dipendente', {'id_nuovo_dipendente' : nuovoDipendente.id}) }}">Modifica</a></li>
+                                            <li><a href="{{ path('elimina_nuovo_dipendente', {'id_nuovo_dipendente' : nuovoDipendente.id, '_token': csrfToken }) }}">Elimina</a></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    {% endif %}
+
+    {#Istruttoria#}
+    {% if form_istruttoria is defined %}
+        <h4>Istruttoria</h4>
+        {{ form_start(form_istruttoria) }}
+        {{ form_end(form_istruttoria) }}
+    {% endif %}
+
+{% endblock %}
+
+{% block jquery_page_document_ready %}
+    <script>
+        function registerDataConfirm() {
+            if ($('#conferma_incremento_occupazionale_incremento_occupazionale_confermato').val() === '0') {
+                $('#dataConfirmModal').find('.modal-body').text('Attenzione non confermando l\'incremento occupazionale si andrà a perdere la premialità. I dati eventulmente inseriti in questa sezione verranno eliminati e non saranno recuperabili.');
+                $('#dataConfirmModal').modal({show: true});
+                return false;
+            }
+        }
+
+        function submitForm() {
+            $('form[name="{{- form.vars.name -}}"]').submit();
+        }
+
+        $(document).ready(function () {
+            $('#conferma_incremento_occupazionale_pulsanti_pulsante_submit').click('change', registerDataConfirm);
+            $('#dataConfirmOK').click(submitForm);
+        });
+    </script>
+{% endblock %}

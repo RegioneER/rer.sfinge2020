@@ -1,0 +1,52 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	
+{% include 'AttuazioneControlloBundle:ControlliStabilita:menu_principale.html.twig' %}		
+{% include 'AttuazioneControlloBundle:ControlliStabilita:menu.html.twig' with {'controllo' : controllo } %}	
+
+<div>
+	<a class="btn btn-primary" href="{{ path('genera_verbale_sopralluogo_stabilita', {'id_controllo' : controllo.id }) }}">
+		Genera Verbale
+	</a>
+</div>
+
+<br>
+
+<h4>Dati verbale sopralluogo</h4>
+
+{{ form_start(form) }}
+{{ form_row(form.data_controllo) }}
+{{ form_row(form.tipo_sede_fase_spr) }}
+<div class="alert alert-warning" role="alert">
+	In caso di sede operativa non indicata o non reperibile è possibile compilare i dati manualmente
+</div>
+{{ form_row(form.indirizzo.via) }}
+{{ form_row(form.indirizzo.numero_civico) }}
+{{ form_row(form.indirizzo.cap) }}
+{{ form_row(form.indirizzo.stato) }}
+{{ form_row(form.indirizzo.provincia, {'_id': 'luogo_residenza_provincia_row'}) }}
+{{ form_row(form.indirizzo.comune, {'_id': 'luogo_residenza_comune_row'}) }}
+{{ form_row(form.indirizzo.localita) }}
+{% do form.indirizzo.setRendered %}
+<br>
+<h4>Documentazione relativa al beneficiario</h4>
+{{ form_row(form.acquisita_fase_spr) }}
+{{ form_row(form.richiesta_fase_spr) }}
+<br>
+<h4>Conclusioni e osservazioni</h4>
+{{ form_row(form.conclusioni_fase_spr) }}
+{{ form_row(form.osservazioni_ben_fase_spr) }}
+<br>
+<h4>Importi</h4>
+{{ form_row(form.spese_ammesse) }}
+{{ form_row(form.spese_rivalutazione) }}
+{{ form_row(form.spese_non_ammissibili) }}
+<br>
+{{ form_end(form) }}
+				
+{% endblock %}
+{% block  jquery_page_document_ready %}
+	{% set vars = {'indirizzo': 'sede_indirizzo', 'form' : form.indirizzo } %}
+	{% include "BaseBundle:Base:province_comuni_js.html.twig" with vars %}
+{% endblock %}

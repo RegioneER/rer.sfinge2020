@@ -1,0 +1,135 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <h3 class="titolo-sezione">Dati Soggetto</h3>
+
+    {{ mostra_soggetto(incarico_persona.soggetto) }}
+    </br>
+
+    <h3 class="titolo-sezione">Dati persona</h3>
+    {{ mostra_persona(incarico_persona.incaricato) }}
+    </br>
+
+    <h3 class="titolo-sezione">Dati incarico</h3>
+
+    <table class="table table-bordered table-hover">
+        <tr>
+            <td>Tipo</td>
+            <td>{{ incarico_persona.tipoIncarico.descrizione }}</td>
+        </tr>
+        <tr>
+            <td>Stato</td>
+            <td>{{ incarico_persona.stato.descrizione }}</td>
+        </tr>
+    </table>
+
+    {% if not incarico_persona.tipoIncarico.hasRuoloApplicativo %}
+        {# mostro i documenti #}
+        </br>
+        <h3 class="titolo-sezione">Documenti incarico</h3>
+
+        {% if incarico_persona.documentoNomina is defined and incarico_persona.documentoNomina is not null %}
+            {{ mostra_file(incarico_persona.documentoNomina ) }}
+        {% endif %}
+        </br>
+        {% if incarico_persona.incaricato.cartaIdentita is defined and incarico_persona.incaricato.cartaIdentita is not null %}
+            {{ mostra_file(incarico_persona.incaricato.cartaIdentita ) }}
+        {% endif %}
+        </br>
+        {% if incarico_persona.cartaIdentitaLr is defined and incarico_persona.cartaIdentitaLr is not null %}
+            {{ mostra_file(incarico_persona.cartaIdentitaLr ) }}
+        {% endif %}
+        </br>
+        <h4>Aggiornamento documenti delega</h4>
+        {{ form(form) }}
+        <h4>Elenco documenti incarico</h4>
+
+        {% if documenti_delega|length > 0 %}
+            <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+                <thead>
+                    <tr>
+                        <td style="width: 40%;">Nota</td>
+                        <td style="width: 60%;">File</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for documento in documenti_delega %}
+                        <tr>
+                            <td>{{ documento.nota  }}</td>
+                            <td>{{ mostra_file(documento.documentoFile) }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+        Nessun documento incarico 
+    {% endif %}
+    </br>
+    <div class="page-actions">
+        <div class="pull-left">{{ pulsante_indietro(path("elenco_incarichi")) }}</div>
+        {% if is_amministratore %}
+            {% if is_super_admin and incarico_persona.stato.codice == "ATTIVO"%}
+                <div class="pull-right" style="width: 22em">
+                    <a href="#" data-target="#revoca-incarico-modal" data-toggle="modal" class="btn btn-primary pull-left">Revoca Incarico</a>
+                    <a href="#" data-target="#cancella-incarico-modal" data-toggle="modal" class="btn btn-primary pull-right">Cancella Incarico</a>
+                </div>
+            {% endif %}
+            {% if incarico_persona.stato.codice == "ATTIVO" and incarico_persona.tipoIncarico.codice != "UTENTE_PRINCIPALE" and is_super_admin == false%}
+                <a href="#" data-target="#revoca-incarico-modal" data-toggle="modal" class="btn btn-primary pull-right">Revoca Incarico</a>
+            {% endif %}
+            {#Se è un LR impedisco di ri-attivare il ruolo#}
+            {% if incarico_persona.tipoIncarico.codice != "LR" %}
+                {% if (incarico_persona.stato.codice == "REVOCATO" or incarico_persona.stato.codice == "BOCCIATO") and  is_super_admin == false %}
+                    <a href="{{ path("riattiva_incarico",{"id_incarico":incarico_persona.id, '_token': csrfToken}) }}" class="btn btn-primary pull-right">Attiva Incarico</a>
+                {% endif %}
+                {% if (incarico_persona.stato.codice == "REVOCATO" or incarico_persona.stato.codice == "BOCCIATO") and  is_super_admin == true %}
+                    <a href="{{ path("riattiva_incarico",{"id_incarico":incarico_persona.id, "soggetto_id":incarico_persona.soggetto.id, '_token': csrfToken}) }}" class="btn btn-primary pull-right">Attiva Incarico</a>
+                {% endif %}
+            {% endif %}
+        {% endif %}
+        {% if isAccessibile('attiva_incarico', {"id_incarico":incarico_persona.id}) %}
+            <div class="pull-right">
+                {% if incarico_persona.stato.codice == "ATTESA_CONFERMA"%}
+                    <a href="{{ path("boccia_incarico",{"id_incarico":incarico_persona.id}) }}" class="btn btn-danger">Boccia Incarico</a>
+                    <a href="{{ path("attiva_incarico",{"id_incarico":incarico_persona.id}) }}" class="btn btn-primary">Approva Incarico</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    <div id="revoca-incarico-modal" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h3 id="revoca-incarico-modal-titolo">Revoca incarico</h3>
+                </div>
+                <div class="modal-body">
+                    <h4 id="revoca-incarico-modal-body">Confermare la revoca dell'incarico?</h4>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">NO</button>
+                    <a class="btn btn-default" id="revocaSI" href="{{ path("revoca_incarico",{"id_incarico":incarico_persona.id, "soggetto_id":incarico_persona.soggetto.id, '_token': csrfToken}) }}" >SI</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="cancella-incarico-modal" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h3 id="cancella-incarico-modal-titolo">Cancella incarico</h3>
+                </div>
+                <div class="modal-body">
+                    <h4 id="cancella-incarico-modal-body">Confermare la cancellazione dell'incarico?</h4>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">NO</button>
+                    <a class="btn btn-default" id="cancellaSI" href="{{ path("cancella_incarico",{"id_incarico":incarico_persona.id, '_token': csrfToken}) }}" >SI</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock body%}

@@ -1,0 +1,47 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	<h3>
+		Elenco sedi per {{ azienda.tipoByFormaGiuridica(1) }}:	<span>{{ azienda.denominazione }}</span>
+	</h3>
+
+    <table class="table table-striped table-hover table-bordered" id="notizie-elenco">
+        <thead>
+            <tr>
+                <th>Ragione sociale</th>
+                <th>Indirizzo</th>
+				<th>Chiusa</th>
+				<th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+			{% for sede in sedi %}
+				<tr>
+					<td>{{ sede.soggetto.denominazione }}</td>
+					<td>{{ sede.indirizzo }}</td>
+					<td>{{ sede.cessata ? 'Sì': 'No' }}</td>
+					<td><div class="dropdown">
+							<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								Azioni
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+								<li>
+									<a href="{{ path('persona_fisica_visualizza_sede_operativa', {id_soggetto:sede.soggetto.id, id_sede:sede.id}) }}">Visualizza</a>
+								</li>
+
+								{% if isAccessibile('soggetto_chiudi_sede_operativa', {id_soggetto: sede.soggetto.id, id_sede:sede.id}) and sede.attiva %}
+									<li>
+										<a href="{{ path('soggetto_chiudi_sede_operativa', {id_soggetto :sede.soggetto.id, id_sede: sede.id, _token: csrfToken,}) }}"
+										data-confirm="Questa è un'operazione irreversibile. Confermi la chiusura della sede?">Chiudi
+										</a>
+									</li>
+								{% endif %}
+							</ul>
+						</div>
+					</td>
+				</tr>
+			{% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

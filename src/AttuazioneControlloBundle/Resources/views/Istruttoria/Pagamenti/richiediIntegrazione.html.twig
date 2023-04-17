@@ -1,0 +1,72 @@
+{% extends 'IstruttorieBundle:Istruttoria:base_istruttoria.html.twig' %}
+
+
+
+{% block body %}
+{% set pagamento = form.vars.value %}	
+{% include 'AttuazioneControlloBundle:Istruttoria/Pagamenti:menu.html.twig' with {'pagamento' : form.vars.value } %}		
+
+{{ form_start(form) }}
+
+<h4>Tipo integrazione</h4>
+{{ form_row(form.integrazione_sostanziale) }}
+
+{% if pagamento.giustificativi|length > 0 %}
+<h4>Giustificativi</h4>	
+
+<table class="table">
+	<thead>
+		<tr>
+			<th style="width:25%;">Fornitore</th>
+			<th style="width:25%;">Numero e data giustificativo</th>
+			<th style="width:10%; text-align: center;">Integrazione</th>
+			<th style="width:30%; text-align: center;">Nota</th>
+		</tr>
+	</thead>
+	<tbody>
+	{% for form_giustificativo in form.giustificativi %}
+
+		{% set giustificativo = form_giustificativo.vars.value %}
+		<tr>
+			<td>{{ giustificativo.denominazioneFornitore }} - {{ giustificativo.codiceFiscaleFornitore }}</td>
+			<td>{{ giustificativo.numeroGiustificativo }} - {{ giustificativo.dataGiustificativo | date('d/m/Y') }}</td>
+			<td style="text-align: center;">{{ form_widget(form_giustificativo.integrazione) }}</td>
+			<td>{{ form_widget(form_giustificativo.nota_integrazione) }}</td>
+		</tr>
+	{% endfor %}
+	</tbody>	
+</table>
+{% endif %}
+
+{% if pagamento.documentiPagamento|length > 0 %}
+<h4>Documenti</h4>	
+<table class="table">
+	<thead>
+		<tr>
+			<th style="width:25%;">Tipologia</th>
+			<th style="width:25%;">Documento</th>
+			<th style="width:10%; text-align: center;">Integrazione</th>
+			<th style="width:30%; text-align: center;">Nota</th>
+		</tr>
+	</thead>
+	<tbody>
+	{% for form_documento in form.documenti_pagamento %}
+
+		{% set documento = form_documento.vars.value %}
+		<tr>
+			<td>{{ documento.documentoFile.tipologiaDocumento.descrizione }}</td>
+			<td>{{ scarica_file(documento.documentoFile) }}</td>
+			<td style="text-align: center;">{{ form_widget(form_documento.integrazione) }}</td>
+			<td>{{ form_widget(form_documento.nota_integrazione) }}</td>
+		</tr>
+	{% endfor %}
+	</tbody>	
+</table>
+{% endif %}
+
+<h4>Nota integrazione</h4>
+{{ form_row(form.nota_integrazione) }}
+
+{{ form_end(form) }}
+
+{% endblock %}

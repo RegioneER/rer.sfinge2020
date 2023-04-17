@@ -1,0 +1,87 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <div class="table-toolbar">
+        <div>
+			<a class="btn btn-info" href="#ricerca-richiesta-modal" data-toggle="modal">
+				<span class="fa fa-search"></span> Ricerca
+			</a>
+        </div>
+    </div>
+    <div class="count">
+        Numero elementi trovati: {{ richieste.getTotalItemCount }} - Filtro attivo: {{ filtro_attivo ? "Si" : "No" }}
+    </div>
+    <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+        <thead>
+            <tr>
+				<th>Id</th>
+                <th>Titolo procedura</th>
+				<th>Soggetto</th>
+				<th>Stato</th>
+				<th>Data Invio</th>
+				<th>Protocollo</th>
+				<th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+			{% for richiesta in richieste %}
+				<tr>
+					<td>{{ richiesta.id }}</td>
+                    <td>{{ richiesta.titolo }}</td>
+					<td>{{ richiesta.denominazione|capitalize}}</td>
+					<td>{{ richiesta.stato is null ? "-" : richiesta.stato}}</td>
+					<td>{{ richiesta.data_invio is null ? "-" : richiesta.data_invio | date("d/m/Y H:i:s")}}</td>
+					<td>{{ richiesta.protocollo }}</td>
+					<td>
+						{% set vociMenu = voci_menu_presenzazione(richiesta.id) %}
+						{% if vociMenu | length > 0 %}
+						<div class="dropdown">
+							<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								Azioni
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+
+								{% for voceMenu in vociMenu %}
+                                    {% if voceMenu.label != 'Valida' and voceMenu.label != 'Invalida'
+                                        and voceMenu.label != 'Carica domanda firmata' and voceMenu.label !='Invia domanda' %}
+									    <li><a href="{{ voceMenu.path }}" {{ voceMenu.attr is defined ? (voceMenu.attr |raw) : "" }}>{{ voceMenu.label }}</a></li>
+								    {% endif%}
+                                {% endfor %}
+							</ul>
+						</div>
+						{% endif %}
+					</td>
+				</tr>
+			{% endfor %}
+        </tbody>
+    </table>
+    {# display navigation #}
+    <div class="navigation">
+        {{ knp_pagination_render(richieste) }}
+    </div>
+		
+	{{ modale_ricerca("Richieste",form_ricerca_richieste,"elenco_richieste_pulisci","ricerca-richiesta-modal") }}
+{% endblock %}
+	
+{%block  jquery_page_document_ready %}
+	<script>
+		jQuery(document).ready(function() {
+
+			showHideFinestraTemporale();
+			$('#ricerca_richiesta_procedura').change(function(){
+				showHideFinestraTemporale();
+			});		
+		});
+
+		function showHideFinestraTemporale(){
+			// se andasse esteso ad altri bandi basta aggiungere qui gli altri id con logica in_array(id1, id2)
+			if( $('#ricerca_richiesta_procedura').val() == '26'){
+				$('#s2id_ricerca_richiesta_finestraTemporale').closest('div.form-group').show();
+			}else{
+				$('#s2id_ricerca_richiesta_finestraTemporale').select2('val', '');
+				$('#s2id_ricerca_richiesta_finestraTemporale').closest('div.form-group').hide();
+			}
+		}
+	</script>
+{% endblock %}

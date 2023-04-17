@@ -1,0 +1,47 @@
+{% extends '::base.html.twig' %}
+
+{% block intestazione %}
+	{{ parent() }}
+	{{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% block body %}
+
+    <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+        <thead>
+            <tr>
+				<th>Id</th>
+                <th>Titolo procedura</th>
+				<th>Titolo progetto</th>
+				<th>Stato</th>
+				<th>Data Modifica</th>
+				<th>Protocollo</th>
+				<th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+			{% for richiesta in richieste %}
+				<tr>
+					<td>{{ richiesta.id }}</td>
+                    <td>{{ richiesta.procedura.titolo }}</td>
+					<td>{{ richiesta.titolo is null ? "-" : richiesta.titolo }}</td>
+					<td>{{ richiesta.stato is null ? "-" : richiesta.stato.descrizione}}</td>
+					<td>{{ (richiesta.dataInvio is not null ? richiesta.dataInvio : richiesta.dataModifica) | date("d/m/Y")}}</td>
+					<td>{{ richiesta.protocollo }}</td>
+					<td>
+						<div class="dropdown">
+							<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								Azioni
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+								{# TODO: fare action e viste per visualizzare la richiesta e per visualizzare tutti i documenti della richiesta.#}
+								<li><a href="{{ path("gestisci_istruttoria", {'id_richiesta':richiesta.id}) }}">Gestisci</a></li>
+							</ul>
+						</div>
+					</td>
+				</tr>
+			{% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

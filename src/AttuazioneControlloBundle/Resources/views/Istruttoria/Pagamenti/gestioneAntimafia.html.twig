@@ -1,0 +1,29 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+
+	<h4>Elenco documenti caricati</h4>	
+	<table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+		<thead>
+			<tr>
+				<th>Tipologia</th>
+				<th>Documento</th>
+			</tr>
+		</thead>	
+		<tbody>
+			{% for documento in documentiAntimafia %}
+				<tr>
+					<td>{{ documento.documentoFile.tipologiaDocumento.descrizione }}</td>
+					<td>{{ scarica_file(documento.documentoFile) }}</td>
+				</tr>			
+			{% endfor %}
+		</tbody>
+	</table>			
+		
+	{% if istruttoria is defined %}
+		<h4>Istruttoria</h4>
+		{{ form_start(form_istruttoria) }}
+		{{ form_end(form_istruttoria) }}
+	{% endif %}
+
+{% endblock %}

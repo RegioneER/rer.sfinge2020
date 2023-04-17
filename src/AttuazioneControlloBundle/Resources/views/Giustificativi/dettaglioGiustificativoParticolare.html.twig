@@ -1,0 +1,68 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+	{{ mostra_validazione_giustificativo_assistenza('giustificativo_particolare', path('dettaglio_giustificativo', {'id_giustificativo':giustificativo.id}), "Giustificativi", giustificativo) }}
+	
+	<h4>Fornitore</h4>
+	<table class="table table-striped table-hover">
+		<tr>
+			<td style="width: 50%;">Denominazione</td>
+			<td><strong>{{ giustificativo.denominazioneFornitore }}</strong></td>
+		</tr>
+		<tr>
+			<td style="width: 50%;">Codice fiscale</td>
+			<td><strong>{{ giustificativo.codiceFiscaleFornitore }}</strong></td>
+		</tr>				
+	</table>	
+	
+	<h4>Dati giustificativo</h4>
+	<table class="table table-striped table-hover">
+		<tr>
+			<td style="width: 50%;">Descrizione</td>
+			<td><strong>{{ giustificativo.descrizioneGiustificativo }}</strong></td>
+		</tr>
+		<tr>
+			<td style="width: 50%;">Numero</td>
+			<td><strong>{{ giustificativo.numeroGiustificativo }}</strong></td>
+		</tr>
+		<tr>
+			<td style="width: 50%;">Data</td>
+			<td><strong>{{ giustificativo.dataGiustificativo | date('d/m/Y') }}</strong></td>
+		</tr>
+		<tr>
+			<td style="width: 50%;">Imponibile</td>
+			<td><strong>{{ giustificativo.importoImponibileGiustificativo |number_format(2, ',', '.') }}</strong></td>
+		</tr>
+		<tr>
+			<td style="width: 50%;">Iva</td>
+			<td><strong>{{ giustificativo.importoIvaGiustificativo |number_format(2, ',', '.') }}</strong></td>
+		</tr>
+		<tr>
+			<td style="width: 50%;">Importo totale</td>
+			<td><strong>{{ giustificativo.importoGiustificativo |number_format(2, ',', '.') }}</strong></td>
+		</tr>	
+		{% if giustificativo.documentoGiustificativo %}
+		<tr>
+			<td style="width: 50%;">Documento</td>
+			<td><strong>{{ scarica_file(giustificativo.documentoGiustificativo) }}</strong></td>
+		</tr>
+		{% endif %}
+	</table>	
+	
+	<h4>Dati richiesta</h4>
+	<table class="table table-striped table-hover">
+		<tr>
+			<td style="width: 50%;">Importo rendicontato</td>
+			<td><strong>{{ giustificativo.importoRichiesto|number_format(2, ',', '.') }}</strong></td>
+		</tr>				
+	</table>	
+	
+	<h4>Altri dati</h4>
+	<table class="table table-striped table-hover">
+		<tr>
+			<td style="width: 50%;">Nota</td>
+			<td><strong>{{ giustificativo.notaBeneficiario }}</strong></td>
+		</tr>				
+	</table>	
+			
+{% endblock %}

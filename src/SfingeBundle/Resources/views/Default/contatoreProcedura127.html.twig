@@ -1,0 +1,32 @@
+{{ procedura.titolo }} ({{ procedura.atto.numero }} del {{ procedura.atto.datapubblicazione|date("d/m/Y") }})
+{# Mostro l’indicazione della finestra solamente dalla seconda finestra in poi #}
+{% if procedura.attualeFinestraTemporalePresentazione > 1 %}
+    {% set finestre = {2 : 'Seconda', 3 : 'Terza', 4 : 'Quarta', 5 : 'Quinta', 6 : 'Sesta'} %}
+    - <strong>{{ finestre[procedura.attualeFinestraTemporalePresentazione] }} finestra</strong> 
+{% endif %}
+
+<br>
+Domande totali confermate all’amministrazione: {{ procedura.richiesteInviate.richieste_inviate }}
+
+<br>
+<br>
+
+<table class="table table-hover table-bordered" id="sedi-operative-elenco">
+    <thead>
+    <tr>
+        <th>Tipologia unità locale</th>
+        <th>Dotazione finanziaria</th>
+        <th>Disponibilità residua</th>
+    </tr>
+    </thead>
+    {% for dati in procedura.richiesteInviate.disponibilita %}
+        <tr>
+            <td>{{ dati['tipologia'] }}</td>
+            <td align="right">{{ dati['dotazione_finanziaria'] }}€</td>
+            <td align="right"><strong>{{ dati['disponibilita_residua'] }}€</strong></td>
+        </tr>
+    {% endfor %}
+    <tbody>
+    </tbody>
+</table>
+</li>

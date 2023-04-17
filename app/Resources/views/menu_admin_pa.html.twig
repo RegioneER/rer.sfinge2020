@@ -1,0 +1,47 @@
+{% include 'menu_accreditamento.html.twig' %}
+{% include 'menu_atti_amministrativi.html.twig' %}
+{% include 'menu_assistenza_tecnica.html.twig' %}
+{% include 'menu_ingegneria_finanziaria.html.twig' %}
+{% include 'menu_acquisizioni.html.twig' %}
+{% include 'menu_procedure_pa.html.twig' %}
+{% include 'menu_richieste_pa.html.twig' %}
+{% if is_granted('ROLE_CERTIFICATORE') or is_granted('ROLE_CERTIFICATORE_ASSE') or is_granted('ROLE_CERTIFICATORE_AGREA') or is_granted('ROLE_CERTIFICATORE_READONLY') %}
+	{% include 'menu_certificazioni.html.twig' %}
+{% endif %}	
+{% include 'menu_persone_pa.html.twig' %}
+<li class="">
+    <a href="javascript:;">
+        <span class="fa fa-lock"></span>
+        <span class="title">Permessi</span>
+        <span class="arrow "></span>
+    </a>
+    <ul class="sub-menu">
+        <li id="permessi_asse">
+            <a href="{{ path("permessi_asse") }}">Associa Asse</a>
+        </li>
+        <li id="permessi_procedura">
+            <a href="{{ path("permessi_procedura") }}">Associa Procedura</a>
+        </li>
+        <li id="elenco_permessi_asse">
+            <a href="{{ path("elenco_permessi_asse") }}">Elenco Permessi Assi</a>
+        </li>
+        <li id="elenco_permessi_procedure">
+            <a href="{{ path("elenco_permessi_procedure") }}">Elenco Permessi Procedure</a>
+        </li>
+    </ul>
+</li>
+<li class="">
+    <a href="javascript:;">
+        <span class="fa fa-newspaper"></span>
+        <span class="title">Notizie</span>
+        <span class="arrow "></span>
+    </a>
+    <ul class="sub-menu">
+        <li id="notizie_elenco">
+            <a href="{{ path("lista_notizie") }}">Elenco</a>
+        </li>
+        <li id="notizie_crea">
+            <a href="{{ path("crea_notizia") }}">Crea</a>
+        </li>
+    </ul>
+</li>

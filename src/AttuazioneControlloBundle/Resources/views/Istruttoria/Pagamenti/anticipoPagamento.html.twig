@@ -1,0 +1,58 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	
+<br>		
+<h4>Riepilogo richiesta di pagamento</h4>
+	<table class="table table-striped table-hover">
+		<tr>
+			<td style="width: 50%;">Bando</td>
+			<td><strong>{{ pagamento.richiesta.procedura.titolo}}</strong></td>
+		</tr>
+		<tr>
+			<td style="width: 50%;">Cup progetto</td>
+			<td><strong>{{ pagamento.richiesta.istruttoria.codicecup is null ? "-" : pagamento.richiesta.istruttoria.codicecup }}</strong></td>
+		</tr>
+		<tr>
+			<td style="width: 50%;">Modalità richiesta di pagamento</td>
+			<td><strong>{{ pagamento.modalitaPagamento }}</strong></td>
+		</tr>
+		<tr>
+			<td style="width: 50%;">Importo richiesto</td>
+			<td><strong>&euro; {{ pagamento.importoRichiesto|number_format(2, ',', '.') }}</strong></td>
+		</tr>	
+		<tr>
+			<td style="width: 50%;">Data invio richiesta</td>
+			<td><strong>{{ pagamento.dataInvio is null ? "-" : pagamento.dataInvio | date('d/m/Y') }}</strong></td>
+		</tr>	
+
+		<tr>
+			<td style="width: 50%;">Titolo Progetto</td>
+			<td><strong>{{ pagamento.richiesta.titolo }}</strong></td>
+		</tr>
+	</table>
+
+	<br><br>
+	
+	<h4>Anticipo</h4>
+	<table class="table table-striped table-hover">
+		<tr>
+			<td style="width: 50%;">Importo</td>
+			<td><strong>&euro; {{ pagamento_anticipo.importoRichiesto|number_format(2, ',', '.') }}</strong></td>
+		</tr>	
+		<tr>
+			<td style="width: 50%;">Data anticipo</td>
+			<td><strong>{{ pagamento.dataInvio is null ? "-" : pagamento.dataInvio | date('d/m/Y') }}</strong></td>
+		</tr>	
+
+	</table>
+
+	<br><br>
+		
+
+	{{ form_start(form) }}
+	{{ form_errors(form) }}
+	{{ form_end(form) }}
+
+
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends 'AttuazioneControlloBundle:Istruttoria/Variazioni:baseIstruttoria.html.twig' %}
+{% block content %}
+	{% set attuale = variazione.sedeOperativa|default(variazione.richiesta.soggetto.sede) %}
+	{% set prossima = variazione.sedeOperativaVariata %}
+	<table class="table table-striped table-hover table-bordered"
+        style="table-layout: fixed; width: 100%;"
+    >
+		<thead>
+			<tr>
+				<th></th>
+				<th>Valore precedente</th>
+				<th>Valore Variato</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<th>Ragione sociale</th>
+				<td>{{ attuale.denominazione }}</td>
+				<td>{{ prossima.denominazione }}</td>
+			</tr>
+			<tr>
+				<th>Numero REA</th>
+				<td>{{ attuale.numeroRea }}</td>
+				<td>{{ prossima.numeroRea }}</td>
+			</tr>
+			<tr>
+				<th>Codice Ateco</th>
+				<td>{{ attuale.ateco }}</td>
+				<td>{{ prossima.ateco }}</td>
+			</tr>
+			<tr>
+				<th>Codice Ateco secondario</th>
+				<td>{{ attuale.atecoSecondario }}</td>
+				<td>{{ prossima.atecoSecondario }}</td>
+			</tr>
+			<tr>
+				<th>Indirizzo</th>
+				<td>{{ attuale.indirizzo.via }}</td>
+				<td>{{ prossima.indirizzo.via }}</td>
+			</tr>
+			<tr>
+				<th>Numero civico</th>
+				<td>{{ attuale.indirizzo.numeroCivico }}</td>
+				<td>{{ prossima.indirizzo.numeroCivico }}</td>
+			</tr>
+			<tr>
+				<th>Stato</th>
+				<td>{{ attuale.indirizzo.stato }}</td>
+				<td>{{ prossima.indirizzo.stato }}</td>
+			</tr>
+
+			<tr>
+				<th>Provincia / Regione (estera)</th>
+				<td>{{ attuale.indirizzo.comune.provincia ? attuale.indirizzo.comune.provincia : attuale.indirizzo.comune.provinciaEstera }}</td>
+				<td>{{ prossima.indirizzo.comune.provincia ? prossima.indirizzo.comune.provincia : prossima.indirizzo.comune.provinciaEstera }}</td>
+			</tr>
+			<tr>
+				<th>Città (estera)</th>
+				<td>{{ attuale.indirizzo.comune ? attuale.indirizzo.comune : attuale.indirizzo.comuneEstero }}</td>
+				<td>{{ prossima.indirizzo.comune ? prossima.indirizzo.comune : prossima.indirizzo.comuneEstero}}</td>
+			</tr>
+			<tr>
+				<th>CAP</th>
+				<td>{{ attuale.indirizzo.cap }}</td>
+				<td>{{ prossima.indirizzo.cap }}</td>
+			</tr>
+			<tr>
+				<th>Località/Frazione</th>
+				<td>{{ attuale.indirizzo.localita }}</td>
+				<td>{{ prossima.indirizzo.localita }}</td>
+			</tr>
+		</tbody>
+	</table>
+{% endblock content %}

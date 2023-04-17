@@ -1,0 +1,8 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+	<p class="lead">{{error_message}}</p><br>
+	{% if redirect %}
+		<a type="button" class="btn btn-default" href="{{ path(redirect) }}">Ritorna</a></li>
+
+	{% endif %}
+{% endblock %}

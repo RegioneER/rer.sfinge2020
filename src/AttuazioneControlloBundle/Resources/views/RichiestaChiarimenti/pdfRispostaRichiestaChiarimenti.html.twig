@@ -1,0 +1,59 @@
+{% extends ':pdf:base.pdf.html.twig' %}
+
+{% import '@AttuazioneControllo/Pdf/macro/macro_attuazione.html.twig' as macro_attuazione %}
+
+{% block content %}
+
+	{% block dati_intestazione %}
+		 <div class="center">
+			{% if richiesta.procedura.asse.codice == 'A0' %}
+				<img src="assets/img/regione/logo_ue-regione-emilia-romagna.jpg" alt="Loghi regione" height="60px">
+			{% else %}
+				<img src="assets/img/regione/logo_ue-por_fesr_2020.jpg" alt="Loghi regione" height="60px">
+			{% endif %}
+			<h2 align="center">{{ richiesta.procedura.titolo }}</h2>
+			<p class="text-medium">{{ richiesta.procedura.asse.titolo }} - {{ richiesta.procedura.asse.descrizione }}</p>
+			<p class="text-medium">{{ richiesta.procedura.azioni|join(';') }}</p>
+        </div>
+	{% endblock dati_intestazione %}
+	
+	{% block dati_regione %}
+        <table style="border: 0" width="90%">
+            <tr>
+                <td style="border: 0" width="30%">&nbsp;</td>
+                <td style="border: 0" width="30%">&nbsp;</td>
+                <td style="border: 0" width="40%" align="left">
+                    {{ macro_attuazione.dati_regione_chiarimenti(richiesta.procedura.asse.codice) }}
+                </td>
+            </tr>
+        </table>
+    {% endblock dati_regione %}
+
+	<h3 align="center">Risposta richiesta di chiarimenti</h3>
+	<div>
+		In relazione alla richiesta di chiarimenti con protocollo n° {{ risposta_rich_chiarimenti.richiestachiarimenti.protocollorichiestachiarimenti }}<br>
+		si forniscono le seguenti risposte.
+	</div>
+	
+	<br>
+	
+	<div>
+		<strong>Nota del beneficiario:</strong> {{ risposta_rich_chiarimenti.testo ? risposta_rich_chiarimenti.testo|replace({'\r\n' : '<br>', '\n' : '<br>'})|raw : '-' }}
+	</div>	
+
+	{% if risposta_rich_chiarimenti.documenti|length > 0 %}
+		
+		<br><br>
+		
+		<strong>Documentazione allegata</strong>
+		<ul>
+			
+			{% for d in risposta_rich_chiarimenti.documenti %}
+				<li>{{ d.descrizione }}</li>
+			{% endfor %}	
+		
+		</ul>
+	
+	{% endif %}
+	
+{% endblock %}

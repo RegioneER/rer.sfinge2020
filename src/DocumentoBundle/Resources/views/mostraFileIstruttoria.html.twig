@@ -1,0 +1,51 @@
+<div class="row">
+	<div class="col-md-2">		
+		{% if istruttoria is null %}	
+			<span class="text-danger">Da istruire</span>
+		{% elseif istruttoria.statoValutazione == 'Completa' %}
+			<span class="text-success">{{istruttoria.statoValutazione}}</span>
+		{% elseif istruttoria.statoValutazione == 'Incompleta' %}
+			<span class="text-warning">{{istruttoria.statoValutazione}}</span>
+		{% elseif istruttoria.statoValutazione == 'Integrazione' %}
+			<span class="text-info">{{istruttoria.statoValutazione}}</span>
+		{% endif %}		
+	</div>
+    <div class="col-md-3 wrap-text">
+        {% if firmato %}
+            {{ nomeFirmato }}
+        {% else %}
+            {{ nome }}
+        {% endif %}
+    </div>
+    <div class="col-md-3">
+		{% if oggetto_documento.nota is not null %}
+			{{ documento.tipologiaDocumento.descrizione }}:<br/>
+			{{ oggetto_documento.nota }}
+		{% else %}
+			{{ documento.tipologiaDocumento.descrizione }}
+		{% endif %}
+    </div>
+    <div class="col-md-4 pull-right">
+        {% if firmato and pathIstruttoria is not null%}
+            <div class="pull-right">
+                <a class="btn btn-sm btn-primary" title="Scarica documento firmato" href="{{ path("scarica", {"path_codificato":path}) }}" target="_blank">Scarica <small class="italic">(p7m)</small></a>
+                <a class="btn btn-sm btn-info" title="Scarica documento" href="{{ path("scarica_originale", {"path_codificato":path}) }}" target="_blank">Scarica Originale</a>
+                {% if mostra_tasto_istruttoria is not defined or mostra_tasto_istruttoria == true %}
+					<a class="btn btn-sm btn-danger" title="Istruttoria Documento" href="{{ pathIstruttoria }}">Istruttoria</a>
+				{% endif %}
+            </div>
+        {% else %}
+            {% if pathIstruttoria is not null and is_granted('ROLE_ISTRUTTORE_ATC') %}
+                <div class="pull-right">
+                    <a class="btn btn-sm btn-primary" href="{{ path("scarica", {"path_codificato":path}) }}" target="_blank">Scarica</a>
+					{% if mostra_tasto_istruttoria is not defined or mostra_tasto_istruttoria == true %}
+						<a class="btn btn-sm btn-danger" title="Istruttoria Documento" href="{{ pathIstruttoria }}">Istruttoria</a>
+					{% endif %}	
+                </div>
+            {% else %}
+                <a class="btn btn-sm btn-primary" href="{{ path("scarica", {"path_codificato":path}) }}" target="_blank">Scarica</a>
+            {% endif %}
+        {% endif %}
+    </div>
+
+</div>

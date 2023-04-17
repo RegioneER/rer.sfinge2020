@@ -1,0 +1,38 @@
+{% if proceduraProgrammi|length > 0%}
+        <table class="table table-striped table-hover table-bordered" style="margin-bottom: 5em;">
+            <thead>
+                <tr>
+                    <th>Programma</th>
+                    <th>Importo</th>
+                    <th>Azioni</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for programma in proceduraProgrammi %}
+                {% set cancellato = programma.datacancellazione is not null %}
+                <tr>
+                    <td>
+                        {{ programma.tc4programma }}
+                    </td>
+                    <td>{{ programma.importo }}</td>
+                    <td>
+                        {% if form.vars.disabled %}
+                        <a class="btn btn-info dropdown-toggle" href="{{ path('visualizza_procedura_programma', {'id_procedura_programma': programma.id})}}">
+                            Visualizza
+                        </a>
+                        {% else %}
+                            <a class="btn btn-info dropdown-toggle" href="{{ path('modifica_procedura_programma', {'id_procedura_programma': programma.id})}}">
+                            Modifica
+                        </a>
+                        <a class="btn btn-info dropdown-toggle red" 
+                                href="{{path('elimina_procedura_programma',{ id_procedura_programma: programma.id, csrf: csrfToken })}}"
+                                data-confirm="Confermi la cancellazione?">
+                            <span class="fa fa-trash-o"></span> Elimina
+                        </a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}

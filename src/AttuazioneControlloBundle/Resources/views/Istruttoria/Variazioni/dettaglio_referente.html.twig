@@ -1,0 +1,48 @@
+{% extends 'AttuazioneControlloBundle:Istruttoria/Variazioni:baseIstruttoria.html.twig' %}
+{% block content %}
+    <h4>{{ proponente.soggetto }}</h4>
+    {% for variazioneReferente in variazione.variazioniSingoloReferente|filter(v => v.proponente == proponente) %}
+        <table class="table table-striped table-hover table-bordered" style="table-layout:fixed;">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Referente attuale</th>
+                    <th>Referente variato</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th>Persona</th>
+                    <td>{{ variazioneReferente.referenza.persona }}</td>
+                    <td>{{ variazioneReferente.persona }}</td>
+                </tr>
+                <tr>
+                    <th>Tipo referenza</th>
+                    <td>{{ variazioneReferente.referenza.tipoReferenza.descrizione }}</td>
+                    <td>{{ variazioneReferente.referenza.tipoReferenza.descrizione }}</td>
+                </tr>
+                {% if 'email_pec' in opzioni %}
+                <tr>
+                    <th>Email PEC</th>
+                    <td>{{ variazioneReferente.referenza.email_pec }}</td>
+                    <td>{{ variazioneReferente.email_pec }}</td>
+                </tr>
+                {% endif %}
+                {% if 'ruolo' in opzioni %}
+                <tr>
+                    <th>Ruolo</th>
+                    <td>{{ variazioneReferente.referenza.ruolo }}</td>
+                    <td>{{ variazioneReferente.ruolo }}</td>
+                </tr>
+                {% endif %}
+                {% if 'qualifica' in opzioni %}
+                <tr>
+                    <th>Qualifica</th>
+                    <td>{{ variazioneReferente.referenza.qualifica }}</td>
+                    <td>{{ variazioneReferente.qualifica }}</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    {% endfor %}
+{% endblock content %}

@@ -1,0 +1,14 @@
+{% extends 'AttuazioneControlloBundle:Variazioni:dettaglioVariazione.html.twig' %}
+{% block elementi_domanda %}
+{{ mostra_validazione_in_line_variazione(
+                    'referenti', 
+                    path('referenti_variazione', {
+                        id_variazione: variazione.id
+                        }), 
+                    'Referenti', 
+                    variazione, 
+                    null, 
+                    null,
+                    null) 
+                }}
+{% endblock elementi_domanda %}

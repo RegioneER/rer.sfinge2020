@@ -1,0 +1,13 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	
+	{% include 'AttuazioneControlloBundle:PA/Richieste:menu.html.twig' with {'attuazione_controllo' : richiesta.attuazioneControllo } %}	
+
+	{% for proponente in richiesta.proponenti %}
+		<h4>Dati Soggetto {{proponente.soggetto.denominazione}}</h4>
+		{{ mostra_soggetto(proponente.soggetto) }}
+	{% endfor %}
+
+
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+	
+	<h4>Importazione completata</h4>
+	<table class="table table-striped table-hover table-bordered" id="notizie-elenco">
+		{% for errore in errori %}
+			<tr>
+				<td>
+					{{errore}}
+				</td>
+			</tr>
+		{% endfor %}
+	</table>
+	
+{% endblock %}

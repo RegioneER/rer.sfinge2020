@@ -1,0 +1,47 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+
+    {{ form(form) }}
+
+<h4>Documenti allegati</h4>
+    <table class="table table-striped table-bordered table-hover">
+        <thead>
+            <th>File</th>
+            <th>Azioni</th>
+        </thead>
+        <tbody>
+        {% for doc in indicatore.documenti %}
+            <tr>
+                <td>{{ doc.nome }}</td>
+                <td>
+                    {% if doc is firmato %}
+                        <div class="dropdown pull-right">
+							<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								Azioni
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+								<li>
+                                    <a href="{{- path("scarica", {"path_codificato":doc|path}) -}}">
+                                        <i class="fa fa-download" aria-hidden="true"></i>&nbsp;Scarica
+                                    </a>
+                                     <a href="{{- path("scarica_originale", {"path_codificato":doc|path}) -}}">
+                                        <i class="fa fa-download" aria-hidden="true"></i>&nbsp;Scarica firmato
+                                    </a>
+                                </li>
+							</ul>
+						</div>
+                    {% else %}
+                        <a href="{{- path("scarica", {"path_codificato":doc|path}) -}}">
+                            <i class="fa fa-download" aria-hidden="true"></i>&nbsp;Scarica
+                        </a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
+{% endblock %}

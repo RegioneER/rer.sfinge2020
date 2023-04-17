@@ -1,0 +1,51 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}	
+	
+	<div class="form-body">
+		<form method="post" enctype="multipart/form-data">
+			<b>File .xls:</b> <input type="file" name="xlsFile" id="xlsFile" accept=".xls">
+			<br>
+			<input class="btn btn-primary" type="submit" value="Carica e Importa">
+		</form>
+	</div>
+	
+	
+	{% if acronimiNotMatch is defined %}		
+		{% if acronimiNotMatch|length != 0 %}			
+			<div class="alert alert-danger">Acronimi non trovati su Sfinge 2020</div>
+			
+			<table class="table table-bordered">
+				<thead>
+					<tr>
+						<th>Riga Excel</th>
+						<th>Protocollo</th>
+						<th>Acronimo Laboratorio (su excel)</th>
+						<th>Acronimo Normalizzato (su excel)</th>
+						<th>Acronimo Laboratorio sch31 (su excel)</th>
+						<th>Acronimi Laboratorio su Sfinge 2020</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for riga_excel, dati in acronimiNotMatch %}
+						<tr>
+							<td>{{riga_excel}}</td>
+							<td>{{dati['protocollo']}}</td>
+							<td>{{dati['acron_lab_excel']}}</td>
+							<td>{{dati['acron_norm_excel']}}</td>
+							<td>{{dati['acron_sc31_excel']}}</td>
+							<td>
+								<ul>
+									{% for ac in dati['acron_db'] %}
+										<li>{{ac}}</li>
+									{% endfor %}	
+								</ul>
+							</td>
+						</tr>	
+					{% endfor %}
+				</tbody>
+			</table>			
+		{% endif %}		
+	{% endif %}
+	
+{% endblock %}	

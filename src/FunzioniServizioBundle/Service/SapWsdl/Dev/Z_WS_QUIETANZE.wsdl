@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="Z_WS_QUIETANZE" targetNamespace="http://emilia-romagna.it/contabilita/interfacce/ext"
+                  xmlns:rfc="urn:sap-com:document:sap:rfc:functions"
+                  xmlns:p1="http://emilia-romagna.it/contabilita/interfacce/ext"
+                  xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
+                  xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    <wsdl:documentation/>
+    <wsp:UsingPolicy wsdl:required="false"/>
+    <wsp:Policy wsu:Id="OP_Z_WS_CREA_QUIETANZA"/>
+    <wsp:Policy wsu:Id="OP_Z_WS_CHECK_IBAN"/>
+    <wsdl:types>
+        <xsd:schema targetNamespace="urn:sap-com:document:sap:rfc:functions"
+                    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="urn:sap-com:document:sap:rfc:functions">
+            <xsd:element name="Z_WS_CREA_QUIETANZA.Response">
+                <xsd:complexType>
+                    <xsd:all>
+                        <xsd:element name="E_DESCR_MOD_PAG" minOccurs="0">
+                            <xsd:simpleType>
+                                <xsd:restriction base="xsd:string">
+                                    <xsd:maxLength value="255"/>
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:element>
+                        <xsd:element name="E_MESSAGES" minOccurs="0">
+                            <xsd:complexType>
+                                <xsd:sequence>
+                                    <xsd:element name="item" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+                                </xsd:sequence>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="E_PROGRESSIVO" minOccurs="0">
+                            <xsd:simpleType>
+                                <xsd:restriction base="xsd:string">
+                                    <xsd:maxLength value="4"/>
+                                    <xsd:pattern value="\d+"/>
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:element>
+                        <xsd:element name="E_RC" type="xsd:integer" minOccurs="0"/>
+                    </xsd:all>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="Z_WS_CREA_QUIETANZA">
+                <xsd:complexType>
+                    <xsd:all>
+                        <xsd:element name="I_BUKRS">
+                            <xsd:simpleType>
+                                <xsd:restriction base="xsd:string">
+                                    <xsd:maxLength value="4"/>
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:element>
+                        <xsd:element name="I_IBAN">
+                            <xsd:simpleType>
+                                <xsd:restriction base="xsd:string">
+                                    <xsd:maxLength value="34"/>
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:element>
+                        <xsd:element name="I_LIFNR">
+                            <xsd:simpleType>
+                                <xsd:restriction base="xsd:string">
+                                    <xsd:maxLength value="10"/>
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:element>
+                        <xsd:element name="I_NOME_BANCA_ESTERA" minOccurs="0">
+                            <xsd:simpleType>
+                                <xsd:restriction base="xsd:string">
+                                    <xsd:maxLength value="100"/>
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:element>
+                        <xsd:element name="I_SWIFT" minOccurs="0">
+                            <xsd:simpleType>
+                                <xsd:restriction base="xsd:string">
+                                    <xsd:maxLength value="11"/>
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:element>
+                        <xsd:element name="I_TP_QUIET">
+                            <xsd:simpleType>
+                                <xsd:restriction base="xsd:string">
+                                    <xsd:maxLength value="2"/>
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:element>
+                    </xsd:all>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="Z_WS_CHECK_IBAN">
+                <xsd:complexType>
+                    <xsd:all>
+                        <xsd:element name="I_BUKRS">
+                            <xsd:simpleType>
+                                <xsd:restriction base="xsd:string">
+                                    <xsd:maxLength value="4"/>
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:element>
+                        <xsd:element name="I_IBAN">
+                            <xsd:simpleType>
+                                <xsd:restriction base="xsd:string">
+                                    <xsd:maxLength value="34"/>
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:element>
+                    </xsd:all>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="Z_WS_CHECK_IBAN.Response">
+                <xsd:complexType>
+                    <xsd:all>
+                        <xsd:element name="E_MESSAGES" minOccurs="0">
+                            <xsd:complexType>
+                                <xsd:sequence>
+                                    <xsd:element name="item" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+                                </xsd:sequence>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="E_RC" type="xsd:integer" minOccurs="0"/>
+                    </xsd:all>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="rfc.Z_WS_CREA_QUIETANZA.Input">
+        <wsdl:documentation/>
+        <wsdl:part name="parameters" element="rfc:Z_WS_CREA_QUIETANZA"/>
+    </wsdl:message>
+    <wsdl:message name="rfc.Z_WS_CREA_QUIETANZA.Output">
+        <wsdl:documentation/>
+        <wsdl:part name="parameters" element="rfc:Z_WS_CREA_QUIETANZA.Response"/>
+    </wsdl:message>
+    <wsdl:message name="rfc.Z_WS_CHECK_IBAN.Input">
+        <wsdl:documentation/>
+        <wsdl:part name="parameters" element="rfc:Z_WS_CHECK_IBAN"/>
+    </wsdl:message>
+    <wsdl:message name="rfc.Z_WS_CHECK_IBAN.Output">
+        <wsdl:documentation/>
+        <wsdl:part name="parameters" element="rfc:Z_WS_CHECK_IBAN.Response"/>
+    </wsdl:message>
+    <wsdl:portType name="Z_WS_QUIETANZE">
+        <wsdl:documentation/>
+        <wsdl:operation name="Z_WS_CREA_QUIETANZA">
+            <wsdl:documentation/>
+            <wsp:Policy>
+                <wsp:PolicyReference URI="#OP_Z_WS_CREA_QUIETANZA"/>
+            </wsp:Policy>
+            <wsdl:input message="p1:rfc.Z_WS_CREA_QUIETANZA.Input"/>
+            <wsdl:output message="p1:rfc.Z_WS_CREA_QUIETANZA.Output"/>
+        </wsdl:operation>
+        <wsdl:operation name="Z_WS_CHECK_IBAN">
+            <wsdl:documentation/>
+            <wsp:Policy>
+                <wsp:PolicyReference URI="#OP_Z_WS_CHECK_IBAN"/>
+            </wsp:Policy>
+            <wsdl:input message="p1:rfc.Z_WS_CHECK_IBAN.Input"/>
+            <wsdl:output message="p1:rfc.Z_WS_CHECK_IBAN.Output"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="Z_WS_QUIETANZEBinding" type="p1:Z_WS_QUIETANZE">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"
+                      xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+        <wsdl:operation name="Z_WS_CREA_QUIETANZA">
+            <soap:operation soapAction="http://sap.com/xi/WebService/soap1.1"
+                            xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+            <wsdl:input>
+                <soap:body use="literal" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Z_WS_CHECK_IBAN">
+            <soap:operation soapAction="http://sap.com/xi/WebService/soap1.1"
+                            xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+            <wsdl:input>
+                <soap:body use="literal" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="Z_WS_QUIETANZEService">
+        <wsdl:port name="HTTP_Port" binding="p1:Z_WS_QUIETANZEBinding">
+            <soap:address
+                    location="https://test-piws.regione.emilia-romagna.it:443/XISOAPAdapter/MessageServlet?senderParty=RER&amp;senderService=Sfinge&amp;receiverParty=&amp;receiverService=&amp;interface=Z_WS_QUIETANZE&amp;interfaceNamespace=http%3A%2F%2Femilia-romagna.it%2Fcontabilita%2Finterfacce%2Fext"
+                    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

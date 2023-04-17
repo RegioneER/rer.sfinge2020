@@ -1,0 +1,123 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+    {{ form_errors(form) }}
+    {{ form_start(form) }}
+        {{ form_row(form.responsabile)}}
+        {{ form_row(form.rup)}}
+        {{ form_row(form.fase)}}
+        {{ form_row(form.atto)}}
+        {{ form_row(form.titolo)}}
+        {{ form_row(form.risorse_disponibili)}}
+        {{ form_row(form.asse)}}
+        {{ form_row(form.obiettivi_specifici)}}
+        {{ form_row(form.azioni)}}
+        {{ form_row(form.amministrazione_emittente)}}
+        {{ form_row(form.tipo_iter)}}
+        {{ form_row(form.tipo_finanziamento)}}
+        {{ form_row(form.tipo_aiuto)}}
+        {{ form_row(form.anno_programmazione)}}
+        {{ form_row(form.codice_cci)}}
+        {{ form_row(form.fondo)}}
+        {{ form_row(form.categoria_regione)}}
+        {{ form_row(form.sportello)}}
+		{{ form_row(form.generatore_entrate)}}
+		{{ form_row(form.spese_ammissibili_forfettario)}}
+		{{ form_row(form.spese_pubbliche_forfettario)}}
+        {{ form_row(form.aiuto_stato)}}
+        {{ form_row(form.organismo)}}
+        {{ form_row(form.priorita_procedura)}}
+        {{ form_row(form.tipo_procedura_monitoraggio)}}
+        {{ form_row(form.data_approvazione)}}
+        {{ form_row(form.data_pubblicazione)}}
+        {{ form_row(form.data_ora_inizio_presentazione)}}
+        {{ form_row(form.data_ora_fine_presentazione)}}
+        {{ form_row(form.data_ora_fine_creazione)}}
+        {{ form_row(form.data_ora_scadenza)}}
+        {{ form_row(form.anticipo)}}
+        {{ form_row(form.rimborso)}}
+        {{ form_row(form.pagamento_soluzione_unica)}}
+        {{ form_row(form.tipi_operazioni)}}
+        {{ form_row(form.numero_richieste)}}
+        {{ form_row(form.numero_proponenti)}}
+        {{ form_row(form.stato_procedura)}}
+        {{ form_row(form.modalita_finanziamento_attiva)}}
+        {{ form_row(form.rating)}}
+        {{ form_row(form.femminile)}}
+        {{ form_row(form.giovanile)}}
+        {{ form_row(form.incremento_occupazionale)}}
+        {{ form_row(form.dati_incremento_occupazionale)}}
+        {{ form_row(form.fornitori)}}
+        {{ form_row(form.requisiti_rating)}}
+        {{ form_row(form.stelle)}}
+        {{ form_row(form.marca_da_bollo)}}
+        {{ form_row(form.tipologia_marca_da_bollo)}}
+        {{ form_row(form.esenzione_marca_bollo)}}
+        {{ form_row(form.sezione_video)}}
+        {{ form_row(form.rendicontazione_attiva)}}
+        {{ form_row(form.proroga_attiva) }}
+        {{ form_row(form.richiesta_firma_digitale) }}
+        {{ form_row(form.richiesta_firma_digitale_step_successivi) }}
+        {{ form_row(form.mostra_contatore_richieste_presentate) }}
+
+        <h4>Dati di Monitoraggio</h4>
+
+        {{ form_row(form.mon_tipo_procedura_attivazione) }}
+        {{ form_row(form.mon_proc_att)}}
+        {{ form_row(form.mon_cod_aiuto_rna)}}
+        {{ form_row(form.mon_flag_aiuti)}}
+        {{ form_row(form.mon_data_avvio_procedura)}}
+        {{ form_row(form.mon_data_fine_procedura)}}
+        {{ form_row(form.pulsanti)}}
+    {{ form_rest(form) }}
+    {{ form_end(form) }}
+
+    <h4>Elenco programmi</h4>
+    <div style="margin-top: 5em;">
+        {% include 'SfingeBundle:Procedura:tabella_programmi_procedure.html.twig' with {'proceduraProgrammi':proceduraProgrammi} %}
+        {% if formProgramma is defined %}
+            {{form(formProgramma)}}
+        {% endif %}
+    </div>
+	{%block  jquery_page_document_ready %}
+            {% set vars = {'procedura': 'bando', 'form' : form }%}
+            {% include "BaseBundle:Base:assi_obiettivi_js.html.twig" with vars %}
+	{% endblock %}
+	
+	<script>
+        $(document).ready(function() {
+            $("#bando_tipo_aiuto").change(function() {
+                var selezionati = "";
+                $("#bando_tipo_aiuto option:selected").each(function() {
+                  selezionati += $(this).text();
+                });			
+                if (selezionati == "" || selezionati == "Intervento che non costituisce aiuto di stato"){
+                    $("#bando_aiuto_stato").prop("checked", false);
+                } else {
+                    $("#bando_aiuto_stato").prop("checked", true);
+                }
+            });
+
+            if (!$("#bando_marca_da_bollo").is(":checked")) {
+                if ($('#bando_tipologia_marca_da_bollo').data('select2')) {
+                    $('#bando_tipologia_marca_da_bollo').select2('destroy');
+                }
+
+                $('#bando_tipologia_marca_da_bollo').val('').parent('div').parent('div').hide();
+            }
+
+            $("#bando_marca_da_bollo").change(function() {
+                if ($("#bando_marca_da_bollo").is(":checked")){
+                    $('#bando_tipologia_marca_da_bollo').select2();
+                    $('#bando_tipologia_marca_da_bollo').parent('div').parent('div').show();
+                } else {
+                    if ($('#bando_tipologia_marca_da_bollo').data('select2')) {
+                        $('#bando_tipologia_marca_da_bollo').select2('destroy');
+                    }
+
+                    $('#bando_tipologia_marca_da_bollo').val('').parent('div').parent('div').hide();
+                }
+            });
+        });
+
+    </script>
+{% endblock %}

@@ -1,0 +1,106 @@
+{% extends '::base.html.twig' %}
+
+{% block intestazione %}
+    {{ parent() }}
+    {{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% block body %}
+    <h4>Gestione priorità</h4>
+        {{ form_start(form) }}
+		{{ form_row(form.sistema_produttivo) }}
+		{{ form_row(form.orientamento_tematico) }}
+		
+		{% if has_priorita_tecnologiche == 1 %}
+			{{ form_row(form.priorita_tecnologiche) }}
+		{% endif %}
+		
+		{% if has_driver_kets == 1 %}
+			{{ form_row(form.drivers) }}
+			{{ form_row(form.kets) }}
+		{% endif %}
+		{{ form_end(form) }}
+
+<script>
+var $id_sistema_produttivo = '{{ form.sistema_produttivo.vars.id }}';		
+var $sistema_produttivo = $('#'+$id_sistema_produttivo);
+
+var $id_orientamento_tematico = '{{ form.orientamento_tematico.vars.id }}';		
+var $orientamento_tematico = $('#'+$id_orientamento_tematico);
+
+{% if has_priorita_tecnologiche == 1 %}
+	var $id_priorita_tecnologiche = '{{ form.priorita_tecnologiche.vars.id }}';	
+	var $priorita_tecnologiche = $('#'+$id_priorita_tecnologiche);
+{% endif %}
+
+var $in_corso = false;
+
+$sistema_produttivo.change(function() {
+	if ($in_corso) return;
+	$in_corso = true;
+	var $form = $(this).closest('form');
+	var data = {};
+	data[$sistema_produttivo.attr('name')] = $sistema_produttivo.val();
+	data[$orientamento_tematico.attr('name')] = $orientamento_tematico.val();
+	data["priorita_strategia_proponente[_token]"] = $("#priorita_strategia_proponente__token").val();
+  
+ 	$orientamento_tematico.prop("disabled", true);
+	$orientamento_tematico.trigger("change");
+	
+	{% if has_priorita_tecnologiche == 1 %}
+		$priorita_tecnologiche.prop("disabled", false);
+		$priorita_tecnologiche.trigger("change");
+	{% endif %}
+
+  $.ajax({
+    url : "?no-flush",
+    type: $form.attr('method'),
+    data : data,
+
+    success: function(html) {
+		$orientamento_tematico.html($(html).find('#'+$id_orientamento_tematico).html());
+		{% if has_priorita_tecnologiche == 1 %}
+			$priorita_tecnologiche.html($(html).find('#'+$id_priorita_tecnologiche).html());
+		{% endif %}
+	  
+		$orientamento_tematico.prop("disabled", false);
+		$orientamento_tematico.trigger("change");		  
+		{% if has_priorita_tecnologiche == 1 %}
+			$priorita_tecnologiche.prop("disabled", false);
+			$priorita_tecnologiche.trigger("change");
+		{% endif %}
+		$in_corso = false;	
+    }
+  });
+});
+
+$orientamento_tematico.change(function() {
+	if ($in_corso) return;
+	$in_corso = true;	
+	var $form = $(this).closest('form');
+	var data = {};
+	data[$sistema_produttivo.attr('name')] = $sistema_produttivo.val();
+	data[$orientamento_tematico.attr('name')] = $orientamento_tematico.val();
+	data["priorita_strategia_proponente[_token]"] = $("#priorita_strategia_proponente__token").val();
+
+	{% if has_priorita_tecnologiche == 1 %}
+		$priorita_tecnologiche.prop("disabled", true);
+		$priorita_tecnologiche.trigger("change");
+	{% endif %}
+  $.ajax({
+    url : "?no-flush",
+    type: $form.attr('method'),
+    data : data,
+
+    success: function(html) {	  
+	{% if has_priorita_tecnologiche == 1 %}
+		$priorita_tecnologiche.html($(html).find('#'+$id_priorita_tecnologiche).html());
+		$priorita_tecnologiche.prop("disabled", false);
+		$priorita_tecnologiche.trigger("change");
+	{% endif %}
+		$in_corso = false;
+    }
+  });
+});
+</script>		
+{% endblock %}

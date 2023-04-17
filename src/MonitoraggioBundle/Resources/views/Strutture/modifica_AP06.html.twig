@@ -1,0 +1,9 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <h4>Inserimento nuova voce in {{tabella.descrizione}}</h4>
+    {{ form(form) }}
+{% endblock %}
+{% block  jquery_page_document_ready %}
+   <script src="{{ asset('assets/scripts/ajaxTCforms.js') }}"></script>
+{% endblock %}	

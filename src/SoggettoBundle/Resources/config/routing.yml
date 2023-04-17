@@ -1,0 +1,119 @@
+soggetti_giuridici_consultazione:
+    resource: "@SoggettoBundle/Controller/SoggettoGiuridicoConsultazioneController.php"
+    type: annotation
+    prefix: /soggetti_giuridici/consultazione
+
+soggetti_giuridici_gestione:
+    resource: "@SoggettoBundle/Controller/SoggettoGiuridicoGestioneController.php"
+    type:    annotation
+    prefix:   /soggetti_giuridici/gestione
+
+soggetti_comuni_consultazione:
+    resource: "@SoggettoBundle/Controller/ComuniUnioniConsultazioneController.php"
+    type:    annotation
+    prefix:   /comuni/consultazione
+
+soggetti_comuni_gestione:
+    resource: "@SoggettoBundle/Controller/ComuniUnioniGestioneController.php"
+    type:    annotation
+    prefix:   /comuni/gestione   
+    
+soggetti_comuni_consultazione_sedi:
+    resource: "@SoggettoBundle/Controller/ComuniUnioniConsultazioneSedeController.php"
+    type:    annotation
+    prefix:   /comuni/consultazione/sedi_operative  
+    
+soggetti_comun_gestione_sedi:
+    resource: "@SoggettoBundle/Controller/ComuniUnioniGestioneSedeController.php"
+    type:    annotation
+    prefix:   /comuni/gestione/sedi_operative 
+
+soggetti_azienda_consultazione:
+    resource: "@SoggettoBundle/Controller/AziendaConsultazioneController.php"
+    type:    annotation
+    prefix:   /aziende/consultazione
+    
+soggetti_azienda_gestione:
+    resource: "@SoggettoBundle/Controller/AziendaGestioneController.php"
+    type:    annotation
+    prefix:   /aziende/gestione  
+    
+soggetti_azienda_consultazione_sedi:
+    resource: "@SoggettoBundle/Controller/AziendaConsultazioneSedeController.php"
+    type:    annotation
+    prefix:   /aziende/consultazione/sedi_operative    
+
+soggetti_azienda_gestione_sedi:
+    resource: "@SoggettoBundle/Controller/AziendaGestioneSedeController.php"
+    type:    annotation
+    prefix:   /aziende/gestione/sedi_operative    
+
+soggetti_soggetto_gestione_sedi:
+    resource: "@SoggettoBundle/Controller/SoggettoGestioneSedeController.php"
+    type:    annotation
+    prefix:   /soggetto/gestione/sedi_operative    
+    
+soggetti_soggetto_consultazione_sedi:
+    resource: "@SoggettoBundle/Controller/SoggettoConsultazioneSedeController.php"
+    type:    annotation
+    prefix:   /soggetto/consultazione/sedi_operative
+
+soggetti_persona_fisica_consultazione_sedi:
+    resource: "@SoggettoBundle/Controller/PersonaFisicaConsultazioneSedeController.php"
+    type: annotation
+    prefix: /persona_fisica/consultazione/sedi_operative
+
+soggetti_persona_fisica_gestione_sedi:
+    resource: "@SoggettoBundle/Controller/PersonaFisicaGestioneSedeController.php"
+    type:    annotation
+    prefix:   /persona_fisica/gestione/sedi_operative
+
+soggetti_soggetto_consultazione:
+    resource: "@SoggettoBundle/Controller/SoggettoConsultazioneController.php"
+    type:    annotation
+    prefix:   /soggetti/consultazione
+    
+soggetti_soggetto_gestione:
+    resource: "@SoggettoBundle/Controller/SoggettoGestioneController.php"
+    type:    annotation
+    prefix:   /soggetti/gestione
+
+soggetti_persona_fisica_consultazione:
+    resource: "@SoggettoBundle/Controller/PersonaFisicaConsultazioneController.php"
+    type: annotation
+    prefix: /persona_fisica/consultazione
+
+soggetti_persona_fisica_gestione:
+    resource: "@SoggettoBundle/Controller/PersonaFisicaGestioneController.php"
+    type: annotation
+    prefix: /persona_fisica/gestione
+
+soggetti_selezione:
+    resource: "@SoggettoBundle/Controller/SelezioneSoggettoController.php"
+    type:    annotation
+    prefix:   /selezione_soggetto
+
+incarichi:
+    resource: "@SoggettoBundle/Controller/IncaricoGestioneController.php"
+    type:    annotation
+    prefix:   /incarichi/gestione
+
+incarichi_gestione:
+    resource: "@SoggettoBundle/Controller/IncaricoApprovazioneController.php"
+    type:    annotation
+    prefix:   /incarichi/approvazione
+    
+incarichi_consultazione:
+    resource: "@SoggettoBundle/Controller/IncaricoConsultazioneController.php"
+    type:    annotation
+    prefix:   /incarichi/consultazione   
+    
+autorita_urbane:
+    resource: "@SoggettoBundle/Controller/AllegatiOrganismiIntermediController.php"
+    type:    annotation
+    prefix:   /autorita_urbane 
+    
+soggetti_base:
+    resource: "@SoggettoBundle/Controller/SoggettoBaseController.php"
+    type:    annotation
+    prefix:   /soggetti/base  

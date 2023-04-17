@@ -1,0 +1,22 @@
+{% extends '::base.html.twig' %}
+
+    {% block body %}
+        <p class="lead">SAP test suite - Visualizza beneficiario</p>
+
+        {{ form_start(form) }}
+
+        {{ form_row(form.impegno) }}
+        {{ form_row(form.posizione) }}
+
+        {{ form_end(form) }}
+
+        <a href="{{ path('sap_test_suite') }}">Torna alla suite</a>
+
+        {% if result is not null %}
+            <br />
+            <br />
+            <pre>{{ result|json_encode(constant('JSON_PRETTY_PRINT')) }}
+            </pre>
+        {% endif %}
+
+    {% endblock %}

@@ -1,0 +1,200 @@
+{% extends '::base.html.twig' %}
+
+
+{% block body %}
+    {% include 'MonitoraggioBundle:Progetti:menu.html.twig' with {'page_view' : page_view }%}
+    {% set prototype = form.classificazioni.vars.prototype %}
+    {% set child = prototype.children %}
+    {{ form_errors(form) }}
+    {{ form_start(form) }}
+    <h4>Gestione classificazioni legate al programma per il progetto</h4>
+    {% form_theme form.classificazioni _self %}
+    {{ form_errors(form.classificazioni) }}
+
+    {% if form.classificazioni|length >0 %}
+        {% set visualizzazioneTabellaClassificazioni = 'visibility:visible' %}
+    {% else%}
+        {% set visualizzazioneTabellaClassificazioni = 'visibility:hidden' %}
+        <h5>Nessun elemento trovato</h5></br>
+    {% endif %}
+
+    <table id="{{- form.classificazioni.vars.id -}}"
+        style="{{ visualizzazioneTabellaClassificazioni }}"
+        data-prototype="{{- form_row(prototype)|e -}}"
+        data-elementi="{{- form.classificazioni|length -}}" 
+        class="table table-striped table-hover table-bordered" >
+        <thead>
+            <tr>
+                <th>{{- child.tipo_classificazione.vars.label -}}</th>
+                <th>{{- child.classificazione.vars.label -}}</th>
+                {% if app.user is not null and (is_granted('ROLE_MONITORAGGIO_SCRITTURA')) %}
+                    <th>Azioni</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for classificazione in form.classificazioni %}
+                 {{ form_row(classificazione) }}
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+    {% if app.user is not null and (is_granted('ROLE_MONITORAGGIO_SCRITTURA')) %}
+        <div>
+            <a onclick="aggiungiElemento(this);" class="btn btn-page-action btn-primary">Aggiungi</a>
+        </div>
+    {% endif %}
+
+    <h4>Gestione livelli gerarchici</h4>
+    {% set livelliGerarchici = form.mon_livelli_gerarchici %}
+    {% set livelliGerarchiciPrototype = livelliGerarchici.vars.prototype %} 
+    {% form_theme livelliGerarchici _self %}
+    {{ form_errors(livelliGerarchici) }}
+
+    {% if livelliGerarchici|length >0 %}
+        {% set visualizzazioneTabellaLivelli = 'visibility:visible' %}
+    {% else%}
+        {% set visualizzazioneTabellaLivelli = 'visibility:hidden' %}
+        <h5>Nessun elemento trovato</h5></br>
+    {% endif %}
+
+
+    <table id="{{- livelliGerarchici.vars.id -}}"
+        style="{{ visualizzazioneTabellaLivelli }}"
+        data-prototype="{{ form_row(livelliGerarchiciPrototype)|e}}" 
+        data-elementi="{{ livelliGerarchici|length }}" 
+        class="table table-striped table-hover table-bordered">
+        <thead>
+            <tr>
+                <th>Livello gerarchico</th>
+                {% if app.user is not null and (is_granted('ROLE_MONITORAGGIO_SCRITTURA')) %}
+                    <th>Azioni</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for livello in livelliGerarchici %}
+                    {{ form_row(livello) }}
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+    {% if app.user is not null and (is_granted('ROLE_MONITORAGGIO_SCRITTURA')) %}
+        <div>
+            <a onclick="aggiungiElemento(this);" class="btn btn-page-action btn-primary">Aggiungi</a>
+        </div>
+    {% endif %}
+
+
+    {{ form_rest(form) }}
+    {{ form_end(form) }}
+{% endblock %}
+
+{% block jquery_page_document_ready %}
+<script type="text/javascript">
+    'use strict';
+    function onChangeValue(element){
+        var elemento = $(element);
+        var target = elemento.parent().parent().find('td:nth-of-type(2) > select');
+
+        elemento.prop('disabled',true).select2();
+        target.prop('disabled',true).select2();
+        var tabella = elemento.val();
+        $.ajax({
+        'url': decodeURI("{{- path( 'monitoraggio_api_classificazione_richiesta_programma') -}}"),
+        'data': { 
+            'richiesta_programma': {{ richiesta_programma.id }},
+            'tipo_classificazione':tabella
+         },
+        'type': 'GET',
+        'success': function (data) {
+            target
+                .find('option')
+                .remove()
+                .end()
+                .trigger('change');
+
+            $.each(data, function (k, v) {
+            target.append($('<option></option>', {
+                    value: v.id
+                })
+                    .text(v.text)
+                );
+            });
+            elemento
+                .prop('disabled', false)
+                .select2();
+            target
+                .prop('disabled',false)
+                .trigger('change')
+                .select2();
+            App.initAjax();
+        }
+    });
+    }
+    
+    function aggiungiElemento(event){
+        var tabella = $(event)
+            .parent()
+            .prev('table');
+
+        $(tabella).css("visibility", "visible");
+
+        var numeroElementi = tabella.data('elementi');
+        var target = event.target;
+        var nuovoElemento = 
+            $(tabella)
+            .attr('data-prototype')
+            .replace(/__name__/g, numeroElementi++);
+
+        tabella.find('tbody')
+            .append(nuovoElemento);
+        tabella.data('elementi', numeroElementi);        
+
+        {# $(tabella)
+            .find('tbody > tr:last-of-type')
+            .find('.input-date, .datepicker, .date-picker > input')
+            .datetimepicker({
+                pickTime: false,
+                language: 'it',
+                direction: 'down'
+        }); #}
+        $(tabella).find('tbody> tr:last-of-type > td:first-of-type > select').trigger('change').select2();
+    }
+
+    function eliminaElemento( e ){
+        $(e).parent().parent().remove().trigger('change');
+    }
+
+    
+
+    
+</script>
+{% endblock %}
+
+{% block form_row -%}
+
+        {{ not form.vars.compound ? '<td>' : '' }}
+            {{- form_errors(form) -}}
+            {{- form_widget(form) -}}
+        {{ not form.vars.compound ? '</td>' : '' }}
+    
+{%- endblock form_row %}
+
+{% block form_widget_compound %}
+    {% if form.vars.prototype is not defined %}
+        <tr {{ block('widget_container_attributes') }}>
+            {{ block('form_rows') }}
+            {% if app.user is not null and (is_granted('ROLE_MONITORAGGIO_SCRITTURA')) %}
+            <td>
+                <button class="btn btn-info dropdown-toggle red" onclick="eliminaElemento(this);" >
+                    Elimina&nbsp;<i class="fa fa-trash"></i>
+                </button>
+            </td>
+            {% endif %}
+
+        </tr>
+    {% endif %}
+{% endblock %}

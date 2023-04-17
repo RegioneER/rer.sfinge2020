@@ -1,0 +1,120 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block begin_page_level_plugin_style %}
+	<link href="{{ asset('assets/css/wizard.css') }}" rel="stylesheet" type="text/css"/>
+{% endblock %}
+
+{% block body %}
+	
+	{% set richiesta = pagamento.richiesta %}
+	{% set richiesta = pagamento.richiesta %}
+	{% set variazioni = richiesta.attuazioneControllo.variazioni %}
+	{% set variazioniPendenti = variazioni|filter( v => v.pendente )%}
+	{% if variazioniPendenti|filter(v => v is instanceof('AttuazioneControlloBundle\\Entity\\VariazionePianoCosti'))|length > 0 %}
+		<div class="alert alert-warning" role="alert">
+			Per il progetto esiste una variazione in attesa di istruttoria
+			quindi il piano costi potrebbe non essere ancora aggiornato.
+		</div>
+	{% endif %}
+
+	{% if variazioniPendenti|filter(v => v is instanceof('AttuazioneControlloBundle\\Entity\\VariazioneDatiBancari'))|length > 0 %}
+		<div class="alert alert-warning" role="alert">
+			Per il progetto esiste una variazione dei dati bancari in attesa di istruttoria
+			quindi i dati bancari potrebbero non essere aggiornati.
+		</div>
+	{% endif %}
+
+    {% if variazioni|filter(v => v.stato.codice == 'VAR_PROTOCOLLATA')|length > 0 %}
+		<div class="alert alert-info" role="alert">
+			Per il progetto sono presenti variazioni.
+		</div>
+	{% endif %}
+
+
+	<h4>Riepilogo richiesta di pagamento</h4>
+	<table class="table table-striped table-hover">
+		<tr>
+			<td style="width: 40%;">Bando</td>
+			<td><strong>{{ pagamento.richiesta.procedura.titolo}}</strong></td>
+		</tr>
+		<tr>
+			<td>Protocollo richiesta</td>
+			<td><strong>{{ richiesta.protocollo }}</strong></td>
+		</tr>
+		<tr>
+			<td>Cup progetto</td>
+			<td><strong>{{ pagamento.richiesta.istruttoria.codicecup is null ? "-" : pagamento.richiesta.istruttoria.codicecup }}</strong></td>
+		</tr>
+		<tr>
+			<td>Titolo progetto</td>
+			<td><strong>{{ richiesta.titolo is not null ? richiesta.titolo : "-" }}</strong></td>
+		</tr>
+		<tr>
+			<td>Modalità richiesta di pagamento</td>
+			<td><strong>{{ pagamento.modalitaPagamento }}</strong></td>
+		</tr>
+		<tr>
+			<td>Importo richiesto</td>
+			<td><strong>&euro; {{ pagamento.importoRichiesto|number_format(2, ',', '.') }}</strong></td>
+		</tr>	
+		<tr>
+			<td>Data fideiussione</td>
+			<td><strong>{{ pagamento.dataFideiussione is null ? "-" : pagamento.dataFideiussione | date('d/m/Y') }}</strong></td>
+		</tr>
+		<tr>
+			<td>Data invio richiesta</td>
+			<td><strong>{{ pagamento.dataInvio is null ? "-" : pagamento.dataInvio | date('d/m/Y') }}</strong></td>
+		</tr>	
+	
+	</table>
+
+	<h6>Sezioni</h6>
+	<ul class="list-group list-checked">
+		
+		{% block sezioni %}
+
+			{{ mostra_validazione_in_line_istruttoria('date_progetto', path('date_progetto_istruttoria', {'id_pagamento':pagamento.id}), "Date progetto", pagamento) }}
+						
+			{{ mostra_validazione_in_line_istruttoria('dati_bancari', path('dati_bancari_pagamento_istruttoria', {'id_pagamento':pagamento.id}), "Dati bancari", pagamento) }}	
+					
+			{% if pagamento.modalitaPagamento.richiedeGiustificativi and pagamento.giustificativi | length > 0 %}
+				{{ mostra_validazione_in_line_istruttoria('giustificativi', path('elenco_giustificativi_istruttoria', {'id_pagamento':pagamento.id}), "Giustificativi", pagamento) }}	
+			{% endif %}			
+
+			{% if pagamento.isProceduraParticolare == false  %}
+				{{ mostra_validazione_in_line_istruttoria('documenti_progetto', path('documenti_progetto_istruttoria', {'id_pagamento':pagamento.id}), "Documenti progetto", pagamento) }}
+			{% endif %}
+			
+		{% endblock %}		
+	</ul>
+	
+
+
+	{% block sezioni_istruttore %}
+		<div class="page-actions">
+
+			<a class="btn btn-info" href="{{path('checklist_generale', {'id_pagamento': pagamento.id}) }}">Checklist</a>
+
+			{# verificare che condizione serve TODO #}
+			{% if pagamento.isProceduraParticolare == false  %}
+				{% set valutazione_cl = pagamento.valutazioniChecklist|last %}
+				{% if valutazione_cl and valutazione_cl.ammissibile %} 
+					<a class="btn btn-info" href="{{path('esito_finale_istruttoria_pagamenti', {'id_pagamento':pagamento.id})}}">Comunicazioni</a>
+				{% else %}
+					<a class="btn btn-info" href="{{path('integrazione_pagamento', {'id_pagamento':pagamento.id})}}">Comunicazioni</a>
+				{% endif %}
+			{% else %}
+				<a class="btn btn-info" href="{{path('integrazione_pagamento', {'id_pagamento':pagamento.id})}}">Comunicazioni</a>
+			{% endif %}
+
+			<a class="btn btn-info" href="{{path('mandato_pagamento', {'id_pagamento':pagamento.id})}}">Mandato</a>
+		</div>
+	{% endblock %}			
+	
+	<script type="text/javascript" language="javascript">
+		$(document).ready(function () {
+			$('[data-toggle="popover"]').popover();
+		});
+	</script>
+
+{% endblock %}

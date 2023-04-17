@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Soggetto list</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Denominazione</th>
+                <th>Partita_iva</th>
+                <th>Codice_fiscale</th>
+                <th>Data_registrazione</th>
+                <th>Data_costituzione</th>
+                <th>Sito_web</th>
+                <th>Dimensione</th>
+                <th>Email</th>
+                <th>Tel</th>
+                <th>Fax</th>
+                <th>Via</th>
+                <th>Civico</th>
+                <th>Cap</th>
+                <th>Localita</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for soggetto in soggettos %}
+            <tr>
+                <td><a href="{{ path('soggetto_show', { 'id': soggetto.id }) }}">{{ soggetto.id }}</a></td>
+                <td>{{ soggetto.denominazione }}</td>
+                <td>{{ soggetto.partitaiva }}</td>
+                <td>{{ soggetto.codicefiscale }}</td>
+                <td>{% if soggetto.dataregistrazione %}{{ soggetto.dataregistrazione|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>{% if soggetto.datacostituzione %}{{ soggetto.datacostituzione|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>{{ soggetto.sitoweb }}</td>
+                <td>{{ soggetto.dimensione }}</td>
+                <td>{{ soggetto.email }}</td>
+                <td>{{ soggetto.tel }}</td>
+                <td>{{ soggetto.fax }}</td>
+                <td>{{ soggetto.via }}</td>
+                <td>{{ soggetto.civico }}</td>
+                <td>{{ soggetto.cap }}</td>
+                <td>{{ soggetto.localita }}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('soggetto_show', { 'id': soggetto.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('soggetto_edit', { 'id': soggetto.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('soggetto_new') }}">Create a new entry</a>
+        </li>
+    </ul>
+{% endblock %}

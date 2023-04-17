@@ -1,0 +1,11 @@
+{% extends ':Form:fields.html.twig' %}
+
+{% block submit_widget %}
+<div class="page-actions">
+    {{ pulsante_indietro() }}
+    {% spaceless %}
+        {% set type = type|default('submit') %}
+        {{ block('button_widget') }}
+    {% endspaceless %}
+</div>
+{% endblock submit_widget %}

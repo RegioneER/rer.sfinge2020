@@ -1,0 +1,47 @@
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-striped table-hover table-bordered">
+			<thead>
+				<tr>
+					<th colspan="2">{{ tipo }}</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td style="width: 30%">Titolo</td><td>{{ procedura.titolo }}</td>
+				</tr>
+				<tr>
+					<td>Asse</td><td>{{ procedura.asse }}</td>
+				</tr>
+				<tr>
+					<td>Amministrazione emittente</td><td>{{ procedura.amministrazioneEmittente.descrizione }}</td>
+				</tr>
+				<tr>
+					<td>Data/Ora inizio presentazione</td><td>{{ procedura.dataOraInizioPresentazione is null ? "-" : procedura.dataOraInizioPresentazione|date("d/m/Y H:i") }}</td>
+				</tr>
+				<tr>
+					<td>Data/Ora fine presentazione</td><td>{{ procedura.dataOraFinePresentazione is null ? "-" : procedura.dataOraFinePresentazione|date("d/m/Y H:i") }}</td>
+				</tr>
+				<tr>
+					<td>Atto</td><td>{{ procedura.atto.titolo }} - {{ procedura.atto.numero }}</td>
+				</tr>
+				<tr>
+					<td>Organismo che rilascia il documento</td><td>{{ procedura.organismo }}</td>
+				</tr>
+				{#% if procedura.documenti|length > 0 %}
+					<tr>
+						<th colspan="2">Documenti</th>
+					</tr>
+					{% for documento in procedura.documenti %}
+						<tr>
+							<td>{{ documento.descrizione }}</td><td>{{ scarica_file(documento.documento) }}</td>
+						</tr>
+					{% endfor %}
+				{% endif  %#}
+				{%  block dati_aggiuntivi %}
+
+				{% endblock %}
+			</tbody>
+        </table>
+    </div>
+</div>

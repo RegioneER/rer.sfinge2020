@@ -1,0 +1,49 @@
+{% extends ':pdf:base.pdf.html.twig' %}
+
+{% block content %}
+
+    {% block dati_intestazione %}
+        <div class="center">
+            {% if rispostaIntegrazione.richiesta.procedura.isNuovaProgrammazione %}
+                <img src="assets/img/regione/Loghi_CoesioneITA_UE_REP_ER_21_27.jpg" alt="Loghi regione" height="45px">
+            {% elseif rispostaIntegrazione.richiesta.procedura.asse.codice == 'A0' %}
+                <img src="assets/img/regione/logo_ue-regione-emilia-romagna.jpg" alt="Loghi regione" height="60px">
+                <h2 align="center">{{ rispostaIntegrazione.richiesta.procedura.titolo }}</h2>
+            {% elseif is_fsc == true %}
+                <img src="assets/img/regione/logo_fsc.jpg" alt="Loghi regione" height="80px">
+                <h2 align="center">{{ rispostaIntegrazione.richiesta.procedura.titolo }}</h2>
+            {% else%}
+                <img src="assets/img/regione/logo_ue-por_fesr_2020.jpg" alt="Loghi regione" height="60px">
+                <h2 align="center">POR-FESR EMILIA ROMAGNA 2014-2020</h2>
+            {% endif %}
+        </div>
+    {% endblock dati_intestazione %}
+
+    <h3 align="center">Risposta richiesta di integrazione</h3>
+    <div>
+        In relazione alla richiesta di integrazione con protocollo n° {{ rispostaIntegrazione.integrazione.protocolloIntegrazione }}<br>
+        si forniscono le seguenti integrazioni.
+    </div>
+
+    <br>
+
+    <div>
+        <strong>Nota del beneficiario:</strong> {{ rispostaIntegrazione.testo ? rispostaIntegrazione.testo|replace({'\r\n' : '<br>', '\n' : '<br>'})|raw : '-' }}
+    </div>	
+
+    {% if rispostaIntegrazione.documenti|length > 0 %}
+
+        <br><br>
+
+        <strong>Documentazione integrata</strong>
+        <ul>
+
+            {% for documentoIntegrato in rispostaIntegrazione.documenti %}
+                <li>{{ documentoIntegrato.documentoFile.tipologiaDocumento.descrizione }}</li>
+                {% endfor %}	
+
+        </ul>
+
+    {% endif %}
+
+{% endblock %}

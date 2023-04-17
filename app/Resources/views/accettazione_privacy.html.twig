@@ -1,0 +1,22 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+
+    <div testo>
+
+    {% include 'testo_privacy.html.twig' %}
+
+        {{ form_start(form) }}
+        <div class="page-actions">
+            {{ form_widget(form.children.non_accetto,
+                {'attr': {'style': 'color: #333 !important;; border-color: #CCC !important;; background-color: #E6EBEF !important;'}})
+            }}
+
+            {{ form_row(form.accetto) }}
+        </div>
+
+        {{ form_end(form) }}
+    </div>
+
+{% endblock body %}
+

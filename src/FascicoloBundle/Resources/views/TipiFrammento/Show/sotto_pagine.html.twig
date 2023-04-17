@@ -1,0 +1,19 @@
+{% set sottoPagine = servizio.sottoPagineFrammento(istanza_frammento) %}
+{% if sottoPagine | length > 0%}	
+	<ul class="list-group list-checked">
+		
+	{% for pagina in sottoPagine %}
+		{% set sotto_pagine = istanza_frammento.istanzeSottoPagineByAlias(pagina.alias, true) %}
+		{% if sotto_pagine|length == 0 %}
+			{% set complete = false %}
+		{% else %}	
+			{% set validazione = servizio.validaIstanzaPagina(sotto_pagine|first) %}
+			{% set complete = validazione.esito %}
+		{% endif %}
+		<li class="list-group-item {{ complete ? "complete" : "" }}">
+			<a href="{{ path(servizio.routeIstanzaPagina, {'id_istanza_frammento' : istanza_frammento.id, 'id_pagina' : pagina.id }) }}">{{ pagina.titolo }}</a>
+		</li>
+	{% endfor %}	
+
+	</ul>
+{% endif %}

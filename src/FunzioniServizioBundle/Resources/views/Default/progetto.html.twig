@@ -1,0 +1,248 @@
+{% extends '::base.html.twig' %}
+
+    {% block body %}
+        <p class="lead">Dettagli del progetto</p>
+
+        {% if progetto|length %}
+            <table class="table table-hover table-bordered" id="dettaglio-progetto">
+                <tbody>
+                <tr>
+                    <td width="200px" class="bold">Id progetto</td>
+                    <td>{{ progetto.id_progetto }}</td>
+                </tr>
+                <tr>
+                    <td width="200px" class="bold">Contestuale</td>
+                    <td>{{ (progetto.contestuale == 'S') ? 'Sì' : 'No' }}</td>
+                </tr>
+                <tr>
+                    <td width="200px" class="bold">Nr. protocollo</td>
+                    <td>{{ progetto.numero_protocollo }}</td>
+                </tr>
+                <tr>
+                    <td width="200px" class="bold">Data protocollo</td>
+                    <td>{{ progetto.data_protocollo|date('d/m/Y') }}</td>
+                </tr>
+                <tr>
+                    <td width="200px" class="bold">Beneficiario</td>
+                    <td>{{ progetto.beneficiario }}</td>
+                </tr>
+                <tr>
+                    <td width="200px" class="bold">Codice fiscale</td>
+                    <td>{{ progetto.codice_fiscale }}</td>
+                </tr>
+                <tr>
+                    <td width="200px" class="bold">Partita IVA</td>
+                    <td>{{ progetto.partita_iva }}</td>
+                </tr>
+                <tr>
+                    <td width="200px" class="bold">Presentato</td>
+                    <td>{{ progetto.costo_presentato|number_format(2, ',', '.') }} €</td>
+                </tr>
+                <tr>
+                    <td width="200px" class="bold">Ammesso</td>
+                    <td>{{ progetto.costo_ammesso|number_format(2, ',', '.') }} €</td>
+                </tr>
+                <tr>
+                    <td width="200px" class="bold">Contributo concesso</td>
+                    <td>{{ progetto.contributo_concesso|number_format(2, ',', '.') }} €</td>
+                </tr>
+                <tr>
+                    <td width="200px" class="bold">Titolo bando</td>
+                    <td>{{ progetto.titolo_bando }}</td>
+                </tr>
+                </tbody>
+            </table>
+            <br />
+            <input type="text" class="form-control" placeholder="Cerca tra i documenti del progetto..." id="search_prg_doc">
+            <br />
+            <table class="table table-striped table-hover table-bordered" id="documentos">
+                <thead>
+                <tr class="myHead">
+                    <th colspan="4">Documenti del progetto</th>
+                </tr>
+                <tr class="myHead">
+                    <th>Nome</th>
+                    <th>Link</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for documento in progetto.elenco_documenti %}
+                    <tr>
+                        <td>{{ documento.nome }}</td>
+                        <td>{% if documento.url is not empty %}<a class="btn btn-info btn-sm" href="{{ documento.url }}" role="button">Scarica <span class="fa fa-download"></span></a>{% else %}File non caricato dalla PA{% endif %}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <br />
+            <input type="text" class="form-control" placeholder="Cerca tra i documenti amministrativi del progetto..." id="search_prg_doc_amministrativi">
+            <br />
+            <table class="table table-striped table-hover table-bordered" id="documentoAmministrativos">
+                <thead>
+                <tr class="myHead">
+                    <th colspan="4">Documenti amministrativi del progetto</th>
+                </tr>
+                <tr class="myHead">
+                    <th>Nome / Tipologia documento</th>
+                    <th>Tipologia caricamento</th>
+                    <th>Protocollo</th>
+                    <th>Data ricezione</th>
+                    <th>Link</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for documento in progetto.elenco_documenti_amministrativi %}
+                    <tr>
+                        <td>{{ documento.tipologia_documento }}</td>
+                        <td>
+                            {% if documento.tipologia_caricamento == 'P' %}
+                                Protocollo
+                            {% elseif documento.tipologia_caricamento == 'M' %}
+                                Manuale
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ documento.protocollo }}
+                        </td>
+                        <td>
+                            {% if documento.data is not null %}
+                                {{ documento.data|date('d/m/Y') }}
+                            {% endif %}
+                        </td>
+                        <td>{% if documento.url is not empty %}<a class="btn btn-info btn-sm" href="{{ documento.url }}" role="button">Scarica <span class="fa fa-download"></span></a>{% else %}File non caricato dalla PA{% endif %}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <br />
+            <input type="text" class="form-control" placeholder="Cerca tra le concessioni del progetto..." id="search_prg_concessioni">
+            <br />
+            <table class="table table-striped table-hover table-bordered" id="concessiones">
+                <thead>
+                <tr class="myHead">
+                    <th colspan="4">Elenco concessioni</th>
+                </tr>
+                <tr class="myHead">
+                    <th>Protocollo concessione</th>
+                    <th>Nr. atto concessione</th>
+                    <th>Data atto concessione</th>
+                    <th>Link</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% if progetto.elenco_concessioni is defined %}
+                    {% for concessione in progetto.elenco_concessioni %}
+                        <tr>
+                            <td>{{ concessione.protocollo_atto_concessione }}</td>
+                            <td>{{ concessione.numero_atto_concessione }}</td>
+                            <td>{{ concessione.data_atto_concessione|date('d/m/Y') }}</td>
+                            <td>{% if concessione.file_atto_concessione is not empty %}<a class="btn btn-info btn-sm" href="{{ concessione.file_atto_concessione }}" role="button">Scarica <span class="fa fa-download"></span></a>{% else %}File non caricato dalla PA{% endif %}</td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+                </tbody>
+            </table>
+            <br />
+            <input type="text" class="form-control" placeholder="Cerca tra i pagamenti del progetto..." id="search_prg_pagamenti">
+            <br />
+            <table class="table table-striped table-hover table-bordered" id="pagamentos">
+                <thead>
+                <tr class="myHead">
+                    <th colspan="4">Elenco pagamenti</th>
+                </tr>
+                <tr class="myHead">
+                    <th>Protocollo pagamento</th>
+                    <th>Tipo pagamento</th>
+                    <th>Data domanda pagamento</th>
+                    <th>Dettaglio</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for pagamento in progetto.elenco_pagamenti %}
+                    <tr>
+                        <td>{{ pagamento.protocollo_domanda_pagamento }}</td>
+                        <td>{{ pagamento.tipo_domanda_pagamento }}</td>
+                        <td>{{ pagamento.data_domanda_pagamento|date('d/m/Y') }}</td>
+                        <td>
+                            {% set param_pagamento = pagamento.protocollo_domanda_pagamento|url_encode %}
+                            <a class="btn btn-info btn-sm" href="{{ path('funzioni_servizio_pagamento', {'idBando': progetto.id_bando, 'idProgetto': progetto.id_progetto, 'piattaforma': progetto.piattaforma, 'pagamento': param_pagamento}) }}" role="button">
+                                Dettaglio <span class="fa fa-arrow-right"></span>
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="row">
+                <div class="col-md-12">
+                    <p>Nessun progetto disponibile</p>
+                </div>
+            </div>
+        {% endif %}
+        <a type="button" class="btn btn-default" href="{{ path('funzioni_servizio_bando', {'idBando': progetto.id_bando, 'piattaforma': progetto.piattaforma }) }}">Ritorna</a>
+    {% endblock %}
+
+{% block  jquery_page_document_ready %}
+    <script>
+        $('#search_prg_doc').on('keyup', function() {
+            var value = $(this).val();
+            var patt = new RegExp(value, "i");
+
+            $('#documentos').find('tr').each(function() {
+                if (!($(this).find('td').text().search(patt) >= 0)) {
+                    $(this).not('.myHead').hide();
+                }
+                if (($(this).find('td').text().search(patt) >= 0)) {
+                    $(this).show();
+                }
+
+            });
+        });
+
+        $('#search_prg_doc_amministrativi').on('keyup', function() {
+            var value = $(this).val();
+            var patt = new RegExp(value, "i");
+
+            $('#documentoAmministrativos').find('tr').each(function() {
+                if (!($(this).find('td').text().search(patt) >= 0)) {
+                    $(this).not('.myHead').hide();
+                }
+                if (($(this).find('td').text().search(patt) >= 0)) {
+                    $(this).show();
+                }
+
+            });
+        });
+
+        $('#search_prg_concessioni').on('keyup', function() {
+            var value = $(this).val();
+            var patt = new RegExp(value, "i");
+
+            $('#concessiones').find('tr').each(function() {
+                if (!($(this).find('td').text().search(patt) >= 0)) {
+                    $(this).not('.myHead').hide();
+                }
+                if (($(this).find('td').text().search(patt) >= 0)) {
+                    $(this).show();
+                }
+
+            });
+        });
+
+        $('#search_prg_pagamenti').on('keyup', function() {
+            var value = $(this).val();
+            var patt = new RegExp(value, "i");
+
+            $('#pagamentos').find('tr').each(function() {
+                if (!($(this).find('td').text().search(patt) >= 0)) {
+                    $(this).not('.myHead').hide();
+                }
+                if (($(this).find('td').text().search(patt) >= 0)) {
+                    $(this).show();
+                }
+
+            });
+        });
+    </script>
+{% endblock %}

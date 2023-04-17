@@ -1,0 +1,70 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <div class="table-toolbar">
+        <div>
+			{% if isAccessibile('crea_comune_unione') %}
+                <a class="btn btn-primary" href="{{ path('crea_comune_unione') }}">
+                    <span class="fa fa-plus"></span> Aggiungi
+                </a>
+			{% endif %}
+                <a class="btn btn-info" href="#ricerca-comune_unione-modal" data-toggle="modal">
+                    <span class="fa fa-search"></span> Ricerca
+                </a>
+        </div>
+    </div>
+    <div class="count">
+        Numero elementi trovati: {{ comuni_unioni.getTotalItemCount }} - Filtro attivo: {{ filtro_attivo ? "Si" : "No" }}
+    </div>
+    <table class="table table-striped table-hover table-bordered" id="notizie-elenco">
+        <thead>
+            <tr>
+                <th class="text-center">{{ knp_pagination_sortable(comuni_unioni, 'Id', 's.id') }}</th>
+                <th>Ragione sociale</th>
+                <th>Partita iva</th>
+                <th>Codice fiscale</th>
+                <th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+			{% for comune_unione in comuni_unioni %}
+				<tr>
+                    <td class="table-id">
+                        {% if isAccessibile('comune_unione_visualizza', { 'id_soggetto': comune_unione.id }) %}
+                            <a href="{{ path('comune_unione_visualizza', { 'id_soggetto': comune_unione.id }) }}">{{ comune_unione.id }}</a>
+                        {% else %}
+                            {{ comune_unione.id }}
+                        {% endif %}
+                    </td>
+					<td>{{ comune_unione.denominazione }}</td>
+					<td>{{ comune_unione.partitaiva }}</td>
+					<td class="uppercase">{{ comune_unione.codicefiscale }}</td>
+					<td><div class="dropdown">
+							<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								Azioni
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                {% if isAccessibile('comune_unione_visualizza', { 'id_soggetto': comune_unione.id }) %}
+								    <li><a href="{{ path('comune_unione_visualizza', {'id_soggetto':comune_unione.id}) }}">Visualizza</a></li>
+                                {% endif %}
+								{% if isAccessibile('comune_unione_modifica', { 'id_soggetto': comune_unione.id }) %}
+									<li><a href="{{ path('comune_unione_modifica', {'id_soggetto':comune_unione.id}) }}">Modifica</a></li>
+								{% endif %}		
+								<li><a href="{{ path('elenco_sedi_operative_comune', {'id_soggetto':comune_unione.id}) }}">Elenco sedi</a></li>
+							</ul>
+						</div>
+					</td>
+				</tr>
+			{% endfor %}
+        </tbody>
+    </table>
+    {# display navigation #}
+    <div class="navigation">
+        {{ knp_pagination_render(comuni_unioni) }}
+    </div>
+
+    {{ modale_ricerca("Comuni",form_ricerca_comuni_unioni,"elenco_comuni_unioni_pulisci","ricerca-comune_unione-modal") }}
+
+{% endblock %}
+

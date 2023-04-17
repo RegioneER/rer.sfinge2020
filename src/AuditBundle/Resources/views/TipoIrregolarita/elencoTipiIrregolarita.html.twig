@@ -1,0 +1,38 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	
+	{% include 'AuditBundle:Audit:menu.html.twig' %}
+	
+	<br/>
+   {# <div class="table-toolbar">
+        <div>
+			{% if isAccessibile('crea_tipo_irregolarita') %}
+                <a class="btn btn-primary" href="{{ path('crea_tipo_irregolarita') }}">
+                    <span class="fa fa-plus"></span> Aggiungi tipo irregolarità
+                </a>
+			{% endif %}
+        </div>
+    </div>
+   #}
+    <table class="table table-striped table-hover table-bordered" id="tipi-irregolarita-elenco">
+        <thead>
+            <tr>
+                <th class="text-center">Id</th>
+                <th>Denominazione</th>
+            </tr>
+        </thead>
+        <tbody>
+			{% for tipoIrregolarita in tipiIrregolarita %}
+				<tr>
+                    <td class="table-id">
+	                    {{ tipoIrregolarita.id }}
+                    </td>
+                    <td>{{ tipoIrregolarita.descrizione }}</td>
+				</tr>
+			{% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
+

@@ -1,0 +1,162 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet box green">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <span class="fa fa-reorder"></span>Modificare i dati
+                    </div>
+                </div>
+                <div class="portlet-body">
+					<div class="form-body">
+						{{ form_start(form) }}
+						<div>
+							{{ form_row(form.titolo) }}
+							{{ form_row(form.nota) }}
+							{{ form_row(form.alias) }}
+							{{ form_row(form.tipoFrammento) }}
+							{{ form_row(form.callbackPresenza) }}							
+						</div>
+						{{ form_end(form) }}
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		{% set frammento = form.vars.value %}
+		{% set tipo_frammento = frammento.tipoFrammento %}
+		{% if tipo_frammento.campi %}
+		<div class="col-md-12">
+            <div class="portlet box green">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <span class="fa fa-reorder"></span>Campi Frammento
+                    </div>
+                </div>
+				<div class="portlet-body">
+					<div class="form-body">
+						<div>
+							<div class="table-toolbar">
+								<div class="btn-group">
+									<a href="{{ path('crea_campo', {'id_frammento':id_frammento}) }}"><button id="sample_editable_1_new" class="btn green"><span class="fa fa-plus"></span></button>
+									</a>
+								</div>
+							</div>
+							{% if frammento.campi|length > 0 %}
+							<table class="table table-striped table-hover table-bordered" id="campi-frammento-elenco">
+								<thead>
+									<tr>
+										<th>Label</th>		
+										<th>Alias</th>
+										<th>Tipo</th>	
+										<th>Obbligatorio</th>
+										<th>Vincoli</th>
+										<th>Azioni</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for campo in frammento.campi %}
+										<tr>
+											<td>{{ campo.label }}</td>	
+											<td>{{ campo.alias }}</td>	
+											<td>{{ campo.tipoCampo }}</td>
+											<td>{{ campo.required ? "Sì" : "No" }}</td>
+											<td>
+												{% if campo.vincoli|length %}
+													{% for vincolo in campo.vincoli %}
+														{{ vincolo }}
+													{% endfor %}
+												{% else %}
+													<a href="{{ path('crea_vincolo', {'id_campo':campo.id}) }}">
+														<button id="sample_editable_1_new" class="btn green">
+															<span class="fa fa-plus"></span>
+														</button>
+													</a>
+												{% endif %}
+											</td>
+											<td><div class="dropdown">
+													<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuCampi" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+														Azioni
+														<span class="caret"></span>
+													</button>
+													<ul class="dropdown-menu" aria-labelledby="dropdownMenuCampi">
+														<li><a href="{{ path('modifica_campo', {'id_campo':campo.id}) }}">Modifica</a></li>
+														<li><a href="{{ path('elimina_campo', {'id_campo':campo.id, '_token': csrfToken }) }}">Elimina</a></li>
+														<li><a href="{{ path('sposta_sopra_campo', {'id_campo':campo.id}) }}">Sposta Sopra</a></li>
+														<li><a href="{{ path('sposta_sotto_campo', {'id_campo':campo.id}) }}">Sposta Sotto</a></li>
+													</ul>
+												</div>
+											</td>
+										</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		{% endif %}
+		
+		{% if tipo_frammento.sottoPagine %}
+		<div class="col-md-12">
+            <div class="portlet box green">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <span class="fa fa-reorder"></span>Sotto Pagine
+                    </div>
+                </div>
+				<div class="portlet-body">
+					<div class="form-body">
+						<div>
+							<div class="table-toolbar">
+								<div class="btn-group">
+									<a href="{{ path('crea_sotto_pagina', {'id_frammento':id_frammento}) }}"><button id="sample_editable_1_new" class="btn green"><span class="fa fa-plus"></span></button>
+									</a>
+								</div>
+							</div>
+							{% if frammento.sottoPagine|length > 0 %}
+							<table class="table table-striped table-hover table-bordered" id="sottopagine-frammento-elenco">
+								<thead>
+									<tr>
+										<th>Titolo</th>
+										<th>Alias</th>
+										<th>Azioni</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for sottoPagina in frammento.sottoPagine %}
+										<tr>
+											<td>{{ sottoPagina.titolo }}</td>
+											<td>{{ sottoPagina.alias }}</td>
+											<td><div class="dropdown">
+													<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuSottoPagine" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+														Azioni
+														<span class="caret"></span>
+													</button>
+													<ul class="dropdown-menu" aria-labelledby="dropdownMenuSottoPagine">
+														<li><a href="{{ path('modifica_pagina', {'id_pagina':sottoPagina.id}) }}">Modifica</a></li>
+														<li><a href="{{ path('elimina_sotto_pagina', {'id_pagina':sottoPagina.id, '_token': csrfToken }) }}">Elimina</a></li>
+														<li><a href="{{ path('sposta_sopra_sotto_pagina', {'id_pagina':sottoPagina.id}) }}">Sposta Sopra</a></li>
+														<li><a href="{{ path('sposta_sotto_sotto_pagina', {'id_pagina':sottoPagina.id}) }}">Sposta Sotto</a></li>
+														<li><a href="{{ path('clona_pagina', {'id_pagina':sottoPagina.id}) }}">Clona</a></li>																												
+													</ul>
+												</div>
+											</td>
+										</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		{% endif %}
+	</div>
+	{% endblock %}
+

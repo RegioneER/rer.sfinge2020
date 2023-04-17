@@ -1,0 +1,89 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <a href="{{ path('funzionalita_irap') }}">Torna</a>
+    <br/>
+    <br/>
+    
+    <p class="lead">Popola Cor</p>
+    <div>
+        Nel campo "Dati" inserire, uno per riga, il numero di protocollo ed il relativo cor.
+        <br/>
+        Es.<br/>
+        PG/2019/843040; 1675183<br/>
+        PG/2019/843279; 1675182<br/>
+        <br/>
+        oppure
+        <br/>
+        <br/>
+        00679580357; 1707983<br/>
+        MNRDRA75R04A944T; 1707984<br/>
+        <br/>
+        N.B. Il separatore può essere la virgola oppure il punto.
+    </div>
+    <br/>
+    
+    {{ form_start(form) }}
+    {{ form_end(form) }}
+
+    {% if arraySuccess is not empty %}
+        <br/>
+        <br/>
+        <div class="alert alert-success">
+            Cor popolati con successo: {{ arraySuccess|length }}
+        </div>
+
+        {% set progressivo = 1 %}
+        <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+            <thead>
+            <tr>
+                <th>Progressivo</th>
+                <th>Protocollo</th>
+                <th>Cor</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for protocollo in arraySuccess %}
+                <tr>
+                    <td>{{ progressivo }}</td>
+                    <td>{{ protocollo.protocollo }}</td>
+                    <td>{{ protocollo.cor }}</td>
+                </tr>
+                {% set progressivo = progressivo + 1 %}
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+    
+    {% if arrayFail is not empty %}
+        <br/>
+        <div class="alert alert-danger">
+            Cor non popolati: {{ arrayFail|length }}
+        </div>
+
+        {% set progressivo = 1 %}
+        <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+            <thead>
+            <tr>
+                <th>Progressivo</th>
+                <th>Protocollo</th>
+                <th>Errore</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for protocollo in arrayFail %}
+                <tr>
+                    <td>{{ progressivo }}</td>
+                    <td>{{ protocollo.protocollo }}</td>
+                    <td>{{ protocollo.errore }}</td>
+                </tr>
+                {% set progressivo = progressivo + 1 %}
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+    
+    <br/>
+    <br/>
+    <a href="{{ path('funzionalita_irap') }}">Torna</a>
+{% endblock %}

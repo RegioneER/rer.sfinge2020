@@ -1,0 +1,76 @@
+{% extends '::base.html.twig' %}
+{% form_theme form.mon_indicatore_output _self %}
+
+{% block intestazione %}
+	{{ parent() }}
+	{{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% block body %}
+	<h4>Nota</h4>
+         {% if richiesta.procedura.id == 189 %}
+		<div style="font-size: 15px">
+			P06 = il valore coincide con il numero di edifici sottoposti a interventi di mitigazione del rischio sismico
+		</div>
+	{% elseif is_nuova_programmazione %}
+		<div style="font-size: 15px">
+			Informativa per la rilevazione degli indicatori presente nel bando.
+		</div>
+	{% else %}
+		{% set linkIndicatori = 'http://fesr.regione.emilia-romagna.it/opportunita/indicatori-di-output-in-sede-di-rendicontazione' %}
+		<div style="font-size: 15px">
+			Informativa per la rilevazione degli indicatori:
+		</div>
+		<br/>
+		<a href="{{ linkIndicatori }}" target="_blank"> {{ linkIndicatori }} </a>
+	{% endif %}
+
+	<h4>Indicatori</h4>
+	{% if form.mon_indicatore_output|length > 0 %}
+	{{form_start(form) }}
+	<table class="table table-striped"> 
+		<thead>
+			<tr>
+                <th>Codice</th>
+				<th>Titolo</th>
+				<th>Unit&agrave; di misura</th>
+				<th>Valore programmato</th>
+			</tr>
+		</thead>
+		<tbdoy>
+			{% for elemento in form.mon_indicatore_output %}
+			{{form_widget(elemento)}}
+			{% endfor %}
+		</tbdoy>
+	</table>
+	{{form_rest(form) }}
+	{{form_end(form) }}
+	{% else %}
+	<h5>Non è necessario compilare questa sezione</h5>
+	{% endif %}
+{% endblock %}
+
+
+{% block form_row -%}
+<th>
+    {{form.parent.vars.value.indicatore.codindicatore }}
+</th>
+<th>
+	{{form.parent.vars.value.indicatore.descrizioneindicatore}}
+</th>
+<td>
+	{{ form.parent.vars.value.indicatore.descunitamisura }}
+</td>
+<td>
+    {{- form_widget(form) -}}
+    {{- form_errors(form) -}}
+</td>
+{% endblock form_row %}
+
+{% block form_widget_compound %}
+    {% if form.vars.prototype is not defined %}
+        <tr id="{{- block('widget_container_attributes') -}}">
+            {{- block('form_rows') -}}
+        </tr>
+    {% endif %}
+{% endblock %}

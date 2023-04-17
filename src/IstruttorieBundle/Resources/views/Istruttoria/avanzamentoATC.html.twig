@@ -1,0 +1,95 @@
+{% extends 'IstruttorieBundle:Istruttoria:base_istruttoria.html.twig' %}
+
+{% form_theme form _self %}
+
+{% block body %}
+
+    {% include 'IstruttorieBundle:Istruttoria:menu.html.twig' with {'istruttoria' : istruttoria } %}
+
+    <h4>Atto e concessione</h4>
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+    {{ form_row(form.ammissibilita_atto) }}
+    {{ form_row(form.concessione) }}
+    {{ form_row(form.contributo_ammesso) }}
+    {{ form_row(form.data_contributo) }}
+    {{ form_row(form.impegno_ammesso) }}
+    {{ form_row(form.data_impegno) }}
+    {{ form_row(form.atto_ammissibilita_atc) }}
+    {{ form_row(form.atto_concessione_atc) }}
+    {{ form_row(form.atto_modifica_concessione_atc) }}
+    <br/>
+    <div class="alert alert-info">
+        Selezionare un nuovo atto modifica di concessione solo in caso di cambiamento del contributo concesso.
+        L'informazione di eventuali, precedenti atti di modifica di concessione rimarranno comunque visibili nei log a 
+        fondo pagina
+    </div>
+
+    <br/>
+    {% if istruttoria.attoammissibilitaatc is defined and istruttoria.attoammissibilitaatc.documentoatto is defined %}
+        <h6>Documento atto di ammissibilità</h6>
+        {{ mostra_file_table(istruttoria.attoammissibilitaatc.documentoatto) }}
+    {% endif %}
+    {% if istruttoria.attoconcessioneatc is defined and istruttoria.attoconcessioneatc.documentoatto is defined %}
+        <h6>Documento atto di concessione</h6>
+        {{ mostra_file_table(istruttoria.attoconcessioneatc.documentoatto) }}
+    {% endif %}
+    {% if istruttoria.attomodificaconcessioneatc is defined and istruttoria.attomodificaconcessioneatc.documentoatto is defined %}
+        <h6>Documento atto modifica di concessione</h6>
+        {{ mostra_file_table(istruttoria.attomodificaconcessioneatc.documentoatto) }}
+    {% endif %}
+
+
+
+    <h4>Date progetto</h4>
+    {{ form_row(form.data_avvio_progetto) }}
+    {{ form_row(form.data_termine_progetto) }}
+    {{ form_row(form.data_inizio_vincolante) }}
+    {{ form_row(form.tipologia_soggetto) }}
+
+    {{ form_end(form) }}
+
+    <h6>Elenco ultime modifiche</h6>	
+    <ul class="well alert alert-info">
+        {% for log in istruttoria.istruttorieAtcLog|slice(0,5)  %}
+            {% if log.oggetto == 'ATC_SALVA' %}
+                {% set operazione = 'Salvato da' %}
+            {% elseif log.oggetto == 'ATC_VALIDA' %}
+                {% set operazione = 'Validato da' %}
+            {% else %}
+                {% set operazione = 'Invalidato da' %}
+            {% endif %}
+            <li> {{operazione ~ " " ~ log.utente.persona.nome ~ " " ~ log.utente.persona.cognome }} in data {{ log.data|date('d/m/Y') }}<br/>
+                - Valore contributo: {{ log.contributoammesso|number_format(2,',', '.')}} - Data Contributo: {{log.datacontributo|date('d/m/Y')}}<br/>
+                - Importo impegnato: {{ log.impegnoammesso|number_format(2,',', '.')}} - Data dell'impegno: {{log.dataimpegno|date('d/m/Y')}}<br/>
+                - Atto modifica di concessione: 
+                {% if log.attomodificaconcessioneatc is defined and log.attomodificaconcessioneatc.documentoatto is defined %}
+                    {{ scarica_file(log.attomodificaconcessioneatc.documentoatto) }}
+                {% else %}
+                    -
+                {% endif %}
+            </li>
+            <br/>
+        {% endfor %}
+    </ul>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            function aggiornaImportoImpegno() {
+                if ($("#avanzamento_atc_impegno_ammesso").val() === '') {
+                    contributo = $("#avanzamento_atc_contributo_ammesso").val();
+                    $("#avanzamento_atc_impegno_ammesso").val(contributo);
+                }
+            }
+            function aggiornaDataImpegno() {
+                if ($("#avanzamento_atc_data_impegno").val() === '') {
+                    data = $("#avanzamento_atc_data_contributo").val();
+                    $("#avanzamento_atc_data_impegno").val(data);
+                }
+            }
+            $("#avanzamento_atc_contributo_ammesso").change(aggiornaImportoImpegno);
+            $("#avanzamento_atc_data_contributo").change(aggiornaDataImpegno);
+            aggiornaImportoImpegno();
+            aggiornaDataImpegno();
+        });
+    </script>
+{% endblock %}

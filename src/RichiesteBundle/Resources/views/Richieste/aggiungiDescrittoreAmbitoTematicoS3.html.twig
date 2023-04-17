@@ -1,0 +1,12 @@
+{% extends '::base.html.twig' %}
+
+{% block intestazione %}
+    {{ parent() }}
+    {{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% block body %}
+    <h4>Aggiungi un descrittore per l’Ambito Tematico S3: <strong>{{ ambito_tematico_s3 }}</strong></h4>
+    {{ form_start(form) }}
+    {{ form_end(form) }}
+{% endblock %}

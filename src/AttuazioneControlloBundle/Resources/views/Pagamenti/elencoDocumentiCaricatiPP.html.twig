@@ -1,0 +1,41 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+
+	{% if pagamento.isAssistenzaTecnica == true %}
+		{% set suffisso = "_at" %}
+	{% elseif pagamento.isIngegneriaFinanziaria == true %}
+		{% set suffisso = "_ing_fin" %}
+	{% elseif pagamento.isAcquisizioni == true %}
+		{% set suffisso = "_acquisizioni" %}
+	{% endif %}
+
+	{% if form is not null %}
+		<div class="form-body">			
+			<h4>Carica documento</h4>	
+			{{ form(form) }}
+		</div>
+	{% endif %}		
+
+	<br/>
+	<h4>Elenco documenti</h4>
+    <table class="table table-striped table-hover table-bordered" id="pagamenti-elenco">
+        <tbody>
+			{% for documento in documenti %}
+				{% if not pagamento.richiestaDisabilitata and (is_granted('ROLE_GESTIONE_INGEGNERIA_FINANZIARIA') or  is_granted('ROLE_GESTIONE_ASSISTENZA_TECNICA'))%}
+					<tr>
+						<td>{{ mostra_file(documento.documentoFile, path('elimina_documento_pagamento'~suffisso, {'id_documento_pagamento': documento.id,'id_pagamento': pagamento.id, '_token': csrfToken, mostra_elimina: true}) ) }}</td>
+					</tr>
+				{% else %}		
+					<tr>
+						<td>{{ mostra_file(documento.documentoFile, null )}}</td>
+					</tr>
+				{% endif %}
+			{% endfor %}
+        </tbody>
+    </table>
+
+	<div class="page-actions">
+		{{ pulsante_indietro(path("elenco_pagamenti"~suffisso,{"id_richiesta":pagamento.richiesta.id})) }}
+	</div>
+{% endblock %}

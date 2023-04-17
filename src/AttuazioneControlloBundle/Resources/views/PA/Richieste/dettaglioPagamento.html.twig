@@ -1,0 +1,198 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+	{% include 'AttuazioneControlloBundle:PA/Richieste:menu.html.twig' with {'attuazione_controllo' : pagamento.attuazioneControlloRichiesta }%}	
+
+	<h4>Riepilogo</h4>
+	<table class="table table-striped table-hover">
+		<tr>
+			<td style="width: 50%;">Modalità pagamento</td>
+			<td><strong>{{ pagamento.modalitaPagamento }}</strong></td>
+		</tr>
+		<tr>
+			<td style="width: 50%;">Importo richiesto</td>
+			<td><strong>&euro; {{ pagamento.importoRichiesto|number_format(2, ',', '.') }}</strong></td>
+		</tr>
+		<tr>
+			<td style="width: 50%;">Importo pagato</td>
+			{% if pagamento.mandatoPagamento is not null %}
+				<td><strong>&euro; {{ pagamento.mandatoPagamento.importoPagato|number_format(2, ',', '.') }}</strong></td>
+			{% else %}
+				<td><strong>-</strong></td>
+			{% endif %}
+		</tr>		
+		<tr>
+			<td style="width: 50%;">Data invio richiesta</td>
+			<td><strong>{{ pagamento.dataInvio is null ? "-" : pagamento.dataInvio | date('d/m/Y') }}</strong></td>
+		</tr>
+		<tr>
+			<td style="width: 50%;">Rendicontato</td>
+			<td><strong>{{ pagamento.ImportoRendicontato == 0 ? "-" :"€ " ~  pagamento.ImportoRendicontato|number_format(2, ',', '.') }}</strong></td>
+		</tr>	
+		<tr>
+			<td style="width: 50%;">Rendicontato Ammesso</td>
+			<td><strong>{{ pagamento.ImportoRendicontatoAmmesso == 0 ? "-" : "€ " ~  pagamento.ImportoRendicontatoAmmesso|number_format(2, ',', '.') }}</strong></td>
+		</tr>
+		<tr>
+			<td style="width: 50%;">Importo spesa pubblica</td>
+			{% if richiesta.proponenti.0.soggetto.formaGiuridica.soggettoPubblico == 1 %}
+				<td><strong>€ {{  richiesta.istruttoria.costoAmmesso |number_format(2, ',', '.')  }}</strong></td>
+			{% else %}
+				<td><strong>€ {{  richiesta.istruttoria.contributoAmmesso |number_format(2, ',', '.')  }}</strong></td>
+			{% endif %}
+		</tr>		
+	</table>
+
+	<h4>Piano costi </h4>
+	{% for sezione in avanzamento %}
+		{% if avanzamento|length > 1 %}
+			<h4>{{ sezione["sezione"].titoloSezione }}</h4>
+		{% endif %}
+		<table class="table table-striped table-bordered">
+			<thead>
+				<tr>
+					<th style="width: 25%">Voce piano costo</th>
+					<th style="text-align: center; width: 15%">Importo ammesso</th>
+					<th style="text-align: center; width: 15%">Importo variato</th>
+					<th style="text-align: center; width: 15%">% Variazione</th>
+					<th style="text-align: center; width: 15%">Importo rendicontato</th>
+					<th style="text-align: center; width: 15%">Importo rendicontato ammesso</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for voce in sezione["voci"] %}
+					<tr {% if voce["voce"].pianocosto.codice == 'TOT' %}style="font-weight: bold;"{% endif%}>
+						{% set percent_variazione = voce["ammesso"] == 0 ? null : (voce["variato"] - voce["ammesso"])/voce["ammesso"]*100 %}
+						<td>{{ voce["voce"].pianocosto.titolo }}</td>
+						<td style="text-align: center;">&euro; {{ voce["ammesso"]|number_format(2,',', '.') }}</td>
+						<td style="text-align: center;">&euro; {{ voce["variato"]|number_format(2,',', '.') }}</td>
+						<td style="text-align: center;{{ percent_variazione == 0 ? '' : (percent_variazione > 0 ? 'color: green;' : 'color:red;')}}">
+							{{ percent_variazione > 0 ? '+' : '' }}{{ percent_variazione is null ? '-' : percent_variazione|round(2, 'common') }} 
+							{{ percent_variazione is null ? '' : '%' }}</td>
+						<td style="text-align: center;">&euro; {{ voce["rendicontato"]|number_format(2,',', '.') }}</td>
+						<td style="text-align: center;">&euro; {{ voce["pagato"]|number_format(2,',', '.') }}</td>
+					</tr>
+				{% endfor %}		
+			</tbody>
+		</table>		
+	{% endfor %}
+
+	<h4>Dati generali</h4>
+	<table class="table table-striped table-hover">
+		<tr>
+			<td style="width: 50%;">Banca</td>
+			<td><strong>{{ pagamento.banca }}</strong></td>
+		</tr>
+		<tr>
+			<td style="width: 50%;">Agenzia</td>
+			<td><strong>{{ pagamento.agenzia }}</strong></td>
+		</tr>	
+		<tr>
+			<td style="width: 50%;">Iban</td>
+			<td><strong>{{ pagamento.iban }}</strong></td>
+		</tr>				
+	</table>
+
+	<h4>Mandato</h4>
+	{% if pagamento.mandatoPagamento is not null %}
+		<table class="table table-striped table-hover">
+			<tr>
+				<td style="width: 50%;">Atto Liquidazione</td>
+				<td><strong>{{ pagamento.mandatoPagamento.attoLiquidazione.numero }} del {{ pagamento.mandatoPagamento.attoLiquidazione.data|date('d/m/Y') }} </strong></td>
+			</tr>
+			<tr>
+				<td style="width: 50%;">Numero mandato</td>
+				<td><strong>{{ pagamento.mandatoPagamento.numeroMandato }}</strong></td>
+			</tr>
+			<tr>
+				<td style="width: 50%;">Data</td>
+				<td><strong>{{ pagamento.mandatoPagamento.dataMandato|date('d/m/Y') }}</strong></td>
+			</tr>	
+			<tr>
+				<td style="width: 50%;">Importo Pagato</td>
+				<td><strong>€ {{ pagamento.mandatoPagamento.importoPagato|number_format(2, ',', '.') }}</strong></td>
+			</tr>
+			<tr>
+				<td style="width: 50%;">Quota FESR</td>
+				<td><strong>€ {{ pagamento.mandatoPagamento.quotaFesr|number_format(2, ',', '.') }}</strong></td>
+			</tr>	
+			<tr>
+				<td style="width: 50%;">Quota Stato</td>
+				<td><strong>€ {{ pagamento.mandatoPagamento.quotaStato|number_format(2, ',', '.') }}</strong></td>
+			</tr>	
+			<tr>
+				<td style="width: 50%;">Quota Regione</td>
+				<td><strong>€ {{ pagamento.mandatoPagamento.quotaRegione|number_format(2, ',', '.') }}</strong></td>
+			</tr>					
+		</table>
+	{% else %}
+		<strong>Mandato non presente</strong>
+	{% endif%}
+	{% if pagamento.giustificativi |length > 0 %}
+
+		<h4>Giustificativi</h4>
+
+		<table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+			<thead>
+				<tr>
+					<th style="width: 25%">Fornitore/Personale</th>
+					<th style="width: 30%">Tipologia giustificativo</th>
+					<th style="width: 20%">Numero e data giustificativo</th>
+					<th style="width: 15%">Importo</th>
+					<th style="width: 10%">Azioni</th>
+				</tr>
+			</thead>	
+			<tbody>
+				{% for giustificativo in pagamento.giustificativi %}
+					<tr>
+						{% if giustificativo.denominazioneFornitore is not null %}
+							<td>{{ giustificativo.denominazioneFornitore }} - {{ giustificativo.codiceFiscaleFornitore }}</td>
+							{% if giustificativo.tipologiagiustificativo is defined and giustificativo.tipologiagiustificativo is not null %}
+								<td>{{ giustificativo.tipologiagiustificativo.descrizione }}</td>
+							{% else %}
+								<td>-</td>
+							{% endif %}
+							<td>{{ giustificativo.numeroGiustificativo }} - {{ giustificativo.dataGiustificativo | date('d/m/Y') }}</td>
+						{% else %}
+							{% if giustificativo.estensione.nome is defined %}
+								<td>{{ giustificativo.estensione.nome }} {{ giustificativo.estensione.cognome }}</td>
+								{% if giustificativo.tipologiagiustificativo is defined %}
+									<td>{{ giustificativo.tipologiagiustificativo.descrizione }}</td>
+								{% else %}
+									<td>-</td>
+								{% endif %}
+								<td>-</td>
+							{% else %}
+								<td>-</td>
+								{% if giustificativo.tipologiagiustificativo is defined %}
+									<td>{{ giustificativo.tipologiagiustificativo.descrizione }}</td>
+								{% else %}
+									<td>-</td>
+								{% endif %}
+								<td>-</td>
+							{% endif %}
+						{% endif %}
+						{% if giustificativo.importoGiustificativo is not null%}
+							<td>&euro; {{ giustificativo.importoGiustificativo|number_format(2, ',', '.') }}</td>
+						{% else %}
+							<td>&euro; {{ giustificativo.TotaleImputato|number_format(2, ',', '.') }}</td>
+						{% endif %}
+						<td>
+							<div class="dropdown">
+								<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+									Azioni
+									<span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+									<li><a href="{{ path("dettaglio_giustificativo_attuazione", {"id_giustificativo" : giustificativo.id }) }}">Dettagli</a></li>													
+								</ul>
+							</div>
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% endif %}	
+
+	<a class="btn btn-primary" href="{{ path('elenco_pagamenti_attuazione', { 'id_richiesta': pagamento.attuazioneControlloRichiesta.richiesta.id }) }}">Indietro</a>
+{% endblock %}

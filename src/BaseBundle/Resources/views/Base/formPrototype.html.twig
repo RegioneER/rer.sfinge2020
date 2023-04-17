@@ -1,0 +1,95 @@
+<!-- prototype form element -->
+{% set indice = 0 %}
+{% for idx,val in prototype_field.children %}
+    {% if idx > indice %}
+        {% set indice = idx %}
+    {% endif %}
+{% endfor %}
+
+{% set prototype_html_element = "PROTOTYPE_CONTAINER_" ~ prototype_field.vars.id %}
+
+<div id="{{ prototype_html_element }}" class="list-unstyled" data-prototype-id="{{ prototype_field.vars.id }}" data-prototype-submited-index="{{ indice }}" data-prototype="{{ form_widget(prototype_field.vars.prototype)|e }}"></div>
+
+
+<script type="application/javascript">
+    var $collectionHolder;
+
+    jQuery(document).ready(function() {
+
+        // manage submited form prototype elements
+        //////////////////////////////////////////
+        var $prototypeElements = $('div[data-prototype] > .form-group');
+        $prototypeElements.addClass('prototype-collection-element');
+        $prototypeElements.addClass('well');
+
+        // Get the ul that holds the collection of tags
+        $collectionHolder = $('#' + '{{ prototype_html_element }}');
+        var newIndex = $('#' + '{{ prototype_html_element }}').data('prototype-submited-index');
+
+        $collectionHolder.remove();
+        $('div[data-prototype]').after($collectionHolder);
+
+        var $addPrototypeElementButton = $('<button class="prototype-add-element btn btn-primary"><span class="fa fa-plus"></span> Aggiungi</button>');
+        var $buttonNewElement = $('<div class="well well-sm"></div>').append($addPrototypeElementButton);
+
+        $collectionHolder.append($buttonNewElement);
+
+        // count the current form inputs we have (e.g. 2), use that as the new
+        // index when inserting a new item (e.g. 2)
+        // for already submited values count prototype elements
+        var prototypeId = $collectionHolder.data('prototype-id');
+        $collectionHolder.data('index', newIndex);
+
+        $addPrototypeElementButton.on('click', function(e) {
+            // prevent the link from creating a "#" on the URL
+            e.preventDefault();
+
+            // add a new tag form (see next code block)
+            addTagForm($collectionHolder, $buttonNewElement);
+        });
+
+        // manage submited form prototype elements
+        //////////////////////////////////////////
+
+        var $buttonRemoveElement = $('<button class="prototype-remove-element btn btn-sm btn-danger"><span>&times;</span> Rimuovi</button>');
+        $buttonRemoveElement.on('click', function() {
+            $(this).parents('.prototype-collection-element').remove();
+        });
+
+        $prototypeElements.append($buttonRemoveElement);
+
+    });
+
+    var addTagForm = function($collectionHolder, $buttonNewElement) {
+        // Get the data-prototype explained earlier
+        var prototype = $collectionHolder.data('prototype');
+
+        // get the new index
+        var index = $collectionHolder.data('index');
+        index++;
+
+        // Replace '__name__' in the prototype's HTML to
+        // instead be a number based on how many items we have
+        var newForm = prototype.replace(/__name__/g, index);
+
+        // increase the index with one for the next item
+        $collectionHolder.data('index', index);
+
+        // Display the form in the page in an li, before the "Add a tag" link li
+        var $newFormElement = $('<div class="prototype-collection-element well"></div>').append(newForm);
+
+        // add "Remove Element" button
+        var $buttonRemoveElement = $('<button class="prototype-remove-element btn btn-sm btn-danger"><span>&times;</span> Rimuovi</button>');
+
+        $buttonRemoveElement.on('click', function() {
+            $(this).parents('.prototype-collection-element').remove();
+        });
+
+        $buttonRemoveElement.bind();
+
+        $newFormElement.append($buttonRemoveElement);
+
+        $buttonNewElement.before($newFormElement);
+    }
+
+</script>

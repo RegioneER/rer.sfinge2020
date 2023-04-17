@@ -1,0 +1,41 @@
+{% extends '::base_ente.html.twig' %}
+{% block body %}
+    {{ form(form) }}
+{% endblock body %}
+
+{% block  jquery_page_document_ready %}
+    {% if form.vars.disabled == false %}
+    <script>
+        'use strict';
+
+        function formattaScelta(repo){
+            if (repo.loading) {
+                return repo.text;
+            }
+            var markup = '<table class="table-bordered"><tbody><tr><th>' + 
+                        repo.text + 
+                        '</th></tr><tr><td>' + 
+                        repo.soggetto + 
+                        '</td></tr><tr><td>' +
+                        repo.titolo +
+                        ' </td></tr></tbody></table>';
+
+            return $(markup);
+        }
+
+        $(document).ready(function () {
+            $('form select#proroga_rendicontazione_attuazione_controllo_richiesta').select2({
+                ajax: {
+                        url: "{{- path('cerca_proroghe_api') -}}",
+                        dataType: 'json',
+                        delay: 250,
+                    },
+                minimumInputLength: 4,
+                placeholder: 'Ricerca progetto',
+                templateResult: formattaScelta,
+            });
+        });
+
+    </script>
+    {% endif %}
+{% endblock jquery_page_document_ready %}

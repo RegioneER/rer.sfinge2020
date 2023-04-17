@@ -1,0 +1,13 @@
+<ul class="nav nav-tabs">
+	<li role="presentation"{% if page_view|default() == "procedura" %}class="active"{% endif %}>
+		<a href="{{page_view|default() == "procedura" ? '#' : path('monitoraggio_esportazione_gestione_procedura_configurazione', {'esportazione_id':esportazione.id})}}">Procedure</a>
+    </li>
+
+	<li role="presentation"{% if page_view|default() == "trasferimento" %}class="active"{% endif %}>
+		<a href="{{page_view|default() == "trasferimento" ? '#' : path('monitoraggio_esportazione_gestione_trasferimento_configurazione', {'esportazione_id':esportazione.id} )}}">Trasferimenti</a>
+    </li>
+
+    <li role="presentation"{% if page_view|default() == "richiesta" %}class="active"{% endif %}>
+		<a href="{{page_view|default() == "richiesta" ? '#' : path('monitoraggio_esportazione_gestione_richiesta_configurazione', {'esportazione_id':esportazione.id} )}}">Progetti</a>
+    </li>
+</ul>

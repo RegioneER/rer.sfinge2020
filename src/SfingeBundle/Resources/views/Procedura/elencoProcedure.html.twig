@@ -1,0 +1,90 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <div class="table-toolbar">
+        <div>
+            <a class="btn btn-info" href="#ricerca-procedura-modal" data-toggle="modal">
+                <span class="fa fa-search"></span> Ricerca
+            </a>
+        </div>
+    </div>
+    <div class="count">
+        Numero elementi trovati: {{ procedure.getTotalItemCount }} - Filtro attivo: {{ filtro_attivo ? "Si" : "No" }}
+    </div>
+    <table class="table table-striped table-hover table-bordered" id="notizie-elenco">
+        <thead>
+            <tr>
+                <th class="text-center">{{ knp_pagination_sortable(procedure, 'Id', 's.id') }}</th>
+                <th>Numero atto</th>
+                <th>Asse</th>
+                <th>Tipo</th>
+                <th>Titolo</th>
+                <th>Amministrazione emittente</th>
+                <th>Responsabile bando</th>
+                <th>Fondo</th>
+                <th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for procedura in procedure %}
+                <tr>
+                    <td class="table-id"><a href="{{ path('atto_amministrativo_visualizza', { 'id_procedura': procedura.id }) }}">{{ procedura.id }}</a></td>
+                    <td>{{ procedura.numero_atto }}</td>
+                    <td>{{ procedura.asse }}</td>
+                    <td>{{ procedura.tipologia_procedura }}</td>
+                    <td>{{ procedura.titolo }}</td>
+                    <td>{{ procedura.amministrazione_emittente }}</td>
+                    <td>{{ procedura.responsabile }}</td>
+                    <td>{{ procedura.fondo }}</td>
+                    <td><div class="dropdown">
+                            <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                Azioni
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                <li><a href="{{ path('atto_amministrativo_visualizza', {'id_procedura':procedura.id}) }}">Visualizza</a></li>
+                                    {% if isAccessibile('atto_amministrativo_modifica', {'id_procedura':procedura.id}) %}
+                                    <li><a href="{{ path('atto_amministrativo_modifica', {'id_procedura':procedura.id}) }}">Modifica</a></li>
+                                    {% endif %}
+                                    {% if isAccessibile('modifica_atto_amministrativo_documenti', {'id_procedura':procedura.id}) %}
+                                    <li><a href="{{ path('modifica_atto_amministrativo_documenti', {'id_procedura':procedura.id}) }}">Documenti</a></li>
+                                    {% else %}
+                                    <li><a href="{{ path('atto_amministrativo_documenti', {'id_procedura':procedura.id}) }}">Documenti</a></li>
+                                    {% endif %}
+                                    {% if isAccessibile('visualizza_piano_costi', {'id_procedura':procedura.id}) %}
+                                    <li><a href="{{ path('visualizza_piano_costi', {'id_procedura':procedura.id}) }}">Piano costi</a></li>
+                                    {% endif %}
+                                    {% if isAccessibile('elenco_documenti_richiesti', {'id_procedura':procedura.id}) %}
+                                    <li><a href="{{ path('elenco_documenti_richiesti', {'id_procedura':procedura.id}) }}">Documenti richiesti</a></li>
+                                    {% endif %}
+                                    {% if isAccessibile('esporta_procedura', {'id_procedura':procedura.id}) %}
+                                    <li><a href="{{ path('esporta_procedura', {'id_procedura':procedura.id}) }}">Esporta SQL</a></li>
+                                    {% endif %}
+                                    {% if isAccessibile('esporta_pagamenti', {'id_procedura':procedura.id}) and (is_granted('ROLE_SUPER_ADMIN') or is_granted('ROLE_ISTRUTTORE_SUPERVISORE_ATC')) %}
+                                    <li><a href="{{ path('esporta_pagamenti', {'id_procedura':procedura.id}) }}">Estrazione Pagamenti</a></li>
+                                    {% endif %}
+
+                                {% if procedura.tipologia_procedura in ['Bando', 'Manifestazione di interesse', 'Ingegneria finanziaria'] %}
+                                    <li><a href="{{ path('estrazione_richieste_procedura_completa', {'id_procedura':procedura.id})}}">Estrazione Completa</a></li>
+                                    <li><a href="{{ path('estrazione_richieste_procedura_completa_con_log', {'id_procedura':procedura.id})}}">Estrazione LOG</a></li>
+                                    {% endif %}
+
+                                <li><a href="{{ path('estrazione_variazioni_generale', {'id_procedura':procedura.id})}}">Estrazione variazioni</a></li>
+                                <li><a href="{{ path('estrazione_proroghe_generale', {'id_procedura':procedura.id})}}">Estrazione proroghe</a></li>
+
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {# display navigation #}
+    <div class="navigation">
+        {{ knp_pagination_render(procedure) }}
+    </div>
+
+    {{ modale_ricerca("Atti Amministrativi",form_ricerca_procedure,"elenco_atti_amministrativi_pulisci","ricerca-procedura-modal") }}
+
+{% endblock %}
+

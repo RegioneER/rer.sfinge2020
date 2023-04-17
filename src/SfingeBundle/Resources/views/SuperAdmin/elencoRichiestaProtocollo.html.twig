@@ -1,0 +1,104 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+    <div class="alert alert-warning">
+        Funzionalità disponibili:
+        <ul style="font-size: 13px;">
+            <li>
+                effettuare un nuovo invio PEC a seguito di un invio PEC a un indirizzo errato;
+            </li>
+            <li>
+                consultare i dati di un invio PEC.
+            </li>
+        </ul>
+        <br/>
+        Effettuare la ricerca di un protocollo per il quale si vuole effettuare un nuovo invio PEC o consultarne i dati e successivamente
+        cliccare su "Azioni -> Vedi PEC inviate".
+    </div>
+
+    <div class="table-toolbar">
+        <a href="#" data-target="#ricerca-richiesta-protocollo-modal" data-toggle="modal" class="btn btn-info">
+            <i class="fas fa-search"></i>&nbsp;Ricerca</a>
+    </div>
+
+    <div class="count">
+        Numero elementi trovati: {{ risultato.getTotalItemCount }} - Filtro attivo: {{ filtro_attivo ? "Sì" : "No" }}
+    </div>
+
+    <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+        <thead>
+            <tr>
+                <th>Protocollo</th>
+                <th>Id richiesta</th>
+                <th>Soggetto</th>
+                <th>Nr. email inviate</th>
+                <th>Esito email inviate</th>
+				<th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for richiesta_protocollo in risultato %}
+            <tr>
+                <td>{{ richiesta_protocollo.protocollo }}</td>
+                <td>{{ richiesta_protocollo.richiesta.id }}</td>
+                <td>{{ richiesta_protocollo.richiesta.mandatario.soggetto.denominazione }}</td>
+                <td>{{ richiesta_protocollo.emailProtocollo|length }}</td>
+                <td>
+                    {% for email_protocollo in richiesta_protocollo.emailProtocollo %}
+                       {{ email_protocollo.getStatoLeggibile }}
+                       {% if not loop.last %} - {% endif %}
+                    {% endfor %}
+                </td>
+                <td><div class="dropdown">
+                    <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        Azioni
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                        <li>
+                            <a href="{{- path('dettaglio_email_protocollo', {id: richiesta_protocollo.id})-}}">
+                                <i class="fas fa-edit"></i>&nbsp;Vedi PEC inviate
+                            </a>
+                        </li>
+                    </ul>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    
+    <div class="navigation">
+		{{ knp_pagination_render(risultato) }}
+	</div>
+
+	<div id="ricerca-richiesta-protocollo-modal" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3 id="ricerca-richiesta-protocollo-modal-titolo">Ricerca Progetto</h3>
+				</div>
+				<div class="modal-body">
+					{{ form(form) }}
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Chiudi</button>
+					<a class="btn btn-default" href="{{ path("elenco_richieste_protocollo_pulisci") }}">Annulla Ricerca</a>
+					<a class="btn btn-primary" href="#" id="ricercaOk">Ricerca</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+    {{ pulsante_indietro(path("utilities")) }}
+{% endblock body %}
+{% block  jquery_page_document_ready %}
+    <script>
+        jQuery(document).ready(function() {
+            $("#ricercaOk").click(function(e){
+                e.preventDefault();
+                $(this).parents(".modal-content").find("form").submit();
+            })
+        });
+    </script>
+{% endblock %}

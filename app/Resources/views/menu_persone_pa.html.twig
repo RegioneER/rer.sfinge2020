@@ -1,0 +1,32 @@
+<li class="">
+    <a href="javascript:;">
+        <span class="fa fa-users"></span>
+        <span class="title">Persone</span>
+        <span class="arrow "></span>
+    </a>
+    <ul class="sub-menu">
+        <li id="elencoPersoneAdmin">
+            <a href="{{ path("elenco_persone_admin") }}">Elenco persone</a>
+        </li>
+        <li id="creaPersonaAdmin">
+            <a href="{{ path("crea_persona_admin") }}">Crea persona</a>
+        </li>
+		<li id="creaPersonaPaAdmin">
+            <a href="{{ path("crea_persona_pa_admin") }}">Crea persona PA</a>
+        </li>
+        <li id="elencoUtenti">
+            <a href="{{path("elenco_utenti")}}">Elenco utenti</a>
+        </li>
+        <li id="creaUtente">
+            <a href="{{ path("crea_utente") }}">Crea utente PA</a>
+        </li>
+        {% if is_granted('ROLE_SUPER_ADMIN') or is_granted('ROLE_ADMIN_PA') %}
+        <li id="associaUtente">
+            <a href="{{path("associa_utente_admin")}}">Associa utente</a>
+        </li>
+		<li id="associaUtentePA">
+            <a href="{{path("associa_utente_admin", {'pa':'pa'})}}">Associa utente Pa</a>
+        </li>
+        {% endif %}
+    </ul>
+</li>

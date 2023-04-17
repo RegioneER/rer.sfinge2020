@@ -1,0 +1,56 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+{% set indicatore = form_indicatore.vars.value %}
+<h4>Valori indicatore</h4>
+    {{ form(form_indicatore) }}
+    <div class="alert alert-info" role="alert">
+        Indicare i valori nella seguente unit&agrave; di misura: <b>{{ indicatore.indicatore.descunitamisura }}</b>
+    </div>
+
+<h4>Documentazione allegata</h4>
+    {{ form_start(form_documento) }}
+    {{ form_row(form_documento.file) }}
+    {{ form_rest(form_documento) }}
+    {{ form_end(form_documento) }}
+    {% if indicatore.documenti|length == 0 and indicatore.indicatore.documentazioneobbligatoria == 1%}
+    <div class="alert alert-warning" role="alert" style="margin-top:2em;">
+		In caso di valore realtizzato diverso da 0 &agrave; obbligatorio fornire documentazione
+    </div>
+    {% endif %}
+    <table class="table table-striped table-hover table-bordered" id="richieste-elenco" style="margin-top:2em;">
+        <thead>
+            <tr>
+                <th>Documento</th>
+                <th style="width: 15%">Azioni</th>
+            </tr>
+        </thead>	
+        <tbody>
+            {% for documento in indicatore.documenti %}
+                <tr>
+                    <td>{{ scarica_file(documento) }}</td>
+                    <td>
+						<div class="dropdown pull-right">
+							<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								Azioni
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+									<li>
+									<a href="{{- 
+										path("elimina_documento_indicatore_ben", {
+											id_richiesta: richiesta.id,
+											id_indicatore: indicatore.id,
+											id_documento: documento.id,
+											_token: csrfToken
+										}) 
+									-}}">Elimina</a></li>
+							</ul>
+						</div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+{% endblock %}

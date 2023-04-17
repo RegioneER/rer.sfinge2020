@@ -1,0 +1,12 @@
+{% extends '::base_ente.html.twig' %}
+  
+{% block body %}
+	{% block note %}
+		{# da ridefinire in base alla necesssità #}
+	{% endblock %}
+		
+	<h4>Dati quietanza</h4>
+	{{ form_start(form) }}
+
+	{{ form_end(form) }}
+{% endblock %}

@@ -1,0 +1,34 @@
+<tr>
+    <td>
+        {% if firmato %}
+            {{ nomeFirmato }}
+        {% else %}
+            {{ nome }}
+        {% endif %}
+    </td>
+    <td>
+        {{ datacreazione|date('d-m-Y') }}
+    </td>
+    <td>
+        {% if firmato %}
+            <div class="pull-right">
+                <a class="btn btn-sm btn-primary" title="Scarica documento firmato" href="{{ path("scarica", {"path_codificato":path}) }}" target="_blank">Scarica <small class="italic">(p7m)</small></a>
+                <a class="btn btn-sm btn-info" title="Scarica documento" href="{{ path("scarica_originale", {"path_codificato":path}) }}" target="_blank">Scarica Originale</a>
+                {% if pathElimina is not null %}
+                    <a class="btn btn-sm btn-danger" title="Elimina Documento" href="{{ pathElimina }}" data-confirm="Eliminare il documento selezionato?">Elimina</a>
+                {% endif %}
+            </div>
+        {% else %}
+            {% if pathElimina is not null %}
+                <div class="pull-right">
+                    <a class="btn btn-sm btn-primary" href="{{ path("scarica", {"path_codificato":path}) }}" target="_blank">Scarica</a>
+                    <a class="btn btn-sm btn-danger" title="Elimina Documento" href="{{ pathElimina }}" data-confirm="Eliminare il documento selezionato?">Elimina</a>
+                </div>
+            {% else %}
+                <div class="pull-right">
+                    <a class="btn btn-sm btn-primary" href="{{ path("scarica", {"path_codificato":path}) }}" target="_blank">Scarica</a>
+                </div>
+            {% endif %}
+        {% endif %}
+    </td>
+</tr>

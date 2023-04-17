@@ -1,0 +1,63 @@
+{% extends ':pdf:base.pdf.html.twig' %}
+
+{% import '@AttuazioneControllo/Pdf/macro/macro_attuazione.html.twig' as macro_attuazione %}
+
+{% block content %}
+
+    {% block dati_intestazione %}
+        <div class="center">
+            {% if rispostaComunicazionePagamento.richiesta.procedura.asse.codice == 'A0' %}
+                <img src="assets/img/regione/logo_ue-regione-emilia-romagna.jpg" alt="Loghi regione" height="60px">
+                <h2 align="center">{{ rispostaComunicazionePagamento.richiesta.procedura.titolo }}</h2>
+                <p><h5 align="center">({{ rispostaComunicazionePagamento.richiesta.procedura.atto.numero }})</h5><p>
+            {% elseif is_fsc == true %}
+                <img src="assets/img/regione/logo_fsc.jpg" alt="Loghi regione" height="80px">
+                <h2 align="center">{{ rispostaComunicazionePagamento.richiesta.procedura.titolo }}</h2>
+                <p><h5 align="center">({{ rispostaComunicazionePagamento.richiesta.procedura.atto.numero }})</h5><p>           
+            {% else %}
+                <img src="assets/img/regione/logo_ue-por_fesr_2020.jpg" alt="Loghi regione" height="90px">
+                <h2 align="center">{{ rispostaComunicazionePagamento.richiesta.procedura.titolo }}</h2>
+                <p class="text-medium">{{ rispostaComunicazionePagamento.richiesta.procedura.asse.titolo }} - {{ rispostaComunicazionePagamento.richiesta.procedura.asse.descrizione }}</p>
+                <p class="text-medium">{{ rispostaComunicazionePagamento.richiesta.procedura.azioni|join(';') }}</p>
+            {% endif %}
+        </div>
+    {% endblock dati_intestazione %}
+
+    {% block dati_regione %}
+        <table style="border: 0" width="90%">
+            <tr>
+                <td style="border: 0" width="30%">&nbsp;</td>
+                <td style="border: 0" width="30%">&nbsp;</td>
+                <td style="border: 0" width="40%" align="left">
+                    {{ macro_attuazione.dati_regione_comunicazioni_pagamenti(rispostaComunicazionePagamento.richiesta.procedura) }}
+                </td>
+            </tr>
+        </table>
+    {% endblock dati_regione %}
+
+    <h3 align="center">Risposta comunicazione di pagamento</h3>
+    <div>
+        In relazione alla comunicazione di pagamento con protocollo n° {{ rispostaComunicazionePagamento.comunicazione.protocolloComunicazione }}<br>
+        si forniscono le seguenti risposte.
+    </div>
+
+    <br>
+
+    <div>
+        <strong>Nota del beneficiario:</strong> {{ rispostaComunicazionePagamento.testo ? rispostaComunicazionePagamento.testo|replace({'\r\n' : '<br>', '\n' : '<br>'})|raw : '-' }}
+    </div>
+
+    {% if rispostaComunicazionePagamento.documenti|length > 0 %}
+
+        <br/><br/>
+
+        <strong>Documentazione allegata</strong>
+        <ul>
+            {% for documentoIntegrato in rispostaComunicazionePagamento.documenti %}
+                <li>{{ documentoIntegrato.descrizione }}</li>
+                {% endfor %}
+        </ul>
+
+    {% endif %}
+
+{% endblock %}

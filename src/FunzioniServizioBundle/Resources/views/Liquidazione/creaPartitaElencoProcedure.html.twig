@@ -1,0 +1,27 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <a href="{{ path('funzionalita_liquidazione') }}">Torna</a>
+    <br/>
+    <br/>
+
+    <p class="lead">Seleziona la procedura per cui creare la/e partita/e</p>
+
+    {% for procedura in procedure %}
+        <ul>
+            <li>
+                {% if procedura.id == 135 %}
+                    <a href="{{ path('crea_partita_elenco_richieste_bando_135', {'procedura_id':procedura.id }) }}">
+                        {{ procedura.id }} - {{ procedura.titolo }}
+                    </a>
+                {% else %}
+                    <a href="{{ path('crea_partita_elenco_richieste', {'procedura_id':procedura.id }) }}">
+                        {{ procedura.id }} - {{ procedura.titolo }}
+                    </a>
+                {% endif %}
+            </li>
+        </ul>
+    {% endfor %}
+
+    <a href="{{ path('funzionalita_liquidazione') }}">Torna</a>
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends '::base.pdf.html.twig' %}
+
+{% block content %}
+
+    <h1>H1. Lorem ipsum dolor sit amet</h1>
+    <h2>H2. Lorem ipsum dolor sit amet</h2>
+    <h3>H3. Lorem ipsum dolor sit amet</h3>
+    <h4>H4. Lorem ipsum dolor sit amet</h4>
+    <h5>H5. Lorem ipsum dolor sit amet</h5>
+    <h6>H6. Lorem ipsum dolor sit amet</h6>
+
+    <hr>
+
+    <h3>Paragraph</h3>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi quis sollicitudin tortor, nec tempor nibh. Sed efficitur diam neque, at fringilla augue varius nec. Proin sit amet accumsan elit. Ut arcu enim, efficitur a purus nec, cursus elementum velit. Praesent sodales dolor ac dui pharetra malesuada.</p>
+
+    <h3>Ordered List</h3>
+    <ol>
+        <li>List item 1</li>
+        <li>List item 2</li>
+        <li>List item 3</li>
+        <li>List item 4</li>
+        <li>List item 5</li>
+    </ol>
+
+
+    <h3>Simple Table</h3>
+    <table>
+        <tr>
+            <th>Nome</th>
+            <th>Cognome</th>
+            <th>Eta</th>
+        </tr>
+        <tr>
+            <td>Jill</td>
+            <td>Smith</td>
+            <td>50</td>
+        </tr>
+        <tr>
+            <td>Eve</td>
+            <td>Jackson</td>
+            <td>94</td>
+        </tr>
+        <tr>
+            <td>Mark</td>
+            <td>Paterson</td>
+            <td>26</td>
+        </tr>
+        <tr>
+            <td>Tyler</td>
+            <td>Durden</td>
+            <td>13</td>
+        </tr>
+        <tr>
+            <td>John</td>
+            <td>Johnson</td>
+            <td>78</td>
+        </tr>
+    </table>
+
+    <br>
+
+    <h3>Complex table</h3>
+    <table>
+        <tr>
+            <th colspan="4">col1</th>
+            <th colspan="4">col2</th>
+            <th colspan="4">col3</th>
+        </tr>
+        <tr>
+            <td colspan="4">text</td>
+            <td colspan="4">text</td>
+            <td colspan="4">text</td>
+        </tr>
+        <tr>
+            <td>A</td>
+            <td>B</td>
+            <td>C</td>
+            <td>D</td>
+            <td>E</td>
+            <td>F</td>
+            <td>G</td>
+            <td>H</td>
+            <td>I</td>
+            <td>J</td>
+            <td>K</td>
+            <td>L</td>
+        </tr>
+    </table>
+
+
+
+{% endblock %}

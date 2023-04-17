@@ -1,0 +1,49 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	{% if procedura.modificabile %}
+		<a href="{{ path('aggiungi_documento_richiesto', {'id_procedura' : procedura.id }) }}" class="btn btn-primary"><span class="fa fa-plus"></span> Aggiungi documento</a><br><br>
+	{% endif %}
+	{% if procedura.documentiRichiesti|length  %}
+	<table class="table table-striped table-hover">
+		<thead>
+			<tr>
+				<th style="width: 34%">Descrizione</th>
+				<th style="width: 12%">Ambito</th>
+				<th style="width: 8%">Obbligatorio</th>
+				<th style="width: 8%">Duplicati</th>
+				<th style="width: 8%">Firma</th>
+				<th style="width: 20%">Mime ammessi</th>
+				<th style="width: 10%">Azioni</th>
+			</tr>
+		</thead>
+		<tbody>
+		{% for tipologia in procedura.documentiRichiesti %}	
+			<tr>
+				<td>{{ tipologia.descrizione }}</a></td>
+				<td>{{ tipologia.tipologia }}</a></td>
+				<td>{{ tipologia.obbligatorio ? "Si" : "No"}}</td>
+				<td>{{ tipologia.abilitaDuplicati ? "Si" : "No" }}</td>
+				<td>{{ tipologia.firmaDigitale ? "Si" : "No" }}</td>
+				<td>{{ tipologia.mimeAmmessi }}</td>
+				<td><div class="dropdown">
+					<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+						Azioni
+						<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+						{% if isAccessibile('modifica_documento_richiesto', { 'id_tipologia': tipologia.id, 'id_procedura' : tipologia.procedura.id }) and procedura.modificabile %}
+							<li><a href="{{ path('modifica_documento_richiesto', { 'id_tipologia': tipologia.id, 'id_procedura' : tipologia.procedura.id }) }}">Modifica</a></li>
+						{% endif %}
+						{% if isAccessibile('elimina_documento_richiesto', { 'id_tipologia': tipologia.id }) and procedura.modificabile %}
+							<li><a href="{{ path('elimina_documento_richiesto', {'id_tipologia':tipologia.id}) }}">Elimina</a></li>
+						{% endif %}
+					</ul>
+				</div></td>
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+	{% endif %}
+{% endblock %}
+

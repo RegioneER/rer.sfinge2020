@@ -1,0 +1,89 @@
+{% extends '::base.html.twig' %}
+{% block begin_page_level_plugin_style %}
+	<style>
+		#appendice td:nth-child(3), #appendice td:nth-child(4), #appendice td:nth-child(5) {
+			text-align: right;
+		}
+	</style>
+{% endblock %}
+{% block body %}
+	{% include 'CertificazioniBundle:Appendici:menuAppendici.html.twig' with {'id_chiusura' : chiusura.id } %}	
+
+	<h4>APPENDICE 1: importi registrati nel sistema contabile dell’AdC</h4>
+
+	<table class="table table-striped table-hover table-bordered" id="appendice">
+		<thead>
+			<tr>
+				<th>Asse prioritario</th>
+				<th>Categoria di regioni</th>				
+				<th>Importo totale di spese ammissibili registrato dall’autorità di certificazione nei propri sistemi contabili 
+					e inserito nelle domande di pagamento presentate alla Commissione
+				</th>					
+				<th>Importo totale della corrispondente spesa pubblica relativa all’attuazione delle operazioni</th>					
+				<th>Importo totale dei pagamenti corrispondenti effettuati ai beneficiari a norma dell’articolo 132, paragrafo 2, 
+					del regolamento (UE) n.1303/2013
+				</th>					
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>1</td>
+				<td>Più sviluppate</td>
+				<td>{{(importi_asse['A1'] - importi_asse['A1TAGLI'])|number_format(2, ',', '.')}}</td>
+				<td>{{(importi_asse['A1'] - importi_asse['A1TAGLI'])|number_format(2, ',', '.')}}</td>
+				<td>{{(importi_asse['A1'] - importi_asse['A1TAGLI'])|number_format(2, ',', '.')}}</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td>Più sviluppate</td>
+				<td>{{(importi_asse['A2'] - importi_asse['A2TAGLI'])|number_format(2, ',', '.')}}</td>
+				<td>{{(importi_asse['A2'] - importi_asse['A2TAGLI'])|number_format(2, ',', '.')}}</td>
+				<td>{{(importi_asse['A2'] - importi_asse['A2TAGLI'])|number_format(2, ',', '.')}}</td>
+			</tr>
+			<tr>
+				<td>3</td>
+				<td>Più sviluppate</td>
+				<td>{{(importi_asse['A3'] - importi_asse['A3TAGLI'])|number_format(2, ',', '.')}}</td>
+				<td>{{(importi_asse['A3'] - importi_asse['A3TAGLI'])|number_format(2, ',', '.')}}</td>
+				<td>{{(importi_asse['A3'] - importi_asse['A3TAGLI'])|number_format(2, ',', '.')}}</td>
+			</tr>
+			<tr>
+				<td>4</td>
+				<td>Più sviluppate</td>
+				<td>{{(importi_asse['A4'] - importi_asse['A4TAGLI'])|number_format(2, ',', '.')}}</td>
+				<td>{{(importi_asse['A4'] - importi_asse['A4TAGLI'])|number_format(2, ',', '.')}}</td>
+				<td>{{(importi_asse['A4'] - importi_asse['A4TAGLI'])|number_format(2, ',', '.')}}</td>
+			</tr>
+			<tr>
+				<td>5</td>
+				<td>Più sviluppate</td>
+				<td>{{(importi_asse['A5'] - importi_asse['A5TAGLI'])|number_format(2, ',', '.')}}</td>
+				<td>{{(importi_asse['A5'] - importi_asse['A5TAGLI'])|number_format(2, ',', '.')}}</td>
+				<td>{{(importi_asse['A5'] - importi_asse['A5TAGLI'])|number_format(2, ',', '.')}}</td>
+			</tr>
+			<tr>
+				<td>6</td>
+				<td>Più sviluppate</td>
+				<td>{{(importi_asse['A6'] - importi_asse['A6TAGLI'])|number_format(2, ',', '.')}}</td>
+				<td>{{(importi_asse['A6'] - importi_asse['A6TAGLI'])|number_format(2, ',', '.')}}</td>
+				<td>{{(importi_asse['A6'] - importi_asse['A6TAGLI'])|number_format(2, ',', '.')}}</td>
+			</tr>
+			<tr>
+				<td>7</td>
+				<td>Più sviluppate</td>
+				<td>{{(importi_asse['A7'] - importi_asse['A7TAGLI'])|number_format(2, ',', '.')}}</td>
+				<td>{{(importi_asse['A7'] - importi_asse['A7TAGLI'])|number_format(2, ',', '.')}}</td>
+				<td>{{(importi_asse['A7'] - importi_asse['A7TAGLI'])|number_format(2, ',', '.')}}</td>
+			</tr>
+			<tr>
+				<td style="font-weight: bold">Totale</td>
+				<td style="font-weight: bold">Più sviluppate</td>
+				<td style="font-weight: bold">{{(importi_asse['TOTALE'] - importi_asse['TOTALETAGLI'])|number_format(2, ',', '.')}}</td>
+				<td style="font-weight: bold">{{(importi_asse['TOTALE'] - importi_asse['TOTALETAGLI'])|number_format(2, ',', '.')}}</td>
+				<td style="font-weight: bold">{{(importi_asse['TOTALE'] - importi_asse['TOTALETAGLI'])|number_format(2, ',', '.')}}</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<a href="{{ path("elenco_certificazioni")}}" class="btn btn-default btn-page-action btn-form-back pull-left">Indietro</a>	
+{% endblock %}

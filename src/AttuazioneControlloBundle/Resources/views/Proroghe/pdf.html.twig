@@ -1,0 +1,121 @@
+{% extends ':pdf:base.pdf.html.twig' %}
+
+{% import '@Richieste/Pdf/macro/macro_richiesta.html.twig' as macro_richiesta %}
+
+{% block content %}
+    {% set richiesta = proroga.attuazioneControlloRichiesta.richiesta %}
+    {% set procedura = richiesta.procedura %}
+    {% block dati_intestazione %}
+        <div class="center">
+            {% if procedura.asse.codice == 'A0' %}
+                <img src="assets/img/regione/logo_ue-regione-emilia-romagna.jpg" alt="Loghi regione" height="60px">
+                <h2 align="center">{{ procedura.titolo }}</h2>
+           {% elseif is_fsc == true %}
+                <img src="assets/img/regione/logo_fsc.jpg" alt="Loghi regione" height="80px">
+                <h2 align="center">{{ titolo_procedura }}</h2>
+            {% else%}
+                <img src="assets/img/regione/logo_ue-por_fesr_2020.jpg" alt="Loghi regione" height="60px">
+                <h2 align="center">POR-FESR EMILIA ROMAGNA 2014-2020</h2>
+
+                <h3 align="center">{{ procedura.asse.titolo }} - {{ procedura.asse.descrizione }}</h3>
+                {% for azione in procedura.azioni %}
+                    <p class="text-medium italic" align="center">Azione {{ azione.codice }} {{ azione.descrizione }}</p>
+                {% endfor %}
+
+                <h3 class="bold" align="center">Bando per</h3>
+                <h3 class="bold" align="center">{{ procedura.titolo }}</h3>
+            {% endif %}
+        </div>
+    {% endblock dati_intestazione %}
+
+    {% block titolo_documento %}
+        {% if proroga.tipoproroga == 'PROROGA_AVVIO'%}
+            <br>
+            <h3 align="center">DOMANDA DI PROROGA AVVIO DEL PROGETTO</h3>
+        {% endif %}
+        {% if proroga.tipoproroga == 'PROROGA_FINE'%}
+            <br>
+            <h3 align="center">DOMANDA DI PROROGA DEL TERMINE PER L'ULTIMAZIONE DEL PROGETTO</h3>
+        {% endif %}
+    {% endblock titolo_documento %}
+
+    {% block dati_regione %}
+        <table width="90%" border="0">
+            <tr>
+                <td width="30%">&nbsp;</td>
+                <td width="30%">&nbsp;</td>
+                <td width="40%" align="left">
+                    {{ macro_richiesta.dati_regione_proroghe(procedura.asse.codice) }}
+                </td>
+            </tr>
+        </table>
+    {% endblock dati_regione %}
+
+    {% block dati_soggetto %}
+        <div style="page-break-after: always"></div>
+        <p class="text-small">
+            Il/La sottoscritto/a <b>{{ proroga.firmatario.nome }} {{ proroga.firmatario.cognome }}</b>
+            nato/a {% if proroga.firmatario.comune is not null %}a <b>{{ proroga.firmatario.comune }}</b> {% else %}in <b>{{ proroga.firmatario.statoNascita }}</b> {% endif %}in data <b>{{ proroga.firmatario.dataNascita | date("d/m/Y") }}</b><br/>
+            residente in <b>{{ proroga.firmatario.luogoResidenza.via }}</b> n° <b>{{ proroga.firmatario.luogoResidenza.numeroCivico }}</b>{% if proroga.firmatario.luogoResidenza.localita is not null %} Località <b>{{ proroga.firmatario.luogoResidenza.localita }}</b>{% endif%}
+            c.a.p. <b>{{ proroga.firmatario.luogoResidenza.cap }}</b>
+            {% if proroga.firmatario.luogoResidenza.comune is not null %} Comune <b>{{ proroga.firmatario.luogoResidenza.comune.denominazione }}</b>
+                Prov. <b>{{ proroga.firmatario.luogoResidenza.provincia.siglaAutomobilistica }}</b>
+            {% else %}
+                Stato <b>{{ proroga.firmatario.luogoResidenza.stato.denominazione }}</b>
+                {% if proroga.firmatario.luogoResidenza.comuneEstero is not null %} Comune (estero) <b>{{ proroga.firmatario.luogoResidenza.comuneEstero }}</b>{% endif %}
+                {% if proroga.firmatario.luogoResidenza.provinciaEstera is not null %} Prov. (estera) <b>{{ proroga.firmatario.luogoResidenza.provinciaEstera }}</b>{% endif %}
+            {% endif %}
+            <br/>
+            Codice fiscale <b>{{ proroga.firmatario.codiceFiscale }}</b><br/>
+        </p>
+        <p class="text-small">
+            In qualità di legale rappresentante/delegato del soggetto
+        </p>
+        <p class="text-small">
+            Denominazione/Ragione sociale <b>{{ capofila.denominazione }}</b><br/>
+            Indirizzo sede legale - <b>{{ capofila.via }} {{ capofila.civico }} {{ capofila.localita }}</b> c.a.p.  <b> {{ capofila.cap }}</b>
+            {% if capofila.comune is not null %}
+                Comune <b>{{ capofila.comune.denominazione }}</b> Prov <b>{{ capofila.provincia.siglaAutomobilistica }}</b><br/>
+            {% endif %}
+            {% if capofila.comuneEstero is not null %}
+                Città (estera) <b>{{ capofila.comuneEstero }}</b> 
+                {% if capofila.provinciaEstera is not null %}Provincia / Regione (estera) <b>{{ capofila.provinciaEstera }}</b>{% endif %} , Stato <b>{{ capofila.stato }}</b><br/>
+            {% endif %}		 
+            Codice fiscale <b>{{ capofila.codiceFiscale }}</b>
+            Forma giuridica <b>{{ capofila.formaGiuridica.descrizione }}</b><br/>
+        </p>
+    {% endblock dati_soggetto %}
+
+    {% block riferimento_richiesta %}
+        <p>in relazione alla domanda di contributo con protocollo {{ richiesta.protocollo }} per la quale ha ricevuto comunicazione 
+            della avvenuta concessione del contributo</p>
+        {% endblock riferimento_richiesta %}	
+
+    {% block chiede %}
+        {% if proroga.tipoproroga == 'PROROGA_AVVIO'%}
+            <div class="center">
+                <h4 align="center">CHIEDE</h4>
+            </div>		
+            <p>una proroga dell'avvio del progetto e di poter avviare lo stesso entro la data del {{ proroga.dataAvvioProgetto|date('d/m/Y') }}</p>
+        {% endif %}
+        {% if proroga.tipoproroga == 'PROROGA_FINE'%}
+            <div class="center">
+                <h4 align="center">CHIEDE</h4>
+            </div>		
+            <p>una proroga del termine di conclusione del progetto e di poter concludere lo stesso entro e non oltre la data del {{ proroga.dataFineProgetto|date('d/m/Y') }}</p>
+        {% endif %}
+    {% endblock chiede %}
+
+    {% block dichiara %}
+        <div class="center">
+            <h4 align="center">DICHIARA</h4>
+        </div>		
+        <p>che la suddetta richiesta è giustificata dalle seguenti motivazioni:<br>
+            {{ proroga.motivazioni }}</p>
+        {% endblock dichiara %}
+
+    {% block documenti %}
+    {% endblock documenti%}
+
+{% endblock content %}
+

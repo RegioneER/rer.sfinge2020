@@ -1,0 +1,112 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <p class="lead">SAP test suite - Crea persone bando</p>
+
+    {{ form_start(form) }}
+
+    {{ form_end(form) }}
+
+    <a href="{{ path('sap_test_suite') }}" type="button">Torna alla suite</a>
+
+    <br />
+    <br />
+
+    {% set counter = 1 %}
+    {% if success is not empty %}
+        <h5>Persone create</h5>
+        <table class="table table-striped table-hover table-bordered" id="proponenti-elenco">
+            <thead>
+                <tr>
+                    <th>Incrementale</th>
+                    <th>Nome</th>
+                    <th>Cognome</th>
+                    <th>Codice fiscale</th>
+                    <th>LIFNR</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in success %}
+                    <tr>
+                        <td>{{ counter }}</td>
+                        <td>{{ item.persona.nome }}</td>
+                        <td>{{ item.persona.cognome }}</td>
+                        <td>{{ item.persona.codiceFiscale }}</td>
+                        <td>
+                            <a href="{{ path('mostra_soggetto_sap', {'lifnr' : item.lifnr, 'env' : 'Dev' }) }}">{{ item.lifnr }} (Dev)</a>
+                            <a href="{{ path('mostra_soggetto_sap', {'lifnr' : item.lifnr, 'env' : 'Prod' }) }}">{{ item.lifnr }} (Prod)</a>
+                        </td>
+                    </tr>
+                    {% set counter = counter + 1 %}
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    <br />
+    <br />
+
+    {% set counter = 1 %}
+    {% if successGiaPresente is not empty %}
+        <h5>Persone già presenti</h5>
+        <table class="table table-striped table-hover table-bordered" id="proponenti-elenco">
+            <thead>
+            <tr>
+                <th>Incrementale</th>
+                <th>Nome</th>
+                <th>Cognome</th>
+                <th>Codice fiscale</th>
+                <th>LIFNR</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in successGiaPresente %}
+                <tr>
+                    <td>{{ counter }}</td>
+                    <td>{{ item.persona.nome }}</td>
+                    <td>{{ item.persona.cognome }}</td>
+                    <td>{{ item.persona.codiceFiscale }}</td>
+                    <td>
+                        <a href="{{ path('mostra_soggetto_sap', {'lifnr' : item.lifnr, 'env' : 'Dev'}) }}">{{ item.lifnr }} (Dev)</a>
+                        <a href="{{ path('mostra_soggetto_sap', {'lifnr' : item.lifnr, 'env' : 'Prod'}) }}">{{ item.lifnr }} (Prod)</a>
+                    </td>
+                </tr>
+                {% set counter = counter + 1 %}
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+    
+
+    {% set counter = 1 %}
+    {% if error is not empty %}
+        <h5>Persone <strong>non</strong> create</h5>
+        <table class="table table-striped table-hover table-bordered" id="proponenti-elenco">
+            <thead>
+            <tr>
+                <th>Incrementale</th>
+                <th>Nome</th>
+                <th>Cognome</th>
+                <th>Codice fiscale</th>
+                <th>Errori</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for item in error %}
+                    <tr>
+                        <td>{{ counter }}</td>
+                        <td>{{ item.persona.nome }}</td>
+                        <td>{{ item.persona.cognome }}</td>
+                        <td>{{ item.persona.codiceFiscale }}</td>
+                        <td>{{ item.errori|join('|') }}</td>
+                    </tr>
+                    {% set counter = counter + 1 %}
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    {% if success is empty and successGiaPresente is empty and error is empty %}
+        <h5>Nessuna record processato</h5>
+    {% endif %}
+{% endblock %}

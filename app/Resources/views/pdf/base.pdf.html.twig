@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="it">
+    <head>
+        <style>
+
+            /* STILE GENERALE PDF */
+
+            {# @page {size: A4; margin: 100px 50px 50px 50px; } #}
+            {# #header { top: -100px; height: 50px; padding: 20px 0; text-align: center; }
+            #header.example { background-color: #ccc; } #}
+
+            table {
+                border-collapse: collapse;
+                border-bottom: 1.5em;
+                width: 100%;
+            }
+
+            table, th, td {
+                border: 1pt solid black;
+            }
+
+            th, td {
+                padding: 2mm;
+                text-align: left;
+            }
+            
+            .piano_el_imp {
+                padding: 2mm;
+                height: 50px;
+                text-align: right;
+            }
+            .piano_el {
+                padding: 2mm;
+                height: 50px;
+                text-align: justify;
+            }
+            
+            .text-small {
+                font-size: 8pt;
+            }
+
+            .text-medium {
+                font-size: 10pt;
+            }
+
+            .italic {
+                font-style: italic;
+            }
+
+            .bold {
+                font-weight: bold;
+            }
+
+            .text-area {
+                padding: 15px;
+                border: 1pt solid #000;
+                word-break: break-all;
+            }
+			
+			 .text-area-no-border {
+                padding: 15px;
+                word-break: break-all;
+            }
+
+            .text-area-importo {
+                padding: 15px;
+                width: 20%;
+                border: 1pt solid #000;
+                text-align: right;
+            }
+
+            .titolo-sezione {
+                padding: 10px;
+                border: 1pt solid black;
+                background-color: #aaaaaa;
+            }
+            .center {
+                text-align: center;
+            }
+
+            footer {
+                position: fixed;
+                bottom: 5mm;
+                width:100%;
+                left: 0cm; 
+            }
+
+            footer .facsimile {
+                color: #666666;
+                font-size: 14pt;
+                text-align:left;
+                color: #D41E1E;
+                height: 100%;
+            }
+
+            footer .numero-pagina {
+                display:inline-block;
+                position:absolute;
+                right:0;
+                height: 100%;
+            }
+
+            footer .pie-pagina {
+                display:inline-block;
+            }
+        
+            body{
+                counter-reset: page 0;
+            }
+
+            .pagenum:before {
+                content: counter(page);
+            }
+
+            {% block style_extra %}
+            {% endblock style_extra %}
+
+        </style>
+        {% block head_extra %}
+        {% endblock head_extra %}
+    </head>
+    <body>
+        <footer> 
+            {% if facsimile %}
+                <p class="facsimile pie-pagina">DOCUMENTO NON VALIDO PER LA PRESENTAZIONE: FACSMILE</p>
+            {% endif %}
+            <p class="numero-pagina pie-pagina">Pag. <span class="pagenum"></span></p>
+        </footer> 
+
+        {% block content %}
+            {# pdf content goes here #}
+        {% endblock %}
+
+
+    </body>
+</html>

@@ -1,0 +1,143 @@
+parameters:  
+    database_driver: pdo_mysql
+    database_host: @@db.server@@
+    database_port: @@db.port@@
+    database_name: @@db.name@@
+    database_user: @@db.user@@
+    database_password: @@db.pazw@@
+
+	database_host2: @@db.server.myfesr@@
+    database_port2: @@db.port.myfesr@@
+    database_name2: @@myfesr@@
+    database_user2: @@db.user.myfesr@@
+    database_password2: @@db.pazw.myfesr@@  
+    
+    database_host3: @@db.server.myfesr_aziende@@
+    database_port3: @@db.port..myfesr_aziende@@
+    database_name3: @@myfesr_aziende@@  
+    database_user3: @@db.user.myfesr_aziende@@
+    database_password3: @@db.pazw.myfesr_aziende@@
+
+    locale: it
+    secret: ThisTokenIsNotSoSecretChangeIt
+
+#----- dev | qa | test | prod --------
+    env: dev
+
+    paginatore.num_elementi: @@num_elementi@@
+    paginatore.max_num_elementi: @@max_num_elementi@@
+
+
+    file.path_base: @@file.path_base@@
+    file.controlla.mime.attivo: @@file.controlla.mime.attivo@@
+    file.controlla.dimensione.attivo: @@file.controlla.dimensione.attivo@@
+    file.controlla.firma.attivo: @@file.controlla.firma.attivo@@
+    file.controlla.firma.estensione: @@file.controlla.firma.estensione@@
+    file.controlla.firma.certificato: @@file.controlla.firma.certificato@@
+    file.controlla.firma.cf: @@file.controlla.firma.cf@@
+
+    invio.email.abilitato: @@invio.email.abilitato@@ // settara a 1 per abilitare l'invio delle email da sistema, 0 altrimenti
+	mailer.from: @@mailer.from@@ //Mittente delle email di comunicazione da parte del sistema
+    indirizzo.email.approvaincarichi: @@protocolloattprodo@regione.emilia-romagna.it@@ // mailing list regione protocolloattprodo@regione.emilia-romagna.it
+
+    login.federa.abilitato:  @@login.federa.abilitato@@ //settarea a 1 se si è in federa, 0 altrimenti
+	logout.federa.url:  @@logout.federa.url@@ //URL logout di federa in funzione dell'ambiente
+
+    https: @@https@@
+
+#----- example: trusted_proxies: 10.33.108.1,10.33.101.1
+    trusted_proxies: @@trusted_proxies@@
+
+	stacca_protocollo_al_volo: 1
+
+#----- credenziali protocollazione DocER -------
+    # N.B.: l'URL non deve contenere lo slash alla fine
+    # Es. : https://docer-test.ente.regione.emr.it
+
+    # vecchio url DOCER_BASE_URL: https://docer.ente.regione.emr.it
+	DOCER_BASE_URL: https://docer-rer.lepida.it
+    DOCER_USERNAME: ut_schema31
+    # vecchia password DOCER_PASSWORD: Ut,Pwd.01 
+    DOCER_PASSWORD: DfapiBo5b1hchhx 
+    DOCER_CODICE_ENTE: R_EMIRO
+    DOCER_CODICE_AOO: AOO_EMR
+
+#----- credenziali protocollazione DocER in uscita -------    
+    #----- Amministrazione
+    DOCER_DENOMINAZIONE: Emilia Romagna
+    DOCER_UO_TIPO_TEMPORANEA: temporanea
+    DOCER_UO_DENOMINAZIONE: UO
+    #----- AOO
+    DOCER_DENOMINAZIONE_AOO: r_emiro
+    DOCER_CODICE_AOO_EMR: AOO_EMR 
+
+# ----- credenziali per CIPE-CUP
+    cipe.user: @@cup.user@@
+    cipe.password: @@cup.password@@
+    cipe.ws_genera_cup.url: @@cup.url@@
+
+#----- E-Grammata -------
+	
+    egrammata.requestParams:
+        userId: UT_SCHEMA31
+				
+		# Password1. (TEST)
+		# Ut,Pwd.01 (PROD) vecchia
+	    # DfapiBo5b1hchhx (PROD) ATTUALE
+        password: 
+        codEnte: 1
+        
+        # https://test-protocollo.ente.regione.emr.it/axisSviluppo (TEST)
+        # https://protocollo.ente.regione.emr.it/axisProduzione (PROD)
+        indirizzoIp: https://test-protocollo.ente.regione.emr.it/axisSviluppo
+        
+        # 152175 (TEST)
+        # 127359 (PROD)
+        idUteIn: 
+        
+        # 103898 (TEST)
+        # 105566 (PROD)
+        idUoIn: 
+     
+    egrammata.wsdl:
+		# https://test-protocollo.ente.regione.emr.it/axisSviluppo/services (TEST)
+        # https://protocollo.ente.regione.emr.it/axisProduzione/services (PROD)
+        baseUrl: 
+        invioEmailProtocollo: /WSInvioEmailProtocollo?wsdl
+        interrogazioneRicevutePec: /WSInterrogazioneRicevutePEC?wsdl
+
+#----- gl --------
+    gl:
+        stream: @@gl.stream@@
+        auth: @@gl.auth@@
+
+## utenze egrammata PROD inserite a database
+#   Utente               IdUteIn            IdUoIn
+#UT_SFINGE_367           162310             113413
+#UT_SFINGE_368           162311             113414
+#UT_SFINGE_397           162307             113410
+#UT_SFINGE_454           162309             113412
+#UT_SFINGE_482           162308             113411
+#UT_SFINGE_347           176436             117667
+
+## utenze egrammata TEST inserite a database
+#   Utente               IdUteIn            IdUoIn
+#UT_SFINGE_367           200184             116246
+#UT_SFINGE_397           200179             116233
+#UT_SFINGE_482           200180             116234
+
+
+#---- mantis -----
+
+    mantis_admin_username: @@mantis.mantis_admin_username@@
+    mantis_admin_password: @@mantis.mantis_admin_password:@@
+    mantis_url: @@mantis.mantis_url@@
+
+#----- token -----
+
+    token_sisma: @@token@@
+
+#----- Adrier -----
+
+    UTENTE_ADRIER: @@UTENTE_ADRIER@@
+    PWD____ADRIER: @@PWD____ADRIER@@

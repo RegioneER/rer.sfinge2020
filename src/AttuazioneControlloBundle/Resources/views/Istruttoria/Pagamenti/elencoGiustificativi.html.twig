@@ -1,0 +1,114 @@
+{% set giustificativiImportati = false %}
+{% extends '::base.html.twig' %}
+
+{% block body %}
+
+    <br>
+    <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+        <thead>
+            <tr>
+                <th>Istruttoria imputazione spesa</th>
+                <th>Istruttoria generale</th>
+                <th>Fornitore</th>
+                <th>Numero e data giustificativo</th>
+                    {% if rendicontazioneProceduraConfig.rendicontazioneMultiProponente %}
+                    <th>Proponente</th>
+                    {% endif %}
+                <th>Importo giustificativo</th>
+                <th>Importo richiesto</th>
+                    {% if ripresentazione_spesa %}
+                    <th>Importo ammesso pagamento attuale</th>
+                    <th>Importo ammesso pagamento successivo</th>
+                    {% else %}
+                    <th>Importo ammesso</th>
+                    {% endif %}
+                    {% if ripresentazione_spesa %}
+                    <th>Importo non ammesso pagamento attuale</th>
+                    {% else %}
+                    <th>Importo non ammesso</th>
+                    {% endif %}
+                <th>Voci di costo</th>
+                <th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for giustificativo in giustificativi %}
+                {# paccamuuora accussì..poi sempre se c'è il tempo facciamo una bela twig estenscion che richiama le valida del gestore #}
+                {% set statoImputazione = "<span style='color:red'>incompleta</span>" %}
+                {% set statoIstruttoria = "<span style='color:red'>incompleta</span>" %}
+                {% set oggettoIstruttoria = giustificativo.istruttoriaOggettoPagamento %}
+
+                {% if giustificativo.importoApprovato is not null %}
+                    {% set statoImputazione = "<span style='color:green'>completa</span>" %}
+                {% endif %}
+
+                {% if oggettoIstruttoria is not null %}
+                    {% if oggettoIstruttoria.completa %}
+                        {% set statoIstruttoria = "<span style='color:green'>completa</span>" %}
+                    {% elseif oggettoIstruttoria.integrazione%}
+                        {% set statoIstruttoria = "<span style='color:blue'>integrazione</span>" %}
+                    {% endif %}
+                {% endif %}
+                <tr>
+                    <td>
+                        {{ statoImputazione |raw }}
+                    </td>
+                    <td>
+                        {{statoIstruttoria |raw}}
+                    </td>
+                    <td>{{ giustificativo.denominazioneFornitore }} <br> {{ giustificativo.codiceFiscaleFornitore }}</td>
+                    <td>{{ giustificativo.numeroGiustificativo }} <br> {{ giustificativo.dataGiustificativo | date('d/m/Y') }}</td>
+                        {% if rendicontazioneProceduraConfig.rendicontazioneMultiProponente %}
+                        <td>{{ giustificativo.proponente }}</td>
+                    {% endif %}
+                    <td>&euro; {{ giustificativo.importoGiustificativo|number_format(2, ',', '.') }}</td>
+                    <td>&euro; {{ giustificativo.importoRichiesto|number_format(2, ',', '.') }}
+                        {%- if giustificativo.getGiustificativoOrigine %}*
+                            {% set giustificativiImportati = true %}
+                        {% endif -%}
+                    </td>
+                    <td>{{ giustificativo.importoApprovato is null ? "-" : '€ ' ~ giustificativo.importoApprovato|number_format(2, ',', '.') }}</td>
+                    {% if ripresentazione_spesa %}
+                        <td>
+                            {% if giustificativo.importoApprovato is null %}
+                                -
+                            {% else %}
+                                &euro; {{ giustificativo.getImportoPagamentoSuccessivo|number_format(2, ',', '.') }}</td>
+                            {% endif %}
+
+                    {% endif %}
+                    <td>&euro; {{ giustificativo.calcolaImportoNonAmmesso|number_format(2, ',', '.') }}</td>
+                    <td>
+                        {% for vocePianoCosto in giustificativo.vociPianoCosto %}
+                            {{ vocePianoCosto.vocePianoCosto.pianoCosto.titolo }}<br>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        <div class="dropdown">
+                            <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                Azioni
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                <li><a href="{{ path("istruttoria_giustificativo_pagamento", {"id_giustificativo" : giustificativo.id }) }}">Valuta</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% if giustificativiImportati %}
+        <span class="text">
+            * Giustificativo rinviato automaticamente dal pagamento precedente, su indicazione dell'istruttorie PA.
+        </span>
+    {% endif %}
+    <div class="page-actions"> 
+        {% if rendicontazioneProceduraConfig.sezioneContratti %}
+            <a href="{{path('elenco_contratti_istruttoria', {'id_pagamento' : pagamento.id})}}" class="btn btn-default btn-page-action btn-form-back">Indietro</a>
+        {% else %}
+            <a href="{{path('riepilogo_istruttoria_pagamento', {'id_pagamento' : pagamento.id})}}" class="btn btn-default btn-page-action btn-form-back">Indietro</a>
+        {% endif %}
+    </div>
+
+{% endblock %}

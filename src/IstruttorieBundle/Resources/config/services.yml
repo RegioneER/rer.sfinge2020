@@ -1,0 +1,50 @@
+services:
+    gestore_checklist:
+        class: IstruttorieBundle\Service\GestoreChecklistService
+        arguments: ["@service_container"]
+        
+    gestore_istruttoria:
+        class: IstruttorieBundle\Service\GestoreIstruttoriaService
+        arguments: ["@service_container"]          
+        
+    validator.criterio:
+        class: IstruttorieBundle\Validator\Constraints\ValidaValutazioneCriterioRichiestaValidator
+        arguments: ["@service_container"]
+        tags:
+            - { name: validator.constraint_validator, alias: valida_criterio }
+            
+    gestore_istruttoria_pianocosto:
+        class: IstruttorieBundle\Service\GestorePianoCostoService
+        arguments: ["@service_container"]
+
+    gestore_integrazione:
+        class: IstruttorieBundle\Service\GestoreIntegrazioneService
+        arguments: ["@service_container"]
+        
+    gestore_comunicazione:
+        class: IstruttorieBundle\Service\GestoreComunicazioneService
+        arguments: ["@service_container"]
+        
+    gestore_comunicazione_progetto:
+        class: IstruttorieBundle\Service\GestoreComunicazioneProgettoService
+        arguments: ["@service_container"]
+        
+    schema.twig.mostra_validazione_integrazione_istr:
+        class: IstruttorieBundle\TwigExtension\MostraValidazioneTwigExtension
+        arguments: ['@service_container']
+        tags:
+          - { name: twig.extension }        
+       
+    Istruttorie.comunicazioneprogetto_voter:
+        class: IstruttorieBundle\Security\ComunicazioneProgettoVoter
+        arguments: ['@security.access.decision_manager', '@doctrine']
+        tags:
+          - { name: security.voter }
+        public: false 
+        
+    Istruttorie.rispostacomunicazioneprogetto_voter:
+        class: IstruttorieBundle\Security\RispostaComunicazioneProgettoVoter
+        arguments: ['@security.access.decision_manager', '@doctrine']
+        tags:
+          - { name: security.voter }
+        public: false 

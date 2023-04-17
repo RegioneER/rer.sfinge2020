@@ -1,0 +1,63 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+    <div class="table-toolbar">
+        <a href="{{ path("nuova_posizione_impegno", {"id_proposta_impegno": proposta_impegno.id}) }}" class="btn btn-info">
+            <i class="fas fa-plus"></i>&nbsp;Nuova posizione impegno
+        </a>
+    </div>
+
+    <table class="table table-striped table-hover table-bordered" id="elenco-posizioni-impegno">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Id proposta impegno</th>
+                <th>Testo posizione<br/>(PTEXT)</th>
+                <th>Numero conto del fornitore<br/>(LIFNR)</th>
+                <th>Codice unico progetto<br/>(ZZCUP)</th>
+                <th>Codice identificativo gara<br/>(ZZCIG)</th>
+                <th>Livello 5<br/>(ZZLIVELLO5)</th>
+                <th>Codice formattato acquisti verde<br/>(ZZ_COD_FORM_AV)</th>
+                <th>Importo totale riservato in divisa transazione<br/>(WTGES)</th>
+                <th>Id richiesta</th>
+                <th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for posizioneImpegno in posizioni_impegno %}
+                <tr>
+                    <td>{{ posizioneImpegno.id }}</td>
+                    <td>{{ posizioneImpegno.propostaImpegno.id }}</td>
+                    <td>{{ posizioneImpegno.ptext }}</td>
+                    <td>{{ posizioneImpegno.lifnr }}</td>
+                    <td>{{ posizioneImpegno.zzCup }}</td>
+                    <td>{{ posizioneImpegno.zzCig }}</td>
+                    <td>{{ posizioneImpegno.zzLivello5 }}</td>
+                    <td>{{ posizioneImpegno.zzCodFormAv }}</td>
+                    <td>{{ posizioneImpegno.wtges|number_format(2, ',', '.') }}</td>
+                    <td>{{ posizioneImpegno.richiesta.id }}</td>
+                    <td>
+                        <div class="dropdown">
+                            <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                Azioni
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                <li>
+                                    <a href="{{ path("modifica_posizione_impegno", {'id_posizione_impegno' : posizioneImpegno.id }) }}">Modifica</a>
+                                </li>
+                                <li>
+                                    <a href="{{ path("elimina_posizione_impegno", {'id_posizione_impegno' : posizioneImpegno.id, '_token': csrfToken}) }}"
+                                       data-confirm="Eliminare la posizione selezionata?" class="text-danger">
+                                        Elimina
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {{ pulsante_indietro(path("elenco_proposte_impegno")) }}
+{% endblock body %}

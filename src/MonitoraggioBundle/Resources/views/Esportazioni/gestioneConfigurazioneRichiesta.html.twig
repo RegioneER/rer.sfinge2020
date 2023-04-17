@@ -1,0 +1,103 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+{% include 'MonitoraggioBundle:Esportazioni:menu.html.twig' with {'page_view' : 'richiesta' } %}
+<div class="table-toolbar">
+    <div>
+        <button class="btn btn-info" data-target="#ricerca-contesto-modal" data-toggle="modal">
+            <span class="fa fa-search"></span> Ricerca
+        </button>
+    </div>
+</div>
+<div class="count">
+    Numero elementi trovati: {{ risultato.risultato.getTotalItemCount }} - Filtro attivo: {{ risultato.filtro_attivo ? "Si" : "No" }}
+</div>
+
+{% if form.monitoraggio_configurazione|length > 0 %}
+{{ form_start(form) }}
+<table class="table table-striped table-hover table-bordered">
+    <thead>
+        <tr>
+            <th >Numero protocollo</th>
+            <th>Errori</th>
+            <th style="min-width: 100px;">AP00</th>
+            <th style="min-width: 100px;">AP01</th>
+            <th style="min-width: 100px;">AP02</th>
+            <th style="min-width: 100px;">AP03</th>
+            <th style="min-width: 100px;">AP04</th>
+            <th style="min-width: 100px;">AP05</th>
+            <th style="min-width: 100px;">AP06</th>
+            <th style="min-width: 100px;">FN00</th>
+            <th style="min-width: 100px;">FN01</th>
+            <th style="min-width: 100px;">FN02</th>
+            <th style="min-width: 100px;">FN03</th>
+            <th style="min-width: 100px;">FN04</th>
+            <th style="min-width: 100px;">FN05</th>
+            <th style="min-width: 100px;">FN06</th>
+            <th style="min-width: 100px;">FN07</th>
+            <th style="min-width: 100px;">FN08</th>
+            <th style="min-width: 100px;">FN09</th>
+            <th style="min-width: 100px;">FN10</th>
+            <th style="min-width: 100px;">SC00</th>
+            <th style="min-width: 100px;">PG00</th>
+            <th style="min-width: 100px;">PR00</th>
+            <th style="min-width: 100px;">PR01</th>
+            <th style="min-width: 100px;">IN00</th>
+            <th style="min-width: 100px;">IN01</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for configurazioneRichiesta in form.monitoraggio_configurazione  %}
+        {% form_theme configurazioneRichiesta.monitoraggio_configurazione_esportazione_tavole _self %}
+            <tr>
+            {% set configurazione = configurazioneRichiesta.vars['value'] %}
+            {% set numeroErrori = configurazione.monitoraggioconfigurazioneesportazioneerrori|length %}
+                <td>{{ configurazioneRichiesta.vars['value'].richiesta.protocollo }}</td>
+                <td>
+                    {% if numeroErrori > 0 %}
+                    <a target="_blank" href="{{ path('monitoraggio_esportazione_mostra_errori',{ configurazione_id: configurazioneRichiesta.vars['value'].id }) }}">
+                        {% if numeroErrori == 1 %}
+                            <span style ="white-space: nowrap;">&Egrave; presente un errore</span>
+                        {% else %}
+                           <span style ="white-space: nowrap;">Sono presenti {{ numeroErrori }} errori</span>
+                        {% endif %}
+                    </a>
+                    {% else %}
+                    Non sono presenti errori
+                    {% endif %}
+                </td>
+                 {% for tavola in configurazioneRichiesta.monitoraggio_configurazione_esportazione_tavole %}
+                    {{ form_row(tavola) }}
+                {% endfor %} 
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+    <div class="navigation">
+        {{ knp_pagination_render(paginate) }}
+    </div>
+{{ form_rest(form) }}
+{{form_end(form)}}
+
+
+
+{% else %}
+<h2>Non vi sono progetti esportabili</h2>
+{% endif %}
+
+{{ modale_ricerca("Ricerca",
+    risultato.form_ricerca,
+    "monitoraggio_esportazione_gestione_richiesta_configurazione_pulisci",
+    "ricerca-contesto-modal",
+    { esportazione_id: esportazione.id }
+) }}
+{% endblock %}
+
+{% block form_row -%}
+
+        {{- not form.vars.compound ? '<td>' : '' -}}
+            {{- form_errors(form) -}}
+            {{- form_widget(form) -}}
+        {{- not form.vars.compound ? '</td>' : '' -}}
+    
+{% endblock form_row %}

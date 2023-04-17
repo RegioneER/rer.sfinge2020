@@ -1,0 +1,43 @@
+{% set sottoPagine = servizio.sottoPagineFrammento(istanza_frammento) %}
+
+{% for sottoPagina in sottoPagine %}
+	{% set istanzePagine = istanza_frammento.istanzeSottoPagineByAlias(sottoPagina.alias) %}
+	{% if istanzePagine | length > 0 %}
+		{% set messaggioMolteplicita = sottoPagina.messaggioMolteplicita %}
+		{% if messaggioMolteplicita is not null %}
+			<p class="alert alert-warning">{{ messaggioMolteplicita }}</p>
+		{% endif %}
+		<table class="table table-striped">
+			<thead>
+				<tr>
+				{% for campi_frammento in sottoPagina.getCampiEvidenziati %}
+					{% for campo in campi_frammento %}
+						<th>{{ campo.label }}</th>
+					{% endfor %}
+				{% endfor %}
+				</tr>	
+			</thead>
+			<tbody>
+				{% for istanza_pagina in istanzePagine %}
+				<tr>
+					{% for chiave_frammento, campi_frammento in sottoPagina.getCampiEvidenziati %}
+						{% set istanza_frammento = istanza_pagina.byAlias(chiave_frammento) %}					
+						{% for campo in campi_frammento %}
+							{% if istanza_frammento is not null %}
+								{% set valore_raw_campo = istanza_frammento.valoreRawByAlias(campo.alias) %}
+							{% endif %}
+							<td>{{ valore_raw_campo is not defined or valore_raw_campo is null ? '' : valore_raw_campo }}</td>
+						{% endfor %}
+					{% endfor %}
+					<td>
+						<div class="pull-right">
+							<a class="btn btn-info" href="{{ path(servizio.routeIstanzaPagina, {'id_istanza_pagina' : istanza_pagina.id })}}" role="button">Visualizza</a>
+						</div>
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>	
+		</table>
+	{% endif %}
+	<br />
+{% endfor %}

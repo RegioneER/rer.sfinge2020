@@ -1,0 +1,80 @@
+{% extends '::base.html.twig' %}
+
+{% block intestazione %}
+    {{ parent() }}
+    {{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% if limite_descrittori is not defined %}
+    {% set limite_descrittori = 99 %}
+{% endif %}
+
+{% block body %}
+    {% if not disabled and ambito_tematico_s3_proponente.descrittori|length < limite_descrittori %}
+        <a href="{{ path('aggiungi_descrittore_ambito_tematico_s3', {'id_richiesta':richiesta.id, 'id_ambito_tematico_s3_proponente':ambito_tematico_s3_proponente.id }) }}"
+           class="btn btn-primary"><span class="fa fa-plus"></span> Aggiungi Descrittore
+        </a>
+    {% endif %}
+
+    <h4>{{ ambito_tematico_s3_proponente }}</h4>
+
+    {% if ambito_tematico_s3_proponente.descrittori|length > 0 %}
+        <table class="table table-striped table-hover table-bordered" id="proponenti-elenco">
+            <thead>
+            <tr>
+                <th>Descrittore</th>
+                {% if ambito_tematico_s3_proponente.proponente.richiesta.procedura.ambitiTematiciS3DescrizioneDescrittori %}
+                    <th>Descrizione</th>
+                {% endif %}
+                <th>Azioni</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for descrittore in ambito_tematico_s3_proponente.descrittori %}
+                <tr>
+                    <td>{{ descrittore }}</td>
+                    {% if ambito_tematico_s3_proponente.proponente.richiesta.procedura.ambitiTematiciS3DescrizioneDescrittori %}
+                        <td>{{ descrittore.descrizione }}</td>
+                    {% endif %}
+                    <td>
+                        <div class="dropdown">
+                            <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                Azioni
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                <li>
+                                    <a href="{{ path('modifica_descrittore_ambito_tematico_s3',{
+                                        'id_richiesta':richiesta.id,
+                                        'id_ambito_tematico_s3_proponente':descrittore.ambitoTematicoS3Proponente.id,
+                                        'id_descrittore':descrittore.descrittore.id})
+                                    }}">
+                                        Descrizione
+                                    </a>
+                                </li>
+                                {% if not disabled %}
+                                    <li>
+                                        <a href="{{ path('elimina_descrittore_ambito_tematico_s3', {
+                                            'id_richiesta':richiesta.id,
+                                            'id_ambito_tematico_s3_proponente':descrittore.ambitoTematicoS3Proponente.id,
+                                            'id_descrittore':descrittore.descrittore.id})
+                                        }}">
+                                            Elimina
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <h6>Nessun descrittore inserito</h6>
+    {% endif %}
+
+    <div class="page-actions">
+        {{ pulsante_indietro(path("gestione_ambiti_tematici_s3", {"id_richiesta":richiesta.id})) }}
+    </div>
+{% endblock %}

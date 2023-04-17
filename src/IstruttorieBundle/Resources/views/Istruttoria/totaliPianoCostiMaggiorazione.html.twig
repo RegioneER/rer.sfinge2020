@@ -1,0 +1,8 @@
+{% extends 'IstruttorieBundle:Istruttoria:totaliPianoCosti.html.twig' %}
+
+{% block totali_piano_costi_extra %}		
+	<h4>Maggiorazioni</h4>
+	{{ form_start(form) }}
+	{{ form_row(form.maggiorazione_contributo_occupazionale) }}
+	{{ form_end(form) }}
+{% endblock %}

@@ -1,0 +1,84 @@
+services:
+  privacy_listener:
+        class: SfingeBundle\EventListener\PrivacyListener
+        arguments: ['@router', '@security.authorization_checker', '@security.token_storage']
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest}
+
+  forza_dati_anagrafici_listener :
+        class: SfingeBundle\EventListener\LoginListener
+        arguments: ['@router', '@security.authorization_checker', '@security.token_storage', '@session', '@service_container']
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: controlliUtenza, priority: 1 }
+      
+  fascicolo_listener :
+        class: SfingeBundle\EventListener\FascicoloListener
+        arguments: ['@router', '@security.authorization_checker', '@security.token_storage', '@session', '@doctrine', '@pagina']
+        tags:
+            - { name: kernel.event_listener, event: fascicolo.istanza, method: accessoIstanzaFascicolo, priority: 1 }
+  sfinge.exception_controller:
+      class: SfingeBundle\Controller\SfingeExceptionController
+      arguments: ['@twig', '%kernel.debug%']
+      
+  sfinge.procedura_voter:
+    class: SfingeBundle\Security\ProceduraVoter
+    arguments: ['@security.access.decision_manager', '@doctrine']
+    tags:
+        - { name: security.voter }
+    public: false  
+    
+  sfinge.asse_voter:
+    class: SfingeBundle\Security\AsseVoter
+    arguments: ['@security.access.decision_manager', '@doctrine']
+    tags:
+        - { name: security.voter }
+    public: false  
+    
+  sfinge.utente_voter:
+    class: SfingeBundle\Security\UtenteVoter
+    arguments: ['@security.access.decision_manager', '@doctrine']
+    tags:
+        - { name: security.voter }
+    public: false    
+    
+  gestione_utenti:
+    class: SfingeBundle\Service\GestioneUtenti
+    arguments: ['@service_container']
+    
+  ricerca_permessi_asse.type:
+      class: SfingeBundle\Form\RicercaPermessiAsseType
+      arguments: ['@service_container']
+      tags:
+      - { name: form.type, alias: ricerca_permessi_asse_type }  
+      
+  ricerca_permessi_procedura.type:
+      class: SfingeBundle\Form\RicercaPermessiProceduraType
+      arguments: ['@service_container']
+      tags:
+      - { name: form.type, alias: ricerca_permessi_procedura_type }
+      
+  sfinge.atto.type:
+      class: SfingeBundle\Form\AttoType
+      arguments: ['@service_container']
+      tags:
+      - { name: form.type, alias: sfinge_atto_type }        
+     
+  gestore_importazione_procedura_380:
+      class: SfingeBundle\Service\Importazione\GestoreImportazioneBando380
+      arguments: ['@service_container']    
+      
+  gestore_importazione_procedura_373:
+      class: SfingeBundle\Service\Importazione\GestoreImportazioneBando373
+      arguments: ['@service_container']  
+      
+  gestore_importazione_procedura_360:
+      class: SfingeBundle\Service\Importazione\GestoreImportazioneBando360
+      arguments: ['@service_container']        
+
+  gestore_importazione_procedura_383:
+      class: SfingeBundle\Service\Importazione\GestoreImportazioneBando383
+      arguments: ['@service_container']
+
+  gestore_proposta_impegno:
+    class: SfingeBundle\Service\GestionePropostaImpegno
+    arguments: [ '@service_container' ]

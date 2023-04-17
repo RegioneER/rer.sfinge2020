@@ -1,0 +1,19 @@
+{% if is_granted('ROLE_GESTIONE_ACQUISIZIONI') or is_granted('ROLE_SUPER_ADMIN') or is_granted('ROLE_GESTIONE_ACQUISIZIONI_READONLY') %}
+<li class="">
+    <a href="javascript:;">
+        <span class="fa fa-users"></span>
+        <span class="title">Acquisizioni</span>
+        <span class="arrow "></span>
+    </a>
+    <ul class="sub-menu">		
+		<li id="elencoRichiesteTr">
+			<a href="{{ path("elenco_richieste_acquisizioni") }}">Elenco operazioni</a>
+		</li>
+		{% if is_granted('ROLE_GESTIONE_ACQUISIZIONI') or is_granted('ROLE_SUPER_ADMIN') %}
+		<li id="creaAcquisizioni">
+			<a href="{{ path("seleziona_procedura_acquisizioni") }}">Crea operazione</a>
+		</li>
+		{% endif %}
+    </ul>
+</li>
+ {% endif %}

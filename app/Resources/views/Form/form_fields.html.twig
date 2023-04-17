@@ -1,0 +1,331 @@
+{% extends 'bootstrap_3_horizontal_layout.html.twig' %}
+
+
+{# DEFINIZIONE DIMENSIONI COLONNE #}
+{# block form_label_class -%}
+col-sm-3 col-md-3 col-lg-4
+{%- endblock form_label_class %}
+
+{% block form_group_class -%}
+col-sm-9 col-md-6 col-lg-5
+{%- endblock form_group_class #}
+
+{% block form_label_class -%}
+    {% if compound is defined and not compound or (form.vars["empty_value_in_choices"] is defined and compound) %}
+col-sm-3 col-md-3 col-lg-4
+    {% else %}
+form-compound-child compound-label
+    {% endif %}
+{%- endblock form_label_class %}
+
+{% block form_group_class -%}
+    {% if compound is defined and not compound or (form.vars["empty_value_in_choices"] is defined and compound) %}
+col-sm-9 col-md-6 col-lg-5
+    {% endif %}
+{%- endblock form_group_class %}
+
+{# FORM LABEL #}
+{% block form_label -%}
+{% apply spaceless %}
+    {% if label is same as(false) %}
+    {% else %}
+        {{- parent() -}}
+    {% endif %}
+{% endapply %}
+{%- endblock form_label %}
+
+
+{# ROW SUBMIT #}
+{% block submit_row -%}
+{% apply spaceless %}
+    {{ form_widget(form) }}
+{% endapply %}
+{% endblock submit_row %}
+
+
+{# FORM WIDGET SIMPLE #}
+{% block form_widget_simple -%}
+    {% if type is not defined or 'file' != type %}
+        {%- set attr = attr|merge({class: (attr.class|default('') ~ ' form-control')|trim}) -%}
+    {% endif %}
+        {%- set type = type|default('text') -%}
+        <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+{%- endblock form_widget_simple %}
+
+
+{% block form_start -%}
+    {% set attr = attr|merge({class: (attr.class|default('') ~ ' clearfix')|trim}) %}
+    {{- parent() -}}
+{%- endblock form_start %}
+
+
+
+{% block checkbox_radio_label %}
+    {# Do not display the label if widget is not defined in order to prevent double label rendering #}
+    {% if widget is defined %}
+        {% if required %}
+            {% set label_attr = label_attr|merge({class: (label_attr.class|default('') ~ ' ')|trim}) %}
+        {% endif %}
+        {% if parent_label_class is defined %}
+            {% set label_attr = label_attr|merge({class: (label_attr.class|default('') ~ ' ' ~ parent_label_class)|trim}) %}
+        {% endif %}
+        {% if label is not same as(false) and label is empty %}
+            {% set label = name|humanize %}
+        {% endif %}
+        <label{% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>
+            {{- widget|raw }} {{ label is not same as(false) ? (translation_domain is same as(false) ? label : label|trans({}, translation_domain)) -}}
+        </label>
+    {% endif %}
+{% endblock checkbox_radio_label %}
+
+
+
+{% block date_widget %}
+    {% apply spaceless %}
+        {% if widget == 'single_text' %}
+            {% set type = type|default('text') %}
+            <div class="input-group date date-picker" data-date-format="dd/mm/yyyy">
+                <input class="form-control" type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+            </div>
+        {% else %}
+            <div {{ block('widget_container_attributes') }}>
+                {{ date_pattern|replace({
+                    '{{ year }}':  form_widget(form.year),
+                    '{{ month }}': form_widget(form.month),
+                    '{{ day }}':   form_widget(form.day),
+                })|raw }}
+            </div>
+        {% endif %}
+    {% endapply %}
+{% endblock date_widget %}
+
+{% block datetime_widget %}
+    {% apply spaceless %}
+        {% if widget == 'single_text' %}
+            {% set type = type|default('text') %}
+            <div class="input-group" data-date-format="dd/MM/yyyy HH:ii">
+                <input class="form-control datetimepicker" type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+            </div>
+        {% else %}
+            <div {{ block('widget_container_attributes') }}>
+                {{  form_widget(form.date) }}
+                {{  form_widget(form.time) }}
+            </div>
+        {% endif %}
+    {% endapply %}
+{% endblock datetime_widget %}
+
+{% block form_row -%}
+    {% set salva_indietro = 0 %}
+    {% set break = 0 %}
+    {% for  block_prefixes in form.vars.block_prefixes if break == 0 %}
+        {% if  block_prefixes == "salva_indietro" %}
+            {% set salva_indietro = 1 %}
+            {% set break = 1 %}
+        {% endif %}
+    {% endfor %}
+
+    {% if salva_indietro == 0 %}
+    <div class="form-group{% if (not compound or force_error|default(false)) and not valid %} has-error{% endif %}">
+        {{- form_label(form) -}}
+        
+        <div class="{{ block('form_group_class') }}">
+            {{- form_widget(form) -}}
+            {{- form_errors(form) -}}
+        </div>
+        
+    </div>
+    {% else %}
+        {{- form_widget(form) -}}
+    {% endif %}
+{%- endblock form_row %}
+
+
+
+{% block salva_indietro_widget %}
+    {% if form.children.pulsante_indietro is defined %}
+    <div class="pull-left">
+        {{ form_widget(form.children.pulsante_indietro) }}
+    </div>
+    {% endif %}
+
+    <div class="pull-right">
+        {{ form_widget(form.children.pulsante_submit) }}
+    </div>
+{% endblock salva_indietro_widget %}
+
+
+{% block salva_invio_indietro_widget %}
+    {% if form.children.pulsante_indietro is defined %}
+    <div class="pull-left">
+        {{ form_widget(form.children.pulsante_indietro) }}
+    </div>
+    {% endif %}
+
+	<div class="pull-right" style="margin-left: 10px;">	
+        {{ form_widget(form.children.pulsante_invio) }}
+    </div>
+    <div class="pull-right">
+		{{ form_widget(form.children.pulsante_submit) }}
+	</div>	
+{% endblock salva_invio_indietro_widget %}
+
+{% block salva_blocca_indietro_widget %}
+    {% if form.children.pulsante_indietro is defined %}
+    <div class="pull-left">
+        {{ form_widget(form.children.pulsante_indietro) }}
+    </div>
+    {% endif %}
+	<div class="pull-right" style="margin-left: 10px;">	
+        {{ form_widget(form.children.pulsante_blocca) }}
+    </div>
+    <div class="pull-right">
+		{{ form_widget(form.children.pulsante_submit) }}
+	</div>	
+{% endblock salva_blocca_indietro_widget %}
+
+{% block salva_valida_indietro_widget %}
+    {% if form.children.pulsante_indietro is defined %}
+    <div class="pull-left">
+        {{ form_widget(form.children.pulsante_indietro) }}
+    </div>
+    {% endif %}
+	<div class="pull-right" style="margin-left: 10px;">	
+        {{ form_widget(form.children.pulsante_valida) }}
+    </div>
+    <div class="pull-right">
+		{{ form_widget(form.children.pulsante_submit) }}
+	</div>	
+{% endblock salva_valida_indietro_widget %}
+
+{% block valida_invalida_indietro_widget %}
+    {% if form.children.pulsante_indietro is defined %}
+    <div class="pull-left">
+        {{ form_widget(form.children.pulsante_indietro) }}
+    </div>
+    {% endif %}
+	{% if form.children.pulsante_valida is defined %}
+	<div class="pull-right" style="margin-left: 10px;">	
+        {{ form_widget(form.children.pulsante_valida) }}
+    </div>
+	{% endif %}
+	{% if form.children.pulsante_invalida is defined %}
+    <div class="pull-right">
+		{{ form_widget(form.children.pulsante_invalida) }}
+	</div>
+	{% endif %}
+{% endblock valida_invalida_indietro_widget %}
+
+{% block submit_widget %}
+    {% apply spaceless %}
+        {% set type = type|default('submit') %}
+        {% set attr = attr|merge({'class': 'btn btn-page-action btn-primary btn-form-save pull-right'}) %}
+
+        {{ block('button_widget') }}
+    {% endapply %}
+{% endblock submit_widget %}
+
+{% block indietro_widget %}
+    <a class='btn btn-default btn-page-action btn-form-back pull-left' role="button" {% for attrname, attrvalue in attr %}{{ attrname }}="{{ attrvalue }}" {% endfor %} ><span class="fa fa-arrow-left"></span> {{ label|trans({}, translation_domain) }}</a>
+{% endblock indietro_widget %}
+
+{% block link_widget %}
+    <a class='btn btn-primary btn-page-action' role="button" {% for attrname, attrvalue in attr %}{{ attrname }}="{{ attrvalue }}" {% endfor %} > {{ label|trans({}, translation_domain) }}</a>
+{% endblock link_widget %}
+
+
+{%- block form_widget_compound -%}
+    {% set attr = attr|merge({class: (attr.class|default('') ~ ' form-compound-parent')|trim}) %}
+    {{- parent() -}}
+{%- endblock form_widget_compound -%}
+
+{% block file_widget %}
+    {% apply spaceless %}
+
+    {{ block('form_widget') }}
+
+    {% if estensione is not null %}
+        <div class="label_estensioni_documenti">Formati ammessi: <span id="lista_estensioni">{{ estensione }}</span></div>
+    {% else %}
+        <div class="label_estensioni_documenti">Formati ammessi: 
+            <img id="loader_estensione" src="{{ asset('assets/img/ajax-loading.gif') }}"/>  
+            <span id="lista_estensioni"></span>
+        </div>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $("#myDrop").hide();
+				popolaListaEstensioni();
+                $("select.select_tipologia_documento").change(function() {
+                    onChangeFunctions();
+				});
+				
+				function onChangeFunctions() {
+                    mostraNascondiDropzone();
+                    popolaListaEstensioni();
+                }
+
+				function popolaListaEstensioni() {
+					$('#documento_file_file').attr('disabled',true);
+                    var id_documento = $("select.select_tipologia_documento").val();
+                    if (id_documento) {
+                        var url = '{{ path("mostra_estensione_documento", { 'id_documento' : 'id_documento' }) }}';
+                        url = url.replace("id_documento", id_documento);
+                        $("#lista_estensioni").html('');
+                        $("#loader_estensione").show();
+                        $.ajax({
+                            url: url,
+                            success: function (res) {
+                                $("#lista_estensioni").append(res);
+                                $("#loader_estensione").hide();
+                                $('#documento_file_file').attr('disabled', false);
+                            }
+                        });    
+                    } else {
+                        $("#lista_estensioni").html('');
+                    }
+				}
+
+                function mostraNascondiDropzone() {
+                    $('#documento_file_file').attr('disabled', true);
+                    var id_documento = $("select.select_tipologia_documento").val();
+                    if (id_documento) {
+                        var url = '{{ path("is_documento_dropzone", { 'id_documento' : 'id_documento' }) }}';
+                        url = url.replace("id_documento", id_documento);
+                        $.ajax({
+                            url: url,
+                            success: function (res) {
+                                if (res) {
+                                    // Non uso direttamente l'ID per essere compatibile con le diverse sezioni da cui viene chiamato.
+                                    $("[id ^='documento_'][id $='_file_file']").parent().parent().hide();
+                                    $("[id ^='documento_'][id $='_submit']").hide();
+                                    $("#myDrop").show();
+                                } else {
+                                    // Non uso direttamente l'ID per essere compatibile con le diverse sezioni da cui viene chiamato.
+                                    $("[id ^='documento_'][id $='_file_file']").parent().parent().show();
+                                    $("[id ^='documento_'][id $='_submit']").show();
+                                    $("#myDrop").hide();
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        </script>
+    {% endif %}
+    {% endapply %}
+
+{% endblock %}
+
+{% block money_widget -%}
+        {{- block('form_widget_simple') -}}
+{%- endblock money_widget %}
+
+{% block advanced_text_widget %}
+    {{ block('textarea_widget') }}
+    <script>
+        CKEDITOR.replace( '{{- form.vars.full_name -}}', {
+            language: '{{-form.vars.language -}}',
+            customConfig: '{{ asset('js/ckeditor-config.js') }}'
+        });
+    </script>
+{% endblock advanced_text_widget %}

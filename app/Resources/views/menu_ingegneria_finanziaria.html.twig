@@ -1,0 +1,19 @@
+{% if is_granted('ROLE_GESTIONE_INGEGNERIA_FINANZIARIA') or is_granted('ROLE_SUPER_ADMIN') or is_granted('ROLE_GESTIONE_INGEGNERIA_FINANZIARIA_READONLY') %}
+<li class="">
+    <a href="javascript:;">
+        <span class="fa fa-users"></span>
+        <span class="title">Ingegneria finanziaria</span>
+        <span class="arrow "></span>
+    </a>
+    <ul class="sub-menu">		
+		<li id="elencoRichiesteIngFin">
+			<a href="{{ path("elenco_richieste_ing_fin") }}">Elenco operazioni</a>
+		</li>
+		{% if is_granted('ROLE_GESTIONE_INGEGNERIA_FINANZIARIA') or is_granted('ROLE_SUPER_ADMIN') %}
+		<li id="creaRichiestaIngFin">
+			<a href="{{ path("seleziona_procedura_ing_fin") }}">Crea operazione</a>
+		</li>     
+		{% endif %}
+    </ul>
+</li>
+{% endif %}

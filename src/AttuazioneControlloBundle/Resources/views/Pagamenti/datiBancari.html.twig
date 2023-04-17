@@ -1,0 +1,61 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+
+	<h4>Dati bancari</h4>
+
+	{% for datiBancariProponente in datiBancariProponenti %}
+		<div>
+			<h5>{{ datiBancariProponente.proponente.soggetto.denominazione }}</h5>
+			<table class="table table-striped table-hover table-bordered">
+				<tr>
+					<td>Banca</td>
+					<td><strong>{{ datiBancariProponente.banca }}</strong></td>
+				</tr>
+				<tr>
+					<td>Agenzia</td>
+					<td><strong>{{ datiBancariProponente.agenzia }}</strong></td>
+				</tr>
+				<tr>
+					<td>Intestatario</td>
+					<td><strong>{{ datiBancariProponente.intestatario }}</strong></td>
+				</tr>
+				{% if datiBancariProponente.contoTesoreria %}
+					<tr>
+						<td>Conto di tesoreria</td>
+						<td><strong>{{ datiBancariProponente.contoTesoreria ? datiBancariProponente.contoTesoreria : '-' }}</strong></td>
+					</tr>
+				{% else %}
+					<tr>
+						<td>IBAN</td>
+						<td><strong>{{ datiBancariProponente.iban ? datiBancariProponente.iban : '-' }}</strong></td>
+					</tr>					
+				{% endif %}
+			</table>
+		</div>
+				
+		<br>
+
+	{% endfor %}
+	
+	{# i dati bancari vengono richiesti in fase di accettazione contributo..per casi pregressi
+		prevediamo un form, giusto per non essere sommersi di richieste #}
+	{% if form is defined %}
+		{{ form_start(form) }}		
+			{{ form_errors(form) }}
+			{% for datiBancariProponente in form.datiBancariProponenti %}
+				<div>
+					<h4>Dati bancari di {{ datiBancariProponente.vars.value.proponente }} </h4>
+					{{ form_row(datiBancariProponente) }}
+				</div>
+				<br>
+			{% endfor %}	
+
+		{{ form_end(form) }}
+	{% else %}
+		<div class="page-actions">
+			{{ pulsante_indietro(path("dettaglio_pagamento",{"id_pagamento":pagamento.id})) }}
+		</div>
+	{% endif %}
+
+{% endblock %}

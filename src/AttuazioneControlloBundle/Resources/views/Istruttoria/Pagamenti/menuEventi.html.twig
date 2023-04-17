@@ -1,0 +1,19 @@
+<ul class="nav nav-tabs">
+
+    <li role="presentation"{% if menu|default() == "integrazione" %}class="active"{% endif %}>
+        <a href="{{path('integrazione_pagamento', {'id_pagamento': pagamento.id})}}">Integrazione</a>
+    </li>
+    
+    <li role="presentation"{% if menu|default() == "chiarimenti" %}class="active"{% endif %}>
+        <a href="{{path('richiesta_chiarimento_pagamento', {'id_pagamento': pagamento.id})}}">Richiesta chiarimenti</a>
+    </li>
+    {#<li role="presentation"{% if menu|default() == "comunicazioni_pagamento" %}class="active"{% endif %}>
+        <a href="{{path('comunicazioni_pagamento', {'id': pagamento.id})}}">Comunicazioni</a>
+    </li>#}
+    {#% set valutazione_cl = pagamento.valutazioniChecklist|last %}
+    {% if valutazione_cl and valutazione_cl.ammissibile %#}
+        <li role="presentation"{% if menu|default() == "esito" %}class="active"{% endif %}>
+            <a href="{{path('esito_finale_istruttoria_pagamenti', {'id_pagamento':pagamento.id})}}">Esito finale</a>
+        </li>
+    {#% endif %#}
+</ul>

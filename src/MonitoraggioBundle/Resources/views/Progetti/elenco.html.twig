@@ -1,0 +1,64 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <div class="table-toolbar">
+        <div>
+            <button class="btn btn-info" data-target="#ricerca-contesto-modal" data-toggle="modal">
+                    <span class="fa fa-search"></span> Ricerca
+            </button>
+        </div>
+    </div>
+    <div class="count">
+        Numero elementi trovati: {{ risultato.getTotalItemCount }} - Filtro attivo: {{ filtro_attivo ? "Si" : "No" }}
+    </div>
+    <table class="table table-striped table-hover table-bordered" id="progetti-elenco">
+        <thead>
+            <tr>
+                <th>Asse</th>
+                <th>Codice locale Procedura attivazione</th>
+                <th>Titolo Procedura attivazione</th>
+                <th>Codice locale progetto</th>
+                <th>CUP</th>
+                <th>Titolo progetto</th>
+                <th>Beneficiario</th>
+                <th>CF beneficiario</th>
+                <th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for richiesta in risultato %}
+            {% set protocollo = richiesta.protocollo %}
+                <tr>
+                    <td>{{ richiesta.procedura.asse }}</td>
+                    <td>{{ richiesta.procedura.atto.numero }}</td>
+                    <td>{{ richiesta.procedura.titolo }}</td>
+                    <td>{{ protocollo == '-' ? richiesta.id : protocollo }}</td>
+                    <td>{{ richiesta.istruttoria.codicecup}}</td>
+                    <td>{{ richiesta.titolo }}</td>
+                    <td>{{ richiesta.mandatario.soggetto.denominazione}}</td>
+                    <td>{{ richiesta.mandatario.soggetto.codicefiscale }}</td>
+                    <td>
+                        <div class="dropdown">
+                            <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    Azioni
+                                    <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                {% if app.user is not null and (is_granted('ROLE_MONITORAGGIO_SCRITTURA')) %}
+                                    <li><a href="{{path('anagrafica_progetto', {'richiesta_id':richiesta.id})}}">Gestisci</a></li>
+                                {% else %}
+                                    <li><a href="{{path('anagrafica_progetto', {'richiesta_id':richiesta.id})}}">Visualizza</a></li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="navigation">
+        {{ knp_pagination_render(risultato) }}
+    </div>
+    {{ modale_ricerca("Progetti",form_ricerca,"monitoraggio_elenco_progetti_pulisci","ricerca-contesto-modal") }}
+{% endblock %}

@@ -1,0 +1,111 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <div class="table-toolbar">
+		<a href="#" data-target="#ricerca-istruttoria-modal" data-toggle="modal" class="btn btn-info"><span class="fa fa-search"></span> Ricerca</a>
+    </div>
+	<div class="count">
+		Numero elementi trovati: {{ richieste.getTotalItemCount }} - Filtro attivo: {{ filtro_attivo ? "Si" : "No" }}
+	</div>
+	
+    <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+        <thead>
+            <tr>
+				<th>Id</th>
+                <th>Titolo procedura</th>
+				<th>Soggetto</th>
+				<th>Data invio</th>
+				<th>Protocollo</th>
+				<th>Istruttore</th>
+				<th>Esito istruttoria</th>
+				<th>Azioni</th>
+            </tr>
+        </thead>
+       <tbody>
+			 {% for richiesta in richieste %}
+				{% set warning = (richiesta.proroga_in_attesa == 1 ) ? 'fa fa-warning' : ''  %}
+				<tr>
+					<td>{{ richiesta.id }}</td>
+                    <td>{{ richiesta.titolo }}</td>
+					<td>{{ richiesta.denominazione|capitalize}}</td>
+					<td>{{ richiesta.data_invio | date("d/m/Y H:i:s") }}</td>
+					<td>{{ richiesta.protocollo }}</td>
+					<td>{{ richiesta.assegnatario is null ? "-" : richiesta.assegnatario }}</td>					
+					<td>{{ richiesta.esito }}</td>					
+					<td>
+						<div class="dropdown">
+							<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								<i class='{{warning}}'></i> Azioni
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+								<li>
+									<a href="{{ path("gestisci_istruttoria", {'id_richiesta':richiesta.id}) }}">
+										Gestisci
+									</a>
+								</li>
+                                {% if (is_granted("ROLE_ISTRUTTORE_SUPERVISORE") or is_granted("ROLE_SUPER_ADMIN")) and richiesta.esito == '-' %}
+									<li>
+										<a href="{{ path("assegna_istruttoria_richiesta", {'id_richiesta':richiesta.id}) }}">
+											{{ richiesta.assegnatario is null ? "Assegna" : "Riassegna" }}
+										</a>
+									<li>
+                                {% endif %}
+							</ul>
+						</div>
+					</td>
+				</tr>
+			{% endfor %}
+       </tbody>
+    </table>
+			
+	{# display navigation #}
+	<div class="navigation">
+		{{ knp_pagination_render(richieste) }}
+	</div>
+
+	<div id="ricerca-istruttoria-modal" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3 id="ricerca-istruttoria-modal-titolo">Ricerca Istruttoria</h3>
+				</div>
+				<div class="modal-body">
+					{{ form(formRicercaIstruttoria) }}
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Chiudi</button>
+					<a class="btn btn-default" href="{{ path("elenco_istruttorie_pulisci") }}">Annulla Ricerca</a>
+					<a class="btn btn-primary" href="#" id="ricercaOk">Ricerca</a>
+				</div>
+			</div>
+		</div>
+	</div>			
+{% endblock %}
+
+{%block  jquery_page_document_ready %}
+<script>
+	jQuery(document).ready(function() {
+		$("#ricercaOk").click(function(e){
+			e.preventDefault();
+			$(this).parents(".modal-content").find("form").submit();
+		});
+		
+		showHideFinestraTemporale();
+		$('#ricerca_istruttoria_procedura').change(function(){
+			showHideFinestraTemporale();
+		});		
+	});
+	
+	function showHideFinestraTemporale(){
+		// se andasse esteso ad altri bandi basta aggiungere qui gli altri id con logica in_array(id1, id2)
+		if( $('#ricerca_istruttoria_procedura').val() == '26'){
+			$('#s2id_ricerca_istruttoria_finestraTemporale').closest('div.form-group').show();
+		}else{
+			$('#s2id_ricerca_istruttoria_finestraTemporale').select2('val', '');
+			$('#s2id_ricerca_istruttoria_finestraTemporale').closest('div.form-group').hide();
+		}
+	}
+</script>
+{% endblock %}

@@ -1,0 +1,44 @@
+# Netbeans
+nbproject/*
+
+#Phpstorm
+.idea
+
+# Symfony directories
+*/logs/*
+*/cache/*
+.DS_Store
+
+# Configuration files
+app/config/parameters.yml
+app/config/mail_config.yml
+app/config/gelf_logger_config.yml
+app/config/parameters.ini
+composer.phar
+app/config/captcha.yml
+/db_update.log
+app/cache/*
+app/logs/*
+sfinge.sublime-workspace
+sfinge.sublime-project
+
+web/app_dev.php
+
+
+.vscode/
+
+.settings
+.eslintrc.json
+jsconfig.json
+**/.php_cs.cache
+**/.php-cs-fixer.cache
+cov.xml
+
+# Vendor repositories
+/vendor/**/.git
+/web/**/.git
+/Vagrantfile
+/atlassian-ide-plugin.xml
+/src/AttuazioneControlloBundle/IMPORT/
+
+app/config/certs/*

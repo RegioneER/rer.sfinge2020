@@ -1,0 +1,115 @@
+{% extends ':pdf:base.pdf.html.twig' %}
+
+{% set richiesta = variazione.richiesta %}
+{% set procedura = richiesta.procedura %}
+
+{% block content %}
+
+    {% block dati_intestazione %}
+        {% if procedura.asse.codice == 'A0' %}
+            <div class="center">
+                <img src="assets/img/regione/logo_ue-regione-emilia-romagna.jpg" alt="Loghi regione" height="60px">
+            </div>
+        {% elseif is_fsc == true %}
+            <div class="center">
+                <img src="assets/img/regione/logo_fsc.jpg" alt="Loghi regione" height="80px">
+            </div>
+        {% else%}
+            <div class="center">
+                <img src="assets/img/regione/logo_ue-por_fesr_2020.jpg" alt="Loghi regione" height="60px">
+                <h2 align="center">POR-FESR EMILIA ROMAGNA 2014-2020</h2>
+            </div>
+        {% endif %}
+    {% endblock dati_intestazione %}
+
+    {% block dati_bando %}
+        <div id="dati_procedura">
+            {% if procedura.asse.codice != 'A0' %}
+                <div id="asse" style="margin-bottom: 20px; text-align: center">
+                    <h3>{{ procedura.asse.titolo }} - {{ procedura.asse.descrizione }}</h3>
+                </div>
+                <div id="azioni">
+                    {% for azione in procedura.azioni %}
+                        <div class="text-medium italic" style="text-align: center; margin-bottom: 10px;">Azione {{ azione.codice }} {{ azione.descrizione }}</div>
+                    {% endfor %}
+                </div>	
+            {% endif %}
+            <div id="titolo" style="margin-bottom: 20px;">
+                <h3 align="center">{{ procedura.titolo }}</h3>
+                <p><h5 align="center">({{ procedura.atto.numero }})</h5><p>
+            </div>
+        </div>
+        <h3 class="bold" align="center">RICHIESTA DI VARIAZIONI DEL PROGETTO</h3>
+
+    {% endblock dati_bando %}
+
+    {% block dati_soggetto %}
+        {% set firmatario = variazione.firmatario %}
+
+        <div style="page-break-after: always"></div>
+        <p class="text-small">
+            Il/La sottoscritto/a <b>{{ firmatario.nome }} {{ firmatario.cognome }}</b> nato/a {% if firmatario.comune is not null %}a <b>{{ firmatario.comune }}</b>{% else %}in <b>{{ firmatario.statoNascita }}</b> {% endif %} il <b>{{ firmatario.dataNascita | date("d/m/Y") }}</b>
+            codice fiscale <b>{{ firmatario.codiceFiscale }}</b>
+        </p>
+        <p class="text-small">
+            In qualità di legale rappresentante/delegato del soggetto
+        </p>
+
+        {% set capofila = richiesta.mandatario.soggetto %}
+        <p class="text-small">
+            Denominazione/Ragione sociale <b>{{ capofila.denominazione }}</b> forma giuridica <b>{{ capofila.formaGiuridica.descrizione }}</b> codice fiscale <b>{{ capofila.codiceFiscale }}</b>
+            {% if capofila.partitaIva is not null %}
+                partita IVA <b>{{ capofila.partitaIva }}</b>
+            {% endif %}
+        </p>
+
+        <p class="text-small">
+            Sede legale
+        </p>
+        <p class="text-small">
+            Via <b>{{ capofila.via }}</b> N. <b>{{ capofila.civico }} </b> 
+            {% if capofila.comune is not null %}
+                Comune <b>{{ capofila.comune.denominazione }} ({{ capofila.provincia.siglaAutomobilistica }})</b>
+            {% endif %}
+            {% if capofila.comuneEstero is not null %}
+                Città (estera) <b>{{ capofila.comuneEstero }} {% if capofila.provinciaEstera is not null %}({{ capofila.provinciaEstera }},{{capofila.stato}}){% else %}({{capofila.stato}}){% endif %}</b>
+            {% endif %}	
+            CAP <b>{{ capofila.cap }} </b>
+        </p>
+
+    {% endblock dati_soggetto %}
+
+    {% block riferimento_richiesta %}
+        <p class="text-small">in relazione alla domanda di contributo con protocollo {{ richiesta.protocollo }} per la quale ha ricevuto comunicazione 
+            della avvenuta concessione del contributo</p>
+        {% endblock riferimento_richiesta %}
+
+    {% block chiede %}
+
+        <p class="text-medium" align="center"><b>A TAL FINE</b><p>
+        <p class="text-small">
+            <b>consapevole delle conseguenze, anche penali previste nel medesimo decreto per chi presenta dichiarazioni false o mendaci.</b>
+        </p>
+        <p class="text-medium" align="center"><b>CHIEDE</b><p>
+        <p class="text-small">
+            l'autorizzazione alla variazione del Progetto.
+        </p>
+
+    {% endblock chiede %}
+
+    {% block comunica %}
+
+        <p class="text-medium" align="center"><b>COMUNICA</b><p>
+        <p class="text-small">
+            La seguente variazione del progetto
+        </p>
+        <p class="text-small">
+            {{variazione.note}}
+        </p>
+
+    {% endblock comunica %}
+
+    {% block body_variazione %}
+    {% endblock body_variazione %}
+
+{% endblock content %}

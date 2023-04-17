@@ -1,0 +1,102 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+
+{{ form_start(form) }}
+{{ form_errors(form) }}
+
+<h4>Note alla richiesta di integrazione</h4>
+{{ form_row(form.testo) }}
+
+<h4>Testo da inviare tramite pec al beneficiario</h4>
+{{ form_row(form.testoEmail) }}
+
+{% if giorni_risposta_default is not null and mostra_giorni_per_risposta == true %}
+    <h4>Numero di giorni a disposizione del beneficiario per rispondere alla comunicazione {% if giorni_risposta_default is not null %}(giorni di default {{ giorni_risposta_default }}){% endif %}</h4>
+    {{ form_row(form.giorniPerRisposta) }}
+{% endif %}
+
+<h4>PDF per la richiesta di integrazione</h4>
+<a href="{{path('pdf_integrazione_istruttoria', {'id_pagamento': pagamento.id}) }}" class="btn btn-info">Genera fac-simile</a>
+
+<br><br>
+
+<div id="conferma_operazione_invio" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&#x2613;</button>
+                <h3 id="dataConfirmLabel">Conferma necessaria</h3>
+            </div>
+            <div class="modal-body">
+                Confermi l'operazione di invio dell'integrazione?
+            </div>
+            
+            <div class="modal-footer">
+                <a class="btn" data-dismiss="modal" aria-hidden="true" href="">No</a>
+                <button type="submit" name="integrazione[pulsanti][pulsante_invio]" class="btn btn-primary">Si</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="conferma_operazione_salva" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&#x2613;</button>
+                <h3 id="dataConfirmLabel">Conferma necessaria</h3>
+            </div>
+            <div class="modal-body">
+                
+            </div>
+
+            <div class="modal-footer">
+                <a class="btn" data-dismiss="modal" aria-hidden="true" href="">No</a>
+                <button type="submit" name="integrazione[pulsanti][pulsante_submit]" class="btn btn-primary">Si</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{ form_end(form) }}
+
+{% endblock %}
+{%block  jquery_page_document_ready %}
+    <script>
+        jQuery(document).on('click', '#integrazione_pulsanti_pulsante_submit', function (e) {
+            var testoEmail = $("#integrazione_testoEmail").val().toLowerCase();
+            var giorniPerRisposta = $("#integrazione_giorniPerRisposta").val();
+            
+            // Controllo se nel messaggio per il beneficiario è presente il testo "termine di" 
+            // e se è stato indicato il numero di giorni nel campo "Giorni per risposta"
+            // in tal caso controllo che il numero di giorni indicato nel testo sia uguale 
+            // a quello indicato nel campo. Se così non fosse lo aggiungo del testo nella finestra modale.
+            // N.B. Ho messo "giorn" e non "giorni" per intercettarli entrambi
+            if (testoEmail.includes("termine di") && giorniPerRisposta && !testoEmail.includes("termine di " + giorniPerRisposta + " giorn")) {
+                e.preventDefault();
+                $("#conferma_operazione_salva").find('.modal-body').text("Attenzione, il numero di giorni specificato nel campo \"Testo email\" non è lo stesso indicato nel campo \"Giorni per risposta\".");
+                $("#conferma_operazione_salva").modal("show");
+            }
+        });
+
+        jQuery(document).on('click', '#integrazione_pulsanti_pulsante_invio', function (e) {
+            var testoEmail = $("#integrazione_testoEmail").val().toLowerCase();
+            var giorniPerRisposta = $("#integrazione_giorniPerRisposta").val();
+            e.preventDefault();
+
+            // Controllo se nel messaggio per il beneficiario è presente il testo "termine di" 
+            // e se è stato indicato il numero di giorni nel campo "Giorni per risposta"
+            // in tal caso controllo che il numero di giorni indicato nel testo sia uguale 
+            // a quello indicato nel campo. Se così non fosse lo aggiungo del testo nella finestra modale.
+            // N.B. Ho messo "giorn" e non "giorni" per intercettarli entrambi
+            if (testoEmail.includes("termine di") && giorniPerRisposta && !testoEmail.includes("termine di " + giorniPerRisposta + " giorn")) {
+                $("#conferma_operazione_invio").find('.modal-body').append("<br/><strong>Attenzione, il numero di giorni specificato nel campo \"Testo email\" non è lo stesso indicato nel campo \"Giorni per risposta\".</strong>");
+            } else {
+                $("#conferma_operazione_invio").find('.modal-body').text("Confermi l'operazione di invio dell'integrazione?");
+            }
+
+            $("#conferma_operazione_invio").modal("show");
+        });
+    </script>
+{% endblock %}

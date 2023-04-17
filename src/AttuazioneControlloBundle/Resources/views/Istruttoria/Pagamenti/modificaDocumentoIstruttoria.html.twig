@@ -1,0 +1,34 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+
+	{% if form is not null %}
+		<div class="form-body">
+			<h4>Modifica documento istruttoria</h4>
+			{{ form_start(form) }}
+			
+				{% if documento_caricato %}
+					
+					{% set documentoIstruttoriaPagamento = form.vars.value %}
+					
+					{% include 'AttuazioneControlloBundle::_file.html.twig' with {
+						label: "Documento istruttoria pagamento",
+						nome_file: documentoIstruttoriaPagamento.documentoFile.nomeOriginale,
+						url_scarica: path("scarica", { "path_codificato" : path }),
+						url_elimina: null } %}
+				{% else %}
+					{{ form_row(form.documento_file) }}		
+				{% endif %}	
+				
+				{{ form_row(form.data_richiesto) }}
+				
+				{{ form_row(form.data_ricevuto) }}
+				
+				{{ form_row(form.data_scadenza) }}
+		
+			{{ form_end(form) }}
+		</div>
+	{% endif %}
+	
+{% endblock %}
+		

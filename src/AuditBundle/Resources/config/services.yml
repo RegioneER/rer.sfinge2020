@@ -1,0 +1,10 @@
+services:
+  audit_esportazioni:
+    class: 'AuditBundle\Service\GestoreEsportazioni'
+    arguments: 
+      - "@service_container"
+      
+  audit_estrazioni:
+    class: 'AuditBundle\Service\GestoreEstrazioni'
+    arguments: 
+      - "@service_container"

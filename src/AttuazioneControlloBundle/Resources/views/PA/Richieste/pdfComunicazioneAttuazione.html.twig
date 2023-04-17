@@ -1,0 +1,33 @@
+{% extends ':pdf:base.pdf.html.twig' %}
+
+{% block content %}
+
+    {% block dati_intestazione %}
+        {% if procedura.asse.codice == 'A0' %}
+            <div class="center">
+                <img src="assets/img/regione/logo_ue-regione-emilia-romagna.jpg" alt="Loghi regione" height="60px">
+            </div>
+        {% elseif is_fsc == true %}
+            <div class="center">
+                <img src="assets/img/regione/logo_fsc.jpg" alt="Loghi regione" height="80px">
+            </div>
+        {% else%}
+            <div class="center">
+                <img src="assets/img/regione/logo_ue-por_fesr_2020.jpg" alt="Loghi regione" height="60px">
+
+                <h2 align="center">POR-FESR EMILIA ROMAGNA 2014-2020</h2>
+            </div>
+        {% endif %}
+    {% endblock dati_intestazione %}
+
+    <h3 align="center">Comunicazione</h3>
+    <div>
+        {% if comunicazione.TipoOggetto == 'ATTUAZIONE' %}
+            In relazione alla sua richiesta di finanziamento ricevuta con protocollo n° {{ comunicazione.richiesta.protocollo }} si trasmette la seguente documentazione in allegato.<br>
+        {% endif %}
+    </div>
+    <br/>
+    {% for documento in documenti%}
+        <p>{{ documento.descrizione|raw }}</p>
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,87 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+    {% form_theme form.proroghe_rendicontazione _self %}
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+    <table id="tabella"
+        class="table table-striped table-hover table-bordered" 
+        data-prototype="{{- form_row(form.proroghe_rendicontazione.vars.prototype)|escape('html_attr') -}}"
+        data-numero-elementi="{{- form.proroghe_rendicontazione|length -}}"
+    >
+        <thead>
+            <tr>
+                <th>Modalita pagamento</th>
+                <th>Data inizio</th>
+                <th>Data fine</th>
+                <th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for f in form.proroghe_rendicontazione %}
+                {{ form_row(f) }}
+            {% endfor %}
+        </tbody>
+    </table>
+    <div>
+        <a class="btn btn-primary" onclick="aggiungi(event)">Aggiungi</a>
+    </div>
+    {{ form_rest(form) }}
+    {{ form_end(form) }}
+{% endblock body %}
+
+{% block  jquery_page_document_ready %}
+<script>
+    'use strict';
+    function elimina(e){
+        var btn = $(e.target);
+        var tr = btn.parent().parent();
+        tr.remove().trigger('change');
+    }
+
+    function aggiungi(e){
+
+        var tabella = $('table#tabella');
+        var numeroElementi = tabella.attr('data-numero-elementi');
+        var nuovoElemento = 
+            $(tabella)
+            .attr('data-prototype')
+            .replace(/__name__/g, numeroElementi++);
+        tabella.attr('data-numero-elementi', numeroElementi);
+        tabella.find('tbody')
+            .append(nuovoElemento).trigger('change');
+
+        tabella
+            .find('tbody > tr:last-of-type')
+            .find('.input-date, .datepicker, .date-picker > input')
+            .datetimepicker({
+                pickTime: false,
+                language: 'it',
+                direction: 'down'
+        });
+        tabella
+            .find('tbody > tr > td select').select2();
+    }
+</script>
+{% endblock  jquery_page_document_ready %}
+
+
+{% block form_row -%}
+
+{{- not form.vars.compound ? '<td>' : '' -}}
+	{{- form_errors(form) -}}
+	{{- form_widget(form) -}}
+	{{- not form.vars.compound ? '</td>' : '' -}}
+
+{% endblock form_row %}
+
+{% block form_widget_compound %}
+   {% if form.vars.prototype is not defined %}
+   <tr {{ block('widget_container_attributes') -}}>
+        {{- block('form_rows') -}}
+        <td>
+            <a class="btn btn-primary danger" onclick="elimina(event)" >Elimina</a>
+        </td>
+    </tr>
+    {% endif %}
+{% endblock %}

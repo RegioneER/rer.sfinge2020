@@ -1,0 +1,21 @@
+services:
+  inserimento_persona:
+    class: AnagraficheBundle\Service\InserimentoPersona
+    arguments: ['@service_container']
+    
+  persona.type:
+      class: AnagraficheBundle\Form\PersonaType
+      arguments: ["@doctrine.orm.entity_manager"]
+      tags:
+      - { name: form.type, alias: persona_type } 
+      
+  anagrafiche.persona_voter:
+    class: AnagraficheBundle\Security\PersonaVoter
+    arguments: ['@security.access.decision_manager', '@doctrine']
+    tags:
+        - { name: security.voter }
+    public: false  
+    
+  inserimento_personale:
+    class: AnagraficheBundle\Service\InserimentoPersonale
+    arguments: ['@service_container']

@@ -1,0 +1,104 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	<h4>Spesa iniziale ammessa</h4>
+
+	<div class="row">
+		<div class="col-md-12">
+			<table class="table table-striped table-hover table-bordered">
+				<tr>
+					<td style="font-weight: bold; width: 50%">Spesa iniziale ammessa</td>
+					<td style="font-weight: bold; width: 50%">{{ richiesta.istruttoria.costoammesso|number_format(2, ',', '.') }}</td>
+				</tr>
+				<tr>
+					<td style="font-weight: bold; width: 50%">Contributo concesso</td>
+					<td style="font-weight: bold; width: 50%">{{ contributo|number_format(2, ',', '.') }}</td>
+				</tr>		
+				<tr>
+					<td>Di cui FESR</td><td>{{ (contributo * 0.50)|number_format(2, ',', '.') }}</td>
+				</tr>
+				<tr>
+					<td>Di cui quota stato</td><td>{{ (contributo * 0.35)|number_format(2, ',', '.') }}</td>
+				</tr>
+				<tr>
+					<td>Di cui quota regione</td><td>{{ (contributo * 0.15)|number_format(2, ',', '.') }}</td>
+				</tr>
+				<tr>
+					<td style="font-weight: bold">Spesa rendicontata ammessa</td>
+					<td style="font-weight: bold">{{ richiesta.attuazionecontrollo.ImportoRendicontatoAmmessoTotale|number_format(2, ',', '.') }}</td>
+				</tr>
+				<tr>
+					<td style="font-weight: bold">Contributo liquidato</td>
+					<td style="font-weight: bold">{{ importo_mandato|number_format(2, ',', '.') }}</td>
+				</tr>		
+				<tr>
+					<td>Di cui FESR</td><td>{{ importo_mandato_fesr|number_format(2, ',', '.') }}</td>
+				</tr>
+				<tr>
+					<td>Di cui quota stato</td><td>{{ importo_mandato_stato|number_format(2, ',', '.') }}</td>
+				</tr>
+				<tr>
+					<td>Di cui quota regione</td><td>{{ importo_mandato_regione|number_format(2, ',', '.') }}</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+
+	<h4>N° e data del provvedimento di revoca</h4>
+
+	<div class="row">
+		<div class="col-md-12">
+			<table class="table table-striped table-hover table-bordered">
+				<tr>
+					<td style="font-weight: bold; width: 50%">Tipo revoca</td>
+					<td style="width: 50%">{{ revoca.attorevoca is not null ? (revoca.attorevoca.tipo is not null ? revoca.attorevoca.tipo.descrizione : '-') : '-'}}</td>
+				</tr>		
+				<tr>
+					<td style="font-weight: bold">Tipo irregolarità</td>
+					<td>{{ revoca.tipoirregolarita|join(', ')}}</td>
+				</tr>
+				<tr>
+					<td style="font-weight: bold">Spesa irregolarità</td>
+					<td>{{ revoca.registro.spesairregolare|number_format(2, ',', '.')}}</td>
+				</tr>
+				<tr>
+					<td style="font-weight: bold">Certificazioni irregolarità</td>
+					<td>{{ certificazioni|join(', ') }}</td>
+				</tr>
+				<tr>
+					<td style="font-weight: bold">Anno contabile</td>
+					<td>{{ anni_contabili|join(', ') }}</td>
+				</tr>
+				<tr>
+					<td style="font-weight: bold">Importo sospeso ex art. 137 co. 2</td>
+					<td>{{ art137 == true ? 'Si' : 'No' }}</td>
+				</tr>
+				<tr>
+					<td style="font-weight: bold">Contributo irregolare corrispondente</td>
+					<td>{{ revoca.contributo|number_format(2, ',', '.') }}</td>
+				</tr>		
+				<tr>
+					<td>Di cui FESR</td><td>{{ (revoca.contributo * 0.50)|number_format(2, ',', '.') }}</td>
+				</tr>
+				<tr>
+					<td>Di cui quota stato</td><td>{{ (revoca.contributo * 0.35)|number_format(2, ',', '.') }}</td>
+				</tr>
+				<tr>
+					<td>Di cui quota regione</td><td>{{ (revoca.contributo * 0.15)|number_format(2, ',', '.') }}</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<h4>Schede Olaf</h4>
+	<table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+		<tbody>
+			{% for documento in revoca.registro.documentiregistro %}
+				{% if documento.documentofile.tipologiadocumento.codice == 'SCHEDE_OLAF' %}
+					<tr>
+						<td>{{ mostra_file(documento.documentoFile )}}</td>
+					</tr>
+				{% endif %}
+			{% endfor %}
+		</tbody>
+	</table>
+{% endblock %}

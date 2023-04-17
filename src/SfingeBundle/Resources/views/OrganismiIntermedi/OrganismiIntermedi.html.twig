@@ -1,0 +1,40 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+
+    <table class="table table-striped table-hover table-bordered" id="organismi-intermedi-elenco">
+        <thead>
+            <tr>
+                <th>Denominazione</th>
+                <th>Indirizzo</th>
+                <th>Email</th>
+                <th>Telefono</th>
+				<th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+			{% for oi in organismi_intermedi %}
+				<tr>
+					<td>{{ oi.denominazione }}</td>
+					<td>{{ oi.via }}, {{ oi.civico }} - {{ oi.cap }} {{ oi.comune is not null ? oi.comune.denominazione : ''}}</td>
+					<td>{{ oi.email }}</td>
+                    <td>{{ oi.tel }}</td>
+					<td>												
+						<div class="dropdown">
+							<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								Azioni
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+								{% if is_granted("ROLE_GESTORE_OI") or is_granted("ROLE_SUPER_ADMIN") %}
+									<li><a href="{{ path("organismi_intermedi_documenti",{"id_organismo_intermedio":oi.id}) }}">Gestione</a></li>
+								{% endif %}	
+							</ul>
+						</div>					
+					</td>
+				</tr>
+			{% endfor %}
+        </tbody>
+    </table>
+	
+{% endblock %}

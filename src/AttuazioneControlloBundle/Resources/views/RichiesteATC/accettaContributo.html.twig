@@ -1,0 +1,75 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+	<h6>Riepilogo operazione</h6>
+	<div class="row">
+		<div class="col-md-12">
+			<table class="table table-striped table-hover table-bordered">
+				<tr>
+					<td style="width: 20%">Numero operazione</td><td>{{ richiesta.id }}</td>
+				</tr>
+				<tr>
+					<td>Numero protocollo</td><td>{{ richiesta.protocollo }}</td>
+				</tr>
+				<tr>
+					<td>Titolo operazione</td><td>{{ richiesta.titolo is not null ? richiesta.titolo : "-" }}</td>
+				</tr>				
+			</table>
+		</div>
+	</div>
+	
+	<h6>Atto di ammissibilità</h6>
+	<div class="row">
+		<div class="col-md-12">
+			<table class="table table-striped table-hover table-bordered">
+				<tr>
+					<td style="width: 20%">Numero</td><td>{{ richiesta.istruttoria.attoAmmissibilitaAtc.numero }}</td>
+				</tr>
+				<tr>
+					<td>Titolo</td><td>{{ richiesta.istruttoria.attoAmmissibilitaAtc.titolo }}</td>
+				</tr>
+				<tr>
+					<td>Data pubblicazione</td><td>{{ richiesta.istruttoria.attoAmmissibilitaAtc.dataPubblicazione | date('d/m/Y') }}</td>
+				</tr>				
+				<tr>
+					<td>Documento</td><td>{{ scarica_file(richiesta.istruttoria.attoAmmissibilitaAtc.documentoAtto) }}</td>
+				</tr>				
+			</table>
+		</div>
+	</div>
+
+	<h6>Atto di concessione</h6>
+	<div class="row">
+		<div class="col-md-12">
+			<table class="table table-striped table-hover table-bordered">
+				<tr>
+					<td style="width: 20%">Numero</td><td>{{ richiesta.istruttoria.attoConcessioneAtc.numero }}</td>
+				</tr>
+				<tr>
+					<td>Titolo</td><td>{{ richiesta.istruttoria.attoConcessioneAtc.titolo }}</td>
+				</tr>
+				<tr>
+					<td>Data pubblicazione</td><td>{{ richiesta.istruttoria.attoConcessioneAtc.dataPubblicazione | date('d/m/Y') }}</td>
+				</tr>				
+				<tr>
+					<td>Documento</td><td>{{ scarica_file(richiesta.istruttoria.attoConcessioneAtc.documentoAtto) }}</td>
+				</tr>				
+			</table>
+		</div>
+	</div>
+				
+	<br>
+	
+	{{ form_start(form) }}		
+		{{ form_errors(form) }}
+		{% for datiBancariProponente in form.datiBancariProponenti %}
+			<div>
+				<h4>Dati bancari di {{ datiBancariProponente.vars.value.proponente }} </h4>
+				{{ form_row(datiBancariProponente) }}
+			</div>
+			<br>
+		{% endfor %}	
+	
+	{{ form_end(form) }}
+	
+{% endblock %}

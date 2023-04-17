@@ -1,0 +1,80 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <div class="table-toolbar">
+		{% if is_granted('ROLE_SUPER_ADMIN') or is_granted('ROLE_ISTRUTTORE_SUPERVISORE_ATC') or is_granted('ROLE_MANAGER_PA')%}
+			<a href="{{ path('crea_atto') }}" class="btn btn-primary"><span class="fa fa-plus"></span> Aggiungi atto</a> 
+		{% endif %}
+		<a href="#" data-target="#ricerca-atto-modal" data-toggle="modal" class="btn btn-info"><span class="fa fa-search"></span> Ricerca</a>
+    </div>
+	<div class="count">
+		Numero elementi trovati: {{ atti.getTotalItemCount }} - Filtro attivo: {{ filtro_attivo ? "Si" : "No" }}
+	</div>
+    <table class="table table-striped table-hover table-bordered" id="notizie-elenco">
+        <thead>
+            <tr>
+				<th>{{ knp_pagination_sortable(atti, 'Id', 'a.id') }}</th>
+                <th>Numero</th>
+                <th>Titolo</th>
+				<th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+			{% for atto in atti %}
+				<tr>
+                	<td><a href="{{ path('visualizza_atto', { 'id_atto': atto.id }) }}">{{ atto.id }}</a></td>
+					<td>{{ atto.numero }}</td>
+					<td>{{ atto.titolo }}</td>
+					<td><div class="dropdown">
+							<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								Azioni
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+								<li><a href="{{ path('visualizza_atto', { 'id_atto': atto.id }) }}">Visualizza</a></li>
+								{% if isAccessibile('modifica_atto', { 'id_atto': atto.id }) %}
+									<li><a href="{{ path('modifica_atto', { 'id_atto': atto.id }) }}">Modifica</a></li>
+								{% endif %}
+							</ul>
+						</div>
+					</td>
+				</tr>
+			{% endfor %}
+        </tbody>
+    </table>
+
+	{# display navigation #}
+	<div class="navigation">
+		{{ knp_pagination_render(atti) }}
+	</div>
+
+	<div id="ricerca-atto-modal" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+					<h3 id="ricerca-atto-modal-titolo">Ricerca Atto</h3>
+				</div>
+				<div class="modal-body">
+					{{ form(formRicercaAtto) }}
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Chiudi</button>
+					<a class="btn btn-default" href="{{ path("elenco_atti_pulisci") }}">Annulla Ricerca</a>
+					<a class="btn btn-primary" href="#" id="ricercaOk">Ricerca</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}
+{%block  jquery_page_document_ready %}
+<script>
+	jQuery(document).ready(function() {
+		$("#ricercaOk").click(function(e){
+			e.preventDefault();
+			$(this).parents(".modal-content").find("form").submit();
+		})
+	});
+</script>
+{% endblock %}

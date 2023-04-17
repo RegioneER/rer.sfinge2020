@@ -1,0 +1,18 @@
+{% extends '::base.html.twig' %}
+
+{% block intestazione %}
+    {{ parent() }}
+    {{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% block body %}
+
+    {% if firmatario is not null %}
+        <h4>Firmario attuale</h4>
+        {{ mostra_persona(firmatario) }}
+    {% endif %}
+
+    <h4>Nuovo firmatario</h4>
+        {{ form(form) }}
+		
+{% endblock %}

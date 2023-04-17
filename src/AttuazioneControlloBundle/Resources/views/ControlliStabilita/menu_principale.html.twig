@@ -1,0 +1,4 @@
+<ul class="nav nav-tabs">
+	<li role="presentation"{% if menu_principale|default() == "procedura" %}class="active"{% endif %}><a href="{{path('home_controlli_stabilita')}}">Riepilogo campioni</a></li>
+	<li role="presentation"{% if menu_principale|default() == "estrazioni" %}class="active"{% endif %}><a href="{{path('estrazioni_stabilita')}}">Estrazioni</a></li>	
+</ul>

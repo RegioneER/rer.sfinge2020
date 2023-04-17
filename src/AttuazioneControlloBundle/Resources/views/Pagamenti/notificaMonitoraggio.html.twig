@@ -1,0 +1,43 @@
+{% set indicatoriVisibili = richiesta is indicatoriManuali %}
+{% set iterProgettoPresenti = hasIterProgettoVisibili(richiesta) %}
+
+{% set codiceNaturaCup = false %}
+{% if pagamento.procedura.sezioneIstruttoriaCup %}
+	{% set codiceNaturaCup = pagamento.attuazionecontrollorichiesta.richiesta.istruttoria.cupnatura.codice %}
+{% endif %}
+
+{% set impegniPresenti = richiesta is impegniVisibili and richiesta.procedura.id not in [71, 81, 126, 120, 137, 162, 166, 170] %}
+{% set procedureAggPresenti = codiceNaturaCup in [
+	constant('CipeBundle\\\Entity\\Classificazioni\\CupNatura::REALIZZAZIONE_LAVORI_PUBBLICI'),
+	constant('CipeBundle\\\Entity\\Classificazioni\\CupNatura::CONCESSIONE_AIUTI_SOGGETTI_DIVERSI_UNITA_PRODUTTIVE'),
+	constant('CipeBundle\\\Entity\\Classificazioni\\CupNatura::REALIZZAZIONE_BENI_SERVIZI')
+] and richiesta.procedura.id not in [71,81,126,65,120,131,137,160,162, 166, 170] %}
+
+{% if indicatoriVisibili or iterProgettoPresenti or procedureAggPresenti %}
+	<article class="alert note-warning">
+		Anche se con spunta verde, si presti attenzione alle informazioni presenti nelle seguenti sezioni:
+		<ul>
+			{% if indicatoriVisibili %}
+				<li>Indicatori di output</li>
+			{% endif %}
+			{% if iterProgettoPresenti %}
+				<li>Fasi procedurali</li>
+			{% endif %}
+			{% if impegniPresenti %}
+				<li>Impegni e disimpegni</li>
+			{% endif %}
+			{% if procedureAggPresenti %}
+				<li>Procedura di aggiudicazione</li>
+			{% endif %}
+		</ul>
+	</article>
+        {% if richiesta.procedura.id == 140 and pagamento.isUltimoPagamento == true%}
+            <article class="alert note-warning">
+                Attenzione! Per la valorizzazione degli indicatori nel SALDO FINALE, si prega di attenersi 
+                alle specifiche indicate dall'Autorità di gestione e concordate con i singoli beneficiari. 
+                I "valori realizzati" presenti all'apertura dei diversi indicatori, sono quelli valorizzati, 
+                manualmente o automaticamente, all'invio del SAL e sarà necessario aggiornarli coerentemente 
+                con quanto compilato nel file "Tracciato xls indicatori di output".
+            </article>
+        {% endif %}
+{% endif %}

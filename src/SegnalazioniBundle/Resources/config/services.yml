@@ -1,0 +1,6 @@
+services:
+    validator.valida_mantis:
+        class: SegnalazioniBundle\Validator\Constraints\ValidaMantisValidator
+        arguments: ["@service_container"]
+        tags:
+            - { name: validator.constraint_validator, alias: valida_mantis }

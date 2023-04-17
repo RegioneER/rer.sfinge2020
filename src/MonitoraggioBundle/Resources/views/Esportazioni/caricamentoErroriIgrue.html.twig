@@ -1,0 +1,42 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    {{ form(form) }}
+
+<div class="modal fade" data-backdrop="static" tabindex="-1" role="dialog" id="modal-caricamento">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" style="text-align:center;">Importazione risultato</h3>
+      </div>
+      <div class="modal-body">
+        <p>
+            <span id="modal-caricamento-body">Attendere elaborazione in corso...</span>
+        </p>
+      </div>
+      <div class="modal-footer">
+        <div class="progress">
+            <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+            </div>
+          </div>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+{% endblock %}
+
+{% block jquery_page_document_ready %}
+<script type="text/javascript">
+    'use strict';
+
+
+    function caricamentoFile( event ){
+        $('#modal-caricamento').modal('show');
+    }
+
+    $(document).ready( function () {
+        $('button[type="submit"]').click(caricamentoFile)
+    });
+</script>
+{% endblock %}

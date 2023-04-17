@@ -1,0 +1,142 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+
+	{% include 'AttuazioneControlloBundle:PA/Richieste:menu.html.twig' with {'attuazione_controllo' : richiesta.attuazionecontrollo }%}	
+
+	{% if form_documenti is not null %}
+		<div class="form-body">
+			<h4>Carica documento</h4>
+			{% form_theme form_documenti _self %}
+			{{ form_start(form_documenti) }}
+			{{ form_end(form_documenti) }}
+		</div>
+	{% endif %}			
+
+	<h4>Elenco documenti caricati</h4>
+	{% if documenti is not empty %}
+		<div class="form-body">	
+			{% for documento in documenti %}
+				<b>Nota:</b> <a class="descrizioneCollapse" href="#descrizione_{{documento.id}}" data-toggle="collapse">visualizza</a>
+				<div id="descrizione_{{documento.id}}" class="collapse">{{documento.descrizione|raw}}</div>
+				<br><br>
+				{% if not disabilita_azioni  %}
+					{{ mostra_file(documento.documentoFile, path('elimina_documento_comunicazione_attuazione', {'id_documento': documento.id, 'id_richiesta' : richiesta.id }) )}}
+				{% else %}
+					{{ mostra_file(documento.documentoFile, null )}}
+				{% endif %}			
+				<br/>
+				<hr>
+			{% endfor %}
+		</div>
+	{% else %}
+		<h6>Nessun documento caricato</h6>
+	{% endif %}
+
+	<br><br><br><br>
+
+	{% if form_esito is not null %}
+		<div class="form-body">
+			<h4>Testo da inviare tramite pec al beneficiario</h4>
+			{{ form_start(form_esito) }}
+			{{ form_errors(form_esito) }}	
+
+			<div id="conferma_operazione_invio" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&#x2613;</button>
+							<h3 id="dataConfirmLabel">Conferma necessaria</h3>
+						</div>
+						<div class="modal-body">
+							Confermi l'operazione di invio della comunicazione ?
+						</div>
+						<div class="modal-footer">
+							<a class="btn" data-dismiss="modal" aria-hidden="true" href="">No</a>
+							<button type="submit" name="comunicazione_attuazione[pulsanti][pulsante_invio]" class="btn btn-primary">Si</button>					
+						</div>
+					</div>
+				</div>
+			</div>
+
+			{{ form_end(form_esito) }}
+		</div>
+	{% endif %}	
+	{% if comunicazione.stato.codice == 'COM_INSERITA'%}
+		<a href="{{ path('genera_facsimile_comunicazione_attuazione', {'id_comunicazione' : comunicazione.id }) }}" class="btn btn-default btn-page-action btn-form-back">Genera fac-simile</a>
+	{% else %}
+		<a href="{{ path('scarica_comunicazione_attuazione', {'id_comunicazione' : comunicazione.id, 'id_richiesta' : richiesta.id }) }}" class="btn btn-default btn-page-action btn-form-back">Scarica comunicazione</a>
+	{% endif %} 	
+{% endblock %}
+
+{%block  jquery_page_document_ready %}
+	<script>
+		jQuery(document).ready(function () {
+			$("#comunicazione_attuazione_pulsanti_pulsante_invio").click(function (e) {
+				e.preventDefault();
+				$("#conferma_operazione_invio").modal("show");
+			});
+		});
+	</script>
+{% endblock %}
+
+{% block file_widget %}
+    {% spaceless %}
+
+		{{ block('form_widget') }}
+
+		{% if estensione is not null %}
+			<div class="label_estensioni_documenti">Formati ammessi: <span id="lista_estensioni">{{ estensione }}</span></div>
+			{% else %}
+			<div class="label_estensioni_documenti">Formati ammessi: 
+				<img id="loader_estensione" src="{{ asset('assets/img/ajax-loading.gif') }}"/>  
+				<span id="lista_estensioni"></span>
+			</div>
+			<script type="text/javascript">
+				'use strict';
+				$(document).ready(function () {
+					$("#comunicazione_attuazione_documento_documento_file_tipologia_documento").change(function () {
+						$('#documento_file_file').attr('disabled', true);
+						var id_documento = $(this).val();
+						if (id_documento) {
+							var url = '{{ path("mostra_estensione_documento", { 'id_documento' : 'id_documento' }) }}';
+							url = url.replace("id_documento", id_documento);
+							$("#lista_estensioni").html('');
+							$("#loader_estensione").show();
+							$.ajax({
+								url: url,
+								success: function (res) {
+									$("#lista_estensioni").append(res);
+									$("#loader_estensione").hide();
+									$('#documento_file_file').attr('disabled', false);
+								}
+							});
+						} else {
+							$("#lista_estensioni").html('');
+						}
+					});
+				});
+			</script>
+			<script>
+				'use strict';
+				jQuery(document).ready(function () {
+					$('.collapse').on('hidden.bs.collapse', function (event) {
+						debugger;
+						var div = $(event.target);
+						var bottone = $('a[href="#'+div.attr('id')+'"]');
+						$(bottone).html('visualizza');
+					});
+
+					$('.collapse').on('shown.bs.collapse', function (event) {
+						var div = $(event.target);
+						var bottone = $('a[href="#'+div.attr('id')+'"]');
+						$(bottone).html('nascondi');
+					});
+
+					$('.descrizioneCollapse').collapse('hide');
+				});
+			</script>
+		{% endif %}
+    {% endspaceless %}
+
+{% endblock %}

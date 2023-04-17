@@ -1,0 +1,94 @@
+{% extends '::base.html.twig' %}
+
+{% block intestazione %}
+	{{ parent() }}
+	{{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% block body %}
+	<h4>Elenco Richieste di chiarimenti</h4>
+	
+	<br/>
+
+	{% if messaggio_contatore is defined and messaggio_contatore != '' %}
+		<div class="{{classe_messaggio_contatore}}">{{messaggio_contatore}}</div>	
+		<br/>
+	{% endif %}
+
+    <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+        <thead>
+			{# Lato Beneficiario #}
+            <tr>
+				<th>Id</th>
+                <th>Titolo procedura</th>
+				<th>Titolo progetto</th>
+				<th>Protocollo progetto</th>				
+				<th>Protocollo richiesta di pagamento</th>
+				<th>Protocollo richiesta di chiarimenti PA</th>
+				<th>Data consegna PEC richiesta di chiarimenti</th>
+				<th>Protocollo risposta richiesta di chiarimenti</th>
+				<th>Data invio risposta alla PA</th>
+				<th>Stato richiesta di chiarimenti</th>
+				<th>Azioni</th>
+            </tr>
+			
+        </thead>
+        <tbody>
+			{% for r in richieste_chiarimenti %}
+				{% set richiesta = r.pagamento.richiesta %}
+				{% set pagamento = r.pagamento %}
+				<tr>
+					<td>{{ r.id }}</td>
+                    <td>{{ richiesta.procedura.titolo }}</td>
+					<td>{{ richiesta.titolo is null ? "-" : richiesta.titolo }}</td>
+					<td>{{ richiesta.protocollo }}</td>
+					<td>{{ pagamento.protocollo }}</td>
+					<td>{{ r.protocollorichiestachiarimenti }}</td>
+					
+					{% set data_consegna_pec = '-' %}
+					{% set richieste_protocollo = r.richiesteprotocollo %}
+					{% if  richieste_protocollo|length != 0 %}
+						{% set richiesta_protocollo = richieste_protocollo|last %}
+						{% set emails_protocollo    = richiesta_protocollo.EmailProtocollo %}
+						{% if  emails_protocollo|length != 0 %}
+							{% set email_protocollo = emails_protocollo|last %}
+							{% set data_consegna_pec = email_protocollo.dataconsegna %}
+						{% endif %}						
+					{% endif %}	
+
+					<td>{{data_consegna_pec}}</td>	
+					
+					<td>{{ r.risposta.protocollorispostarichiestachiarimenti }}</td>
+					{% set data_invio_pa =  r.risposta.data %}
+					{% set risposte_protocollo = r.risposta.richiesteprotocollo %}
+					{% if  risposte_protocollo|length != 0 %}
+						{% set risposta_protocollo = risposte_protocollo|last %}
+						{% set emails_risposta_protocollo    = risposta_protocollo.EmailProtocollo %}
+						{% if  emails_risposta_protocollo|length != 0 %}
+							{% set email_risposta_protocollo = emails_risposta_protocollo|last %}
+							{% set data_invio_pa = email_risposta_protocollo.dataconsegna %}
+						{% endif %}						
+					{% endif %}	
+					<td>{{ data_invio_pa is null ? '-' : data_invio_pa|date('d/m/Y')}}</td>					
+					{% if r.isInAttesaRisposta == true %}
+						<td>Richiesta in attesa di risposta</td>		
+					{% else  %}
+						<td>Risposta inviata</td>	
+					{% endif %}
+
+					<td>
+						<div class="dropdown">
+							<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								Azioni
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+								<li><a href="{{ path("dettaglio_richiesta_chiarimenti", {'id_richiesta_chiarimenti':r.id}) }}">Gestisci</a></li>
+							</ul>
+						</div>
+					</td>
+				</tr>
+			{% endfor %}
+        </tbody>
+    </table>		
+{% endblock %}

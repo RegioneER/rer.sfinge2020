@@ -1,0 +1,65 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+
+    {% if pagamento.contratti | length > 0 %}
+
+        <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+            <thead>
+                <tr>
+                    <th>Istruttoria</th>
+                    <th>Numero</th>
+                    <th>Fornitore</th>
+                    <th>Tipologia fornitore</th>
+                    <th>Tipologia contratto</th>
+                    <th>Data contratto</th>
+                    <th>Azioni</th>
+                </tr>
+            </thead>	
+            <tbody>							
+                {% for contratto in pagamento.contratti %}
+                    {% set oggettoIstruttoria = contratto.istruttoriaOggettoPagamento %}
+                    {% set statoIstruttoria = "<span style='color:red'>incompleta</span>" %}
+                    {% if oggettoIstruttoria is not null %}
+                        {% if oggettoIstruttoria.completa %}
+                            {% set statoIstruttoria = "<span style='color:green'>completa</span>" %}
+                        {% elseif oggettoIstruttoria.integrazione%}
+                            {% set statoIstruttoria = "<span style='color:blue'>integrazione</span>" %}
+                        {% endif %}
+                    {% endif %}
+                    <tr>
+                        <td>{{ statoIstruttoria|raw}}</td>
+                        <td>{{ contratto.numero }}</td>
+                        <td>{{ contratto.fornitore }}</td>
+                        <td>{{ contratto.tipologiaFornitore ? contratto.tipologiaFornitore.descrizione : '-'}}</td>
+                        <td>{{ contratto.tipologiaSpesa ? contratto.tipologiaSpesa.descrizione : '-'}}</td>
+                        <td>{{ contratto.dataInizio ? contratto.dataInizio | date('d-m-Y') : '-' }}</td>						
+                        <td>
+                            <div class="dropdown">
+                                <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    Azioni
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">						
+                                    {% if istruttoria is not defined %}						
+                                        {% if not pagamento.pagamentoDisabilitato %}
+                                            <li><a href="{{ path("modifica_contratto", {"id_contratto" : contratto.id }) }}">Modifica</a></li>
+                                            <li><a href="{{ path("elimina_contratto", {"id_contratto" : contratto.id }) }}">Elimina</a></li>		
+                                            {% endif %}							
+                                        {% else %}
+                                        <li><a href="{{ path("visualizza_contratto_istruttoria", {"id_contratto" : contratto.id }) }}">Visualizza</a></li>									
+                                        <li><a href="{{ path("elenco_documenti_contratto_istruttoria", {'id_contratto':contratto.id, 'id_pagamento':contratto.pagamento.id}) }}">Istruttoria</a></li>
+                                        <li><a href="{{ path("elenco_giustificativi_contratto_istruttoria", {'id_contratto':contratto.id, 'id_pagamento':contratto.pagamento.id}) }}">Giustificativi</a></li>
+                                    {% endif %}	
+                                </ul>
+                            </div>						
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>	
+
+    {% endif %}
+
+{% endblock %}
+

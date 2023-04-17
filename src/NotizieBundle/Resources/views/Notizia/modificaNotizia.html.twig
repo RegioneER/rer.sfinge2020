@@ -1,0 +1,23 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+
+    <h4>Dati</h4>
+	{{ form_start(form) }}
+	<div>
+		{{ form_row(form.titolo) }}	
+		{{ form_row(form.dataInserimento) }}
+		{{ form_row(form.dataInizioVisualizzazione) }}
+		{{ form_row(form.dataFineVisualizzazione) }}
+		{{ form_row(form.visibilita) }}
+		{{ form_row(form.procedura) }}
+		<h4>Testo</h4>
+		{{ form_widget(form.testo) }}
+	</div>
+	{{ form_end(form) }}
+
+	<script>
+		CKEDITOR.replace('notizia_testo', {
+			customConfig: '{{ asset('js/ckeditor-config-notizie.js') }}'
+		});
+	</script>
+{% endblock %}

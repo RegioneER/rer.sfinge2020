@@ -1,0 +1,49 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	
+    <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+        <thead>
+            <tr>
+				<th>Asse e procedura</th>
+				<th>Soggetto</th>
+				<th>Protocollo richiesta</th>
+				<th>Data invio pag.</th>				
+				<th>Modalità pag.</th>
+				<th>GG</th>
+				<th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+			{% for pagamento in risultati %}
+				<tr>
+                    <td>{{ pagamento.asse_procedura }} / {{pagamento.titolo_procedura }}</td>
+					<td>{{ pagamento.soggetto|capitalize }}</td>
+					<td>{{ pagamento.protocollo_richiesta }}</td>
+					<td>{{ pagamento.dataInvio | date("d/m/Y") }}</td>					
+					<td>{{ pagamento.descrizione }}</td>					
+					<td>{{ pagamento.giorni_istruttoria }}</td>	
+					<td>
+						<div class="dropdown">
+							<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								Azioni
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+								<li><a href="{{ path("riepilogo_istruttoria_pagamento", {'id_pagamento':pagamento.id_pagamento}) }}">Gestisci</a></li>
+								{% if pagamento.esito_istruttoria != '-' and is_granted("ROLE_CERTIFICATORE")%}						
+									<li><a href="{{ path("decertifica_pagamento", {'id_pagamento':pagamento.id_pagamento}) }}">Decertifica</a></li>	
+								{% endif %}
+							</ul>
+						</div>
+					</td>
+				</tr>
+			{% endfor %}
+        </tbody>
+    </table>
+			
+	{# display navigation #}
+	<div class="navigation">
+		{{ knp_pagination_render(risultati) }}
+	</div>
+{% endblock %}

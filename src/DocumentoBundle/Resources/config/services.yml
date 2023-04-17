@@ -1,0 +1,33 @@
+services:
+  documenti:
+    class: DocumentoBundle\Service\DocumentiService
+    arguments: ['@service_container']
+    
+  documenti.type:
+      class: DocumentoBundle\Form\Type\DocumentoFileType
+      arguments: ["@service_container"]
+      tags:
+      - { name: form.type, alias: documenti_type }
+      
+  documenti.simple.type:
+      class: DocumentoBundle\Form\Type\DocumentoFileSimpleType
+      arguments: ["@service_container"]
+      tags:
+      - { name: form.type, alias: documenti_simple_type }      
+      
+  documenti.twig.scarica_file_extension:
+          class: DocumentoBundle\TwigExtension\ScaricaFileTwigExtension
+          arguments: ['@service_container']
+          tags:
+            - { name: twig.extension }
+
+  validator.mime_type:
+        class: DocumentoBundle\Validator\Constraints\ValidaDocumentoValidator
+        arguments: ["@service_container"]
+        tags:
+            - { name: validator.constraint_validator, alias: valida_mime }
+
+  app.image_type_extension:
+        class: DocumentoBundle\Form\Extension\DocumentoTypeExtension
+        tags:
+            - { name: form.type_extension, extended_type: Symfony\Component\Form\Extension\Core\Type\FileType }

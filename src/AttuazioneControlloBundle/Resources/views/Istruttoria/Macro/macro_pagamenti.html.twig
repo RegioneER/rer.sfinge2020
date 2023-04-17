@@ -1,0 +1,23 @@
+{% macro contatore_istruttoria(pagamento) %}
+	{% if pagamento.procedura_particolare != 'true' and pagamento.descrizione != 'Anticipo' %}
+		{% if pagamento.data_mandato is null %}
+			{% if pagamento.data_protocollo_int is null %}
+				{{ date().diff(date(pagamento.data_protocollo_pag|date_modify("+90 day"))).format('%r%a')}}
+			{% elseif pagamento.data_protocollo_risp_int is null  %}
+				{{ date(pagamento.data_protocollo_int).diff(date(pagamento.data_protocollo_pag|date_modify("+90 day"))).format('%r%a')}}
+			{% else %}
+				{{ date().diff(date(pagamento.data_protocollo_risp_int|date_modify("+90 day"))).format('%r%a')}}
+			{% endif %}
+		{% else %}
+			{% if pagamento.data_protocollo_int is null %}
+				{{ date(pagamento.data_mandato).diff(date(pagamento.data_protocollo_pag|date_modify("+90 day"))).format('%r%a')}}
+			{% elseif pagamento.data_protocollo_risp_int is null  %}
+				{{ date(pagamento.data_mandato).diff(date(pagamento.data_protocollo_pag|date_modify("+90 day"))).format('%r%a')}}
+			{% else %}
+				{{ date(pagamento.data_mandato).diff(date(pagamento.data_protocollo_risp_int|date_modify("+90 day"))).format('%r%a')}}
+			{% endif %}
+		{% endif %}
+	{% else %}
+		-
+	{% endif %}
+{% endmacro %}

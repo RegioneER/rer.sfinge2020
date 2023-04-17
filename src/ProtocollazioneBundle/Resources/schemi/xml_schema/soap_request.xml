@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" __XML_NAMESPACES__  xmlns:xsd="http://classes.sdk.docer.kdm.it/xsd">
+	<soapenv:Header/>
+	<soapenv:Body>
+		<__METHOD_NAMESPACE_PREFIX__:__METHOD__><__METHOD_NAMESPACE_PREFIX__:token>__TOKEN__</__METHOD_NAMESPACE_PREFIX__:token>__PARAMS__</__METHOD_NAMESPACE_PREFIX__:__METHOD__>
+	</soapenv:Body>
+</soapenv:Envelope>

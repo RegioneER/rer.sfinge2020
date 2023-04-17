@@ -1,0 +1,26 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	
+<h4>Dati Cup</h4>
+
+{{ form_start(form) }}
+{{ form_row(form.cup_natura) }}
+{{ form_row(form.cup_tipologia) }}
+{{ form_row(form.cup_settore) }}
+{{ form_row(form.cup_sottosettore) }}
+{{ form_row(form.cup_categoria) }}
+{% if form.cup_tipi_copertura_finanziaria is defined %}
+	{{ form_row(form.cup_tipi_copertura_finanziaria) }}
+{% endif %}
+
+<h4>Codice CUP</h4>
+{{ form_row(form.codice_cup) }}
+
+{{ form_end(form) }}
+
+<script type="text/javascript">
+	{% include('IstruttorieBundle:Istruttoria:datiCup.js.twig') %}
+</script>
+
+{% endblock %}

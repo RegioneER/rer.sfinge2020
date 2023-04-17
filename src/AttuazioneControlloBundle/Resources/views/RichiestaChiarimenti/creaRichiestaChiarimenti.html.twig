@@ -1,0 +1,65 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+{% if pagamento.procedura.id != 32 %}
+	<h4>Allegati</h4>
+	{% for allegato in form.vars.data.allegati %}
+		<div style="margin-bottom:1.5em;">
+			{{ mostra_file(
+				allegato.documento, 
+				form.vars.disabled ? 
+					null : 
+					path('elimina_allegato_richiesta_chiarimenti', { id_allegato: allegato.id })
+				)
+			}}
+		</div>
+	{% endfor %}
+	{{ form(form_allegati) }}
+{% endif %}
+
+{{ form_start(form) }}
+{{ form_errors(form) }}
+
+<h4>Note alla richiesta di chiarimenti</h4>
+{{ form_row(form.testo) }}
+
+<h4>Testo da inviare tramite pec al beneficiario</h4>
+{{ form_row(form.testoEmail) }}
+
+<h4>PDF per la richiesta di chiarimenti</h4>
+	<a href="{{path('pdf_chiarimenti_istruttoria', {'id_pagamento': pagamento.id}) }}" class="btn btn-info">Genera fac-simile</a>
+<br><br>
+
+<div id="conferma_operazione_invio" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&#x2613;</button>
+				<h3 id="dataConfirmLabel">Conferma necessaria</h3>
+			</div>
+			<div class="modal-body">
+				Confermi l'operazione di invio della richiesta di chiarimenti ?
+			</div>
+			<div class="modal-footer">
+				<a class="btn" data-dismiss="modal" aria-hidden="true" href="">No</a>
+				<button type="submit" name="richiesta_chiarimenti[pulsanti][pulsante_invio]" class="btn btn-primary">Si</button>					
+			</div>
+		</div>
+	</div>
+</div>
+
+{{ form_end(form) }}
+
+
+{% endblock %}
+{% block  jquery_page_document_ready %}
+	<script>
+		jQuery(document).ready(function () {
+			$("#richiesta_chiarimenti_pulsanti_pulsante_invio").click(function (e) {
+				e.preventDefault();
+				$("#conferma_operazione_invio").modal("show");
+			});
+		});
+	</script>
+	
+{% endblock %}

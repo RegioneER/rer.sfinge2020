@@ -1,0 +1,247 @@
+parameters:
+    monitoraggio.ignoredEntities:
+        - 'MonitoraggioBundle\Entity\VistaAP00'
+        - 'MonitoraggioBundle\Entity\VistaAP01'
+        - 'MonitoraggioBundle\Entity\VistaAP02'
+        - 'MonitoraggioBundle\Entity\VistaAP03'
+        - 'MonitoraggioBundle\Entity\VistaAP04'
+        - 'MonitoraggioBundle\Entity\VistaAP05'
+        - 'MonitoraggioBundle\Entity\VistaAP06'
+        - 'MonitoraggioBundle\Entity\VistaSC00'
+        - 'MonitoraggioBundle\Entity\VistaFN00'
+        - 'MonitoraggioBundle\Entity\VistaFN01'
+        - 'MonitoraggioBundle\Entity\VistaFN02'
+        - 'MonitoraggioBundle\Entity\VistaFN03'
+        - 'MonitoraggioBundle\Entity\VistaFN04'
+        - 'MonitoraggioBundle\Entity\VistaFN05'
+        - 'MonitoraggioBundle\Entity\VistaFN06'
+        - 'MonitoraggioBundle\Entity\VistaFN07'
+        - 'MonitoraggioBundle\Entity\VistaFN08'
+        - 'MonitoraggioBundle\Entity\VistaFN09'
+        - 'MonitoraggioBundle\Entity\VistaIN00'
+        - 'MonitoraggioBundle\Entity\VistaIN01'
+        - 'MonitoraggioBundle\Entity\VistaPR00'
+        - 'MonitoraggioBundle\Entity\VistaPR01'
+        - 'MonitoraggioBundle\Entity\VistaPA00'
+        - 'MonitoraggioBundle\Entity\VistaPG00'
+
+    monitoraggio.controlliIGRUE:
+        '001':
+            messaggio: sfinge.monitoraggio.ap03_001
+            strutture:
+                - AP03
+        '002':
+            messaggio: sfinge.monitoraggio.ap05_002
+            strutture:
+                - AP05
+        '003':
+            messaggio: sfinge.monitoraggio.ap06_003
+            strutture:
+                - AP06
+        '004':
+            messaggio: sfinge.monitoraggio.sc00_004
+            strutture:
+                - SC00
+        '005':
+            messaggio: sfinge.monitoraggio.fn00_005
+            strutture:
+                - FN00
+        '006':
+            messaggio: sfinge.monitoraggio.fn01_006
+            strutture:
+                - FN01
+        '007':
+            messaggio: sfinge.monitoraggio.in00_007
+            strutture:
+                - IN00
+        '008':
+            messaggio: sfinge.monitoraggio.in01_008
+            strutture:
+                - IN01
+        '009':
+            messaggio: sfinge.monitoraggio.pr00_009
+            strutture:
+                - PR00
+        '010':
+            messaggio: sfinge.monitoraggio.pr01_010
+            strutture:
+                - PR01
+        '013':
+            messaggio: sfinge.monitoraggio.ap01_013
+            strutture:
+                - AP00
+                - AP01
+                - PA00
+        '014':
+            messaggio: sfinge.monitoraggio.ap03_014
+            strutture:
+                - AP03
+                - AP04
+        '015':
+            messaggio: sfinge.monitoraggio.ap03_015
+            strutture:
+                - AP03
+                - AP04
+        '016':
+            messaggio: sfinge.monitoraggio.ap03_016
+            strutture:
+                - AP03
+                - AP04
+        '017':
+            messaggio: sfinge.monitoraggio.ap03_017
+            strutture:
+                - AP03
+                - AP04
+        '018':
+            messaggio: sfinge.monitoraggio.fn02_ap00_018
+            strutture:
+                - FN02
+                - AP00
+        '019':
+            messaggio: sfinge.monitoraggio.fn04_fn06_019
+            strutture:
+                - FN04
+                - FN06
+        '020':
+            messaggio: sfinge.monitoraggio.fn01_ap04_020
+            strutture:
+                - FN01
+                - AP04
+        '021':
+            messaggio: sfinge.monitoraggio.fn05_ap04_021
+            strutture:
+                - FN05
+                - AP04
+        '022':
+            messaggio: sfinge.monitoraggio.fn07_ap04_022
+            strutture:
+                - FN07
+                - AP04
+# Attenzione mancano i controlli 023 e 024 perché bisogna implementare la FN09 e FN10
+        '025':
+            messaggio: sfinge.monitoraggio.fn04_fn05_025
+            strutture:
+                - FN04
+                - FN05
+        '026':
+            messaggio: sfinge.monitoraggio.fn06_fn07_026
+            strutture:
+                - FN05
+                - FN06
+# Attenzione manca il controllo 027 perché bisogna implementare la FN10
+        '028':
+            messaggio: sfinge.monitoraggio.fn04_fn06_028
+            strutture:
+                - FN04
+                - FN06
+        '029':
+            messaggio: sfinge.monitoraggio.fn01_fn05_029
+            strutture:
+                - FN01
+                - FN05
+        '030':
+            messaggio: sfinge.monitoraggio.fn05_fn07_030
+            strutture:
+                - FN05
+                - FN07
+# Il controllo 031  per procedura non per progetto: non implementato
+        '032':
+            messaggio: sfinge.monitoraggio.fn04_032
+            strutture:
+                - FN04
+        '033':
+            messaggio: sfinge.monitoraggio.fn06_033
+            strutture:
+                - FN06
+        '034':
+            messaggio: sfinge.monitoraggio.fn05_034
+            strutture:
+                - FN05
+        '035':
+            messaggio: sfinge.monitoraggio.fn07_035
+            strutture:
+                - FN07
+        '036':
+            messaggio: sfinge.monitoraggio.pr01_036
+            strutture:
+                - PR01
+        '037':
+            messaggio: sfinge.monitoraggio.fn06_fn08_037
+            strutture:
+                - FN06
+                - FN08
+# Attenzione mancano i controlli 038 e 039 perché bisogna implementare la FN10
+        '040':
+            messaggio: sfinge.monitoraggio.pr00_in01_040
+            strutture:
+                - PR00
+                - IN01
+        '041':
+            messaggio: sfinge.monitoraggio.pr00_041
+            strutture:
+                - PR00
+        '042':
+            messaggio: sfinge.monitoraggio.pr00_042
+            strutture:
+                - PR00
+        '043':
+            messaggio: sfinge.monitoraggio.ap04_in00_043
+            strutture:
+                - AP04
+                - IN00
+        '044':
+            messaggio: sfinge.monitoraggio.ap04_in01_044
+            strutture:
+                - AP04
+                - IN01
+        '045':
+            messaggio: sfinge.monitoraggio.fn02_ap00_045
+            strutture:
+                - FN02
+                - AP00
+        '046':
+            messaggio: sfinge.monitoraggio.pr00_ap00_046
+            strutture:
+                - PR00
+                - AP00
+        '047':
+            messaggio: sfinge.monitoraggio.fn04_fn05_047
+            strutture:
+                - FN04
+                - FN05
+        '048':
+            messaggio: sfinge.monitoraggio.fn06_fn07_048
+            strutture:
+                - FN06
+                - FN07
+        '049':
+            messaggio: sfinge.monitoraggio.fn06_fn08_049
+            strutture:
+                - FN06
+                - FN08
+        '050':
+            messaggio: sfinge.monitoraggio.fn04_050
+            strutture:
+                - FN04
+        '051':
+            messaggio: sfinge.monitoraggio.fn05_051
+            strutture:
+                - FN05
+        '052':
+            messaggio: sfinge.monitoraggio.fn06_052
+            strutture:
+                - FN06
+        '053':
+            messaggio: sfinge.monitoraggio.fn07_053
+            strutture:
+                - FN07
+        '054':
+            messaggio: sfinge.monitoraggio.fn04_fn05_054
+            strutture:
+                - FN04
+                - FN05
+        '055':
+            messaggio: sfinge.monitoraggio.fn06_fn07_055
+            strutture:
+                - FN06
+                - FN07

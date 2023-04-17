@@ -1,0 +1,20 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+
+	<h4>Scheda Organismo</h4>
+
+	{{ form(form) }}
+
+	<h4>Elenco documenti caricati</h4>
+	{% if documenti is not empty %}
+		<div class="form-body">		
+			{% for documento in documenti %}
+				{{ mostra_file(documento.documentoFile, path('elimina_documento_organismo', {'id_documento_organismo': documento.id, '_token': csrfToken }) ) }}
+			{% endfor %}
+		</div>
+	{% else %}
+		<h6>Nessun documento caricato</h6>
+	{% endif %}
+
+{% endblock %}

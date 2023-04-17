@@ -1,0 +1,14 @@
+persone_gestione:
+    resource: "@AnagraficheBundle/Controller/GestionePersoneController.php"
+    type:    annotation
+    prefix:   /persone/gestione
+    
+persona:
+    resource: "@AnagraficheBundle/Controller/PersonaController.php"
+    type:    annotation
+    prefix:   /persona 
+    
+anagrafica_utente:
+    resource: "@AnagraficheBundle/Controller/AnagraficaUtenteController.php"
+    type:    annotation
+    prefix:   /persone/utente

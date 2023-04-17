@@ -1,0 +1,119 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	<div class="table-toolbar">
+        <div>
+			<a class="btn btn-info" href="#ricerca-istruttoria-modal" data-toggle="modal">
+				<span class="fa fa-search"></span> Ricerca
+			</a>
+        </div>
+    </div>
+    <div class="count">
+        Numero elementi trovati: {{ richieste.getTotalItemCount }} - Filtro attivo: {{ filtro_attivo ? "Si" : "No" }}
+    </div>
+    <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+        <thead>
+            <tr>
+				<th>{{ knp_pagination_sortable(richieste, 'Id', 'a.id') }}</th>
+                <th>Titolo procedura</th>
+				<th>Soggetto</th>
+				<th>Data invio</th>
+				<th>Protocollo</th>
+				<th>Pagamento</th>
+				<th>Data invio pagamento</th>
+				<th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+			{% for richiesta in richieste %}
+				{% set pagamento = richiesta.richiesta.attuazioneControllo.ultimoPagamentoInviato %}
+				<tr>
+					<td>{{ richiesta.id }}</td>
+                    <td>{{ richiesta.titolo }}</td>
+					<td>{{ richiesta.denominazione|capitalize}}</td>
+					<td>{{ richiesta.data_invio | date("d/m/Y H:i:s") }}</td>
+					<td>{{ richiesta.protocollo }}</td>
+					{% if richiesta.richiesta.attuazioneControllo.isRevocatoTotale == true %}
+						<td>Revoca totale</td>
+						<td>-</td>
+					{% else %}
+						<td>{{ pagamento is null ? "-" : (pagamento.modalitaPagamento ~ (pagamento.contatore != '1' ? ' '~pagamento.contatore : '')) }}</td>
+						<td>{{ pagamento is null ? "-" : pagamento.dataInvio|date('d/m/Y') }}</td>
+					{% endif %}
+					<td>
+						<div class="dropdown">
+							<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								Azioni
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+								{% if is_granted('ROLE_GESTIONE_ASSISTENZA_TECNICA') and richiesta.richiesta.isAssistenzaTecnica == true %}
+									<li><a href="{{ path("riepilogo_richiesta_attuazione_at", {'id_richiesta':richiesta.id}) }}">Gestisci</a></li>
+								{% elseif is_granted('ROLE_GESTIONE_INGEGNERIA_FINANZIARIA') and richiesta.richiesta.isIngegneriaFinanziaria == true%}
+									<li><a href="{{ path("riepilogo_richiesta_attuazione_ing_fin", {'id_richiesta':richiesta.id}) }}">Gestisci</a></li>
+								{% elseif is_granted('ROLE_GESTIONE_TRASPORTO') and richiesta.richiesta.isAcquisizioni == true%}
+									<li><a href="{{ path("riepilogo_richiesta_attuazione_acquisizioni", {'id_richiesta':richiesta.id}) }}">Gestisci</a></li>
+								{% else %}
+									<li><a href="{{ path("riepilogo_richiesta_attuazione", {'id_richiesta':richiesta.id}) }}">Gestisci</a></li>
+								{% endif %}
+								{% if is_granted('ROLE_GESTIONE_ASSISTENZA_TECNICA') and richiesta.richiesta.isAssistenzaTecnica %}
+									<li><a href="{{ path("aggiungi_pagamento_at", {'id_richiesta':richiesta.id}) }}">Aggiungi pagamento</a></li>
+								{% elseif is_granted('ROLE_GESTIONE_INGEGNERIA_FINANZIARIA') and richiesta.richiesta.isIngegneriaFinanziaria %}
+									<li><a href="{{ path("aggiungi_pagamento_ing_fin", {'id_richiesta':richiesta.id}) }}">Aggiungi pagamento</a></li>
+								{% elseif is_granted('ROLE_GESTIONE_TRASPORTO') and richiesta.richiesta.isAcquisizioni %}
+									<li><a href="{{ path("aggiungi_pagamento_acquisizioni", {'id_richiesta':richiesta.id}) }}">Aggiungi pagamento</a></li>
+								{% endif %}
+								{% if is_granted("ROLE_SUPER_ADMIN") or is_granted("ROLE_ISTRUTTORE_CONTROLLI")  %}
+									<li><a href="{{ path('estrazione_giustificativi_progetto', { 'id_richiesta': richiesta.id }) }}">Estrazione giustificativi</a></li>
+								{% endif %}
+								{% if is_granted("ROLE_SUPER_ADMIN") %}
+									<li><a href="{{- path('gestione_proroghe_rendicontazione',{ id: richiesta.richiesta.attuazioneControllo.id }) -}}">
+										Proroghe rendicontazione
+									</a></li>
+								{% endif %}
+							</ul>
+						</div>
+					</td>
+				</tr>
+			{% endfor %}
+        </tbody>
+    </table>
+
+	{# display navigation #}
+	<div class="navigation">
+		{{ knp_pagination_render(richieste) }}
+	</div>
+
+	<div id="ricerca-istruttoria-modal" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3 id="ricerca-istruttoria-modal-titolo">Ricerca Progetto</h3>
+				</div>
+				<div class="modal-body">
+
+					{% do formRicercaIstruttoria.codice_fiscale.setRendered %}
+										
+					{{ form(formRicercaIstruttoria) }}
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Chiudi</button>
+					<a class="btn btn-default" href="{{ path("elenco_attuazione_pulisci") }}">Annulla Ricerca</a>
+					<a class="btn btn-primary" href="#" id="ricercaOk">Ricerca</a>
+				</div>
+			</div>
+		</div>
+	</div>			
+{% endblock %}
+
+{%block  jquery_page_document_ready %}
+	<script>
+		jQuery(document).ready(function () {
+			$("#ricercaOk").click(function (e) {
+				e.preventDefault();
+				$(this).parents(".modal-content").find("form").submit();
+			})
+		});
+	</script>
+{% endblock %}

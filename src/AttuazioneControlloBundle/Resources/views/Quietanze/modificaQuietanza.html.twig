@@ -1,0 +1,33 @@
+{% extends '::base_ente.html.twig' %}
+  
+{% block body %}
+	{% block note %}
+		{# da ridefinire in base alla necesssità #}
+	{% endblock %}
+
+    <h4>Dati quietanza</h4>
+    {{ form_start(form) }}
+                        
+        {{ form_row(form.numero) }}
+        
+        {{ form_row(form.data_quietanza) }}
+        
+        {{ form_row(form.tipologia_quietanza) }}
+        
+        {% if documento_caricato %}
+            {% include 'AttuazioneControlloBundle::_file.html.twig' with {
+                label: "Documento quietanza",
+                nome_file: quietanza.documentoQuietanza.nomeOriginale,
+                url_scarica: path("scarica", {"path_codificato":path}),
+                url_elimina: not quietanza.giustificativoPagamento.modificabileIntegrazione or quietanza.giustificativoPagamento.pagamento.richiestaDisabilitata or quietanza.giustificativoPagamento.giustificativoOrigine ? null : path('elimina_documento_quietanza', {'id_quietanza': quietanza.id, 'id_documento_quietanza': quietanza.documentoQuietanza.id, '_token': csrfToken }) } %}
+        {% else %}
+            {{ form_row(form.documento_quietanza) }}
+        {% endif %}
+
+        <div class="form-group">
+            {{ form_row(form.pulsanti) }}
+        </div>
+    
+    {{ form_end(form) }}
+    
+{% endblock %}

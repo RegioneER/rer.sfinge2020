@@ -1,0 +1,75 @@
+{# Attualmente questo script non viene utilizzato. Comunque dovrà essere eventualmente corretto perché ad ogni asse corrispondono più obiettivi specifici.
+
+<script type="text/javascript">
+			$(document).ready(function () {
+				// Obs = obiettivi specifici
+
+				var containerSelectorAsse = '{{procedura}}_asse';
+				var containerSelectorObs = '{{procedura}}_obiettivo_specifico';
+				var containerSelectorAzione = '{{procedura}}_azioni';
+
+				function abilitaObs() {
+
+					if(!$('#' + containerSelectorAsse).val()) {
+						disabilitaTutto();
+					}
+					else {
+						mostraTutto();
+					}
+				}
+
+				function mostraTutto() {
+					$("#" + containerSelectorObs).removeAttr("disabled");
+					$("#" + containerSelectorAzione).removeAttr("disabled");
+				}
+
+				
+				function disabilitaTutto() {
+					$("#" + containerSelectorObs).attr("disabled", "disabled");
+					$("#" + containerSelectorObs).select2('val', '');
+
+					$("#" + containerSelectorAzione).attr("disabled", "disabled");
+					$("#" + containerSelectorAzione).select2('val', '');
+				}
+
+				function disabilitaAzione() {
+					$("#" + containerSelectorAzione).attr("disabled", "disabled");
+					$("#" + containerSelectorAzione).select2('val', '');
+				}
+ 
+				var obs_url = '{{ path("obiettivi_specifici_asse_options", { 'asse_id' : 'id_asse' }) }}';
+
+				$("#" + containerSelectorAsse).change(function () {
+					disabilitaTutto();
+					var url = obs_url;
+					url = url.replace("id_asse", $(this).val());
+					$.ajax({
+						url: url,
+						success: function (res) {
+							$("#" + containerSelectorObs).removeAttr("disabled");
+							$("#" + containerSelectorObs).html(res);
+						}
+					});
+
+				});
+
+				var azione_url = '{{ path("azioni_obiettivo_specifico_options", { 'obiettivo_specifico_id' : 'id_obiettivo_specifico' }) }}';
+
+				$("#" + containerSelectorObs).change(function () {
+					disabilitaAzione();
+					var url = azione_url;
+					url = url.replace("id_obiettivo_specifico", $(this).val());
+					$.ajax({
+						url: url,
+						success: function (res) {
+							$("#" + containerSelectorAzione).removeAttr("disabled");
+							$("#" + containerSelectorAzione).html(res);
+						}
+					});
+
+				});
+
+				abilitaObs();
+			});
+</script>
+#}

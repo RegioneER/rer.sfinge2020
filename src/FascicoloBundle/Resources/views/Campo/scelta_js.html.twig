@@ -1,0 +1,38 @@
+<script type="text/javascript">
+			$(document).ready(function () {
+				var scelta_id = '{{ form.children['tipoCampo'].vars['id'] }}'; 
+				
+				var precisione_id = '{{ form.children['tipoCampo'].vars['id']}}';
+				
+				
+				$("#" + scelta_id).change(nascondiScelta);
+				$("#" + scelta_id).change(nascondiTextAreaRows);
+				$("#" + scelta_id).change(nascondiPrecisione);
+				function nascondiScelta(){
+					if ($("#" + scelta_id).val() != '{{ scelta.id }}') {
+						$("#" + "scelta").hide();
+					}else{
+						$("#" + "scelta").show();
+					}
+				}
+				
+				function nascondiPrecisione(){
+					if ($("#" + scelta_id).val() != '{{numero.id}}') {
+						$("#" + "precisione").hide();
+					}else{
+						$("#" + "precisione").show();
+					}
+				}
+				
+				function nascondiTextAreaRows(){
+					if ($("#" + scelta_id).val() != '{{ textarea.id }}') {
+						$("#" + "textareaRows").hide();
+					}else{
+						$("#" + "textareaRows").show();
+					}
+				}
+				nascondiScelta();
+				nascondiPrecisione();
+				nascondiTextAreaRows();
+			});
+</script>

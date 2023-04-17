@@ -1,0 +1,30 @@
+{% extends '::base.html.twig' %}
+
+{% block intestazione %}
+	{{ parent() }}
+	{{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+{% set richiesta = proponente.richiesta %}
+{% block body %}
+    {% set route = 'comune_aggiungi_sede_operativa_rich' %}
+    {% if richiesta.soggetto.tipo == 'SOGGETTO' %}
+        {% set route = 'soggetto_aggiungi_sede_operativa_rich' %}
+    {% elseif richiesta.soggetto.tipo == 'AZIENDA' %}
+        {% set route = 'azienda_aggiungi_sede_operativa_rich' %}
+    {% endif %}
+
+    {% if isAccessibile(route, { id_richiesta: richiesta.id, id_proponente: proponente.id }) %}
+    <div class="btn-group" style="width: 100%">
+        <a class="pull-right btn btn-primary mb-2" 
+            href="{{path(route, { 
+                id_richiesta: richiesta.id, 
+                id_proponente: proponente.id, 
+                refer: this_url 
+            })}}">
+            <i class="fa fa-plus"></i>&nbsp;Aggiungi
+        </a>
+    </div>
+    {% endif %}
+    {{ form(form) }}
+
+{% endblock %}

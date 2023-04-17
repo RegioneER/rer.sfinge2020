@@ -1,0 +1,76 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <div class="table-toolbar">
+        <div class="btn-group">
+			<a href="#"><button id="btn_ricerca_ws_genera_cup" data-target="#ricerca-classificazione-modal" data-toggle="modal" class="btn btn-info"><span class="fa fa-search"></span> Ricerca</button></a>
+        </div>
+    </div>
+	<div class="count">
+		Numero elementi trovati: {{ Classificazione.getTotalItemCount }} - Filtro attivo: {{ filtro_attivo ? "Si" : "No" }}
+	</div>
+	{% if Classificazione.getTotalItemCount == 0 %}
+        <div class="alert alert-warning">
+            Non è stato trovato alcun elemento.
+        </div>
+	{% endif%}
+
+    <table class="table table-striped table-hover table-bordered" id="notizie-elenco">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>codice</th>
+                <th>descrizione</th>
+				<th>formazione</th>
+				<th>Natura</th>
+            </tr>
+        </thead>
+		<tbody>
+        {% for Item in Classificazione %}
+            <tr>
+				<td>{{ Item.id }}</a></td>
+                <td>{{ Item.codice }}</td>
+                <td>{{ Item.descrizione }}</td>
+                <td>{% if Item.formazione %}Si{% else %}Indefinito{% endif %}</td>
+				<td>{{ Item.CupNatura.codice }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+       
+    </table>
+
+	{# display navigation #}
+	<div class="navigation">
+		{{ knp_pagination_render(Classificazione) }}
+	</div>
+
+	<div id="ricerca-classificazione-modal" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3 id="ricerca-persone-modal-titolo">Ricerca Classificazione</h3>
+				</div>
+				<div class="modal-body">
+					{{ form(formRicerca) }}
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Chiudi</button>
+					{# <a class="btn btn-default" href="{{ path("elenco_ws_genera_cup_pulisci") }}">Annulla Ricerca</a> #}
+					<a class="btn btn-primary" href="#" id="ricercaOk">Ricerca</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}
+{%block  jquery_page_document_ready %}
+<script>
+	jQuery(document).ready(function() {
+		$("#ricercaOk").click(function(e){
+			e.preventDefault();
+			$(this).parents(".modal-content").find("form").submit();
+		})
+	});
+</script>
+{% endblock %}

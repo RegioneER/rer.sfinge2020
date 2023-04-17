@@ -1,0 +1,43 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+
+    {{ form_start(form) }}
+
+	{% if is_multiproponente %}
+		<h4>Proponente</h4>
+		{{ form_row(form.proponente) }}
+	{% endif %}
+
+	{% block sede_operativa %}
+
+	{% endblock sede_operativa %}
+	
+	<h4>Indirizzo</h4>
+	
+	<div class="alert alert-info">
+		Indicare di seguito l'indirizzo completo della sede dove si realizza l'intervento
+	</div>
+
+	{{ form_row(form.indirizzo.via) }}
+	{{ form_row(form.indirizzo.numero_civico) }}
+	{{ form_row(form.indirizzo.stato) }}
+	{{ form_row(form.indirizzo.provincia, {'_id': 'luogo_residenza_provincia_row'}) }}
+	{{ form_row(form.indirizzo.comune, {'_id': 'luogo_residenza_comune_row'}) }}
+
+	{{ form_row(form.indirizzo.provinciaEstera, {'_id': 'luogo_residenza_provincia_estera_row'}) }}
+	{{ form_row(form.indirizzo.comuneEstero, {'_id': 'luogo_residenza_comune_estero_row'}) }}
+
+	{{ form_row(form.indirizzo.cap) }}
+	{{ form_row(form.indirizzo.localita) }}
+	
+	<h4>Recapiti</h4>
+	
+    {{ form_end(form) }}
+
+{% endblock %}
+
+{% block  jquery_page_document_ready %}
+	{% set vars = {'indirizzo': 'sede_indirizzo', 'form' : form.indirizzo } %}
+	{% include "BaseBundle:Base:province_comuni_js.html.twig" with vars %}
+{% endblock %}

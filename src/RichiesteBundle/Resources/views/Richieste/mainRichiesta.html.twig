@@ -1,0 +1,186 @@
+{% extends '::base.html.twig' %}
+
+{% block begin_page_level_plugin_style %}
+    <link href="{{ asset('assets/css/wizard.css') }}" rel="stylesheet" type="text/css"/>
+{% endblock %}
+
+{% block intestazione %}
+    {{ parent() }}
+    {{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% block body %}
+
+    <ul class="nav nav-pills nav-wizard {{ avanzamenti|length == 3 ? "three-steps" : "" }}">
+        {% for avanzamento, attivo in avanzamenti %}
+            <li {% if attivo  %}class="active"{% endif %}>{% if not loop.first %}<div class="nav-wedge"></div>{% endif %}<span>{{avanzamento}}</span>{% if not loop.last %}<div class="nav-arrow"></div>{% endif %}</li>
+                {% endfor %}
+    </ul>
+    <br>
+
+    {% block sezione_avviso %}
+        {# da ridefinire in base alla necesssità #}
+    {% endblock %}
+
+    {% block sezione_avviso_validazione %}
+        {% if oggetto_richiesta is not defined %}
+            {% set oggetto_richiesta = oggetti_richiesta|first %}
+        {% endif %}
+        {% set utenteCorrente = app.user.utente.persona %}
+        {% if (oggetto_richiesta.richiesta.stato.codice == constant('BaseBundle\\Entity\\StatoRichiesta::PRE_INSERITA') or oggetto_richiesta.richiesta.stato.codice == constant('BaseBundle\\Entity\\StatoRichiesta::PRE_VALIDATA')
+			or oggetto_richiesta.richiesta.stato.codice == constant('BaseBundle\\Entity\\StatoRichiesta::PRE_FIRMATA'))
+			and oggetto_richiesta.richiesta.procedura.richiestaFirmaDigitale == false and not oggetto_richiesta.isLegaleRappresentanteODelegato(utenteCorrente.codiceFiscale) %}
+        <p class="alert alert-warning">
+            <strong>ATTENZIONE: </strong> solamente il <strong>legale rappresentante</strong> o un suo <strong>delegato</strong> possono <strong>validare</strong> ed <strong>inviare</strong> la richiesta.
+        </p>
+        {% endif %}
+            {% endblock %}
+
+                <h6>Dati richiesta</h6>
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="table table-striped table-hover table-bordered">
+                            {% block dati_richiesta %}
+                                <tr>
+                                    <td>Numero richiesta</td><td>{{ richiesta.id }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Numero protocollo</td><td>{{ richiesta.protocollo }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Titolo progetto</td><td>{{ richiesta.titolo is not null ?richiesta.titolo : "-" }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Stato</td><td>{{ richiesta.stato.descrizione }}</td>
+                                </tr>
+                            {% endblock %}
+                            {% block extra_dati_richiesta %}{% endblock %}
+                        </table>
+                    </div>
+                </div>
+                <h6>Sezioni</h6>	
+                <ul class="list-group list-checked">		
+                    {# estendere questo twig ridefinendo questo blocco all'occorenza #}
+                    {% block sezioni %}
+                        {% if richiesta.procedura.isMarcaDaBollo %}
+                            {{ mostra_validazione_in_line('dati_marca_da_bollo', path('dati_marca_da_bollo', {'id_richiesta':richiesta.id}), "Gestione dati marca da bollo") }}
+                        {% endif %}
+
+                        {% if richiesta.procedura.isSezioneDatiGenerali is not null and richiesta.procedura.isSezioneDatiGenerali
+			and (richiesta.procedura.femminile or richiesta.procedura.giovanile or richiesta.procedura.requisitiRating
+			     or richiesta.procedura.rating or richiesta.procedura.incrementoOccupazionale
+			     or richiesta.procedura.stelle or richiesta.procedura.sedeMontana)   %}
+                        {{ mostra_validazione_in_line('dati_generali', path('dati_generali', {'id_richiesta':richiesta.id}), "Gestione dati generali") }}
+                        {% endif %}
+
+                            {{ mostra_validazione_in_line('dati_proponenti', path('elenco_proponenti', {'id_richiesta':richiesta.id}), "Gestione proponenti") }}
+                            {{ mostra_validazione_in_line('dati_progetto', path('dati_progetto', {'id_richiesta':richiesta.id}), "Gestione dati progetto") }}
+
+
+                            {% if priorita %}
+                                {% block sezione_priorita %}
+                                    {{ mostra_validazione_in_line('priorita', path('gestione_priorita', {'id_richiesta':richiesta.id}), "Gestione priorità") }}
+                                {% endblock %}
+                            {% endif %}
+
+                            {% if ambiti_prioritari_s3 %}
+                                {% block sezione_ambiti_prioritari_s3 %}
+                                    {{ mostra_validazione_in_line('dati_ambiti_prioritari_s3', path('gestione_ambiti_tematici_s3', {'id_richiesta':richiesta.id}), "Gestione ambiti prioritari S3") }}
+                                {% endblock %}
+                            {% endif %}
+
+                            {% if risorse_progetto %}
+                                {{ mostra_validazione_in_line('risorse_progetto', path('elenco_risorse_progetto', {'id_richiesta':richiesta.id, 'tipo':'default'}), "Gestione risorse progetto") }}
+                            {% endif %}
+
+                            {% if interventi %}
+                                {{ mostra_validazione_in_line('dati_interventi', path('elenco_interventi', {'id_richiesta':richiesta.id}), "Gestione sedi di intervento") }}
+                            {% endif %}	
+
+                            {% if intervento_sede is defined and intervento_sede == true %}
+                                {{ mostra_validazione_in_line('dati_interventi_sede', path('elenco_interventi_sede_esterno', {'id_richiesta':richiesta.id}), "Gestione interventi") }}
+                            {% endif %}	
+
+                            {% for oggetto in oggetti_richiesta %}
+                                {% if oggetto.istanzafascicolo is not null %}
+                                    {% set label = "Gestione questionario " ~ oggetto.descrizione  %}
+                                    {{ mostra_validazione_in_line('dati_questionario', path('questionario', {'id_istanza_pagina':oggetto.istanzafascicolo.indice.id}), label, NULL, oggetto.istanzafascicolo.indice ) }}
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if richiesta.procedura.isFasiProcedurali %}
+                                {{ mostra_validazione_in_line('stato_avanzamento', path('stati_avanzamento', {'id_richiesta':richiesta.id}), "Gestione fasi procedurali") }}
+                            {% endif %}
+
+                            {% if fornitori %}
+                                {{ mostra_validazione_in_line('dati_fornitori', path('elenco_fornitori', {'id_richiesta':richiesta.id}), "Gestione fornitori") }}
+                            {% endif %}	
+
+                            {% block piano_costi %}
+                                {% if piano_costo_attivo == true %}
+                                    {% if multi_piano_costo == true %}
+                                        {% for proponente in proponenti %}
+                                            {% set label = "Gestione piano costi " ~ proponente.soggetto.denominazione  %}
+                                            {{ mostra_validazione_in_line('piano_costi', path('piano_costi', {'id_richiesta':richiesta.id, 'id_proponente':proponente.id}), label, proponente.id) }}
+                                        {% endfor %}
+                                        {% block extra_multi_piano_costo %}{% endblock %}		
+                                    {% else %}
+                                        {% set label = "Gestione piano costi " ~ mandatario.soggetto.denominazione  %}
+                                        {{ mostra_validazione_in_line('piano_costi', path('piano_costi', {'id_richiesta':richiesta.id, 'id_proponente':mandatario.id}), label, mandatario.id) }}
+                                    {% endif %}
+                                {% endif %}
+                            {% endblock piano_costi %}
+
+                            {% if obiettivi_realizzativi is defined and  obiettivi_realizzativi == true %}
+                                {{ mostra_validazione_in_line('obiettivi_realizzativi', path('elenco_obiettivi_realizzativi_richiesta', {id_richiesta:richiesta.id}), 'Gestione obiettivi realizzativi') }}
+                            {% endif %}
+
+                            {{ mostra_validazione_in_line('documenti_richiesta', path('elenco_documenti_richiesta', {'id_richiesta':richiesta.id}), "Gestione allegati richiesta") }}
+
+                            {% if richiesta.procedura.sezioneVideo %}
+                                {{ mostra_validazione_in_line('documenti_richiesta_dropzone', path('elenco_documenti_richiesta_dropzone', {'id_richiesta':richiesta.id}), "Video di presentazione") }}
+                            {% endif %}
+
+                            {% if richiesta is indicatoriManuali %}
+                                {{ mostra_validazione_in_line('indicatori_output_richiesta', path('elenco_indicatori_richiesta', {'id_richiesta':richiesta.id}), "Gestione indicatori di output") }}
+                            {% endif %}
+
+                            {% if iter_progetto is defined and iter_progetto == true %}
+                                {{ mostra_validazione_in_line('iter_progetto', path('richiesta_iter_progetto', {'id_richiesta':richiesta.id}), "Gestione fasi procedurali") }}
+                            {% endif %}
+
+                            {% if dnsh %}
+                                {{ mostra_validazione_in_line('dichiarazioni_dsnh', path('dichiarazioni_dsnh', {'id_richiesta':richiesta.id}), "Dichiarazioni DNSH") }}
+                            {% endif %}
+
+                            {% block autodichiarazioni %}
+                                {% if has_autodichiarazioni %}
+                                    {{ mostra_validazione_in_line('autodichiarazioni_autorizzazioni_richiesta', path('autodichiarazioni_autorizzazioni_richiesta', {'id_richiesta':richiesta.id}), "Autodichiarazioni", richiesta) }}
+                                {% endif %}
+                            {% endblock autodichiarazioni %}
+
+                            {% endblock %}		
+                            </ul>
+
+                            {% set vociMenu = voci_menu_presenzazione(richiesta.id) %}
+                            <div class="page-actions">
+                                {% for voceMenu in vociMenu %}
+                                    {# schippo la voce attuale della pagina attuale #}
+                                    {% set pathAttuale = path(app.request.attributes.get('_route'),app.request.attributes.get('_route_params')) %}
+                                    {% if voceMenu.path != pathAttuale %}
+                                        {% set style = "btn btn-info" %}
+                                        {% if voceMenu.style is defined %}
+                                            {% set style = voceMenu.style %}
+                                        {% endif %}
+                                        <a href="{{ voceMenu.path }}" {{ voceMenu.attr is defined ? (voceMenu.attr |raw) : "" }} class="{{ style }}">{{ voceMenu.label }}</a>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+
+                            <script type="text/javascript" language="javascript">
+                                $(document).ready(function () {
+                                    $('[data-toggle="popover"]').popover();
+                                });
+                            </script>
+
+                            {% endblock %}

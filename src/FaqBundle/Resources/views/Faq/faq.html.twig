@@ -1,0 +1,30 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+
+  <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+
+  {% set i = 0 %}
+
+  {% for f in faq %}
+
+    {% set i = i + 1 %}
+
+    <div class="panel panel-default">
+      <div class="panel-heading" role="tab" id="heading{{ i }}">
+        <h4 class="panel-title">
+          <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ i }}" aria-expanded="false" aria-controls="collapse{{ i }}">
+            <strong> {{ f.titolo }} </strong>
+          </a>
+        </h4>
+      </div>
+      <div id="collapse{{ i }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading{{ i }}">
+        <div class="panel-body">
+          {{ f.testo }}
+        </div>
+      </div>
+    </div>
+
+{% endfor %}
+
+{% endblock %}

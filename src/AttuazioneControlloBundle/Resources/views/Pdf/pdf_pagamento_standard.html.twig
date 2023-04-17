@@ -1,0 +1,456 @@
+{# questo twig viene esteso da pdf_sal, pdf_saldo e pdf_unica_soluzione
+	si spera costituisca la base uguale a tutte le modalità pagamento
+	eventualemnte vanno ridefiniti o aggiunti i blocchi che servono
+#}
+
+{% extends ':pdf:base.pdf.html.twig' %}
+
+{#% import '@Richieste/Pdf/macro/macro_richiesta.html.twig' as macro_richiesta %#}
+
+{% block content %}
+
+	{# Variabili disponibili di default: pagamento, richiesta, procedura, capofila #}
+
+    {% block dati_intestazione %}
+        <div class="center">
+            <img src="assets/img/regione/logo_ue-por_fesr_2020.jpg" alt="Loghi regione" height="60px">
+
+            <h2 align="center">POR-FESR EMILIA ROMAGNA 2014-2020</h2>
+        </div>
+    {% endblock dati_intestazione %}
+
+    {% block frontespizio %}
+		
+		{% block dati_procedura %}
+			
+			<div id="dati_procedura">
+				<div id="asse" style="margin-bottom: 20px; text-align: center">
+					<h3>{{ procedura.asse.titolo }} - {{ procedura.asse.descrizione }}</h3>
+				</div>
+				<div id="azioni">
+					{% for azione in procedura.azioni %}
+						<div class="text-medium italic" style="text-align: center; margin-bottom: 10px;">Azione {{ azione.codice }} {{ azione.descrizione }}</div>
+					{% endfor %}
+				</div>				
+				<div id="titolo" style="margin-bottom: 20px;">
+					<h3 align="center">{{ procedura.titolo }}</h3>
+				</div>
+			</div>
+			
+		{% endblock dati_procedura %}
+		
+		
+		{% block domanda %}
+			
+			<div id="domanda" style="margin-bottom: 60px">
+				<div>
+					<h2 class="" style="text-align: center;">TRASMISSIONE RENDICONTAZIONE</h2>
+				</div>
+				<div>
+					<h3 class="bold" style="text-align: center; margin-bottom: 10px;">
+						(DICHIARAZIONE SOSTITUTIVA DI ATTO DI NOTORIETA'<br>
+						Ai sensi degli articoli 46 e 47 del D.P.R. n. 445/2000)
+					</h3>
+				</div>
+				{#
+				<div>
+					<h3 class="bold" style="text-align: center; margin-bottom: 10px;">INVIO RENDICONTAZIONE FINANZIARIA E TECNICA E RICHIESTA LIQUIDAZIONE DEL CONTRIBUTO CONCESSO</h3>
+				</div>
+				#}
+
+			</div>
+					
+		{% endblock domanda %}
+        	
+		
+		{% block destinatario %}
+			
+			<div id="destinatario" class="text-small" style="text-align: right; margin-bottom: 40px; page-break-inside: avoid;">
+				Spett.le Regione Emilia-Romagna<br>
+                        Direzione Generale Conoscenza, Ricerca, Lavoro, Imprese <br><br>
+                         Area Liquidazione dei Programmi per lo Sviluppo <br> Economico e Supporto alla Autorità di Gestione FESR
+                         <br><br>
+                        Viale Aldo Moro 44 <br><br>
+                        40127 – Bologna <br>
+			</div>
+			
+		{% endblock destinatario %}
+		
+		{% block oggetto %}
+			
+			<div id="oggetto" style="margin-bottom: 80px">	
+				<table style="border: none; width: 100%">
+					<tr>
+						<th style="border: none;">
+							<h3 class="bold" style="text-align: left;">OGGETTO:</h3>
+						</th>
+						<td style="border: none;">
+							<h3 class="bold" style="text-align: left;">Richiesta di erogazione del contributo relativo al progetto <br>C.U.P. {{ richiesta.istruttoria.codiceCup }} ({{ pagamento.modalitaPagamento.descrizioneBreve }}).</h3>
+						</td>
+					</tr>
+				</table>
+			</div>
+					
+		{% endblock oggetto %}
+		
+		<div style="page-break-after: always"></div>
+		
+    {% endblock frontespizio %}
+
+	
+	
+    {% block dati_richiedente %}
+		
+		{% set firmatario = pagamento.firmatario %}
+		{% set luogoResidenza = firmatario.luogoResidenza %}
+
+		{% block dati_firmatario %}
+		
+			<div id="dati_firmatario" class="text-medium" style="margin-bottom: 20px">
+				Il/La sottoscritto/a <b>{{ firmatario.nome }} {{ firmatario.cognome }}</b>
+				nato/a 
+
+				{% if pagamento.firmatario.comune is not null %}
+					a <b>{{ firmatario.comune }}</b> 
+				{% else %}
+					in <b>{{ firmatario.statoNascita }}</b> 		
+				{% endif %}
+
+				in data <b>{{ firmatario.dataNascita | date("d/m/Y") }}</b><br/>
+				residente in 
+				<b>{{ luogoResidenza.via }}</b>
+				n° <b>{{ luogoResidenza.numeroCivico }}</b>
+
+				{% if luogoResidenza.localita is not null %}
+					Località <b>{{ pagamento.firmatario.luogoResidenza.localita }}</b>
+				{% endif %}
+
+				CAP <b>{{ luogoResidenza.cap }}</b>
+
+				{% if luogoResidenza.comune is not null %} Comune
+					<b>{{ luogoResidenza.comune.denominazione }}</b>
+					Prov. <b>{{ luogoResidenza.provincia.siglaAutomobilistica }}</b>
+				{% else %}
+					Stato <b>{{ luogoResidenza.stato.denominazione }}</b>
+
+					{% if luogoResidenza.comuneEstero is not null %} Comune (estero)
+						<b>{{ luogoResidenza.comuneEstero }}</b>{% endif %}
+					{% if luogoResidenza.provinciaEstera is not null %} Prov. (estera)
+						<b>{{ luogoResidenza.provinciaEstera }}</b>
+					{% endif %}
+
+				{% endif %}
+
+				<br>
+
+				codice fiscale <b>{{ firmatario.codiceFiscale }}</b>
+			</div>
+		
+		{% endblock dati_firmatario %}
+		
+			
+		{% block dati_soggetto %}	
+			
+			<div class="text-medium">
+
+				<ul>
+					<li>
+						in qualità di legale rappresentante/delegato del soggetto:
+						<br><br>
+
+						<table class="text-medium">
+							<tr>
+								<th>Denominazione/Ragione sociale</th>
+								<td>{{ capofila.denominazione }}</td>
+							</tr>
+							<tr>
+								<th>Codice fiscale</th>
+								<td>{{ capofila.codiceFiscale }}</td>
+							</tr>	
+							<tr>
+								<th>Partita IVA</th>
+								<td>{{ capofila.partitaIva ? capofila.partitaIva : '-' }}</td>
+							</tr>	
+							<tr>
+								<th>Forma giuridica</th>
+								<td>{{ capofila.formaGiuridica.descrizione }}</td>
+							</tr>
+							<tr>
+								<th>Sede legale</th>
+								<td>
+									{{ capofila.via }} {{ capofila.civico }} {{ capofila.localita }}, {{ capofila.cap }}<br>
+									{% if capofila.comune is not null %}
+										{{ capofila.comune }} ( {{ capofila.provincia.siglaAutomobilistica }} )
+									{% endif %}
+
+									{% if capofila.comuneEstero is not null %}
+										{{ capofila.comuneEstero }} {{ capofila.provinciaEstera ? '(' ~ capofila.provinciaEstera ~ ')': ''}}, {{ capofila.stato }}
+									{% endif %}
+								</td>
+							</tr>
+							<tr>
+								<th>Telefono</th>
+								<td>{{ capofila.tel ? capofila.tel : '-' }}</td>
+							</tr>
+							<tr>
+								<th>Fax</th>
+								<td>{{ capofila.fax ? capofila.fax : '-' }}</td>
+							</tr>
+							<tr>
+								<th>Email</th>
+								<td>{{ capofila.tel ? capofila.email : '-' }}</td>
+							</tr>
+							<tr>
+								<th>Pec</th>
+								<td>{{ capofila.emailPec ? capofila.emailPec : '-' }}</td>
+							</tr>
+							<tr>
+								<th>Codice Ateco 2007</th>
+								<td>{{ capofila.codiceAteco ? capofila.codiceAteco : '-' }}</td>
+							</tr>
+						</table>
+						<br>
+					</li>
+					<li>
+						in relazione alla domanda di contributo assunta agli atti con {{ richiesta.protocollo }} presentata ai sensi del Bando approvato con Delibera di Giunta n. {{ procedura.atto.numero }} ed eventuali successive modifiche ed integrazioni, 
+						per un contributo complessivo concesso di € {{ contributoTotaleAmmesso is null ? '-' : contributoTotaleAmmesso|number_format(2,',', '.') }} a fronte di un investimento complessivo ammesso di € {{ costoTotaleAmmesso is null ? '-' : costoTotaleAmmesso|number_format(2,',', '.') }}
+						per il progetto da realizzarsi presso la sede legale/l'unità locale ubicata a {{datiSede.comune}} ({{datiSede.provincia}}), {{datiSede.via}} {{ datiSede.numero ? 'n.' ~ datiSede.numero : '' }} 
+					</li>
+					<li>						
+						consapevole delle responsabilità penali cui può andare incontro in caso di dichiarazione mendace o di esibizione di atto falso o contenente dati 
+						non rispondenti a verità, ai sensi degli artt. 75 e 76 del D.P.R. 28/12/2000 n. 445 <br><br>
+					</li>					
+				</ul>
+			</div>
+				
+		{% endblock dati_soggetto %}
+		
+    {% endblock dati_richiedente %}
+				
+		
+	{% block chiede %}
+		
+		<div id="chiede">
+
+			<h4 align="center">CHIEDE</h4>			
+			<div>
+				<ul>
+					<li>
+						L'erogazione del contributo spettante a titolo di {{ pagamento.modalitaPagamento.descrizioneBreve }} 
+						{% if  pagamento.modalitaPagamento.isAnticipo %}
+							pari a €
+						{% else %}
+							a fronte di una spesa rendicontata di €
+						{% endif %}
+						
+						{{ pagamento.importoRichiesto|number_format(2,',', '.') }}
+						
+						{# importo richiesto viene aggiornato a catena ad ogni imputazione sui giustificativi..in alternativa si 
+						   si può invocare pagamento.getImportoTotaleRichiesto che lo ricalcola a runtime
+						#}
+
+						{#% if pagamento.needDataFineRendicontazioneSal %}
+							relativo alle spese sostenute fino al {{ pagamento.dataFineRendicontazione ? pagamento.dataFineRendicontazione|date('d/m/Y') : 'N.D.' }} 
+						{% endif %#}
+					</li>
+					<li>
+						il pagamento del contributo, ai sensi dell’art. 3 della L. 136/2010 
+						modificata dall’art. 7 comma 1 lettera a) della Legge di conversione 
+						n. 217/2010 del D.L. n. 187/2010 (c.d. Tracciabilità dei Flussi Finanziari)
+						
+						{% set datiBancari = richiesta.mandatario.datiBancari.last %}				
+						{% if datiBancari %}
+
+							{% if datiBancari.contoTesoreria %}
+								mediante girofondi su contabilità speciale presso Banca d'Italia - Tesoreria dello Stato n° {{ datiBancari.contoTesoreria }} 
+							{% else %}
+								sul seguente conto corrente:
+								<br/><br/>
+								Intestatario: {{ datiBancari.intestatario }}
+								<table width="100%" class="text-medium" style="margin: 20px 0; page-break-inside: avoid;">
+									<tr>
+										<td colspan="15">ISTITUTO DI CREDITO<br>{{ pagamento.banca }}</td>
+										<td colspan="12">AGENZIA<br>{{ pagamento.agenzia }}</td>
+									</tr>
+									<tr>
+										<td colspan="2">PAESE</td>
+										<td colspan="2">CIN<br>EUR</td>
+										<td colspan="1">CI<br>N</td>
+										<td colspan="5">ABI</td>
+										<td colspan="5">CAB</td>
+										<td colspan="12">CONTO CORRENTE</td>
+									</tr>
+									<tr>
+										{% for i in 0..26 %}
+											<td colspan="1">{{ datiBancari.iban[i:1] }}</td>
+										{% endfor %}
+									</tr>
+								</table>  
+							{% endif %}	
+
+						{% endif %}
+						
+					</li>
+				</ul>				
+				
+			</div>
+		</div>
+		
+    {% endblock chiede %}
+
+	{% block autodichiarazioni %}
+		
+		<div id="autodichiarazioni" style="margin-bottom: 60px">
+			A tal fine,
+			
+			{% for elencoProcedura in elenchiProcedura %}
+				{%set elenco = elencoProcedura.elenco %}
+				<h4 style="text-transform: uppercase; text-align: center">{{ elenco.testo }}</h4>
+					<ul>
+						{% for autodichiarazione in elenco.getAutodichiarazioni %}
+							<li>
+								{{ autodichiarazione.testo|raw }}
+								<br>
+							</li>
+						{% endfor %}
+					</ul>
+			{% endfor %}
+	
+		</div>
+			
+	{% endblock autodichiarazioni %}
+	
+	{% block giustificativi %}	
+		
+		<div id="giustificativi" style="margin-bottom: 60px; page-break-inside: always; page-break-before: always;">
+			<h4 align="center">Riepilogo giustificativi</h4>
+			<table style="margin-bottom: 60px; width:100%">
+				<thead>
+					<tr>
+						<th>Fornitore</th>
+						<th>Tipologia</th>
+						<th>Numero</th>
+						<th>Data</th>
+						<th>Importo</th>
+						<th>Importo richiesto</th>
+					</tr>					
+				</thead>
+				<tbody>
+					{% for giustificativo in giustificativi %}
+						<tr>
+							<td>
+								{{ giustificativo.denominazione_fornitore }}<br>
+								{{ giustificativo.codice_fiscale_fornitore}}
+							</td>
+							<td>{{ giustificativo.tipologia_giustificativo }}</td>
+							<td>{{ giustificativo.numero_giustificativo }}</td>
+							<td>{{ giustificativo.data_giustificativo ? giustificativo.data_giustificativo|date('d/m/Y') : '' }}</td>
+							<td>{{ giustificativo.importo_giustificativo|number_format(2, ',', '.') }}</td>
+							<td>{{ giustificativo.importo_richiesto|number_format(2, ',', '.') }}</td>
+						</tr>
+					{% endfor %}
+				</tbody>				
+			</table>
+		</div>
+		
+    {% endblock giustificativi %}
+
+    {% block allega %}	
+		
+		<div id="allega">
+			<h4 align="center">ALLEGA</h4>
+			<div>
+				Attraverso caricamento sull'applicativo Sfinge 2020, la seguente documentazione tecnica:
+				{{ sezioneAllega.testo|raw }}
+			</div>
+		</div>
+		
+    {% endblock allega %}
+	
+	{% block referenti %}	
+		
+		<div id="referenti" class="text-medium" style="margin-top: 80px;">
+		
+			{% if rendicontazioneProceduraConfig.isPubblico %}
+
+				<h4 align="center">Referenti operativi</h4>
+
+				{% set referenti = richiesta.mandatario.referenti %}
+				{% if referenti|length > 0 %}
+
+					<table style="margin-bottom: 60px; width:100%">
+
+						{% for referente in referenti %}
+							<tr>
+								<th>Referente</th>
+								<td>
+									{{ referente.persona }}
+								</td>
+							</tr>
+							<tr>
+								<th>Tipo</th>
+								<td>
+									{{ referente.tipoReferenza.descrizione }}
+								</td>
+							</tr>
+							<tr>
+								<th>Indirizzo</th>
+								<td>
+									{{ referente.persona.luogoResidenza }}
+								</td>
+							</tr>
+							<tr>
+								<th>Telefono</th>
+								<td>
+									{{ referente.persona.telefonoPrincipale }}
+								</td>
+							</tr>
+							<tr>
+								<th>Email</th>
+								<td>
+									{{ referente.persona.emailPrincipale }}
+								</td>
+							</tr>
+							<tr>
+								<th>Email PEC</th>
+								<td>
+									{{ referente.emailPec }}
+								</td>
+							</tr>							
+
+						{% endfor %}
+
+					</table>
+
+				{% else %}
+					Nessun referente
+				{% endif %}
+
+			{% endif %}
+    
+		</div>
+		
+	{% endblock referenti %}
+		
+
+	{% block firma %}	
+    
+		<div class="text-medium" style="margin-top: 80px; width: 90%">
+			<div id="data" style="float: left; width:50%; text-align: left;">
+				<div style="text-align: center; float:left">
+					<strong>{{ "now"|date("d/m/Y") }}</strong><br>
+					__________<br>Data					
+				</div>
+			</div>
+			<div style="float: left; width:50%; text-align: left">
+				<div style="text-align: center; float:right">
+					<strong>{{ pagamento.firmatario.nome }} {{ pagamento.firmatario.cognome }}</strong><br>
+					____________________<br>Firmato digitalmente
+				</div>
+			</div>
+		</div>
+    
+	{% endblock firma %}	   
+	
+{% endblock content %}
+	

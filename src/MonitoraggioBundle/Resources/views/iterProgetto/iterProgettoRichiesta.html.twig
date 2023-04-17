@@ -1,0 +1,59 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	{% if form.mon_iter_progetti|length > 0 %}
+		{% form_theme form.mon_iter_progetti _self %}
+		{% if errori.esito == false %}
+			<div role="alert" class="alert alert-danger">
+				<ul>			
+					{% for errore in errori.messaggi %}
+						<li>{{ errore }}</li>
+					{% endfor %}
+				</ul>
+			</div>
+		{% endif %}
+		{{ form_start(form) }}
+		<table class="table table-striped table-hover table-bordered">
+			<thead>
+				<tr>
+					<th>Voce</th>
+					<th>Data inizio prevista</th>
+					<th>Data inizio effettiva</th>
+					<th>Data fine prevista</th>
+					<th>Data fine effettiva</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for element in form.mon_iter_progetti %}
+					{{ form_widget(element) }}
+				{% endfor %}
+			</tbody>
+		</table>
+		{% if nota_footer is defined %}
+			<p class="well">{{ nota_footer }}</p>
+		{% endif %}
+		{{ form_rest(form) }}
+		{{ form_end(form) }}
+		
+	{% else %}
+		<h2>Non &egrave; stato definito il tipo di iter per la procedura</h2>
+	{% endif %}
+{% endblock %}
+
+
+{% block form_row -%}
+
+{{- not form.vars.compound ? '<td>' : '' -}}
+	{{- form_widget(form) -}}
+	{{- form_errors(form) -}}
+	{{- not form.vars.compound ? '</td>' : '' -}}
+
+{% endblock form_row %}
+
+{% block form_widget_compound %}
+<tr id="{{- block('widget_container_attributes') -}}">
+	<th>{{ form.vars.value.faseprocedurale }}</th>
+	{{ form_errors(form) }}
+	{{- block('form_rows') -}}
+</tr>
+{% endblock %}

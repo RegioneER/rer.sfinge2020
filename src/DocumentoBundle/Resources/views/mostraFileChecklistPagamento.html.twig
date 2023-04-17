@@ -1,0 +1,13 @@
+{# rendicontazione standard #}
+
+{% set documentoFile = documentoChecklistPagamento.documentoFile %}
+
+<td>{{ documentoFile.tipologiaDocumento.descrizione }}</td> 
+<td>{{ documentoFile.nomeoriginale }}</td>
+                
+<td style="text-align: center">
+	<a style="display:block; margin-bottom: 10px" class="btn btn-sm btn-primary" title="Scarica" href="{{ path("scarica", {"path_codificato":path}) }}" target="_blank">Scarica</a>
+	{% if not pathElimina is null %}
+		<a style="display:block" class="btn btn-sm btn-danger" title="Elimina Documento" href="{{ pathElimina }}" data-confirm="Eliminare il documento selezionato?">Elimina</a>
+	{% endif %}
+</td>                 

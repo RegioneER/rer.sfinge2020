@@ -1,0 +1,85 @@
+{% extends ':pdf:base.pdf.html.twig' %}
+
+{% block content %}
+
+    {% block dati_intestazione %}
+        {% if procedura.asse.codice == 'A0' %}
+            <div class="center">
+                <img src="assets/img/regione/logo_ue-regione-emilia-romagna.jpg" alt="Loghi regione" height="60px">
+                <h2 align="center">{{procedura.titolo}}</h2>
+            </div>
+        {% elseif is_fsc == true %}
+            <div class="center">
+                <img src="assets/img/regione/logo_fsc.jpg" alt="Loghi regione" height="80px">
+                <h2 align="center">{{procedura.titolo}}</h2>
+                <p class="text-medium">{{ procedura.asse.titolo }} - {{ procedura.asse.descrizione }}</p>
+                <p class="text-medium">{{ procedura.azioni|join(';') }}</p>
+            </div>
+        {% else %}
+            <div class="center">
+                <img src="assets/img/regione/logo_ue-por_fesr_2020.jpg" alt="Loghi regione" height="90px">
+                <h2 align="center">{{procedura.titolo}}</h2>
+                <p class="text-medium">{{ procedura.asse.titolo }} - {{ procedura.asse.descrizione }}</p>
+                <p class="text-medium">{{ procedura.azioni|join(';') }}</p>
+            </div>
+        {% endif %}
+    {% endblock dati_intestazione %}
+
+    {% block dati_riepilogo %}
+        <div>
+            <h4>Riepilogo dati</h4>
+            <table width="100%" class="text-small">
+                <tr>
+                    <td width="40%">Numero e data protocollo progetto</td>
+                    <td width="60%">{{richiesta.protocollo}} {{richiesta.richiesteprotocollo|length > 0 ? 'del ' ~ richiesta.richiesteprotocollo[0].datapg | date("d/m/Y") : '' }}</td>
+                </tr>
+                <tr>
+                    <td width="40%">CUP</td>
+                    <td width="60%">{{ richiesta.istruttoria.codicecup is null ? "-" : richiesta.istruttoria.codicecup }}</td>
+                </tr>
+                <tr>
+                    <td width="40%">Ragione Sociale</td>
+                    <td width="60%">{{ capofila.soggetto.denominazione }}</td>
+                </tr>
+                <tr>
+                    {% set legaleRappresentante = richiesta.soggetto.lr %}
+                    <td width="40%">Legale rappresentante</td>
+                    <td width="60%">
+                        {{ legaleRappresentante.nome }} {{ legaleRappresentante.cognome }} 
+                        - Codice fiscale: {{ legaleRappresentante.codiceFiscale }}
+                    </td>
+                </tr>
+                <tr>
+                    <td width="40%">Partita IVA</td>
+                    <td width="60%">{{ capofila.soggetto.partitaIva }}</td>
+                </tr>
+                <tr>
+                    <td width="40%">Numero e data protocollo trasmissione rendicontazione</td>
+                    <td width="60%">{{pagamento.protocollo}} {{pagamento.richiesteprotocollo|length > 0 ? 'del ' ~ pagamento.richiesteprotocollo[0].datapg | date("d/m/Y") : '' }}</td>
+                </tr>
+            </table>
+        </div>
+    {% endblock dati_riepilogo %}	
+
+
+    {% block esito_rendicontazione %}
+        <div style="page-break-before: always">
+            <div style="text-align: center; margin-bottom: 40px">
+                <h3>Comunicazione esito istruttoria del pagamento</h3>
+            </div>
+            <h4>Riepilogo del pagamento</h4>
+
+            <table width="100%" class="text-small">
+                <tr>
+                    <td width="40%">Importo anticipo richiesto</td>
+                    <td width="60%">{{ anticipo_richiesto | number_format(2, ',', '.') }}&euro;</td>
+                </tr>	
+                <tr>
+                    <td width="40%">Importo anticipo erogato</td>
+                    <td width="60%">{{ anticipo_erogato | number_format(2, ',', '.') }}&euro;</td>
+                </tr>
+            </table>
+        </div>
+    {% endblock %}
+
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends '::base.html.twig' %}
+
+
+{% block body %}
+	
+{% include 'IstruttorieBundle:Istruttoria:menu.html.twig' with {'istruttoria' : istruttoria }%}	
+
+{% for proponente in istruttoria.richiesta.proponenti %}
+	<h4>Dati Soggetto {{proponente.soggetto.denominazione}}</h4>
+	{{ mostra_soggetto(proponente.soggetto) }}
+{% endfor %}
+
+
+{% endblock %}

@@ -1,0 +1,39 @@
+{% if procedureConContatore|length > 0 %}
+    <h1>
+        Contatori
+    </h1>
+    
+    <div>
+        <h4>
+            <ul style="list-style-type:none; padding-left: 0">
+                {% for procedura in procedureConContatore %}
+                    {% if loop.first %}
+                        <li>
+                    {% else %}
+                        <li style="margin: 25px 0;">
+                    {% endif %}
+
+                    {# Nel caso in cui si voglia personalizzare il contatore è necessario popolare l'array "procedurePersonalizzate" e creare un file "contatoreProcedura###.html.twig #}
+                    {% set procedurePersonalizzate = [95, 126, 127, 138, 168, 174] %}
+                    {% if procedura.id in procedurePersonalizzate %}
+                        {% include '@Sfinge/Default/contatoreProcedura' ~ procedura.id ~ '.html.twig' %} 
+                    {% else %}
+                        {{ procedura.titolo }} ({{ procedura.atto.numero }} del {{ procedura.atto.datapubblicazione|date("d/m/Y") }})
+                        {# Mostro l’indicazione della finestra solamente dalla seconda finestra in poi #}
+                        {% if procedura.attualeFinestraTemporalePresentazione > 1 %}
+                            {% set finestre = {2 : 'Seconda', 3 : 'Terza', 4 : 'Quarta', 5 : 'Quinta', 6 : 'Sesta'} %}
+                            - <strong>{{ finestre[procedura.attualeFinestraTemporalePresentazione] }} finestra</strong> 
+                        {% endif %}
+                        <br>
+                        
+                        Domande totali presentate all’amministrazione: {{ procedura.richiesteInviate }}
+                        {% if procedura.numeroMassimoRichiesteProcedura %}
+                            di {{ procedura.numeroMassimoRichiesteProcedura }}.
+                        {% endif %}
+                    {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </h4>
+    </div>
+{% endif %}

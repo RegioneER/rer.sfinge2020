@@ -1,0 +1,76 @@
+{% extends '@AttuazioneControllo/Pdf/Variazioni/variazione_generica.html.twig' %}
+
+
+{% block body_variazione %}
+{% if pianoCosti|length > 0 %}
+    {% for chiaveAnnualita,anno in annualita %}
+        <div style="page-break-after: always"></div>
+        <p align="center" class="text-medium">
+            <b>PIANO COSTI ANNO
+                {{anno}}</b>
+        </p>
+        <p>
+            {% set importo_totale = 0 %}
+            {% set importo_totale_variazione = 0 %}
+            {% for titoloSezione,vocePianoCosto in pianoCosti[chiaveAnnualita] %}
+                <p class="text-small">
+                    Sezione
+                    {{titoloSezione}}
+                </p>
+
+                <table width="90%">
+                    <tr>
+                        <td width="40%">Voce Costo</td>
+                        <td width="15%">Importo</td>
+                        <td width="15%">Importo Variato</td>
+                        <td width="30%">Nota</td>
+                    </tr>
+                    {% for vocePianoCostoSezione in vocePianoCosto %}
+                        <tr>
+                            <td>
+                                {{ vocePianoCostoSezione['TitoloVoceCosto'] }}
+                            </td>
+                            <td>
+                                {{ vocePianoCostoSezione['ImportoVoceCosto']|number_format(2,',', '.') }}
+                            </td>
+                            <td>
+                                {{ vocePianoCostoSezione['ImportoVariazioneVoceCosto']|number_format(2,',', '.') }}
+                            </td>
+                            <td>
+                                {{ vocePianoCostoSezione['NotaVoceCosto'] }}
+                            </td>
+                        </tr>
+                        {% if vocePianoCostoSezione['CodiceVoceCosto'] != 'TOT' %}
+                            {% set importo_totale =  importo_totale + vocePianoCostoSezione['ImportoVoceCosto'] %}
+                            {% set importo_totale_variazione = importo_totale_variazione + vocePianoCostoSezione['ImportoVariazioneVoceCosto'] %}
+                        {% endif %}
+                    {% endfor %}
+                </table>
+                <br/>
+            {% endfor %}
+            <h4 style="margin-bottom: 5px">Complessivo</h4>
+
+            <table width="90%">
+                <tr>
+                    <td width="50%"></td>
+                    <td width="25%">Costo ammesso</td>
+                    <td width="25%">Variazione</td>
+                </tr>
+                <tr>
+                    <td>
+                        <h5>Totale</h5>
+                    </td>
+                    <td>
+                        {{ importo_totale|number_format(2,',', '.') }}
+                    </td>
+                    <td>
+                        {{ importo_totale_variazione|number_format(2,',', '.') }}
+                    </td>
+                </tr>
+            </table>
+        {% endfor %}
+    {% endif %}
+
+    {% block addizionale_piano_dei_costi %}
+
+{% endblock addizionale_piano_dei_costi %}{% endblock dati_piano_dei_costi %}{% endblock body_variazione %}

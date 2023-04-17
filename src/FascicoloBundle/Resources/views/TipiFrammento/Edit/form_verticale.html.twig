@@ -1,0 +1,47 @@
+{# form_errors(form) #}
+{% for child in form.children %}
+	{{ form_row(child.valore) }}
+	{% if child.vars.attr.campo.note is not null %}
+		<div class="well">
+			{{ child.vars.attr.campo.note|raw|nl2br }}
+			{% for vincolo in child.vars.attr.campo.vincoli %}
+{#				Questo if serve per il pregresso, se è già stata scritta la nota non vado a scriverla una seconda volta.#}
+{#				La regualar expression cerca:#}
+{#				- ogni carattere zero, una o più volte#}
+{#				- il testo max#}
+{#				- un punto oppure uno spazio una o più volte#}
+{#				- uno o più numeri#}
+{#				- zero oppure un punto#}
+{#				- uno o più numeri#}
+{#				- zero oppure uno spazio#}
+{#				- il testo caratteri#}
+{#				- ogni carattere zero, una o più volte#}
+				{% if child.vars.attr.campo.note|lower matches '/.*max[. ]+[0-9]+[.]?[0-9]+[ ]?caratteri.*/' == 0
+					and vincolo.tipoVincolo.codice == 'lunghezza_testo' %}
+					<br/>
+					{% for key, parametro in vincolo.parametri if parametro != 0 %}
+						{% if not loop.first %}
+							<br/>
+						{% endif %}
+
+						{{ key|capitalize }} {{ parametro|number_format(0, ',', '.') }} caratteri
+					{% endfor %}
+				{% endif %}
+			{% endfor %}
+		</div>
+	{% else %}
+		{% for vincolo in child.vars.attr.campo.vincoli %}
+			{% if vincolo.tipoVincolo.codice == 'lunghezza_testo' %}
+				<div class="well">
+					{% for key, parametro in vincolo.parametri if parametro != 0 %}
+						{% if not loop.first %}
+							<br/>
+						{% endif %}
+
+						{{ key|capitalize }} {{ parametro|number_format(0, ',', '.') }} caratteri
+					{% endfor %}
+				</div>
+			{% endif %}
+		{% endfor %}
+	{% endif %}
+{% endfor %}

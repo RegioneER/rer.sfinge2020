@@ -1,0 +1,54 @@
+{% extends '::base.html.twig' %}
+
+{% block intestazione %}
+	{{ parent() }}
+	{{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% block body %}
+	
+	<h4>Dati comunicazione</h4>
+	<div class="row">
+		<div class="col-md-12">
+			<table class="table table-striped table-hover table-bordered">
+				{% if comunicazione.tipooggetto == 'RICHIESTA'%}
+					<tr>
+						<td>Numero protocollo richiesta</td><td>{{ comunicazione.richiesta.protocollo }}</td>
+					</tr>
+				{% endif %}
+				{% if comunicazione.tipooggetto == 'VARIAZIONE'%}
+					<tr>
+						<td>Numero protocollo richiesta</td><td>{{ comunicazione.variazione.richiesta.protocollo }}</td>
+					</tr>
+				{% endif %}
+				<tr>
+					<td>Numero protocollo comunicazione</td><td>{{ comunicazione.protocollocomunicazione }}</td>
+				</tr>
+				<tr>
+					<td>Data comunicazione</td><td>{{ comunicazione.data|date('d/m/Y') }}</td>
+				</tr>
+				<tr>
+					<td>Nota</td><td>{{ comunicazione.testoEmail|replace({'\r\n' : '<br>', '\n' : '<br>'})|raw }}</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+				
+	<a href="{{ path('scarica_comunicazione_progetto', {'id_comunicazione' : comunicazione.id }) }}" class="btn btn-default btn-page-action btn-form-back">Scarica comunicazione</a>
+	
+	<h4>Elenco documenti esito</h4>
+	{% if comunicazione.documenticomunicazione is not empty %}
+    <div class="form-body">	
+		{% for documento in comunicazione.documenticomunicazione %}
+			<br><br>
+				{{ mostra_file(documento.documentoFile, null )}}
+            <br/>
+			<hr>
+		{% endfor %}
+    </div>
+	{% else %}
+		<h6>Nessun documento caricato</h6>
+	{% endif %}
+	
+		
+{% endblock %}

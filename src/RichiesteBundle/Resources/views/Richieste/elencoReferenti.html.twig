@@ -1,0 +1,60 @@
+{% extends '::base.html.twig' %}
+
+{% block intestazione %}
+    {{ parent() }}
+    {{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% block body %}
+    {{ mostra_validazione('valida_referenti', proponente.id) }}
+
+    {% if aggiungi_referente %}
+        <a href="{{ path('cerca_referente', {'id_proponente':proponente.id, 'id_richiesta':id_richiesta}) }}"
+           class="btn btn-primary"><span class="fa fa-plus"></span> Aggiungi referente
+        </a>
+    {% endif %}
+
+    {% if proponente.referenti | length > 0 %}
+        <h4>Dati referente</h4>
+        <table class="table table-striped table-hover table-bordered" id="referenti-elenco">
+            <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Cognome</th>
+                <th>Codice fiscale</th>
+                <th>E-mail PEC</th>
+                <th>Telefono</th>
+                <th>Azioni</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for referente in proponente.referenti %}
+                <tr>
+                    <td>{{ referente.persona.nome}}</a></td>
+                    <td>{{ referente.persona.cognome}}</a></td>
+                    <td>{{ referente.persona.codiceFiscale}}</a></td>
+                    <td>{{ referente.emailpec}}</a></td>
+                    <td>{{ referente.persona.telefonoPrincipale}}</a></td>
+                    <td>
+                        <div class="dropdown">
+                            <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                Azioni
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                {% if is_granted('ROLE_UTENTE') and not is_disabilitata %}
+                                    <li><a href="{{ path('rimuovi_referente', {'id_referente':referente.id, 'id_richiesta':id_richiesta, '_token': csrfToken}) }}">Elimina</a></li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    <div class="page-actions">
+        {{ pulsante_indietro(path('dettaglio_richiesta', {'id_richiesta':id_richiesta})) }}
+    </div>
+{% endblock %}

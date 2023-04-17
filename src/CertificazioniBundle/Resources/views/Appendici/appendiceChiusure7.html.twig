@@ -1,0 +1,88 @@
+{% extends '::base.html.twig' %}
+{% block begin_page_level_plugin_style %}
+	<style>
+		#appendice td:nth-child(3), #appendice td:nth-child(4), #appendice td:nth-child(5) {
+			text-align: right;
+		}
+	</style>
+{% endblock %}
+{% block body %}
+	{% include 'CertificazioniBundle:Appendici:menuAppendici.html.twig' with {'id_chiusura' : chiusura.id } %}	
+
+	<h4>APPENDICE 7: Anticipi versati nel quadro di aiuti di Stato a norma dell'articolo 131, paragrafo 5, 
+		del regolamento (UE) n. 1303/2013 (dati cumulativi dall'inizio del programma) — articolo 137, paragrafo 1, 
+		lettera c), del regolamento (UE) n. 1303/2013
+	</h4>
+
+	<table class="table table-striped table-hover table-bordered" id="appendice">
+		<thead>
+			<tr>
+				<th>Asse prioritario</th>
+				<th>Categoria di regioni</th>				
+				<th>Importo complessivo versato come anticipo dal programma operativo</th>					
+				<th>Importo che è stato coperto dalle spese sostenute dai beneficiari entro tre anni dal pagamento dell'anticipo</th>					
+				<th>Importo che non è stato coperto dalle spese sostenute dai beneficiari e per il quale il periodo di tre anni non è ancora trascorso</th>					
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>1</td>
+				<td>Più sviluppate</td>
+				<td>{{importi_asse['A1']|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A1']|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A1']|number_format(2, ',', '.')}}</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td>Più sviluppate</td>
+				<td>{{importi_asse['A2']|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A2']|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A2']|number_format(2, ',', '.')}}</td>
+			</tr>
+			<tr>
+				<td>3</td>
+				<td>Più sviluppate</td>
+				<td>{{importi_asse['A3']|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A3']|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A3']|number_format(2, ',', '.')}}</td>
+			</tr>
+			<tr>
+				<td>4</td>
+				<td>Più sviluppate</td>
+				<td>{{importi_asse['A4']|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A4']|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A4']|number_format(2, ',', '.')}}</td>
+			</tr>
+			<tr>
+				<td>5</td>
+				<td>Più sviluppate</td>
+				<td>{{importi_asse['A5']|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A5']|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A5']|number_format(2, ',', '.')}}</td>
+			</tr>
+			<tr>
+				<td>6</td>
+				<td>Più sviluppate</td>
+				<td>{{importi_asse['A6']|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A6']|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A6']|number_format(2, ',', '.')}}</td>
+			</tr>
+			<tr>
+				<td>7</td>
+				<td>Più sviluppate</td>
+				<td>{{importi_asse['A7']|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A7']|number_format(2, ',', '.')}}</td>
+				<td>{{importi_asse['A7']|number_format(2, ',', '.')}}</td>
+			</tr>
+			<tr>
+				<td style="font-weight: bold">Totale</td>
+				<td style="font-weight: bold">Più sviluppate</td>
+				<td style="font-weight: bold">{{importi_asse['TOTALE']|number_format(2, ',', '.')}}</td>
+				<td style="font-weight: bold">{{importi_asse['TOTALE']|number_format(2, ',', '.')}}</td>
+				<td style="font-weight: bold">{{importi_asse['TOTALE']|number_format(2, ',', '.')}}</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<a href="{{ path("elenco_certificazioni")}}" class="btn btn-default btn-page-action btn-form-back pull-left">Indietro</a>	
+{% endblock %}

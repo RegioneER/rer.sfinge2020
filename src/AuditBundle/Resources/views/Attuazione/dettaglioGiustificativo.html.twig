@@ -1,0 +1,177 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	{% include 'AuditBundle:Audit:menu.html.twig' %}
+
+	<h4>Fornitore</h4>
+	<table class="table table-striped table-hover">
+		<tr>
+			<th style="width: 50%">Denominazione</th>
+			<td>{{ campioneGiustificativo.giustificativo.denominazioneFornitore }}</td>
+		</tr>
+		<tr>
+			<th>Codice fiscale</th>
+			<td>{{ campioneGiustificativo.giustificativo.codiceFiscaleFornitore }}</td>
+		</tr>				
+	</table>	
+
+	<h4>Dati giustificativo</h4>
+	<table class="table table-striped table-hover">
+		<tr>
+			<th style="width: 50%;">Numero</th>
+			<td>{{ campioneGiustificativo.giustificativo.numeroGiustificativo }}</td>
+		</tr>
+		<tr>
+			<th style="width: 50%;">Data</th>
+			<td>{{ campioneGiustificativo.giustificativo.dataGiustificativo | date('d/m/Y') }}</td>
+		</tr>
+		<tr>
+			<th>Tipologia</th>
+			{% if campioneGiustificativo.giustificativo.tipologiagiustificativo is defined and campioneGiustificativo.giustificativo.tipologiagiustificativo is not null %}
+				<td>{{ campioneGiustificativo.giustificativo.tipologiagiustificativo.descrizione }}</td>
+			{% else %}
+				<td>-</td>
+			{% endif %}
+		</tr>
+		<tr>
+			<th>Importo giustificativo</th>
+			<td>{{ campioneGiustificativo.giustificativo.importoGiustificativo |number_format(2, ',', '.') }}</td>
+		</tr>	
+		<tr>
+			<th>Importo su cui si richiede il contributo</th>
+			<td>{{ campioneGiustificativo.giustificativo.importoRichiesto|number_format(2, ',', '.') }}</td>
+		</tr>	
+		{% if campioneGiustificativo.giustificativo.proponente is not null %}
+			<tr>
+				<th>Proponente</th>
+				<td>{{ campioneGiustificativo.giustificativo.proponente }}</td>
+			</tr>
+		{% endif %}
+		<tr>
+			<th>Nota/Descrizione</th>
+			<td>{{ campioneGiustificativo.giustificativo.notaBeneficiario }}</td>
+		</tr>		
+		<tr>
+			<th>Documento</th>
+			<td>{{ campioneGiustificativo.giustificativo.documentoGiustificativo ? scarica_file(campioneGiustificativo.giustificativo.documentoGiustificativo) : '-' }}</td>
+		</tr>
+	</table>
+
+	<h4>Elenco quietanze</h4>
+	{% if campioneGiustificativo.giustificativo.quietanze |length > 0 %}			
+		<table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+			<thead>
+				<tr>
+					<th>Numero</th>
+					<th>Data quietanza</th>
+					<th>Tipologia</th>
+					<th>Azioni</th>
+				</tr>
+			</thead>	
+			<tbody>
+				{% for quietanza in campioneGiustificativo.giustificativo.quietanze %}
+					<tr>
+						<td>{{ quietanza.numero is null ? "-" : quietanza.numero }}</td>
+						<td>{{ quietanza.dataQuietanza is null ? "-" : quietanza.dataQuietanza | date('d/m/Y') }}</td>
+						<td>{{ quietanza.tipologiaQuietanza }}</td>
+						<td>
+							<div class="dropdown">
+								<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+									Azioni
+									<span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+									<li><a href="{{ path("audit_dettaglio_quietanza", {"id_quietanza" : quietanza.id, 'id_campione' : campioneGiustificativo.id }) }}">Dettagli</a></li>														
+								</ul>
+							</div>
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% endif %}
+	
+	<h4>Elenco voci di costo</h4>
+	{% if campioneGiustificativo.giustificativo.vocipianocosto |length > 0 %}	
+			
+		<table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+			<thead>
+				<tr>
+					<th style="width: 30%">Voce piano costo</th>
+					<th>Importo richiesto</th>
+					<th>Importo ammesso</th>
+					<th>Importo non ammesso</th>
+					<th>Nota</th>
+				</tr>
+			</thead>	
+			<tbody>
+				{% for voce in campioneGiustificativo.giustificativo.vocipianocosto %}
+					<tr>
+						<td>{{ campioneGiustificativo.giustificativo.pagamento.procedura.hasPianoCostiMultiSezione ? voce.vocePianoCosto.mostraLabelRendicontazioneConSezione : voce.vocePianoCosto.mostraLabelRendicontazione }}</td>
+						<td>&euro; {{ voce.importo|number_format(2, ',', '.') }}</td>
+						<td>{{ voce.importoapprovato }}</td>
+						<td>
+							{% set importoNonAmmesso = voce.calcolaImportoNonAmmesso %}
+							{% if importoNonAmmesso is null %}
+								-
+							{% else %}
+								&euro; {{ voce.calcolaImportoNonAmmesso|number_format(2, ',', '.') }}
+							{% endif %}
+						</td>
+						<td>{{voce.nota }}</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% endif %}	
+	
+	<h4>Elenco documenti giustificativo</h4>
+    {% set documentiGiustificativo = campioneGiustificativo.giustificativo.documentiGiustificativo %}
+	{% if documentiGiustificativo |length > 0 %}	
+
+		<table class="table table-striped table-hover table-bordered" id="giustificativo-documenti">
+			<thead>
+				<tr>
+					<th style="width: 20%">Tipologia</th>
+					<th style="width: 30%">Documento</th>
+					<th style="width: 35%">Nota</th>
+				</tr>
+			</thead>	
+			<tbody>
+				{% for documento in documentiGiustificativo %}
+					<tr>
+						<td>{{ documento.documentoFile.tipologiaDocumento.descrizione }}</td>
+						<td>{{ scarica_file(documento.documentoFile) }}</td>
+						<td>{{ documento.nota }}</td>						
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>	
+	{% endif %}	
+
+	<h4>Valutazione giustificativo</h4>
+	{{ form_errors(form) }}
+	{{ form_start(form) }}		
+	{{ form_end(form) }}
+	
+	<h4>Documenti audit</h4>
+	{{ form_errors(formDocumento) }}
+	{{ form_start(formDocumento) }}		
+	{{ form_end(formDocumento) }}
+	
+	<h4>Elenco documenti audit</h4>
+		{% if campioneGiustificativo.documenticampionegiustificativo |length > 0 %}	
+		<table class="table table-striped table-hover table-bordered" id="giustificativo-documenti">	
+			<tbody>
+				{% for documento in campioneGiustificativo.documenticampionegiustificativo %}
+					<tr>
+						<td>{{ mostra_file(documento.documentoFile) }}</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		{% else %}
+		Nessun documento caricato
+	{% endif %}	
+	
+{% endblock %}

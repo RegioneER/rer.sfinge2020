@@ -1,0 +1,129 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+
+    {{ form_errors(form) }}
+    {{ form_start(form) }}
+    <h3>Azienda</h3>
+    <h4>Dati azienda</h4>
+    {{ form_row(form.azienda.denominazione) }}
+    {{ form_row(form.azienda.codice_fiscale) }}
+    {{ form_row(form.azienda.partita_iva) }}
+    {{ form_row(form.azienda.senza_piva) }}
+    {{ form_row(form.azienda.data_costituzione) }}
+
+    {{ form_row(form.azienda.dimensione_impresa) }}
+    {{ form_row(form.azienda.forma_giuridica) }}
+    {{ form_row(form.azienda.codice_ateco) }}
+    {{ form_row(form.azienda.codice_ateco_secondario) }}
+
+    <h4>Dati Registri</h4>
+    {{ form_row(form.azienda.ccia) }}
+    {{ form_row(form.azienda.data_ccia) }}
+    {{ form_row(form.azienda.rea) }}
+    {{ form_row(form.azienda.data_rea) }}
+    {{ form_row(form.azienda.registro_equivalente) }}
+
+    <h4>Dati sede Legale</h4>
+    {{ form_row(form.azienda.via) }}
+    {{ form_row(form.azienda.civico) }}
+    {{ form_row(form.azienda.stato) }}
+    {{ form_row(form.azienda.provincia) }}        
+    {{ form_row(form.azienda.comune) }}
+    {{ form_row(form.azienda.provinciaEstera) }}
+    {{ form_row(form.azienda.comuneEstero) }}
+    {{ form_row(form.azienda.cap) }}
+    {{ form_row(form.azienda.localita) }}
+    {{ form_row(form.azienda.tel) }}
+    {{ form_row(form.azienda.fax) }}
+    {{ form_row(form.azienda.email) }}
+    {{ form_row(form.azienda.email_pec) }}
+
+    {% do form.azienda.laboratorio_ricerca.setRendered %}
+
+    <h3>Legale rappresentante</h3>
+
+
+    <h4>Dati personali</h4>
+
+    {{ form_row(form.legaleRappresentante.nome) }}
+    {{ form_row(form.legaleRappresentante.cognome) }}
+    {{ form_row(form.legaleRappresentante.sesso) }}
+    {{ form_row(form.legaleRappresentante.nazionalita) }}
+    {{ form_row(form.legaleRappresentante.data_nascita) }}
+    {% set persona = form.legaleRappresentante.vars.value %}
+    {% if not(persona.comune and persona.comune.cedutoLegge1989) %}
+        {{ form_row(form.legaleRappresentante.stato_nascita) }}
+    {% endif %}
+    {# if (persona.comune and not persona.comune.cedutoLegge1989) #}
+    {{ form_row(form.legaleRappresentante.provincia) }}
+    {# endif #}
+    {{ form_row(form.legaleRappresentante.comune) }}
+    {{ form_row(form.legaleRappresentante.codice_fiscale) }}
+
+
+    <h4>Indirizzo residenza</h4>
+
+    {{ form_row(form.legaleRappresentante.luogo_residenza.via) }}
+    {{ form_row(form.legaleRappresentante.luogo_residenza.numero_civico) }}
+    {{ form_row(form.legaleRappresentante.luogo_residenza.stato) }}
+    {{ form_row(form.legaleRappresentante.luogo_residenza.provincia, {'_id': 'luogo_residenza_provincia_row'}) }}
+    {{ form_row(form.legaleRappresentante.luogo_residenza.comune, {'_id': 'luogo_residenza_comune_row'}) }}
+
+    {{ form_row(form.legaleRappresentante.luogo_residenza.provinciaEstera, {'_id': 'luogo_residenza_provincia_estera_row'}) }}
+    {{ form_row(form.legaleRappresentante.luogo_residenza.comuneEstero, {'_id': 'luogo_residenza_comune_estero_row'}) }}
+
+    {{ form_row(form.legaleRappresentante.luogo_residenza.cap) }}
+    {{ form_row(form.legaleRappresentante.luogo_residenza.localita) }}
+
+
+    <h4>Recapito principale</h4>
+
+    {{ form_row(form.legaleRappresentante.telefono_principale) }}
+    {{ form_row(form.legaleRappresentante.fax_principale) }}
+    {{ form_row(form.legaleRappresentante.email_principale) }}
+
+
+    <h4>Recapito alternativo</h4>
+
+    {{ form_row(form.legaleRappresentante.telefono_secondario) }}
+    {{ form_row(form.legaleRappresentante.fax_secondario) }}
+    {{ form_row(form.legaleRappresentante.email_secondario) }}
+
+
+    {{ form_end(form) }}
+
+{% endblock %}
+
+{% block  jquery_page_document_ready %}
+    <script>
+        jQuery(document).ready(function () {
+            $("#nuova_azienda_azienda_senza_piva").change(nascondiSezioni);
+
+            function nascondiSezioni() {
+                if ($("#nuova_azienda_azienda_senza_piva").is(':checked')) {
+                    $("#nuova_azienda_azienda_partita_iva").attr("readonly",true);
+                } else {
+                    $("#nuova_azienda_azienda_partita_iva").attr("readonly",false);
+                }
+            }
+
+            nascondiSezioni();
+
+        });
+    </script>
+    {% include "BaseBundle:Base:province_comuni_js.html.twig" with {
+		indirizzo: 'azienda', 
+		form : form.azienda 
+	} %}
+
+    {% include "BaseBundle:Base:province_comuni_js.html.twig" with {
+	indirizzo: 'persona_luogo_residenza',
+	form : form.legaleRappresentante.luogo_residenza 
+	} %}
+
+    {% include "BaseBundle:Base:persona_province_comuni_js.html.twig" with {
+		indirizzo: '', 
+		form : form.legaleRappresentante, 
+		stato_name : 'stato_nascita' 
+	} %}	
+{% endblock %}

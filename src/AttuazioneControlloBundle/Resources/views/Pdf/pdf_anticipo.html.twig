@@ -1,0 +1,37 @@
+{% extends 'AttuazioneControlloBundle:Pdf:pdf_pagamento_standard.html.twig' %}
+
+{% block autodichiarazioni %}
+
+	<div id="autodichiarazioni" style="margin-bottom: 60px">
+		A tal fine,
+
+		<h4 style="text-transform: uppercase; text-align: center">DICHIARA</h4>
+		<ul>
+			<li>
+				di non essere destinataria di un ordine di recupero pendente a seguito di una decisione della Commissione Europea che dichiara 
+				l'aiuto ricevuto illegale ed incompatibile con il mercato comune o di aver ricevuto un ordine di recupero a seguito di 
+				una precedente decisione della Commissione Europea che dichiara un aiuto illegale e incompatibile con 
+				il mercato comune e di aver restituito tale aiuto o di averlo depositato in un conto bloccato (“clausola DEGGENDORF”);
+				<br>
+			</li>
+			<li>
+				di avere avviato le attività progettuali (dichiarazione allegata, mediante caricamento sull’applicativo Sfinge 2020); 
+			</li>
+			<li>
+				di aver provveduto in data {{ pagamento.dataFideiussione | date("d/m/Y") }} a sottoscrivere idonea fideiussione bancaria o assicurativa
+				irrevocabile ed escutibile a prima richiesta, d’importo pari all’anticipazione (allegata, mediante
+				caricamento sull'applicativo Sfinge 2020);
+			</li>	
+			<li>
+				di aver provveduto a consegnare l’originale della fideiussione presso la Segreteria del 
+				“Area Liquidazione dei Programmi per lo Sviluppo Economico e Supporto alla Autorità di Gestione FESR” 
+				– Viale Aldo Moro 44 – 40127 Bologna – OVVERO – di impegnarmi a farla pervenire entro 15 giorni dalla data odierna;
+			</li>
+		</ul>
+	</div>
+
+{% endblock autodichiarazioni %}
+
+{% block giustificativi %}	
+	{# non serve #}
+{% endblock giustificativi %}

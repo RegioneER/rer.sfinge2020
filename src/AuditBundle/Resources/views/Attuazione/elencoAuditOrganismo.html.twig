@@ -1,0 +1,36 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	{% include 'AuditBundle:Audit:menu.html.twig' %}
+
+	<h4>Audit in attuazione del periodo {{pianificazione.periodocontabile}} tipo {{pianificazione.tipo.descrizione}}</h4>
+	<table class="table table-striped table-hover table-bordered" id="organismi-elenco">
+		<thead>
+			<tr>
+				<td style="width: 90%">Nome</td>
+				<td style="width: 10%"></td>
+			</tr>
+		</thead>
+		<tbody>
+			{% if audits_organismi|length > 0%}
+				{% for audit_organismo in audits_organismi %}
+					<tr>
+						<td>{{ audit_organismo.organismo.codice}}</td>
+						<td>
+							<div class="dropdown">
+								<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+									Azioni
+									<span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+									<li><a href="{{ path("requisiti_audit_organismo_attuazione", {'id_audit_organismo': audit_organismo.id}) }}">Requisiti</a></li>
+									<li><a href="{{ path("valutazione_audit_organismo", {'id_audit_organismo': audit_organismo.id}) }}">Valutazione</a></li>
+								</ul> 
+							</div>
+						</td>
+					</tr>
+				{% endfor %}
+			{% endif %}
+		</tbody>
+	</table>			
+{% endblock %}

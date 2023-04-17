@@ -1,0 +1,8 @@
+<ul class="nav nav-tabs">
+	<li role="presentation"{% if menu|default() == "com_esito" %}class="active"{% endif %}><a href="{{path('elenco_comunicazioni_beneficiario')}}">Comunicazioni esito istruttoria</a></li>
+	<li role="presentation"{% if menu|default() == "com_variazione" %}class="active"{% endif %}><a href="{{path('elenco_comunicazioni_variazione_ben')}}">Comunicazioni esito variazione</a></li>  
+	<li role="presentation"{% if menu|default() == "com_generica" %}class="active"{% endif %}><a href="{{path('elenco_comunicazioni_progetto')}}">Comunicazioni generiche</a></li>  
+	<li role="presentation"{% if menu|default() == "com_attuazione" %}class="active"{% endif %}><a href="{{path('elenco_comunicazioni_atc')}}">Comunicazioni attuazione</a></li>  
+</ul>
+
+

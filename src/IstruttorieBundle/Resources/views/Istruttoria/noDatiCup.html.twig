@@ -1,0 +1,11 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	
+{% include 'IstruttorieBundle:Istruttoria:menu.html.twig' with {'istruttoria' : istruttoria } %}
+
+<h4>Dati Cup</h4>
+
+<div class="alert alert-warning">Dati cup non previsti per questo bando</div>
+
+{% endblock %}

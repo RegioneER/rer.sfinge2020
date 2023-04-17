@@ -1,0 +1,67 @@
+{% extends 'AttuazioneControlloBundle:Pdf:pdf_pagamento_standard_new.html.twig' %}
+
+{# al momento estendiamo soltanto pdf_pagamento_base in attesa di capire se serviranno cose diverse in base 
+alla modalità pagamento.
+Quindi al momento tutte le modalità pagamento hanno lo stesso pdf
+#}
+
+{% block incremento_occupazionale %}
+    {% if rendicontazioneProceduraConfig.incrementoOccupazionale and (pagamento.richiesta.isIncrementoOccupazionale or incrementoOccAltri == true ) %}            
+        <div id="incremento_occupazionale">
+            <h4 style="text-align:center">DICHIARA ALTRESÌ CHE</h4>
+            <div>
+                {% if not pagamento.getAttuazioneControlloRichiesta.incrementoOccupazionaleConfermato %}
+                    <strong>non</strong> conferma l'incremento occupazionale dichiarato in fase di presentazione della richiesta di contributo.
+                {% else %}
+                    conferma l'incremento occupazionale dichiarato in fase di presentazione della richiesta di contributo:
+
+                    <ul>
+                        {% if pagamento.attuazioneControlloRichiesta.incrementoOccupazionaleConfermato %}
+                            {% set incremento_occupazionale = pagamento.getIncrementoOccupazionale|last %}
+                            <li>
+                                {% if rendicontazioneProceduraConfig.etichettaInizioIncrementoOccupazionale is not null %} 
+                                    {{ rendicontazioneProceduraConfig.etichettaInizioIncrementoOccupazionale }}&nbsp;{{ incremento_occupazionale.getOccupatiInDataA }} unità;
+                                {% else %}
+                                    che alla data
+                                    del {{ pagamento.attuazioneControlloRichiesta.getDataAvvioProgettoConEventualeProroga|date('d/m/Y') }}
+                                    il numero degli occupati a tempo indeterminato era di {{ incremento_occupazionale.getOccupatiInDataA }} unità;
+                                {% endif %}
+                            </li>
+
+                            <li>
+                                {% if rendicontazioneProceduraConfig.etichettaFineIncrementoOccupazionale is not null %} 
+                                    {{ rendicontazioneProceduraConfig.etichettaFineIncrementoOccupazionale }}&nbsp;{{ incremento_occupazionale.getOccupatiInDataB }} unità;
+                                {% else %}
+                                    che alla data
+                                    del {{ pagamento.attuazioneControlloRichiesta.getDataTermineProgettoConEventualeProroga|date('d/m/Y') }}
+                                    il numero degli occupati a tempo indeterminato era di {{ incremento_occupazionale.getOccupatiInDataB }} unità;
+                                {% endif %}
+                            </li>
+
+                            {% if rendicontazioneProceduraConfig.incrementoOccupazionaleNuoviDipendenti %}
+                                {% if pagamento.personale|length > 0 %}
+                                    <li>
+                                        che l'elenco dei nuovi assunti è il seguente:
+                                        <ul style="list-style-type: none; padding-left: 10px">
+                                            {% for nuovo_assunto in pagamento.personale %}
+                                                <li>
+                                                    - {{ nuovo_assunto.nome }} {{ nuovo_assunto.cognome }} assunto
+                                                    il {{ nuovo_assunto.dataAssunzione|date('d/m/Y') }} come {{ nuovo_assunto.tipologiaAssunzione.descrizione }};
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </li>
+                                {% endif %}
+
+                                <li>
+                                    che per ogni nuovo assunto allega il contratto di assunzione e la comunicazione al centro per l'impiego.
+                                </li>
+                            {% endif %}
+                        {% endif %}
+                    </ul>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+
+{% endblock incremento_occupazionale %}

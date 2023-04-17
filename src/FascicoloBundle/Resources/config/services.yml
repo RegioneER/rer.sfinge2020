@@ -1,0 +1,87 @@
+services:
+    fascicolo:
+        class: FascicoloBundle\Services\Fascicolo
+        arguments: ['@service_container']
+    fascicolo.istanza:
+        class: FascicoloBundle\Services\IstanzaFascicolo
+        arguments: ['@service_container']
+        
+    fascicolo.form.vincolo_type:
+        class: FascicoloBundle\Form\Type\VincoloType
+        arguments: ['@service_container']        
+        tags:
+            - { name: form.type }         
+
+    fascicolo.tipo.text:
+        class: FascicoloBundle\Services\TipoCampo\Testo
+        arguments: ['@service_container']
+    fascicolo.tipo.textarea:
+        class: FascicoloBundle\Services\TipoCampo\AreaTesto
+        arguments: ['@service_container'] 
+    fascicolo.tipo.email:
+        class: FascicoloBundle\Services\TipoCampo\Email
+        arguments: ['@service_container']         
+    fascicolo.tipo.int:
+        class: FascicoloBundle\Services\TipoCampo\Integer
+        arguments: ['@service_container']  
+    fascicolo.tipo.data:
+        class: FascicoloBundle\Services\TipoCampo\Data
+        arguments: ['@service_container']  
+    fascicolo.tipo.numero:
+        class: FascicoloBundle\Services\TipoCampo\Numero
+        arguments: ['@service_container'] 
+    fascicolo.tipo.url:
+        class: FascicoloBundle\Service\TipoCampos\Url
+        arguments: ['@service_container']  
+    fascicolo.tipo.checkbox:
+        class: FascicoloBundle\Services\TipoCampo\Checkbox
+        arguments: ['@service_container']      
+    fascicolo.tipo.choice:
+        class: FascicoloBundle\Services\TipoCampo\Scelta
+        arguments: ['@service_container']
+
+    fascicolo.tipo.text_advanced:
+        class: FascicoloBundle\Services\TipoCampo\TestoAvanzato
+        arguments: ['@service_container']
+        
+    fascicolo.tipo.textadvanced:
+        alias: fascicolo.tipo.text_advanced
+        
+    fascicolo.vincolo.lunghezza_testo:
+        class: FascicoloBundle\Services\TipoVincolo\LunghezzaTesto
+        arguments: ['@service_container'] 
+
+    fascicolo.vincolo.lunghezza_testo_html:
+        class: FascicoloBundle\Services\TipoVincolo\LunghezzaTestoHtml
+        arguments: ['@service_container'] 
+
+    fascicolo.vincolo.regex:
+        class: FascicoloBundle\Services\TipoVincolo\EspressioneRegolare
+        arguments: ['@service_container']
+
+    fascicolo.vincolo.expression:
+        class: FascicoloBundle\Services\TipoVincolo\Espressione
+        arguments: ['@service_container']        
+        
+    fascicolo.istanza.banda_larga_2015:
+        class: FascicoloBundle\Services\Istanza\BandaLarga2015
+        arguments: ['@service_container']
+
+    fascicolo.istanza.esempio:
+        class: FascicoloBundle\Services\EsempioIstanza
+        arguments: ['@service_container']
+        
+    
+
+    fascicolo.twig.serialize_extension:
+        class: FascicoloBundle\TwigExtension\SerializeTwigExtension
+        arguments: ['@doctrine.orm.entity_manager', '@service_container']
+        public: false
+        tags:
+          - { name: twig.extension }
+
+    fascicolo.form.advancedtext_type:
+        class: FascicoloBundle\Form\Type\AdvancedTextType
+        arguments: ['@exercise_html_purifier.default']        
+        tags:
+            - { name: form.type } 

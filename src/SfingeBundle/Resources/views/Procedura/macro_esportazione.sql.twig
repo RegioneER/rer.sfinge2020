@@ -1,0 +1,156 @@
+{% macro insert_procedura(procedura) %}
+INSERT INTO `procedure_operative` (`responsabile_id`, `stato_procedura_id`, `atto_id`, `asse_id`, `amministrazione_emittente_id`, `tipo_procedura_monitoraggio_id`, `tipo_iter_id`, `tipo_finanziamento_id`, `tipo_aiuto_id`, `fase_id`, `titolo`, `risorse_disponibili`, `anno_programmazione`, `marca_da_bollo`, `sezione_dati_generali`, `piano_costo_attivo`, `multi_piano_costo`, `classifica`, `fascicolo_principale`, `anno_protocollazione`, `unita_organizzativa`, `numero_proponenti`, `data_cancellazione`, `data_creazione`, `data_modifica`, `creato_da`, `modificato_da`, `tipo`, `data_approvazione`, `data_pubblicazione`, `data_ora_inizio_presentazione`, `data_ora_fine_presentazione`, `data_convenzione`, `data_programma_attivita`, `rating`, `femminile`, `giovanile`, `anticipo`, `rimborso`, `pagamento_soluzione_unica`, `data_ora_scadenza`, `fasi_procedurali`, `modalita_finanziamento_attiva`, `numero_richieste`, `sportello`, `visibile_in_corso`, `data_ora_fine_creazione`, `fornitori`, `requisiti_rating`, `stelle`, `esenzione_marca_bollo`, `aiuto_stato`, `codice_cci`, `fondo`, `categoria_regione`, `organismo`, `priorita_procedura_id`)
+VALUES
+	(
+	/* responsabile */ {{ procedura.responsabile is null ? 'NULL' : procedura.responsabile.id }}, 
+	/* stato */ {{ procedura.statoProcedura is null ? 'NULL' : procedura.statoProcedura.id }}, 
+	/* atto */ {{ procedura.atto is null ? 'NULL' : procedura.atto.id }}, 
+	/* asse */ {{ procedura.asse is null ? 'NULL' : procedura.asse.id }}, 
+	/* amministrazione_emittente */ {{ procedura.amministrazioneEmittente is null ? 'NULL' : procedura.amministrazioneEmittente.id }}, 
+	/* tipo_procedura_monitoraggio */ {{ procedura.tipoProceduraMonitoraggio is null ? 'NULL' : procedura.tipoProceduraMonitoraggio.id }}, 
+	/* tipo_iter */ {{ procedura.tipoIter is null ? 'NULL' : procedura.tipoIter.id }}, 
+	/* tipo_finanziamento */ {{ procedura.tipoFinanziamento is null ? 'NULL' : procedura.tipoFinanziamento.id }}, 
+	/* tipo_aiuto */ {{ procedura.tipoAiuto is null ? 'NULL' : procedura.TipiAiutoString }}, 
+	/* fase */ {{ procedura.fase is null ? 'NULL' : procedura.fase.id }}, 
+	/* titolo */ {% if procedura.titolo is null %}NULL{% else %}'{{procedura.titolo}}'{% endif %}, 
+	/* risorse_disponibili */ {{ procedura.risorseDisponibili is null ? 'NULL' : procedura.risorseDisponibili }}, 
+	/* anno_programmazione */ {{ procedura.annoProgrammazione is null ? 'NULL' : procedura.annoProgrammazione }}, 
+	/* marca_da_bollo */ {{ procedura.marcaDaBollo is null ? 'NULL' : (procedura.marcaDaBollo ? 1 : 0) }}, 
+	/* sezione_dati_generali */ {{ procedura.sezioneDatiGenerali is null ? 'NULL' : (procedura.sezioneDatiGenerali ? 1 : 0) }}, 
+	/* piano_costo_attivo */ {{ procedura.pianoCostoAttivo is null ? 'NULL' : (procedura.pianoCostoAttivo ? 1 : 0) }}, 
+	/* multi_piano_costo */ {{ procedura.multiPianoCosto is null ? 'NULL' : (procedura.multiPianoCosto ? 1 : 0) }}, 
+	/* classifica */ {% if procedura.classifica is null %}NULL{% else %}'{{procedura.classifica}}'{% endif %}, 
+	/* fascicolo_principale */ {{ procedura.fascicoloPrincipale is null ? 'NULL' : procedura.fascicoloPrincipale }}, 
+	/* anno_protocollazione */ {% if procedura.annoProtocollazione is null %}NULL{% else %}'{{procedura.annoProtocollazione}}'{% endif %}, 
+	/* unita_organizzativa */ {% if procedura.unitaOrganizzativa is null %}NULL{% else %}'{{procedura.unitaOrganizzativa}}'{% endif %}, 
+	/* numero_proponenti */ {{ procedura.numeroProponenti|default('NULL') }}, 
+	/* data_cancellazione */ {{ procedura.dataCancellazione is null ? 'NULL' : procedura.dataCancellazione|date('Y-m-d H:i:s')|quote|raw }}, 
+	/* data_creazione */ {{ procedura.dataCreazione is null ? 'NULL' : procedura.dataCreazione|date('Y-m-d H:i:s')|quote|raw }}, 
+	/* data_modifica */ {{ procedura.dataModifica is null ? 'NULL' : procedura.dataModifica|date('Y-m-d H:i:s')|quote|raw }}, 
+	/* creato_da */ {{ procedura.creatoDa is null ? 'NULL' : procedura.creatoDa|quote|raw }}, 
+	/* modificato_da */ {{ procedura.modificatoDa is null ? 'NULL' : procedura.modificatoDa|quote|raw }},
+	/* tipo */ {{ procedura.tipo|quote|raw }}, 
+	/* data_approvazione */ {{ procedura.dataApprovazione is not defined or procedura.dataApprovazione is null ? 'NULL' : procedura.dataApprovazione|date('Y-m-d')|quote|raw }}, 
+	/* data_pubblicazione */ {{ procedura.dataPubblicazione is not defined or procedura.dataPubblicazione is null ? 'NULL' : procedura.dataPubblicazione|date('Y-m-d')|quote|raw }},
+	/* data_ora_inizio_presentazione */ {{ procedura.dataOraInizioPresentazione is not defined or procedura.dataOraInizioPresentazione is null ? 'NULL' : procedura.dataOraInizioPresentazione|date('Y-m-d H:i:s')|quote|raw }}, 
+	/* data_ora_fine_presentazione */ {{ procedura.dataOraFinePresentazione is not defined or procedura.dataOraFinePresentazione is null ? 'NULL' : procedura.dataOraFinePresentazione|date('Y-m-d H:i:s')|quote|raw }}, 
+	/* data_convenzione */ {{ procedura.dataConvenzione is not defined or procedura.dataConvenzione is null ? 'NULL' : procedura.dataConvenzione|date('Y-m-d')|quote|raw }},
+	/* data_convenzione */ {{ procedura.dataProgrammaAttivita is not defined or procedura.dataProgrammaAttivita is null ? 'NULL' : procedura.dataProgrammaAttivita|date('Y-m-d')|quote|raw }},  
+	/* rating */ {{ procedura.rating is null ? 'NULL' : (procedura.rating ? 1 : 0) }},
+	/* femminile */ {{ procedura.femminile is null ? 'NULL' : (procedura.femminile ? 1 : 0) }},
+	/* giovanile */ {{ procedura.giovanile is null ? 'NULL' : (procedura.giovanile ? 1 : 0) }},
+	/* anticipo */ {{ procedura.anticipo is null ? 'NULL' : (procedura.anticipo ? 1 : 0) }},
+	/* rimborso */ {{ procedura.rimborso is null ? 'NULL' : (procedura.rimborso ? 1 : 0) }},
+	/* pagamento_soluzione_unica */ {{ procedura.pagamentoSoluzioneUnica is null ? 'NULL' : (procedura.pagamentoSoluzioneUnica ? 1 : 0) }},
+	/* data_ora_scadenza */ {{ procedura.dataOraScadenza is not defined or procedura.dataOraScadenza is null ? 'NULL' : procedura.dataOraScadenza|date('Y-m-d H:i:s')|quote|raw }}, 
+	/* fasi_procedurali */ {{ procedura.fasiProcedurali is null ? 'NULL' : (procedura.fasiProcedurali ? 1 : 0) }}, 
+	/* modalita_finanziamento_attiva */ {{ procedura.modalitaFinanziamentoAttiva is null ? 'NULL' : (procedura.modalitaFinanziamentoAttiva ? 1 : 0) }}, 
+	/* numero_richieste */ {{ procedura.numeroRichieste|default('NULL') }}, 
+	/* sportello */ {{ procedura.sportello is null ? 'NULL' : (procedura.sportello ? 1 : 0) }},  
+	/* visibile_in_corso */ {{ procedura.visibileInCorso is null ? 'NULL' : (procedura.visibileInCorso ? 1 : 0) }},  
+	/* data_ora_fine_creazione */ {{ procedura.dataOraFineCreazione is not defined or procedura.dataOraFineCreazione is null ? 'NULL' : procedura.dataOraFineCreazione|date('Y-m-d H:i:s')|quote|raw }}, 
+	/* fornitori */ {{ procedura.fornitori is null ? 'NULL' : (procedura.fornitori ? 1 : 0) }}, 
+	/* requisiti_rating */ {{ procedura.requisitiRating is null ? 'NULL' : (procedura.requisitiRating ? 1 : 0) }}, 
+	/* stelle */ {{ procedura.stelle is null ? 'NULL' : (procedura.stelle ? 1 : 0) }}, 
+	/* esenzione_marca_bollo */ {{ procedura.esenzioneMarcaBollo is null ? 'NULL' : (procedura.esenzioneMarcaBollo ? 1 : 0) }},
+	/* aiuto_stato */ {{ procedura.aiutoStato is null ? 'NULL' : (procedura.aiutoStato ? 1 : 0) }}, 
+	/* codice_cci */{% if procedura.codiceCci is null %}NULL{% else %}'{{procedura.codiceCci}}'{% endif %}, 
+	/* fondo */ {% if procedura.fondo is null %}NULL{% else %}'{{procedura.fondo}}'{% endif %}, 
+	/* categoria_regione */ {% if procedura.categoriaRegione is null %}NULL{% else %}'{{procedura.categoriaRegione}}'{% endif %},
+	/* organismo */ {% if procedura.organismo is null %}NULL{% else %}'{{procedura.organismo}}'{% endif %},
+	/* priorita_procedura */ {{ procedura.prioritaProcedura is null ? 'NULL' : procedura.prioritaProcedura.id }}
+	);
+
+SET @id_procedura = (SELECT MAX(id) FROM procedure_operative);
+
+{% for obiettivo in procedura.obiettiviSpecifici %}{{ _self.insert_obiettivo(obiettivo) }}{% endfor %}
+{% for azione in procedura.azioni %}{{ _self.insert_azione(azione) }}{% endfor %}
+{% for tipo in procedura.tipiOperazioni %}{{ _self.insert_tipo_operazione(tipo) }}{% endfor %}
+
+{% endmacro %}
+
+{% macro insert_obiettivo(obiettivo) %}
+INSERT INTO `procedure_operative_obiettivi_specifici` (`procedura_id`, `obiettivospecifico_id`)
+VALUES
+	(@id_procedura, {{ obiettivo.id }});
+	
+{% endmacro %}
+
+{% macro insert_azione(azione) %}
+INSERT INTO `procedure_operative_azioni` (`procedura_id`, `azione_id`)
+VALUES
+	(@id_procedura, {{ azione.id }});
+	
+{% endmacro %}
+
+{% macro insert_tipo_operazione(tipo) %}
+INSERT INTO `procedure_operative_tipi_operazioni` (`procedura_id`, `tipooperazione_id`)
+VALUES
+	(@id_procedura, {{ tipo.id }});
+	
+{% endmacro %}
+
+{% macro insert_documento_richiesto(tipologia) %}
+INSERT INTO `tipi_documento` (`procedura_id`, `firma_digitale`, `autocertificazione`, `con_scadenza`, `durata_validita`, `dimensione_massima`, `mime_ammessi`, `obbligatorio`, `abilita_duplicati`, `tipologia`, `prefix`, `codice`, `descrizione`)
+VALUES
+	(
+	/* procedura */ @id_procedura,
+	/* firma_digitale */ {{ tipologia.firmaDigitale is null ? 'NULL' : (tipologia.firmaDigitale ? 1 : 0) }}, 
+	/* autocertificazione */ {{ tipologia.autocertificazione is null ? 'NULL' : (tipologia.autocertificazione ? 1 : 0) }},  
+	/* con_scadenza */ {{ tipologia.conScadenza is null ? 'NULL' : (tipologia.conScadenza ? 1 : 0) }}, 
+	/* durata_validita */ {{ tipologia.durataValidita|default('NULL') }}, 
+	/* dimensione_massima */ {{ tipologia.dimensioneMassima|default('NULL') }}, 
+	/* mime_ammessi */ {% if tipologia.mimeAmmessi is null %}NULL{% else %}'{{tipologia.mimeAmmessi}}'{% endif %}, 
+	/* obbligatorio */ {{ tipologia.obbligatorio is null ? 'NULL' : (tipologia.obbligatorio ? 1 : 0) }},  
+	/* abilita_duplicati */ {{ tipologia.abilitaDuplicati is null ? 'NULL' : (tipologia.abilitaDuplicati ? 1 : 0) }},  
+	/* tipologia */ {% if tipologia.tipologia is null %}NULL{% else %}'{{tipologia.tipologia}}'{% endif %}, 
+	/* prefix */ {% if tipologia.prefix is null %}NULL{% else %}'{{tipologia.prefix}}'{% endif %}, 
+	/* codice */ {% if tipologia.codice is null %}NULL{% else %}'{{tipologia.codice}}'{% endif %}, 
+	/* descrizione */ {% if tipologia.descrizione is null %}NULL{% else %}'{{tipologia.descrizione}}'{% endif %});
+
+{% endmacro %}	
+
+{% macro insert_piano(piano) %}
+INSERT INTO `piani_costo` (`procedura_id`, `sezione_id`, `tipo_voce_id`, `ordinamento`, `titolo`, `codice`, `identificativo_pdf`, `identificativo_html`, `data_cancellazione`, `data_creazione`, `data_modifica`, `creato_da`, `modificato_da`)
+VALUES
+	( 
+	/* procedura */ @id_procedura,
+	/* sezione */ @id_sezione,
+	/* tipo_voce */ {{ piano.tipoVoceSpesa is null ? 'NULL' : piano.tipoVoceSpesa.id }}, 
+	/* ordinamento */ {{ piano.ordinamento is null ? 'NULL' : piano.ordinamento }}, 
+	/* titolo */ {{ piano.titolo|quote|raw }}, 
+	/* codice */ {{ piano.codice|quote|raw }}, 
+	/* identificativo_pdf */ {{ piano.identificativoPdf|quote|raw }}, 
+	/* identificativo_html */ {{ piano.identificativoHtml|quote|raw }}, 
+	/* data_cancellazione */ {{ piano.dataCancellazione is null ? 'NULL' : piano.dataCancellazione|date('Y-m-d H:i:s')|quote|raw }}, 
+	/* data_creazione */ {{ piano.dataCreazione is null ? 'NULL' : piano.dataCreazione|date('Y-m-d H:i:s')|quote|raw }}, 
+	/* data_modifica */ {{ piano.dataModifica is null ? 'NULL' : piano.dataModifica|date('Y-m-d H:i:s')|quote|raw }}, 
+	/* creato_da */ {{ piano.creatoDa is null ? 'NULL' : piano.creatoDa|quote|raw }}, 
+	/* modificato_da */ {{ piano.modificatoDa is null ? 'NULL' : piano.modificatoDa|quote|raw }}
+	);
+
+{% endmacro %}	
+
+{% macro insert_sezione(sezione) %}
+INSERT INTO `sezioni_piano_costo` (`codice`, `titolo_sezione`, `data_cancellazione`, `data_creazione`, `data_modifica`, `creato_da`, `modificato_da`, `procedura_id`)
+VALUES
+	(
+	/* codice */ {{sezione.codice|quote|raw}}, 
+	/* titolo_sezione */ {{sezione.titoloSezione|quote|raw}}, 
+	/* data_cancellazione */ {{ sezione.dataCancellazione is null ? 'NULL' : sezione.dataCancellazione|date('Y-m-d H:i:s')|quote|raw }}, 
+	/* data_creazione */ {{ sezione.dataCreazione is null ? 'NULL' : sezione.dataCreazione|date('Y-m-d H:i:s')|quote|raw }}, 
+	/* data_modifica */ {{ sezione.dataModifica is null ? 'NULL' : sezione.dataModifica|date('Y-m-d H:i:s')|quote|raw }}, 
+	/* creato_da */ {{ sezione.creatoDa is null ? 'NULL' : sezione.creatoDa|quote|raw }}, 
+	/* modificato_da */ {{ sezione.modificatoDa is null ? 'NULL' : sezione.modificatoDa|quote|raw }},
+	/* procedura */ @id_procedura
+	);
+
+SET @id_sezione = (SELECT MAX(id) FROM sezioni_piano_costo);
+
+{% for piano in sezione.pianiCosto %}{{ _self.insert_piano(piano) }}{% endfor %}
+
+{% endmacro %}
+	
+	
+
+

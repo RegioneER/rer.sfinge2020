@@ -1,0 +1,1131 @@
+{% macro titolo_sezione(label) %}
+    <div class="titolo-sezione">
+        {{ label | upper | raw }}
+    </div>
+    <br/>
+{% endmacro %}
+
+{% macro text_area(label, valore) %}
+    <span class="text"><b>{{ label }}</b></span>
+    <div class="text-area">
+        {% if valore is not null %}
+            {{ valore|regex_replace('/(?!\\s)([^\\s]{80})/', '$1<wbr>') }}
+        {% else %}    
+            &nbsp;
+        {% endif %}
+    </div>
+    <br/>
+    <br/>
+    <br/>
+{% endmacro %}
+
+{% macro text_area_no_border(label, valore) %}
+    <span class="text"><b>{{ label }}</b></span>
+    <div class="text-area-no-border">
+        {% if valore is not null %}
+            {{ valore|regex_replace('/(?!\\s)([^\\s]{150})/', '$1<wbr>') }}
+        {% else %}    
+            &nbsp;
+        {% endif %}
+    </div>
+    <br/>
+    <br/>
+    <br/>
+{% endmacro %}
+
+{% macro text_area_fascicolo(label, istanza, path_albero, raw) %}
+    <span class="text"><b>{{ label }}</b></span>
+    <div class="text-area" style="text-align: justify">
+        {% if dato_frammento(istanza,path_albero) is not null %}
+            {{ dato_frammento(istanza,path_albero, raw|default(false))|regex_replace('/(?!\\s)([^\\s]{150})/', '$1<wbr>')}}
+        {% else %}    
+            &nbsp;
+        {% endif %}    
+    </div>
+    <br/>
+{% endmacro %}
+
+{% macro text_area_fascicolo_no_border(label, istanza, path_albero, raw) %}
+    <span class="text"><b>{{ label }}</b></span>
+    <div class="text-area-no-border" style="text-align: justify">
+        {% if dato_frammento(istanza,path_albero) is not null %}
+            {{ dato_frammento(istanza,path_albero, raw|default(false))|regex_replace('/(?!\\s)([^\\s]{150})/', '$1<wbr>')}}
+        {% else %}    
+            &nbsp;
+        {% endif %}    
+    </div>
+    <br/>
+{% endmacro %}
+
+
+{% macro text_area_fascicolo_no_border_80(label, istanza, path_albero, raw) %}
+    <span class="text"><b>{{ label }}</b></span>
+    <div class="text-area-no-border" style="text-align: justify">
+        {% if dato_frammento(istanza,path_albero) is not null %}
+            {{ dato_frammento(istanza,path_albero, raw|default(false))|regex_replace('/(?!\\s)([^\\s]{80})/', '$1<wbr>') }}
+        {% else %}    
+            &nbsp;
+        {% endif %}
+    </div>
+    <br/>
+{% endmacro %}
+
+{% macro text_area_fascicolo_nota(label, istanza, path_albero, nota) %}
+    <span class="text"><b>{{ label }}</b>
+            {% if nota is not null %}
+            <br/>{{ nota }}
+        {% endif %} 
+    </span>
+    <div class="text-area" style="text-align: justify">
+        {% if dato_frammento(istanza,path_albero) is not null %}
+            {{ dato_frammento(istanza,path_albero)}}
+        {% else %}    
+            &nbsp;
+        {% endif %}   
+    </div>
+    <br/>
+{% endmacro %}
+
+{% macro text_field_importi_fascicolo(label, istanza, path_albero) %}
+    <span class="text"><b>{{ label }}</b></span>
+    <br/>
+    <div class="text-area-importo">
+        {% if dato_frammento(istanza,path_albero) is not null %}
+            {{ dato_frammento(istanza,path_albero)|number_format(2, ',', '.')}} €
+        {% else %}    
+            &nbsp;
+        {% endif %} 
+    </div>
+    <br/>
+{% endmacro %}
+
+{% macro text_field(label, istanza, path_albero) %}
+    <span class="text"><b>{{ label }}</b></span>
+    <br/>
+    <div class="text-area-importo">
+        {% if dato_frammento(istanza,path_albero) is not null %}
+            {{ dato_frammento(istanza,path_albero)}}
+        {% else %}
+            &nbsp;
+        {% endif %}
+    </div>
+    <br/>
+{% endmacro %}
+
+{% macro tabella_sezione_fascicolo(label, istanza, path_albero,widht_label,widht_valore,dimensione_table,classe) %}
+    <span class="text"><b>{{ label }}</b></span>
+            {% set voci_sezione =  dati_frammento(istanza,path_albero) %}
+            {% set width = dimensione_table ? dimensione_table : '100%'%}
+            {% set class = classe ? classe : ""%}
+            {% if voci_sezione is not null and voci_sezione | length > 0 %}
+        <table width={{width}} class='{{classe}}'>
+            {% for path_sezione, valore_sezione in voci_sezione[0] %}
+                {% set path_albero_elemento = path_albero ~"."~path_sezione %}
+                <tr>
+                    <td width="{{ widht_label|default('30') }}%">{{ label_frammento(istanza,path_albero_elemento) }}</td>
+                    <td width="{{ widht_valore|default('70') }}%">{{ valore_sezione }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+    <br/>
+{% endmacro %}
+
+{# Macro per le tabelle dei campi a scelta multipla: vale sia per checkbox che per radio button #}
+{% macro table_scelta_multipla(label, istanza, path_albero,dimensione_table,classe,label_a_sinistra = true) %}
+    {% set elementi = label_scelta_multipla(istanza, path_albero) %}
+    {% set elementiSelezionati = dati_frammento(istanza, path_albero, false) %}
+    {% set width = dimensione_table ? dimensione_table : '100%'%}
+    {% set class = classe ? classe : ""%}
+
+    <span class="text"><b>{{ label }}</b></span>
+            {% if elementi is not null and elementi | length > 0 %}
+        <table style="width:{{width}}" class="{{class}}">
+            {% for elemento in elementi %}
+                <tr>
+                    {% if label_a_sinistra %}
+                        <td style="width: 95%">{{ elemento }}</td>
+                        <td style="width:5%; text-align:center; vertical-align:MIDDLE">
+                            {% for selezionato in elementiSelezionati  %}
+                                {% if selezionato == elemento or elemento in selezionato %}
+                                    X
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                    {% else %}
+                        <td style="width:5%; text-align:center; vertical-align:MIDDLE">
+                            {% for selezionato in elementiSelezionati  %}
+                                {% if selezionato == elemento or elemento in selezionato %}
+                                    X
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                        <td style="width: 95%">{{ elemento }}</td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+    <br/>
+{% endmacro %}
+
+{% macro table_singolo_checkbox(istanza, path_albero, label_a_sinistra = true) %}
+    {% set label = label_frammento(istanza, path_albero) %}
+    {% set elementoSelezionato = dato_frammento(istanza, path_albero) %}
+    {% if label is not null %}
+        <table class="singolo-checkbox-a-sinistra">
+            <tbody>
+                <tr>
+                    {% if label_a_sinistra %}
+                        <td>{{ label }}</td>
+                        <td>
+                            {{- elementoSelezionato == 1 ? 'X' : '' -}}
+                        </td>
+                    {% else %}
+                        <td>
+                            {{- elementoSelezionato == 1 ? 'X' : '' -}}
+                        </td>
+                        <td>{{ label }}</td>
+                    {% endif %}
+                </tr>
+            </tbody>
+        </table>
+    {% endif %}
+{% endmacro %}
+
+{% macro singolo_checkbox(istanza, path_albero) %}
+    {% set label = label_frammento(istanza, path_albero) %}
+    {% set elementoSelezionato = dato_frammento(istanza, path_albero) %}
+    {% if label is not null %}
+        {{label}}
+        <table width="5%">
+            <tr>
+                <td></td>
+                <td width="5%" align="center" valign="MIDDLE">
+                    {% if(elementoSelezionato == 1) %}
+                        X
+                    {% endif %}
+                </td>
+            </tr>
+        </table>
+    {% endif %}
+    <br/>
+{% endmacro %}
+
+{% macro singolo_checkbox_ul(istanza, path_albero) %}
+    {% set label = label_frammento(istanza, path_albero) %}
+    {% set elementoSelezionato = dato_frammento(istanza, path_albero) %}
+    {% if label is not null %}
+        <li class="text-medium" style="text-align: justify">{{label}}</li>
+        {% endif %}
+    <br/>
+{% endmacro %}
+
+{% macro dati_regione(direzione, sportello) %}
+    <p class="text-medium">
+        Regione Emilia-Romagna<br/>
+
+        {% if direzione == "attivita_produttive"  %}
+            Direzione Generale Attività Produttive, Commercio, Turismo<br/>
+        {% elseif direzione == "attivita_conoscenza" %}
+            Direzione Generale Conoscenza, Ricerca, Lavoro, Imprese<br/>
+        {% elseif direzione == "attivita_politiche_abitare" %}
+            Area Rigenerazione Urbana e<br/>Politiche per l’Abitare<br/>
+        {% endif %}
+
+        {% if sportello == "sviluppo_economico"  %}
+            Servizio politiche di sviluppo economico, ricerca industriale e innovazione tecnologica<br/>
+            Viale Aldo Moro n. 44 - 40127 Bologna
+        {% elseif sportello == "internazionalizzazione" %}
+            Servizio Sportello per l’Internazionalizzazione<br/>
+            Viale Aldo Moro n. 44 - 40127 Bologna
+        {% elseif sportello == "qualificazione" %}
+            Settore Innovazione sostenibile, imprese, filiere produttive<br/>
+            Viale Aldo Moro n. 44 - 40127 Bologna
+        {% elseif sportello == "ricerca_innovazione" %}
+            Servizio Ricerca, innovazione energia ed economia sostenibile<br/>
+            Viale Aldo Moro n. 44 - 40127 Bologna
+        {% elseif sportello == "ricerca_innovazione_2" %}
+            Servizio Ricerca, Innovazione, Energia ed Economia sostenibile<br/>
+            Viale Aldo Moro n. 44 - 40127 Bologna
+        {% elseif sportello == "attrattivita_internazionalizzazione" %}
+            Settore Attrattività, internazionalizzazione, ricerca<br/>
+            Viale Aldo Moro n. 44 - 40127 Bologna
+        {% elseif sportello == "attrattivita_internazionalizzazione_21_27" %}
+            Settore Attrattività, Internazionalizzazione, Ricerca<br/>
+            Area Ricerca e Innovazione<br/> 
+            Viale Aldo Moro n. 44 - 40127 Bologna
+        {% elseif sportello == "turismo_commercio_sport" %}
+            Servizio Turismo, Commercio e Sport
+        {% elseif sportello == "sviluppo_strumenti_finanziari" %}
+            Servizio Sviluppo degli Strumenti finanziari, regolazione, accreditamenti<br/>
+            Viale Aldo Moro n. 38 - 40127 Bologna
+        {% elseif sportello == "sviluppo_culturale" %}
+            Settore Patrimonio culturale<br/>
+            via Galliera, 21 - 40121 Bologna
+        {% elseif sportello == "qualita_del_territorio" %}
+            Settore Governo e Qualità del Territorio<br/>
+            Viale Aldo Moro n. 30 - 40127 Bologna
+        {% endif %}
+
+        {#TODO mettere altri dipartimenti#}
+    </p>
+
+{% endmacro %}
+
+
+{% macro dati_proponente(p) %}
+    {% import _self as macro_richiesta %}
+    {% set s = p.soggetto %}
+    <table  class="text-medium">
+        <tbody>
+            <tr>
+                <td style="width:40px">Denominazione</td>
+                <td style="width:60px"><b>{{ s.denominazione }}</b></td>
+            </tr>
+            {% if s.partitaIva is not null %}
+                <tr>
+                    <td style="width:40px">Partita IVA</td>
+                    <td style="width:60px"><b>{{ s.partitaIva }}</b></td>
+                </tr>
+            {% endif %}
+            <tr>
+                <td style="width:40px">Codice fiscale</td>
+                <td style="width:60px"><b>{{ s.codiceFiscale }}</b></td>
+            </tr>
+            <tr>
+                <td style="width:40px">Sede legale</td>
+                <td style="width:60px">Via <b>{{ s.via }}</b> N. <b>{{ s.civico }} </b> 
+                    {% if s.comune is not null %}
+                        Comune <b>{{ s.comune.denominazione }} ({{ s.provincia.siglaAutomobilistica }})</b>
+                    {% endif %}
+                    {% if s.comuneEstero is not null %}
+                        Città (estera) <b>{{ s.comuneEstero }} {% if s.provinciaEstera is not null %}({{ s.provinciaEstera }},{{s.stato}}){% else %}({{s.stato}}){% endif %}</b>
+                    {% endif %}	
+                    CAP <b>{{ s.cap }} </b>
+                </td>
+            </tr>
+            <tr>
+                <td style="width:40px">Legale rappresentante</td>
+                <td style="width:60px">
+                    {% if s.lr is not null %}
+                        Nome <b>{{s.lr.nome}}</b> Cognome <b>{{ s.lr.cognome }}</b>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td style="width:40px">Luogo e data nascita</td>
+                <td style="width:60px">
+                    {% if s.lr is not null %}
+                        {% if s.lr.comune is not null %}
+                            Comune <b>{{ s.lr.comune.denominazione }}</b>
+                        {% endif %}
+                        Data <b>{{ s.lr.dataNascita | date("d/m/Y") }}</b>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td style="width:40px">Codice fiscale</td>
+                <td style="width:60px">
+                    {% if s.lr is not null %}
+                        <b>{{ s.lr.codiceFiscale }}</b>
+                    {% endif %}
+                </td>
+            </tr>
+            {% if p.sedi | length > 0 %}
+                {% for sede_operativa in p.sedi %}
+                    {% set sedeEstero = false %}
+                    {% if  sede_operativa.sede.indirizzo is not null and  sede_operativa.sede.indirizzo.stato.codicecompleto != '11101' %}
+                        {%  set sedeEstero = true %}
+                    {% endif %}
+                    <tr>
+                        <td style="width:40px">Sede Operativa</td>
+                        <td style="width:60px">
+                            {% if sedeEstero == true %}
+                                <b>{{ sede_operativa.sede.denominazione }}</b> in 
+                                <b>{{ sede_operativa.sede.indirizzo.via }}</b> N° 
+                                <b>{{ sede_operativa.sede.indirizzo.numeroCivico }}</b> CAP 
+                                <b>{{ sede_operativa.sede.indirizzo.cap }}</b> comune estero di 
+                                <b>{{ sede_operativa.sede.indirizzo.comuneEstero}}</b> 
+                                (<b>{{ sede_operativa.sede.indirizzo.provinciaEstera }}</b>)
+                            {% else %}
+                                <b>{{ sede_operativa.sede.denominazione }}</b> in 
+                                <b>{{ sede_operativa.sede.indirizzo.via }}</b> N° 
+                                <b>{{ sede_operativa.sede.indirizzo.numeroCivico }}</b> CAP 
+                                <b>{{ sede_operativa.sede.indirizzo.cap }}</b> comune di 
+                                <b>{{ sede_operativa.sede.indirizzo.comune.denominazione }}</b> 
+                                (<b>{{ sede_operativa.sede.indirizzo.comune.provincia.siglaAutomobilistica }}</b>)
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endif %}      
+        </tbody>      
+    </table>
+    {# mostro i referenti #}
+    {% for referente in p.referenti %}
+        {{ macro_richiesta.dati_referente(referente) }}
+        <br/>
+    {% endfor %}
+
+{% endmacro %}
+
+{% macro dati_referente(r,qualificaAbilitata, pecAbilitata) %}
+    {% set p = r.persona %}
+    <h5>Dati referente: {{ r.tipoReferenza.descrizione }}</h5>
+    <table style="width:100%;" class="text-medium">
+        <tbody>
+            <tr>
+                <td style="width:40%;">Referente</td>
+                <td style="width:60%;">
+                    Nome <b>{{p.nome}}</b> Cognome <b>{{ p.cognome }}</b>
+                </td>
+            </tr>
+            {% if qualificaAbilitata is not null and qualificaAbilitata == 1 %}
+                <tr>
+                    <td style="width:40%;">Qualifica</td>
+                    <td style="width:60%;">
+                        <b>{{ r.qualifica }}</b>
+                    </td>
+                </tr>
+            {% endif %}
+            <tr>
+                <td style="width:40%;">Indirizzo</td>
+                <td style="width:60%;">
+                    {% if p.luogoResidenza is not null %}
+                        <b>{{ p.luogoResidenza }}</b>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td style="width:40%;">Telefono</td>
+                <td style="width:60%;">
+                    <b>{{ p.telefonoPrincipale }}</b>
+                </td>
+            </tr>
+            <tr>
+                <td style="width:40%;">Email</td>
+                <td style="width:60%;">
+                    <b>{{ p.emailPrincipale }}</b> 
+                </td>
+            </tr>
+            {% if pecAbilitata is not null and pecAbilitata == 1 %}
+                <tr>
+                    <td style="width:40%;">PEC</td>
+                    <td style="width:60%;">
+                        <b>{{ r.emailpec }}</b>
+                    </td>
+                </tr>
+            {% endif %}
+            {% if p.faxPrincipale %}
+                <tr>
+                    <td style="width:40%;">Fax</td>
+                    <td style="width:60%;">
+                        <b>{{ p.faxPrincipale }}</b> 
+                    </td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+    {# mostro i referenti #}
+
+{% endmacro %}
+
+{% macro dati_referente_no_intestazione(r,qualificaAbilitata, pecAbilitata) %}
+    {% set p = r.persona %}
+    <table style="width:100%;" class="text-medium">
+        <tbody>
+            <tr>
+                <td style="width:40%;">Referente</td>
+                <td style="width:60%;">
+                    Nome <b>{{p.nome}}</b> Cognome <b>{{ p.cognome }}</b>
+                </td>
+            </tr>
+            {% if qualificaAbilitata is not null and qualificaAbilitata == 1 %}
+                <tr>
+                    <td style="width:40%;">Qualifica</td>
+                    <td style="width:60%;">
+                        <b>{{ r.qualifica }}</b>
+                    </td>
+                </tr>
+            {% endif %}
+            <tr>
+                <td style="width:40%;">Indirizzo</td>
+                <td style="width:60%;">
+                    {% if p.luogoResidenza is not null %}
+                        <b>{{ p.luogoResidenza }}</b>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td style="width:40%;">Telefono</td>
+                <td style="width:60%;">
+                    <b>{{ p.telefonoPrincipale }}</b>
+                </td>
+            </tr>
+            <tr>
+                <td style="width:40%;">Email</td>
+                <td style="width:60%;">
+                    <b>{{ p.emailPrincipale }}</b> 
+                </td>
+            </tr>
+            {% if pecAbilitata is not null and pecAbilitata == 1 %}
+                <tr>
+                    <td style="width:40%;">PEC</td>
+                    <td style="width:60%;">
+                        <b>{{ r.emailpec }}</b>
+                    </td>
+                </tr>
+            {% endif %}
+            {% if p.faxPrincipale %}
+                <tr>
+                    <td style="width:40%;">Fax</td>
+                    <td style="width:60%;">
+                        <b>{{ p.faxPrincipale }}</b> 
+                    </td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+    {# mostro i referenti #}
+
+{% endmacro %}
+
+{% macro dati_referente_ruolo(r,qualificaAbilitata, pecAbilitata) %}
+    {% set p = r.persona %}
+    <h5>Dati referente: {{ r.tipoReferenza.descrizione }}</h5>
+    <table style="width:100%;" class="text-medium">
+        <tbody>
+            <tr>
+                <td style="width:40%;">Referente</td>
+                <td style="width:60%;">
+                    Nome <b>{{p.nome}}</b> Cognome <b>{{ p.cognome }}</b>
+                </td>
+            </tr>
+            {% if qualificaAbilitata is not null and qualificaAbilitata == 1 %}
+                <tr>
+                    <td style="width:40%;">Ruolo in azienda</td>
+                    <td style="width:60%;">
+                        <b>{{ r.qualifica }}</b>
+                    </td>
+                </tr>
+            {% endif %}
+            <tr>
+                <td style="width:40%;">Indirizzo</td>
+                <td style="width:60%;">
+                    {% if p.luogoResidenza is not null %}
+                        <b>{{ p.luogoResidenza }}</b>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td style="width:40%;">Telefono</td>
+                <td style="width:60%;">
+                    <b>{{ p.telefonoPrincipale }}</b>
+                </td>
+            </tr>
+            <tr>
+                <td style="width:40%;">Email</td>
+                <td style="width:60%;">
+                    <b>{{ p.emailPrincipale }}</b> 
+                </td>
+            </tr>
+            {% if pecAbilitata is not null and pecAbilitata == 1 %}
+                <tr>
+                    <td style="width:40%;">PEC</td>
+                    <td style="width:60%;">
+                        <b>{{ r.emailpec }}</b>
+                    </td>
+                </tr>
+            {% endif %}
+            {% if p.faxPrincipale %}
+                <tr>
+                    <td style="width:40%;">Fax</td>
+                    <td style="width:60%;">
+                        <b>{{ p.faxPrincipale }}</b> 
+                    </td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+    {# mostro i referenti #}
+
+{% endmacro %}
+
+{% macro dati_referente_no_descrizione(r,qualificaAbilitata, pecAbilitata) %}
+    {% set p = r.persona %}
+    <h5>Dati referente:</h5>
+    <table style="width:100%;" class="text-medium">
+        <tbody>
+            <tr>
+                <td style="width:40%;">Referente</td>
+                <td style="width:60%;">
+                    Nome <b>{{p.nome}}</b> Cognome <b>{{ p.cognome }}</b>
+                </td>
+            </tr>
+            {% if qualificaAbilitata is not null and qualificaAbilitata == 1 %}
+                <tr>
+                    <td style="width:40%;">Qualifica</td>
+                    <td style="width:60%;">
+                        <b>{{ r.qualifica }}</b>
+                    </td>
+                </tr>
+            {% endif %}
+            <tr>
+                <td style="width:40%;">Indirizzo</td>
+                <td style="width:60%;">
+                    {% if p.luogoResidenza is not null %}
+                        <b>{{ p.luogoResidenza }}</b>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td style="width:40%;">Telefono</td>
+                <td style="width:60%;">
+                    <b>{{ p.telefonoPrincipale }}</b>
+                </td>
+            </tr>
+            <tr>
+                <td style="width:40%;">Email</td>
+                <td style="width:60%;">
+                    <b>{{ p.emailPrincipale }}</b> 
+                </td>
+            </tr>
+            {% if pecAbilitata is not null and pecAbilitata == 1 %}
+                <tr>
+                    <td style="width:40%;">PEC</td>
+                    <td style="width:60%;">
+                        <b>{{ r.emailpec }}</b>
+                    </td>
+                </tr>
+            {% endif %}
+            {% if p.faxPrincipale %}
+                <tr>
+                    <td style="width:40%;">Fax</td>
+                    <td style="width:60%;">
+                        <b>{{ p.faxPrincipale }}</b> 
+                    </td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+    {# mostro i referenti #}
+
+{% endmacro %}
+
+{% macro dati_inps_inail_proponente(p) %}
+    {% set s = p.soggetto %}
+    <table style="width:100%;" class="text-medium">
+        <tbody>
+            <tr>
+                <td style="width:40%;">L'impresa è iscritta all'INPS?</td>
+                {% if s.matricolaInps is not empty %}
+                    <td style="width:60%;"><b>si</b></td>
+                {% else %}
+                    <td style="width:60%;"><b>no</b></td>
+                {% endif %}
+            </tr>
+            <tr>
+                <td style="width:40%;">Numero di matricola INPS</td>
+                <td style="width:60%;"><b>{{ s.matricolaInps }}</b></td>
+            </tr>
+            <tr>
+                <td style="width:40%">Impresa iscritta all'INPS di</td>
+                <td style="width:60%"><b>{{ s.impresaIscrittaInps }}</b></td>
+            </tr>
+            <tr>
+                <td style="width:40%;">Motivazioni della non iscrizione INPS</td>
+                <td style="width:60%;"><b>{{ s.motivazioniNonIscrizioneInps ? s.motivazioniNonIscrizioneInps : '-'}}</b></td>
+            </tr>          
+            <tr>
+                <td style="width:40%;">L'impresa è iscritta a INAIL?</td>
+                <td style="width:60%;"><b>{{ s.impresaIscrittaInail  ? 'si' : 'no' }}</b></td>
+            </tr>
+            <tr>
+                <td style="width:40%;">L'impresa risulta iscritta all'INAIL di</td>
+                <td style="width:60%;"><b>{{ s.impresaIscrittaInailDi }}</b></td>
+            </tr>
+            <tr>
+                <td style="width:40%;">L'impresa è assicurata con codice ditta n.</td>
+                <td style="width:60%;"><b>{{ s.numeroCodiceDittaImpresaAssicurata }}</b></td>
+            </tr> 
+            <tr>
+                <td style="width:40%;">Motivazioni della non iscrizione INAIL</td>
+                <td style="width:60%;"><b>{{ s.motivazioniNonIscrizioneInail  ? s.motivazioniNonIscrizioneInail : '-' }}</b></td>
+            </tr> 		
+            <tr>
+                <td style="width:40%;">Contratto collettivo nazionale di lavoro</td>
+                <td style="width:60%;"><b>{{ s.ccnl }}</b></td>
+            </tr>	
+        </tbody>	
+    </table>
+{% endmacro %}
+
+{% macro fase_procedurale(richiesta, titolo) %}
+    <span class="text bold">{{ titolo }}</span>
+    <table style="width:100%;">
+        <thead>
+            <tr>
+                <th rowspan="2" class="center">FASI PROCEDURALI</th>
+                <th colspan="5" class="center">DATE PREVISTE O EFFETTIVE</th>
+            </tr>
+        </thead><tbody>
+            <tr>
+                <th class="center">Avvio previsto</th>
+                <th class="center">Conclusione prevista</th>
+                <th class="center">Avvio effettivo</th>
+                <th class="center">Conclusione effettiva</th>
+                <th class="center">Approvazione</th>
+            </tr>
+            {% for voce_fase_procedurale in richiesta.vociFaseProcedurale %}
+                {% set label = voce_fase_procedurale.faseProcedurale.titolo is not null ? voce_fase_procedurale.faseProcedurale.titolo : voce_fase_procedurale.faseProcedurale.faseNatura.descrizione %}
+                <tr>
+                    <td width="25%">{{ label }}</td>
+                    <td>{{ voce_fase_procedurale.dataAvvioPrevista is not null ? voce_fase_procedurale.dataAvvioPrevista | date("d/m/Y") : "-" }}</td>
+                    <td>{{ voce_fase_procedurale.dataConclusionePrevista is not null ? voce_fase_procedurale.dataConclusionePrevista | date("d/m/Y") : "-" }}</td>
+                    <td>{{ voce_fase_procedurale.dataAvvioEffettivo is not null ? voce_fase_procedurale.dataAvvioEffettivo | date("d/m/Y") : "-" }}</td>
+                    <td>{{ voce_fase_procedurale.dataConclusioneEffettiva is not null ? voce_fase_procedurale.dataConclusioneEffettiva | date("d/m/Y") : "-" }}</td>
+                    <td>{{ voce_fase_procedurale.dataApprovazione is not null ? voce_fase_procedurale.dataApprovazione | date("d/m/Y") : "-" }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br/>
+{% endmacro %}
+
+{% macro fase_procedurale_approvazione(richiesta, titolo) %}
+    <span class="text bold">{{ titolo }}</span>
+    <table style="width:100%;">
+        <thead>
+            <tr>
+                <th class="center">Attività per la realizzazione del progetto (*) </th>
+                <th colspan="5" class="center">DATE PREVISTE O EFFETTIVE</th>
+            </tr>
+        </thead><tbody>
+            <tr>
+                <th class="center"></th>
+                <th class="center">Avvio previsto</th>
+                <th class="center">Conclusione prevista</th>
+                <th class="center">Avvio effettivo</th>
+                <th class="center">Conclusione effettiva</th>
+                <th class="center">Approvazione</th>
+            </tr>
+            {% for voce_fase_procedurale in richiesta.vociFaseProcedurale %}
+                {% set label = voce_fase_procedurale.faseProcedurale.titolo is not null ? voce_fase_procedurale.faseProcedurale.titolo : voce_fase_procedurale.faseProcedurale.faseNatura.descrizione %}
+                <tr>
+                    <td width="25%">{{ label }}</td>
+                    <td>{{ voce_fase_procedurale.dataAvvioPrevista is not null ? voce_fase_procedurale.dataAvvioPrevista | date("d/m/Y") : "-" }}</td>
+                    <td>{{ voce_fase_procedurale.dataConclusionePrevista is not null ? voce_fase_procedurale.dataConclusionePrevista | date("d/m/Y") : "-" }}</td>
+                    <td>{{ voce_fase_procedurale.dataAvvioEffettivo is not null ? voce_fase_procedurale.dataAvvioEffettivo | date("d/m/Y") : "-" }}</td>
+                    <td>{{ voce_fase_procedurale.dataConclusioneEffettiva is not null ? voce_fase_procedurale.dataConclusioneEffettiva | date("d/m/Y") : "-" }}</td>
+                    <td>{{ voce_fase_procedurale.dataApprovazione is not null ? voce_fase_procedurale.dataApprovazione | date("d/m/Y") : "-" }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br/>
+{% endmacro %}
+
+{% macro iter_procedurale(richiesta) %}
+    <table style="width:100%; page-break-inside: avoid;">
+        <thead>
+            <tr>
+                <th rowspan="2" class="center">FASI PROCEDURALI</th>
+                <th colspan="4" class="center">DATE PREVISTE O EFFETTIVE</th>
+            </tr>
+            <tr>
+                <th class="center">Data inizio prevista</th>
+                <th class="center">Data inizio effettiva</th>
+                <th class="center">Data fine prevista</th>
+                <th class="center">Data fine effettiva</th>
+            </tr>		
+        </thead>
+        <tbody>
+            {% for voce_fase_procedurale in richiesta.moniterprogetti %}
+                {% set label = voce_fase_procedurale.faseProcedurale %}
+                <tr>
+                    <td width="25%">{{ label }}</td>
+                    <td>{{ voce_fase_procedurale.datainizioprevista is not null ? voce_fase_procedurale.datainizioprevista | date("d/m/Y") : "-" }}</td>
+                    <td>{{ voce_fase_procedurale.datainizioeffettiva is not null ? voce_fase_procedurale.datainizioeffettiva | date("d/m/Y") : "-" }}</td>
+                    <td>{{ voce_fase_procedurale.datafineprevista is not null ? voce_fase_procedurale.datafineprevista | date("d/m/Y") : "-" }}</td>
+                    <td>{{ voce_fase_procedurale.datafineeffettiva is not null ? voce_fase_procedurale.datafineeffettiva | date("d/m/Y") : "-" }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br/>
+{% endmacro %}
+
+{% macro modalita_finanziamento(richiesta, titolo) %}
+    <span class="text"><b>{{ titolo }}</b></span>
+    <table style="width:100%;">
+        <tr>
+            <th class="center">RISORSE</th>
+            <th class="center">Valori assoluti</th>
+            <th class="center">%</th>
+        </tr>
+        {% for voce_modalita_finanziamento in richiesta.vocimodalitafinanziamento  %}
+            {% set label = voce_modalita_finanziamento.modalitafinanziamento.titolo %}
+            <tr>
+                <td >{{ label }}</td>
+                <td style="text-align:right;">{{ voce_modalita_finanziamento.importo|number_format(2, ',', '.') }}</td>
+                <td style="text-align:right;">{{ voce_modalita_finanziamento.percentuale|number_format(2, ',', '.') }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    <br/>
+{% endmacro %}
+
+{% macro tabella_sezione_dinamica_fascicolo(label, istanza, path_albero,widht_label,widht_valore) %}
+    <span class="text"><b>{{ label }}</b></span>
+    <br/>
+    {% set voci_sezione =  dati_frammento(istanza,path_albero) %}
+    {% for valore_sezione in voci_sezione %}
+        <table>
+            {% for path_sezione, valore in valore_sezione.form %}
+                <tr>
+                    {% set path_label = path_albero ~".form."~path_sezione %}
+                    <td width="25%">{{ label_frammento(istanza,path_label) }}</td>
+                    <td>{{ valore }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        <br/>
+    {% endfor %}
+{% endmacro %}
+
+{% macro tabella_aiuti_bando_cultura_natura_associati(label, istanza, rispostaA1, rispostaA2, rispostaB1, rispostaB2, rispostaC, rispostaCSi) %}
+    <span class="text"><b>{{ label }}</b></span>
+    <br />Ai fini della compilazione della seguente tabella si precisa inoltre che:
+    <br />
+    <br />- la definizione di “entrate nette” è inclusa nel paragrafo 6 “Intensità dell’agevolazione” del Bando.<br />
+    <br />- La scelta dell’opzione NA (Non Applicabile) nel riquadro A può essere attribuita esclusivamente nel <br />caso in cui l’intervento in questione abbia un costo di investimento non superiore a euro 1.000.000. <br/>
+    <br />- La scelta dell’opzione NA nel riquadro B può essere attribuita esclusivamente nel caso in cui <br />l’intervento in questione abbia un costo di investimento non superiore a euro 50.000. <br />
+
+    <div style="page-break-after: always"></div>
+    <table style="text-justify: inter-word">
+        <tr>
+            <td rowspan="2" width="5%" class="center">A</td>
+            <td><b>1.</b> I flussi finanziari in entrata potranno generare un ritorno economico secondo quanto previsto dall’art. 61 del Reg (UE) n. 1303/2013)? <b>(entrate nette generate a seguito del completamento dell’intervento, <br />cfr. paragrafo 6 “intensità delle agevolazioni” del Bando)</b></td>
+            <td width="5%"> {{ dato_frammento(istanza, rispostaA1) }} </td>
+        </tr>
+        <tr>
+            <td><b>2.</b> Le entrate nette previste sono quantificabili in fase di presentazione della domanda di finanziamento? Se la risposta è affermativa il soggetto proponente <br />dovrà compilare la tabella di cui all’allegato 3 (in formato xls) ed allegare il file in formato pdf</td>
+            <td> {{ dato_frammento(istanza, rispostaA2) }} </td>
+        </tr>
+        <tr>
+            <td rowspan="2" class="center">B</td>
+            <td><b>1.</b> I flussi finanziari in entrata potranno generare un ritorno economico secondo quanto previsto dall’art. 65, comma 8, del Reg (UE) n. 1303/2013)? <b>(entrate nette generate durante l’attuazione dell’intervento, <br />cfr. paragrafo 6 “intensità delle agevolazioni” del Bando)</b></td>
+            <td> {{ dato_frammento(istanza, rispostaB1) }} </td>
+        </tr>
+        <tr>
+            <td><b>2.</b> Le entrate nette previste sono quantificabili in fase di presentazione della domanda di finanziamento? Se la risposta è affermativa il soggetto proponente <br />dovrà compilare la tabella di cui all’allegato 4 (in formato xls) ed allegare il file in formato pdf</td>
+            <td> {{ dato_frammento(istanza, rispostaB2) }} </td>
+        </tr>
+        <tr>
+            <td rowspan="2" class="center">C</td>
+            <td> L'intervento è destinato ad un'attività economica* di rilevanza comunitaria** e <br />determina benefici per l'operatore che gestisce o gestirà il bene oggetto di intervento (cfr. paragrafo 6 “intensità delle agevolazioni” del Bando). <br />Scrivere Sì solo se la risposta è affermativa per ambo le domande</td>
+            <td> {{ dato_frammento(istanza, rispostaC) }} </td>
+        </tr>
+        <tr>
+            <td colspan="2"> {{ dato_frammento(istanza, rispostaCSi) }} </td>
+        </tr>
+    </table>
+    <br />
+    <p class="text-small">
+        * cioè è gestito secondo principi imprenditoriali<br />
+        ** cioè capace di incidere sugli scambi intracomunitari in quanto funzionale alla valorizzazione di un area che di per se costituisce un attrattore turistico di rilevanza sovranazionale<br />
+        *** in termini di capacità di generare/incrementare le entrate o di ridurne i costi<br />
+        <br />
+        <b>N.B. Un intervento può rientrare sia nella fattispecie A che in quella B. Qualora,
+            a prescindere dalle risposte fornite in A e B, la risposta dalla domanda C sia affermativa e se ne confermi l’esito a seguito del processo valutativo,
+            saranno applicate le disposizioni previste in materia di aiuti di stato paragrafo 6 “intensità delle agevolazioni” del Bando </b>
+    </p>
+    <br/>
+{% endmacro %}
+
+{% macro tabella_aiuti_bando_cultura_natura_singolo(label, istanza, rispostaA1, rispostaA2, rispostaB1, rispostaB2, rispostaC, rispostaCSi) %}
+    <div style="page-break-after: always"></div>
+    <span class="text"><b>{{ label }}</b></span>
+
+    <table style=" text-justify: inter-word">
+        <tr>
+            <td rowspan="2" width="5%" class="center">A</td>
+            <td><b>1.</b> I flussi finanziari in entrata potranno generare un ritorno economico secondo quanto previsto dall’art. 61 del Reg (UE) n. 1303/2013)? (<b>entrate nette generate a seguito del completamento del progetto,</b> cfr. paragrafo 6 “intensità delle agevolazioni” del Bando)</td>
+            <td width="5%"> {{ dato_frammento(istanza, rispostaA1) }} </td>
+        </tr>
+        <tr>
+            <td><b>2.</b> Le entrate nette previste sono quantificabili in fase di presentazione della domanda di finanziamento? Se la risposta è affermativa il soggetto proponente <br />dovrà compilare la tabella di cui all’allegato 3 (in formato xls)  ed  allegare il file <br />in formato pdf</td>
+            <td> {{ dato_frammento(istanza, rispostaA2) }} </td>
+        </tr>
+        <tr>
+            <td rowspan="2" class="center">B</td>
+            <td><b>1.</b> I flussi finanziari in entrata potranno generare un ritorno economico secondo quanto previsto dall’art. 65, comma 8, del Reg (UE) n. 1303/2013)? <br />(<b>entrate nette generate durante l’attuazione del progetto,</b> cfr. paragrafo 6 “intensità delle agevolazioni” del Bando)</td>
+            <td> {{ dato_frammento(istanza, rispostaB1) }} </td>
+        </tr>
+        <tr>
+            <td><b>2.</b> Le entrate nette previste sono quantificabili in fase di presentazione della domanda di finanziamento? Se la risposta è affermativa il soggetto proponente <br />dovrà compilare la tabella di cui all’allegato 4 (in formato xls)  ed  allegare il file <br />in formato pdf</td>
+            <td> {{ dato_frammento(istanza, rispostaB2) }} </td>
+        </tr>
+        <tr>
+            <td rowspan="2" class="center">C</td>
+            <td> Il progetto è destinato ad un'attività economica* di rilevanza comunitaria** e <br />determina benefici per l'operatore che gestisce o gestirà il bene oggetto del <br />progetto (cfr. paragrafo 6 “intensità delle agevolazioni” del Bando). <br />Scrivere Sì solo se la risposta è affermativa per ambo le domande</td>
+            <td> {{ dato_frammento(istanza, rispostaC) }} </td>
+        </tr>
+        <tr>
+            <td colspan="2"> {{ dato_frammento(istanza, rispostaCSi) }} </td>
+        </tr>
+    </table>
+    <br />
+    <p class="text-small">
+        * cioè è gestito secondo principi imprenditoriali<br />
+        ** cioè capace di incidere sugli scambi intracomunitari in quanto funzionale alla valorizzazione di un area che di per se costituisce un attrattore turistico di rilevanza sovranazionale<br />
+        *** in termini di capacità di generare/incrementare le entrate o di ridurne i costi<br />
+        <br />
+        <b>N.B. Un progetto può rientrare sia nella fattispecie A che in quella B. Qualora, a prescindere dalle risposte fornite in A e B, la risposta dalla domanda C sia affermativa e
+            se ne confermi l’esito a seguito del processo valutativo,
+            saranno applicate le disposizioni previste in materia di aiuti di stato paragrafo 6 “intensità delle agevolazioni” del Bando </b>
+    </p>
+    <br/>
+    <br/>
+{% endmacro %}
+
+{% macro print_collection(collection, method) %}
+    <ul>
+        {% for item in collection %}
+            <li>
+                {% if method|default(null) is null %}
+                    {{item}}
+                {% else %}
+                    {{ attribute(item, method) }}
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>	
+{% endmacro %}
+
+{% macro dati_regione_proroghe(asse) %}
+    {% set _asse = asse %}
+    <p class="text-small">
+        Regione Emilia-Romagna<br/>
+
+        Direzione Generale Economia della conoscenza, <br/> del Lavoro e Impresa <br/>
+
+        {% if _asse == "A1" or _asse == "A4" or _asse == "A6" %}
+            Servizio ricerca, innovazione, energia ed economia sostenibile<br/>
+        {% elseif _asse == "A2" or _asse == "A3" %}
+            Servizio qualificazione delle imprese<br/>
+        {% elseif _asse == "A5" %}
+            Servizio turismo, commercio e sport<br/>
+        {% else %}
+            Servizio politiche di sviluppo economico, ricerca industriale e innovazione tecnologica<br/>
+        {% endif %}
+
+        Viale Aldo Moro n. 44 - 40127 Bologna
+    </p>
+{% endmacro %}
+
+{% macro piano_costi_proponente(proponente, annualita) %}
+    <table class="piano-costi">
+        <thead>
+            <tr>
+                <th>Voce</th>
+                    {% for anno in annualita %}
+                    <th>{{anno}}</th>
+                    {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for voce in proponente.vocipianocosto %}
+                {% set isTotale =(voce.pianocosto.codice == 'TOT') %}
+                <tr class="{{ isTotale ? 'totale': '' }}">
+                    <td >
+                        {{ voce.pianocosto.titolo }}
+                    </td>
+                    {% for indice, anno in annualita %}
+                        <td class="euro">
+                            {{ attribute(voce, "getImportoAnno#{indice}")|number_format(2,',','.') }}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endmacro %}
+
+{% macro text_area_senza_a_capo(label, valore) %}
+    <span class="text"><b>{{ label }}</b></span>
+    <div class="text-area">
+        {% if valore is not null %}
+            {{ valore|regex_replace('/(?!\\s)([^\\s]{150})/', '$1<wbr>') }}
+        {% else %}
+            &nbsp;
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{% macro checkbox(value, label, label_a_sinistra = true) %}
+    <table width="100%">
+        <tr>
+            {% if label_a_sinistra %}
+                <td style="width: 95%">{{ label|raw }}</td>
+                    {% if( value ) %}
+                        X
+                    {% endif %}
+                </td>
+            {% else %}
+                <td style="width: 5%; text-align: center; vertical-align: center">
+                    {% if( value ) %}
+                        X
+                    {% endif %}
+                </td>
+                <td style="width: 95%">{{ label|raw }}</td>
+            {% endif %}
+        </tr>
+    </table>
+{% endmacro %}
+
+{% macro dichiarazione_inps_inail(istanza, path_albero, path_albero_motivazioni) %}
+    {% set dichiarazione_inps_inail_check = dato_frammento(istanza, path_albero, true) %}
+    {% set motivazioni_non_iscrizione = dato_frammento(istanza, path_albero_motivazioni) %}
+
+    <table class="singolo-checkbox-a-sinistra">
+        <tbody>
+            <tr>
+                <td>
+                    {{- dichiarazione_inps_inail_check is same as ("0") ? 'X' : '' -}}
+                </td>
+                <td>
+                    {% if dichiarazione_inps_inail_check is same as ("0") %}
+                        <strong>è iscritta</strong>,
+                    {% else %}
+                        è iscritta,
+                    {% endif %}
+                    ai fini degli adempimenti previdenziali, assistenziali e assicurativi, presso l’INPS e/o INAIL
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    {{- dichiarazione_inps_inail_check is same as ("1") ? 'X' : '' -}}
+                </td>
+                <td>
+                    {% if dichiarazione_inps_inail_check is same as ("1") %}
+                        <strong>non è iscritta</strong>,
+                    {% else %}
+                        non è iscritta,
+                    {% endif %}
+                    ai fini degli adempimenti previdenziali, assistenziali e assicurativi, presso l’INPS e/o INAIL
+                    {% if dichiarazione_inps_inail_check is same as ("1") -%}
+                        per le seguenti motivazioni:<br/>
+                        <strong>{{ motivazioni_non_iscrizione }}</strong>
+                    {% endif %}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+{% endmacro %}
+
+{% macro text_field_in_tabella(istanza, path_albero, label = '') %}
+    {% set input = dato_frammento(istanza, path_albero, true) %}
+
+    {% if not label %}
+        {% set label = label_frammento(istanza, path_albero) %}
+    {% endif %}
+
+    <table style="width: 100%">
+        <tr>
+            <td style="width: 35%">{{ label|raw }}</td>
+            <td style="width: 65%">
+                {{ input }}
+            </td>
+        </tr>
+    </table>
+{% endmacro %}
+
+{% macro numero_field_in_tabella(istanza, path_albero, label = '', formatta = true, aggiungi_euro = false) %}
+    {% set input = dato_frammento(istanza, path_albero, true) %}
+
+    {% if not label %}
+        {% set label = label_frammento(istanza, path_albero) %}
+    {% endif %}
+
+    <table style="width: 100%">
+        <tr>
+            <td style="width: 35%">{{ label|raw }}</td>
+            <td style="width: 65%">
+                {% if formatta %}
+                    {{ input|number_format(2, ',', '.') -}}
+                {% else %}
+                    {{ input -}}
+                {% endif %}
+
+                {%- if aggiungi_euro -%}
+                    €
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+{% endmacro %}
+
+{% macro dati_proponente_no_referenti(p) %}
+    {% import _self as macro_richiesta %}
+    {% set s = p.soggetto %}
+    <table  class="text-medium">
+        <tbody>
+            <tr>
+                <td style="width:40px">Denominazione</td>
+                <td style="width:60px"><b>{{ s.denominazione }}</b></td>
+            </tr>
+            {% if s.partitaIva is not null %}
+                <tr>
+                    <td style="width:40px">Partita IVA</td>
+                    <td style="width:60px"><b>{{ s.partitaIva }}</b></td>
+                </tr>
+            {% endif %}
+            <tr>
+                <td style="width:40px">Codice fiscale</td>
+                <td style="width:60px"><b>{{ s.codiceFiscale }}</b></td>
+            </tr>
+            <tr>
+                <td style="width:40px">Sede legale</td>
+                <td style="width:60px">Via <b>{{ s.via }}</b> N. <b>{{ s.civico }} </b> 
+                    {% if s.comune is not null %}
+                        Comune <b>{{ s.comune.denominazione }} ({{ s.provincia.siglaAutomobilistica }})</b>
+                    {% endif %}
+                    {% if s.comuneEstero is not null %}
+                        Città (estera) <b>{{ s.comuneEstero }} {% if s.provinciaEstera is not null %}({{ s.provinciaEstera }},{{s.stato}}){% else %}({{s.stato}}){% endif %}</b>
+                    {% endif %}	
+                    CAP <b>{{ s.cap }} </b>
+                </td>
+            </tr>
+            <tr>
+                <td style="width:40px">Legale rappresentante</td>
+                <td style="width:60px">
+                    {% if s.lr is not null %}
+                        Nome <b>{{s.lr.nome}}</b> Cognome <b>{{ s.lr.cognome }}</b>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td style="width:40px">Luogo e data nascita</td>
+                <td style="width:60px">
+                    {% if s.lr is not null %}
+                        {% if s.lr.comune is not null %}
+                            Comune <b>{{ s.lr.comune.denominazione }}</b>
+                        {% endif %}
+                        Data <b>{{ s.lr.dataNascita | date("d/m/Y") }}</b>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td style="width:40px">Codice fiscale</td>
+                <td style="width:60px">
+                    {% if s.lr is not null %}
+                        <b>{{ s.lr.codiceFiscale }}</b>
+                    {% endif %}
+                </td>
+            </tr>     
+        </tbody>      
+    </table>
+
+{% endmacro %}

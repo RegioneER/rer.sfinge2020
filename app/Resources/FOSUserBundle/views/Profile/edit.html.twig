@@ -1,0 +1,15 @@
+{% extends "FOSUserBundle::layout.html.twig" %}
+
+{% block intestazione %}
+    
+    <h3 class="page-title">
+        Profilo <small>pagina per la visualizzazione dei dati del profilo</small>
+    </h3>
+
+{% endblock %}
+
+{% block fos_user_content %}
+
+    {% include "FOSUserBundle:Profile:edit_content.html.twig" %}
+
+{% endblock fos_user_content %}

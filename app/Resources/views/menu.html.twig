@@ -1,0 +1,136 @@
+<script type="text/javascript">
+      
+    $(document).ready(function() {
+		
+        var current_link = '{{app.session.get('current_link')}}';
+        var item = $('#'+current_link);
+		var item_padre = item.parent().closest("li");
+		var item_nonno = item_padre.parent().closest("li");
+        $(item).addClass('active');
+		$(item_padre).addClass('active');    
+		$(item_nonno).addClass('active');    
+    });
+</script>
+<div class="page-sidebar navbar-collapse collapse">
+    <!-- BEGIN SIDEBAR MENU -->       
+    {% if app.user.datiPersonaInseriti is defined and app.user.datiPersonaInseriti %}
+		{% if app.user.haDoppioRuoloInvFesr == true %}
+			{% if app.user.haDoppioRuoloInvFesrImpostato == true %}
+				<ul class="page-sidebar-menu">
+					{% if app.user is not null and is_granted('ROLE_SUPER_ADMIN') %}
+						{% include 'menu_super_admin.html.twig' %}
+					{% elseif app.user is not null and is_granted('ROLE_ADMIN_PA') %}
+						{% include 'menu_admin_pa.html.twig' %}
+					{% elseif app.user is not null and is_granted('ROLE_MANAGER_PA') %}
+						{% include 'menu_manager_pa.html.twig' %}
+					{% elseif app.user is not null and is_granted('ROLE_UTENTE_PA') %}
+						{% include 'menu_utente_pa.html.twig' %}
+					{% elseif app.user is not null and (is_granted('ROLE_UTENTE')) %}
+						{% include 'menu_utente.html.twig' %}
+					{% endif %}
+					{% if app.user is not null and ((is_granted('ROLE_MONITORAGGIO_LETTURA')) or (is_granted('ROLE_MONITORAGGIO_SCRITTURA'))) %}
+						{% include 'menu_monitoraggio.html.twig' %}
+					{% endif %}
+					{% include 'menu_audit.html.twig' %}
+					{% if app.user is not null and is_granted('ROLE_VERIFICHE_ESTERNE') %}
+						{% include 'menu_verifiche_esterne.html.twig' %}
+					{% endif %}
+				</ul>
+			{% endif %}
+		{% else %}
+			<ul class="page-sidebar-menu">
+					{% if app.user is not null and is_granted('ROLE_SUPER_ADMIN') %}
+						{% include 'menu_super_admin.html.twig' %}
+					{% elseif app.user is not null and is_granted('ROLE_ADMIN_PA') %}
+						{% include 'menu_admin_pa.html.twig' %}
+					{% elseif app.user is not null and is_granted('ROLE_MANAGER_PA') %}
+						{% include 'menu_manager_pa.html.twig' %}
+					{% elseif app.user is not null and is_granted('ROLE_UTENTE_PA') %}
+						{% include 'menu_utente_pa.html.twig' %}
+					{% elseif app.user is not null and (is_granted('ROLE_UTENTE')) %}
+						{% include 'menu_utente.html.twig' %}
+					{% endif %}
+					{% if app.user is not null and ((is_granted('ROLE_MONITORAGGIO_LETTURA')) or (is_granted('ROLE_MONITORAGGIO_SCRITTURA'))) %}
+						{% include 'menu_monitoraggio.html.twig' %}
+					{% endif %}
+					{% include 'menu_audit.html.twig' %}
+					{% if app.user is not null and is_granted('ROLE_VERIFICHE_ESTERNE') %}
+						{% include 'menu_verifiche_esterne.html.twig' %}
+					{% endif %}
+				</ul>
+		{% endif %}
+    {% endif %}
+    <!-- END SIDEBAR MENU -->	
+</div>
+	
+<script type="text/javascript">
+    /**
+	 * gdisparti
+	 * show hide sidebar
+	 */
+
+	 function getSessionValue(name){
+		 var raw = sessionStorage.getItem(name);
+		 var value = raw === null ? true : JSON.parse(raw);
+		 return value;
+	 }
+	
+    $(document).ready(function() {
+		
+		// mi salvo i valori originali onready, per poi ripristinarli
+		var maxWidth = $('div.page-content-inner').css('max-width');
+		var marginLeft = $('div.page-content').css('margin-left');
+		
+		// onready il menù è sempre visibile
+		var nomeSessioneNascondiMenu = 'menu-visibile';
+		var menuVisibile = getSessionValue(nomeSessioneNascondiMenu);
+
+		if(!menuVisibile){
+			nascondiMenu(false);	
+		}
+		$('#nascondi-menu').click(function(){
+			var menuVisibile = getSessionValue(nomeSessioneNascondiMenu);
+
+			if(menuVisibile){
+				nascondiMenu(true);				
+				sessionStorage.setItem(nomeSessioneNascondiMenu, JSON.stringify(false));
+			}else{
+				mostraMenu(true);
+				sessionStorage.setItem(nomeSessioneNascondiMenu, JSON.stringify(true));
+			}
+		});
+		
+		/**
+		 * evento custom..le librerie del template fanno robaccia onresize..
+		 * sovrascrivendo di fatto l'hide del menù
+		 * per cui ho inserito il trigger di un evento custom nelle librerie che viene lanciato alla fine		 * 
+		 */ 		
+		$(window).bind('resizeEnd', function() {
+			if(!menuVisibile){				
+				$('div.page-sidebar').removeClass('collapse');
+				$('div.page-sidebar').hide();
+			}
+		});
+		
+		function nascondiMenu(animate){			
+			$('div.page-sidebar').removeClass('collapse');
+			$('div.page-sidebar').hide(animate ? 500 : 0);
+			$('div.page-content').animate({'margin-left': '0px'}, animate ? 500 : 0);
+			$('div.page-container').addClass('overrided');
+			$('div.page-content-inner').animate({'max-width': '96%'}, animate ? 500: 0);	
+			$('#nascondi-menu strong').html('&rarr;');
+			$('#nascondi-menu').attr('title', 'mostra menu');
+			
+		}
+		
+		function mostraMenu(animate){
+			$('div.page-content-inner').animate({'max-width': maxWidth}, animate ? 500 : 0);
+			$('div.page-content').animate({'margin-left': marginLeft}, animate ? 500 : 0);
+			$('div.page-sidebar').show(animate ? 500 : 0);
+			$('div.page-sidebar').addClass('collapse');
+			$('#nascondi-menu strong').html('&larr;');
+			$('#nascondi-menu').attr('title', 'nascondi menu');
+		}
+         
+    });
+</script>

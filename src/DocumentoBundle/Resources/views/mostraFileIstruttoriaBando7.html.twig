@@ -1,0 +1,9 @@
+
+<td><a class="btn btn-sm btn-info" title="Modifica Documento" href="{{ pathModifica }}">Modifica</a><a class="btn btn-sm btn-danger" title="Elimina Documento" href="{{ pathElimina }}" data-confirm="Eliminare il documento selezionato?">Elimina</a></td>
+<td>{{ documentoFile.tipologiaDocumento.descrizione }}</td> 
+<td>{{ documentoFile.nomeoriginale }}</td>
+<td><a class="btn btn-sm btn-primary" title="Scarica" href="{{ path("scarica", {"path_codificato":path}) }}" target="_blank">Scarica</a></td>
+<td>{{ documentoIstruttorio.datarichiesto is not null ? documentoIstruttorio.datarichiesto|date("d/m/Y") : '-' }}</td>
+<td>{{ documentoIstruttorio.dataricevuto  is not null ? documentoIstruttorio.dataricevuto|date("d/m/Y")  : '-' }}</td>
+<td>{{ documentoIstruttorio.datascadenza  is not null ? documentoIstruttorio.datascadenza|date("d/m/Y")  : '-' }}</td>                    
+                    

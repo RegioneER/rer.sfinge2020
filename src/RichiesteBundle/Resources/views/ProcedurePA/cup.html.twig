@@ -1,0 +1,122 @@
+{% extends '::base.html.twig' %}
+{% block intestazione %}
+{{ parent() }} 
+{{ mostra_soggetto_rappresentato() }} 
+{% endblock %} 
+
+{% block body %} 
+
+<h4>Dati Cup</h4>
+
+{{ form_start(form) }}
+{{ form_row(form.cup_natura) }}
+{{ form_row(form.cup_tipologia) }}
+{{ form_row(form.cup_settore) }}
+{{ form_row(form.cup_sottosettore) }}
+{{ form_row(form.cup_categoria) }}
+{{ form_row(form.cup_tipi_copertura_finanziaria) }}
+{{ form_end(form) }}
+
+<script type="text/javascript">
+'use strict';
+
+function attachOptions( element, values ){
+	element.empty();
+	
+	$.each(values, function(idx, value){
+		$('<option></option>')
+			.text(value.descrizione)
+			.attr('value',value.id)
+			.appendTo(element);
+	});
+
+	element.removeAttr("disabled")
+		.select2("enable", true);
+	element.trigger("change");
+
+}
+
+$(document).ready(function () {
+	
+	var settore_natura_url = '{{ path("settore_natura", { richiesta_id: richiesta.id ,codice : 'codice' }) }}';
+	var tipologia_natura_url = '{{ path("tipologia_natura", { richiesta_id: richiesta.id ,'codice' : 'codice' }) }}';
+	var sottosettore_settore_url = '{{ path("sottosettore_settore", { richiesta_id: richiesta.id ,'codice' : 'codice' }) }}';
+	var categoria_sottosettore_url = '{{ path("categoria_sottosettore", { richiesta_id: richiesta.id ,'codice' : 'codice' }) }}';
+	
+    var idCupNatura = '#{{- form.cup_natura.vars.id -}}';
+	var idCupSettore = '#{{- form.cup_settore.vars.id -}}';
+	var idCupSottoSettore = '#{{- form.cup_sottosettore.vars.id -}}';
+	var idCupTipologia = '#{{- form.cup_tipologia.vars.id -}}';
+	var idCupCategoria = '#{{- form.cup_categoria.vars.id -}}';
+
+	$(idCupNatura).change(function () {
+			var url = settore_natura_url;
+			var cupSettore = $(idCupSettore);
+			cupSettore.attr("disabled", "disabled")
+				.select2("enable", false);
+			if( !$(this).val() ){
+				return;
+			}
+			url = url.replace("codice", $(this).val());
+			$.ajax({
+				url: url,
+				success: function (res) {
+					attachOptions( cupSettore, res);
+				}
+			});
+	});
+	
+	$(idCupNatura).change(function () {
+		var url = tipologia_natura_url;
+		var cupTipologia = $(idCupTipologia);
+		cupTipologia.attr("disabled", "disabled")
+			.select2("enable", false);
+		if( !$(this).val() ){
+			return;
+		}
+		url = url.replace("codice", $(this).val());
+		$.ajax({
+			url: url,
+			success: function (res) {
+				attachOptions( cupTipologia, res);
+			}
+		});
+	});
+	
+	$(idCupSettore).change(function () {
+		var url = sottosettore_settore_url;
+		var cupSottoSettore = $(idCupSottoSettore);
+		cupSottoSettore.attr("disabled", "disabled")
+			.select2("enable", false);
+		if( !$(this).val()  ){
+			return;
+		}
+		url = url.replace("codice", $(this).val());
+		$.ajax({
+			url: url,
+			success: function (res) {
+				attachOptions( cupSottoSettore, res);
+			}
+		});
+	});
+	
+	$(idCupSottoSettore).change(function () {
+			var url = categoria_sottosettore_url;
+			var cupCategoria = $(idCupCategoria);
+			cupCategoria.attr("disabled", "disabled")
+				.select2("enable", false);
+			if( !$(this).val()  ){
+				return;
+			}
+			url = url.replace("codice", $(this).val());
+			$.ajax({
+				url: url,
+				success: function (res) {
+					attachOptions( cupCategoria, res);
+				}
+			});
+		});
+	});
+</script>
+
+{% endblock %}

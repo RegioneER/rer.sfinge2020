@@ -1,0 +1,37 @@
+{
+    "name": "gdbnet/fattura-elettronica-php",
+    "description": "PHP class for italian electronic invoice xml",
+    "keywords": [
+        "php",
+        "fattura",
+        "xml"
+    ],
+    "version": "1.0.4",
+    "type": "library",
+    "license": "GPL-3.0-or-later",
+    "require": {
+        "php": ">=7.1",
+        "ext-dom": "*",
+        "ext-json": "*",
+        "ext-libxml": "*",
+        "ext-xsl": "*",
+        "dompdf/dompdf": "~0.8.0",
+        "symfony/serializer": "^2.8.50"
+    },
+    "require-dev": {
+        "phpunit/phpunit":"^7"
+    },
+    "autoload": {
+        "psr-4": {
+            "Gdbnet\\FatturaElettronica\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Gdbnet\\FatturaElettronica\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    }
+}

@@ -1,0 +1,44 @@
+{% extends '::base.html.twig' %}
+
+{% block istruttorie_buttons_widget %}
+    {% if form.children.pulsante_indietro is defined %}
+    <div class="pull-left">
+        {{ form_widget(form.children.pulsante_indietro) }}       
+    </div>
+    {% endif %}
+	
+    <div class="pull-right" style="margin-left: 10px; ">
+        {{ form_widget(form.children.pulsante_submit) }}
+    </div>
+	<div class="pull-right">
+		{{ form_widget(form.children.pulsante_valida) }}
+	</div>
+	{% if form.children.pulsante_invalida is defined %}	
+	<div class="pull-right">
+		{{ form_widget(form.children.pulsante_invalida, {'disabled': false}) }}
+	</div>
+	{% endif %}
+{% endblock istruttorie_buttons_widget %}
+
+{% block checklist_buttons_widget %}
+    {% if form.children.pulsante_indietro is defined %}
+    <div class="pull-left">
+        {{ form_widget(form.children.pulsante_indietro) }}       
+    </div>
+    {% endif %}
+	
+    <div class="pull-right" style="margin-left: 10px; ">
+        {{ form_widget(form.children.pulsante_submit) }}
+    </div>	
+    <div class="pull-right" style="margin-left: 10px; ">
+        {{ form_widget(form.children.pulsante_valida_liq) }}
+    </div>
+	<div class="pull-right">
+		{{ form_widget(form.children.pulsante_valida_non_liq) }}
+	</div>
+	{% if form.children.pulsante_invalida is defined %}	
+	<div class="pull-right">
+		{{ form_widget(form.children.pulsante_invalida, {'disabled': false}) }}
+	</div>
+	{% endif %}
+{% endblock checklist_buttons_widget %}

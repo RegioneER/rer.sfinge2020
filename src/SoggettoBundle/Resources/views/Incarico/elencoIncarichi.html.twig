@@ -1,0 +1,93 @@
+{% extends '::base.html.twig' %}
+
+{% block intestazione %}
+	{{ parent() }}
+
+	{{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% block body %}
+
+	<div class="table-toolbar">
+		<div class="btn-group">
+			{% if isAccessibile("selezione_incarico") and not is_granted('ROLE_SUPER_ADMIN')%}
+				<a href="{{ path("selezione_incarico") }}"><button id="sample_editable_1_new" class="btn btn-primary"><span class="fa fa-plus"></span> Aggiungi incarico</button></a>
+			{% endif %}
+			<a href="#"><button id="btn_ricerca_soggetto" data-target="#ricerca-incaricati-modal" data-toggle="modal" class="btn btn-info"><span class="fa fa-search"></span> Ricerca</button></a>
+		</div>
+	</div>
+	<div class="count">
+		Numero elementi trovati: {{ incarichi.getTotalItemCount }} - Filtro attivo: {{ filtro_attivo ? "Si" : "No" }}
+	</div>
+	<table class="table table-striped table-hover table-bordered" id="notizie-elenco">
+		<thead>
+		<tr>
+			<th>{{ knp_pagination_sortable(incarichi, 'Id', 'p.id') }}</th>
+			<th>Nome</th>
+			<th>Cognome</th>
+			<th>Incarico</th>
+			<th>Stato</th>
+			<th>Soggetto</th>
+			<th>Azioni</th>
+		</tr>
+		</thead>
+		<tbody>
+		{% for incaricato in incarichi %}
+			<tr>
+				<td>{{ incaricato.id }}</td>
+				<td>{{ incaricato.incaricato.nome }}</td>
+				<td>{{ incaricato.incaricato.cognome }}</td>
+				<td>{{ incaricato.tipoIncarico.descrizione }}</td>
+				<td>{{ incaricato.stato.descrizione }}</td>
+				<td>{{ incaricato.soggetto.denominazione }}</td>
+				<td>
+					{#% if isAccessibile('attiva_incarico', {"id_incarico":incaricato.id}) %}
+						<a href="{{ path("dettaglio_incarico",{"id_incarico":incaricato.id}) }}" class="btn btn-default">Gestisci incarico</a>
+					{% else %#}
+						<a href="{{ path("dettaglio_incarico",{"id_incarico":incaricato.id}) }}"><button class="btn btn-default">Dettagli</button></a>
+					{#% endif %#}
+				</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+	<div class="alert alert-warning">
+	Per poter operare su Sfinge2020 ci devono essere <strong>almeno due incarichi: Utente principale e Legale Rappresentante</strong>.<br />La persona incaricata come &quot;Utente principale&quot; pu&ograve; essere anche &quot;Legale Rappresentante&quot; e viceversa.<br />L'utente principale &egrave; il ruolo che pu&ograve; svolgere ogni azione ed &egrave; l'unico che pu&ograve; aggiungere incarichi e revocare incarichi.<br /><br />
+
+	Alla creazione di un nuovo soggetto giuridico, Sfinge2020 attribuisce l'incarico di “Utente Principale” all’utente che ha effettuato la creazione del soggetto e quello di “Legale Rappresentante” a colui che durante la registrazione è stato indicato come tale.<br /><br />
+
+	Il Legale Rappresentante serve:<br />
+	<ol style="font-size:12px">
+		<li>
+			per la firma digitale sui documenti che saranno richiesti durante la presentazione del bando, per quelle procedure che richiedono che la domanda sia firmata digitalmente, prima dell’invio alla PA;
+		</li>
+		<li>
+			per la validazione e invio delle domande, per quelle procedure che prevedono l’invio delle domande senza l’apposizione della firma digitale.
+		</li>
+	</ol>
+
+	Se volete che il Legale Rappresentante possa accedere e operare attivamente su Sfinge2020 (caso 2), lo stesso dovrà accedere al sistema con le proprie credenziali SPID/CIE/CNS.
+	<br />
+	Se il legale rappresentante non viene inserito, il sistema non permetterà la presentazione della richiesta di partecipazione al bando. È possibile revocare il legale rappresentante accedendo al dettaglio del suo incarico e premendo il pulsante "Revoca incarico" (questa funzionalità è disponibile solo per l'Utente principale).
+	<br /><br />
+
+	È possibile aggiungere ulteriori incarichi:
+	<ul style="font-size:12px">
+		<li>
+			Consulente e operatore: possono inserire e gestire le richieste, ma non possono creare incarichi.
+		</li>
+		<li>
+			Delegato: un delegato che può agire per conto del Legale Rappresentante, previa sua delega, e che può quindi firmare le domande oppure validarle e inviarle, in base alla procedura.
+		</li>
+		<li>
+			Operatore progetto: può gestire solo i progetti a lui assegnati e niente altro. Una volta creato l'operatore progetto sarà possibile assegnargli uno o più progetti dalla sezione presentazioni -> Elenco richieste -> azioni -> incarica operatore progetto.
+		</li>
+	</ul>
+	</div>
+	<div class="navigation">
+		{{ knp_pagination_render(incarichi) }}
+	</div>
+
+	{{ modale_ricerca("Incaricati",form_ricerca,"elenco_incarichi_pulisci","ricerca-incaricati-modal") }}
+{% endblock %}
+

@@ -1,0 +1,16 @@
+{% extends template %}
+
+{% block body %}
+
+{% for istanzaFrammento in istanzaPagina.istanzeFrammenti %}
+	{% if istanzaFrammento.frammento.titolo is not null %}
+		<h4>{{istanzaFrammento.frammento.titolo}}</h4>
+	{% endif %}
+	
+	{% if istanzaFrammento.frammento.tipoFrammento is defined %}
+		{% include 'FascicoloBundle:TipiFrammento/Show:'~istanzaFrammento.frammento.tipoFrammento.codice~'.html.twig' 
+				with {'istanza_frammento' : istanzaFrammento, 'alias_fascicolo' : alias_fascicolo, 'path_pagina' : path_pagina, 'istanza_fascicolo': istanza_fascicolo } %}
+	{% endif %}
+{% endfor %}
+	
+{% endblock %}

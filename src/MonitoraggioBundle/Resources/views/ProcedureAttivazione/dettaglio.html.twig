@@ -1,0 +1,124 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+{% set prototype = form.programma.vars.prototype %}
+{% set childrens = prototype.children %}
+{% form_theme form.programma _self %}
+
+    <h4>Anagrafica procedura</h4>
+
+{{ form_start(form) }}
+{{ form_row(form.asse) }}
+{{ form_row(form.numero_atto) }}
+{{ form_row(form.codice_rna) }}
+{{ form_row(form.tipo) }}
+{{ form_row(form.aiuti) }}
+{{ form_row(form.titolo) }}
+{{ form_row(form.responsabile) }}
+{{ form_row(form.data_avvio_lavori_preparatori) }}
+{{ form_row(form.data_approvazione) }}
+{{ form_row(form.data_delibera) }}
+{# {{ form_row(form.data_pubblicazione) }} #}
+{{ form_row(form.data_avvio_procedura) }}
+{{ form_row(form.data_fine_procedura) }}
+{{ form_row(form.codice_procedura_attivazione) }}
+{{ form_row(form.mon_tipo_beneficiario) }}
+
+    <h4>Gestione programmi</h4>
+
+    {% if form.programma|length >0 %}
+        {% set visualizzazioneTabella = 'visibility:visible' %}
+    {% else%}
+        {% set visualizzazioneTabella = 'visibility:hidden' %}
+        <h5>Nessun elemento trovato</h5></br>
+    {% endif %}
+
+<table style="{{ visualizzazioneTabella }}" data-prototype="{{ form_row(prototype)|e }}" class="table table-striped table-hover table-bordered" id="elenco-programmi" data-index="{{- form.programma|length -}}">
+
+            <thead>
+                <tr>
+                    <th>{{- childrens.tc4_programma.vars.label -}}</th>
+                    <th>{{- childrens.importo.vars.label -}}</th>
+                    {% if app.user is not null and (is_granted('ROLE_MONITORAGGIO_SCRITTURA')) %}
+                        <th>Azioni</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for formProgramma in form.programma %}
+                <tr>
+                    {{- form_row(formProgramma.tc4_programma) -}}
+                    {{- form_row(formProgramma.importo) -}}
+                    {% if app.user is not null and (is_granted('ROLE_MONITORAGGIO_SCRITTURA')) %}
+                        <td>
+                            <a class="btn btn-info dropdown-toggle red" onclick="eliminaElemento(this)" >
+                                Cancella&nbsp;<i class="fa fa-trash"></i>
+                            </a>
+                        </td>
+                    {% endif %}
+                </tr>
+                {%  endfor %}
+            </tbody>
+
+        </table>
+
+        {% if app.user is not null and (is_granted('ROLE_MONITORAGGIO_SCRITTURA')) %}
+            <div>
+                <a onclick="aggiungiElemento()" class="btn btn-page-action btn-primary" id="aggiungi-elemento-form">Aggiungi</a>
+            </div>
+        {% endif %}
+
+{{ form_row(form.submit) }}
+{{ form_rest(form) }}
+{{ form_end(form) }}
+{% endblock %}
+
+{% block jquery_page_document_ready %}
+<script type="text/javascript">
+    'use strict';
+
+    function eliminaElemento( e ){
+        $(e).parent().parent().remove().trigger('change');
+    }
+
+    function aggiungiElemento(e){
+        var elencoProgrammi = $('table#elenco-programmi');
+        $(elencoProgrammi).css("visibility", "visible");
+
+        var prototype = elencoProgrammi.data('prototype');
+        var index = elencoProgrammi.data('index');
+        var newForm = prototype.replace(/__name__/g, index);
+        $(newForm).appendTo(elencoProgrammi.children('tbody'));
+        elencoProgrammi.data('index', index + 1);
+        App.initAjax();
+    }
+    $(document).ready( function(){
+        
+    });
+</script>
+{% endblock %}
+
+
+{% block form_row -%}
+
+        {{- not form.vars.compound ? '<td>' : '' -}}
+            {{- form_widget(form) -}}
+            {{- form_errors(form) -}}
+        {{- not form.vars.compound ? '</td>' : '' -}}
+    
+{%- endblock form_row %}
+
+{% block form_widget_compound %}
+{% if form.vars.prototype is not defined %}
+<tr id="{{- block('widget_container_attributes') -}}">
+    {{- block('form_rows') -}}
+    {% if app.user is not null and (is_granted('ROLE_MONITORAGGIO_SCRITTURA')) %}
+    <td>
+        <a class="btn btn-info dropdown-toggle red" onclick="eliminaElemento(this)">
+            Cancella&nbsp;<i class="fa fa-trash"></i>
+        </a>
+    </td>
+    {% endif %}
+</tr>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet box green">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <span class="fa fa-reorder"></span>Inserire i dati
+                    </div>
+                </div>
+                <div class="portlet-body">
+					<div class="form-body">
+						{{ form_start(form) }}
+						<div>
+							{{ form_row(form.label) }}
+							{{ form_row(form.alias) }}
+							{{ form_row(form.tipoCampo) }}
+							<div id="textareaRows">
+								{{ form_row(form.righeTextArea) }}
+							</div>
+							{{ form_row(form.required) }}
+							{{ form_row(form.callbackPresenza) }}								
+							{% if evidenziato %}
+								{{ form_row(form.evidenziato) }}
+							{% endif %}
+							<div id='precisione'>
+								{{ form_row(form.precisione) }}
+							</div>
+							<div id="scelta">
+							{{ form_row(form.expanded) }}
+							{{ form_row(form.multiple) }}
+							{{ form_row(form.scelte) }}
+							{{ form_row(form.query) }}
+							</div>
+							{{ form_row(form.note) }}
+						</div>
+						{{ form_end(form) }}
+					</div>
+				</div>
+			</div>
+		</div>
+	{% endblock %}
+	
+	{%block  jquery_page_document_ready %}   
+		{% include "FascicoloBundle:Campo:scelta_js.html.twig" %}
+	{% endblock %}

@@ -1,0 +1,34 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+    {{ form(form) }}
+{% endblock body %}
+
+{% block  jquery_page_document_ready %}
+<script>
+'use strict';
+
+    $(document).ready(function(){
+        var addendi = $('input[name="{{- form.children["gg_uomo_interno"].vars.full_name -}}"], \
+                    input[name="{{- form.children["gg_uomo_ausiliario"].vars.full_name -}}"], \
+                    input[name="{{- form.children["gg_uomo_ricerca"].vars.full_name -}}"], \
+                    input[name="{{- form.children["gg_uomo_esterno"].vars.full_name -}}"] ');
+        var totale = $('input[name="{{- form.children["gg_uomo_totali"].vars.full_name -}}"]');
+
+        function somma(){
+            var map = addendi.map(function(){
+                var value = $(this).val();
+                return parseFloat(value ? value.deformatMoney() : 0.0);
+            });
+            return map.toArray().reduce(function(a,b){
+                return a + b;
+            }, 0.0);
+        }
+
+        addendi.change(function(){
+            var s = somma();
+            totale.val(s.formatMoney()).trigger('change');
+        });
+    });
+</script>
+{% endblock %}	

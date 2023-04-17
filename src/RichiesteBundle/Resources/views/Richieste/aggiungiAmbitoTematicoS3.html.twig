@@ -1,0 +1,12 @@
+{% extends '::base.html.twig' %}
+
+{% block intestazione %}
+    {{ parent() }}
+    {{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% block body %}
+    <h4>Aggiungi ambito prioritario S3</h4>
+    {{ form_start(form) }}
+    {{ form_end(form) }}
+{% endblock %}

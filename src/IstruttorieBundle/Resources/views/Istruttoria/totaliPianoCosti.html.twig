@@ -1,0 +1,81 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+
+	{% include 'IstruttorieBundle:Istruttoria:menu.html.twig' with {'istruttoria' : richiesta.istruttoria } %}
+
+	<h4>Totali piano costi</h4>
+
+	<table class="table">
+		<thead>
+			<tr>
+				<th style="text-align: center; width: 20%">Anno</th>
+				<th style="text-align: center; width: 20%">Costo presentato</th>
+				<th style="text-align: center; width: 20%">Taglio</th>
+				<th style="text-align: center; width: 20%">Costo ammesso</th>
+				<th style="text-align: center; width: 20%">Contributo</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% if annualita_piano_costi | length > 0 %}
+				{% for chiave, anno in annualita_piano_costi %}
+					<tr>
+						<td style="text-align: center;">{{ anno }}</td>
+						<td style="text-align: center;">{{ totali['presentato_'~chiave]|number_format(2,',', '.') }}</td>
+						<td style="text-align: center;">{{ totali['taglio_'~chiave]|number_format(2,',', '.') }}</td>
+						<td style="text-align: center;">{{ totali['ammissibile_'~chiave]|number_format(2,',', '.') }}</td>
+						<td style="text-align: center;">-</td>
+					</tr>
+				{% endfor %}	
+			{% endif %}	
+		</tbody>
+		<tfoot>
+			<tr>
+				<td style="text-align: center;"><strong>Totali</strong></td>
+				<td style="text-align: center;"><strong>{{ somme['presentato']|number_format(2,',', '.') }}</strong></td>
+				<td style="text-align: center;"><strong>{{ somme['taglio']|number_format(2,',', '.') }}</strong></td>
+				<td style="text-align: center;"><strong>{{ richiesta.istruttoria.costoAmmesso|number_format(2,',', '.') }}</strong></td>
+				<td style="text-align: center;"><strong>{{ richiesta.istruttoria.contributoAmmesso|number_format(2,',', '.') }}</strong></td>
+			</tr>
+		</tfoot>
+	</table>
+	
+	{% if esiste_variazione == true%}
+		<h4>Totali piano costi aggiornato a seguito di variazione</h4>
+		<table class="table">
+			<thead>
+				<tr>
+					<th style="text-align: center; width: 20%">Anno</th>
+					<th style="text-align: center; width: 20%">Costo variato</th>
+					<th style="text-align: center; width: 20%"></th>
+					<th style="text-align: center; width: 20%">Costo ammesso</th>
+					<th style="text-align: center; width: 20%">Contributo</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% if annualita_piano_costi | length > 0 %}
+					{% for chiave, anno in annualita_piano_costi %}
+						<tr>
+							<td style="text-align: center;">{{ anno }}</td>
+							<td style="text-align: center;">{{ totali_variazione['variato_'~chiave]|number_format(2,',', '.') }}</td>
+							<td style="text-align: center;"></td>
+							<td style="text-align: center;">{{ totali_variazione['approvato_'~chiave]|number_format(2,',', '.') }}</td>
+							<td style="text-align: center;">-</td>
+						</tr>
+					{% endfor %}	
+				{% endif %}	
+			</tbody>
+			<tfoot>
+				<tr>
+					<td style="text-align: center;"><strong>Totali</strong></td>
+					<td style="text-align: center;"><strong>{{ somme_variazione['variato']|number_format(2,',', '.') }}</strong></td>
+					<td style="text-align: center;"></td>
+					<td style="text-align: center;"><strong>{{ somme_variazione['approvato']|number_format(2,',', '.') }}</strong></td>
+					<td style="text-align: center;"><strong>{{ variazione.contributoAmmesso|number_format(2,',', '.') }}</strong></td>
+				</tr>
+			</tfoot>
+		</table>
+	{% endif %}
+			
+	{% block totali_piano_costi_extra %}{% endblock %}
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends '::base.html.twig' %}
+
+
+{% block body %}
+    
+    {% include 'MonitoraggioBundle:Progetti:menu.html.twig' with {'page_view' : page_view }%}
+
+    <h5>
+        Codice locale progetto: {{richiesta.protocollo}}
+    </h5>
+    
+    <div class="table-toolbar">
+        <div>
+            <button class="btn btn-info" data-target="#ricerca-contesto-modal" data-toggle="modal">
+                    <span class="fa fa-search"></span> Ricerca
+            </button>
+        </div>
+    </div>
+    <div class="count">
+        Numero elementi trovati: {{ risultato.getTotalItemCount }} - Filtro attivo: {{ filtro_attivo ? "Si" : "No" }}
+    </div>
+
+    <h4>Procedure aggiudicazione</h4>
+
+{% if  risultato.getTotalItemCount > 0 %}
+
+    <table class="table table-striped table-hover table-bordered" id="progetti-elenco">
+        <thead>
+            <tr>
+                <th>Codice procedura aggiudicazione</th>
+                <th>CIG</th>
+                <th>Motivo assenza CIG</th>
+                <th>Descrizione procedura aggiudicazione</th>
+                <th>Tipo procedura aggiudicazione</th>
+                <th>Importo procedura aggiudicazione</th>
+                <th>Data pubblicazione</th>
+                <th>Importo aggiudicato</th>
+                <th>Data aggiudicazione</th>
+                {% if app.user is not null and (is_granted('ROLE_MONITORAGGIO_SCRITTURA')) %}
+                    <th>Azioni</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for proceduraaggiudicazione in risultato %}
+                <tr>
+                    <td>{{ proceduraaggiudicazione.id }}</td>
+                    <td>{{ proceduraaggiudicazione.cig }}</td>
+                    <td>{{ proceduraaggiudicazione.motivoassenzacig is null ? '-' :proceduraaggiudicazione.motivoassenzacig.descmotivoassenzacig }}</td>
+                    <td>{{ proceduraaggiudicazione.descrizioneproceduraaggiudicazione }}</td>
+                    <td>{{ proceduraaggiudicazione.tipoproceduraaggiudicazione is null ? '-' : proceduraaggiudicazione.tipoproceduraaggiudicazione.descrizionetipologiaproceduraaggiudicazione}}</td>
+                    <td>{{ proceduraaggiudicazione.importoproceduraaggiudicazione }}</td>
+                    <td>{{ (proceduraaggiudicazione.datapubblicazione is not null ? proceduraaggiudicazione.datapubblicazione|date("d/m/Y") : "-")}}</td>
+                    <td>{{ proceduraaggiudicazione.importoaggiudicato }}</td>
+                    <td>{{ (proceduraaggiudicazione.dataaggiudicazione is not null ? proceduraaggiudicazione.dataaggiudicazione|date("d/m/Y") : "-")}}</td>
+                    <td>
+                        <div class="dropdown">
+                            <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    Azioni
+                                    <span class="caret"></span>
+                            </button>
+                            {% if app.user is not null and (is_granted('ROLE_MONITORAGGIO_SCRITTURA')) %}
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                    <li><a href="{{ path('dettaglio_procedura_aggiudicazione',{'idProcedura': proceduraaggiudicazione.id})}}">Modifica</a></li>
+                                </ul>
+                            {% else %}
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                    <li><a href="{{ path('dettaglio_procedura_aggiudicazione',{'idProcedura': proceduraaggiudicazione.id})}}">Visualizza</a></li>
+                                </ul>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% else %}
+    <h5>Nessun elemento trovato</h5></br>
+{% endif %}
+
+    <div class="navigation">
+        {{ knp_pagination_render(risultato) }}
+    </div>
+    {{ modale_ricerca("Progetti",form_ricerca,"monitoraggio_procedure_aggiudicazione_pulisci","ricerca-contesto-modal",{richiesta_id:richiesta.id}) }}
+{% endblock %}

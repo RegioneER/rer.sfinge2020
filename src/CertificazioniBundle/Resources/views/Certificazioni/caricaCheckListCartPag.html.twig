@@ -1,0 +1,22 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+
+	<h4>Carica CheckList</h4>
+	
+	{% if is_granted('ROLE_CERTIFICATORE_AGREA') or is_granted('ROLE_SUPER_ADMIN') %}
+		
+		{# SE NON HO DOCUMENTI CHECK_LIST PROPONGO IL FORM DI UPLOAD, ALTRIMENTI PROPONGO IL DOC #}
+		
+		{% if documenti_cert_pagamenti is not empty %}
+			{{ mostra_file(documenti_cert_pagamenti[0].documentoFile, path('cancella_documento_certificazione_pagamento', {'id_documento': documenti_cert_pagamenti[0].id}) ) }}
+		{% else %}
+			<div class="form-body">
+				{{ form(form_upload_checklist_view) }}
+			</div>			
+		{% endif %}
+		
+	{% endif %}	
+
+	<a class="btn btn-info" href="{{path('elenco_pagamenti_certificati', {'id_certificazione' : id_certificazione })}}">Indietro</a>
+	
+{% endblock %} 

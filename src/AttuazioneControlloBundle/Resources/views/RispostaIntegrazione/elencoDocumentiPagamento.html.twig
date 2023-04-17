@@ -1,0 +1,56 @@
+{% extends '::base.html.twig' %}
+
+{% block begin_page_level_plugin_style %}
+	<link href="{{ asset('assets/css/dropzone.min.css') }}" rel="stylesheet" type="text/css"/>
+{% endblock %}
+
+{% block intestazione %}
+	{{ parent() }}
+	{{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% block body %}
+
+	{% if form is not null %}
+		<div class="form-body">
+			<h4>Carica documento</h4>
+				{{ form(form) }}
+
+			<form action="{{ path("carica_documento_integrazione_pagamento_dropzone", {"id_integrazione_pagamento": integrazione.id}) }}"
+				  class="dropzone" id="myDrop">
+			</form>
+	    </div>
+	{% endif %}			
+
+	<h4>Elenco documenti caricati</h4>
+	{% if documenti is not empty %}
+    <div class="form-body">	
+		{% for documento in documenti %}
+			<b>Nota:</b> {{documento.descrizione}}
+			<br><br>
+			{% if not is_richiesta_disabilitata and is_granted('ROLE_UTENTE') %}
+            	{{ mostra_file(documento.documentoFile, path(route_cancellazione_documento, {'id_documento_integrazione': documento.id, '_token': csrfToken, mostra_elimina: true}) ) }}
+			{% else %}			
+            	{{ mostra_file(documento.documentoFile, null )}}
+			{% endif %}			
+            <br/>
+			<hr>
+		{% endfor %}
+    </div>
+	{% else %}
+		<h6>Nessun documento caricato</h6>
+	{% endif %}
+	<div class="page-actions">
+		{{ pulsante_indietro(url_indietro) }}
+	</div>
+{% endblock %}
+
+{% block  jquery_page_document_ready %}
+	<script src="{{ asset('assets/scripts/dropzone.min.js') }}"></script>
+	<script id="dropzone-custom"
+			data-route="{{ path("risposta_integrazione_elenco_documenti_pagamento", { 'id_integrazione_pagamento' : integrazione.id }) }}"
+			data-route-concat="{{ path("concat_chunks_documento_integrazione_pagamento_dropzone", { 'id_integrazione_pagamento' : integrazione.id }) }}"
+			data-file-info="{{ path("get_informazioni_documento_dropzone", { 'id_documento' : 'id_documento' }) }}"
+			src="{{ asset('assets/scripts/dropzone-custom.js') }}">
+	</script>
+{% endblock %}

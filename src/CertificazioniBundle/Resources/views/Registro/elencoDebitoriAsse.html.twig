@@ -1,0 +1,85 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+	<div class="table-toolbar">
+        <div>
+			<a class="btn btn-info" href="#ricerca-istruttoria-modal" data-toggle="modal">
+				<span class="fa fa-search"></span> Ricerca
+			</a>
+        </div>
+    </div>
+    <div class="count">
+        Numero elementi trovati: {{ revoche.getTotalItemCount }} - Filtro attivo: {{ filtro_attivo ? "Si" : "No" }}
+    </div>
+	<table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+        <thead>
+            <tr>
+				<th>Beneficiario</th>
+                <th>Atto di revoca</th>
+				<th>CUP</th>
+				<th>Azione POR</th>
+				<th>Origine segnalazione</th>
+				<th>Azioni</th>
+            </tr>
+        </thead>
+		<tbody>
+			{% for revoca in revoche %}
+				<tr>
+					<td>{{revoca.richiesta.getSoggetto.denominazione}}</td>
+					<td>{{revoca.attorevoca.numero}} - {{revoca.attorevoca.descrizione}}</td>
+					<td>{{revoca.richiesta.getCodiceCup}}</td>
+					<td>{{revoca.richiesta.procedura.azioni|join('; ')}}</td>
+					<td>{{revoca.richiesta.UltimoAttoRevoca is not null ? (revoca.richiesta.UltimoAttoRevoca.TipoOrigineRevoca is not null ? revoca.richiesta.UltimoAttoRevoca.TipoOrigineRevoca : '-') : '-'}}</td>
+					<td>	
+						<div class="dropdown">
+							<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								Azioni
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+								<li><a href="{{ path("dettaglio_irregolarita", {'id_richiesta':revoca.richiesta.id, 'codice_asse':asse, 'id_revoca':revoca.id}) }}">Gestione</a></li>
+								<li><a href="{{ path("dettaglio_irregolarita_documenti", {'id_richiesta':revoca.richiesta.id, 'codice_asse':asse, 'id_revoca':revoca.id}) }}">Documenti</a></li>
+								{% if revoca.AttoRevoca is not null and revoca.AttoRevoca.documento is not null %}
+									<li><a href="{{ path("scarica_atto_revoca", {"id_atto":revoca.AttoRevoca.id}) }}">Scarica atto</a></li>
+								{% endif  %}
+							</ul>
+						</div>
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+    </table>
+	
+	<div class="navigation">
+		{{ knp_pagination_render(revoche) }}
+	</div>
+
+	<div id="ricerca-istruttoria-modal" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3 id="ricerca-istruttoria-modal-titolo">Ricerca beneficiario</h3>
+				</div>
+				<div class="modal-body">
+					{{ form(formRicercaDebitori) }}
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Chiudi</button>
+					<a class="btn btn-default" href="{{ path("richieste_elenco_assi_pulisci", {'codice_asse':asse}) }}">Annulla Ricerca</a>
+					<a class="btn btn-primary" href="#" id="ricercaOk">Ricerca</a>
+				</div>
+			</div>
+		</div>
+	</div>		
+
+{% endblock %}
+{%block  jquery_page_document_ready %}
+	<script>
+		jQuery(document).ready(function () {
+			$("#ricercaOk").click(function (e) {
+				e.preventDefault();
+				$(this).parents(".modal-content").find("form").submit();
+			})
+		});
+	</script>
+{% endblock %}

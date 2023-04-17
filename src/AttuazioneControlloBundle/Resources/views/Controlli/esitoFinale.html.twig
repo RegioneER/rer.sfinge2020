@@ -1,0 +1,15 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+
+{% set controllo = form.vars.value %}
+{% include 'AttuazioneControlloBundle:Controlli:menu_principale.html.twig' %}		
+{% include 'AttuazioneControlloBundle:Controlli:menu.html.twig' with {'controllo' : controllo } %}	
+
+<h4>Valutazione controllo</h4>
+
+{{ form_start(form) }}
+{{ form_row(form.esito) }}
+
+{{ form_end(form) }}
+{% endblock %}

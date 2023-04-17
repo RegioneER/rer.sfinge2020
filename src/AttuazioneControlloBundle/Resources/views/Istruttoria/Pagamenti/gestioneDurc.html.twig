@@ -1,0 +1,75 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+
+    {% if noDurc is defined %}
+        <h4>Dati non presenti</h4>
+    {% else %}
+
+        {# mostriamo i dati presenti in soggetto integrati con quelli dell'oggetto DURC #}
+        <h4>Riepilogo dati mandatario</h4>
+        <table class="table table-striped table-hover">
+
+            <tr>
+                <td style="width: 50%;">Ragione sociale</td>
+                <td><strong>{{ soggetto.denominazione}}</strong></td>
+            </tr>
+            <tr>
+                <td style="width: 50%;">Forma giuridica</td>
+                <td><strong>{{ soggetto.formagiuridica }}</strong></td>
+            </tr>	
+            <tr>
+                <td style="width: 50%;">Codice fiscale</td>
+                <td><strong>{{ soggetto.codicefiscale }}</strong></td>
+            </tr>
+            <tr>
+                <td style="width: 50%;">Partita iva</td>
+                <td><strong>{{ soggetto.partitaiva }}</strong></td>
+            </tr>
+            <tr>
+                <td style="width: 50%;">Pec</td>
+                <td><strong>{{ soggetto.emailPec }}</strong></td>
+            </tr>
+            <tr>
+                <td style="width: 50%;">Legale rappresentante</td>
+                <td><strong>{{ soggetto.Lr }}</strong></td>
+            </tr>
+
+        </table>
+
+
+
+        {% if proponenti is defined and proponenti|length > 0%}
+            <h4>Riepilogo dati altri proponenti</h4>
+            <table class="table table-striped table-hover">
+                {% for proponente in proponenti %}
+                    <tr>
+                        <td style="width: 50%;">Ragione sociale</td>
+                        <td><strong>{{ proponente.soggetto.denominazione}}</strong></td>
+                    </tr>
+                    <tr>
+                        <td style="width: 50%;">Forma giuridica</td>
+                        <td><strong>{{ proponente.soggetto.formagiuridica }}</strong></td>
+                    </tr>	
+                    <tr>
+                        <td style="width: 50%;">Codice fiscale</td>
+                        <td><strong>{{ proponente.soggetto.codicefiscale }}</strong></td>
+                    </tr>
+                    <tr>
+                        <td style="width: 50%;">Partita iva</td>
+                        <td><strong>{{ proponente.soggetto.partitaiva }}</strong></td>
+                    </tr>
+                    <tr>
+                        <td style="width: 50%;">Pec</td>
+                        <td><strong>{{ proponente.soggetto.emailPec }}</strong></td>
+                    </tr>                   
+                    <tr><td colspan=2></td></tr>
+
+                {% endfor %}
+            </table>
+        {% endif %}
+
+    {% endif %}
+
+{% endblock %}
+

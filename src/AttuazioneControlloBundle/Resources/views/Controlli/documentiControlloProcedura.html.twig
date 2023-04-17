@@ -1,0 +1,26 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	{% include 'AttuazioneControlloBundle:Controlli:menu_principale.html.twig' %}		
+	
+	<h4>Carica documento</h4>
+
+    {{ form(form) }}
+	
+	<h4>Documenti allegati durante il controllo</h4>
+    <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+        <tbody>
+			{% if controllo.documentiControllo|length > 0 %}
+				{% for documento in controllo.documentiControllo %}
+					<tr>
+						<td>{{ mostra_file(documento.documentoFile, disabled ? null : path('elimina_documento_controllo_procedura', {'id_controllo': controllo.id, 'id_documento': documento.id  }) ) }}</td>
+					</tr>
+				{% endfor %}
+			{% else %}
+				<tr><td>Nessun documento caricato</td></tr>
+			{% endif %}
+        </tbody>
+    </table>
+			
+{% endblock %}
+

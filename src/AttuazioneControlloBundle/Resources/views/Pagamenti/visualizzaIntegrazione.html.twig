@@ -1,0 +1,67 @@
+{% extends 'IstruttorieBundle:Istruttoria:base_istruttoria.html.twig' %}
+
+{% block body %}	
+
+<h4>Riepilogo integrazione</h4>
+<table class="table table-striped">
+	<tr>
+		<td style="width:30%;">Tipo</td>
+		<td><strong>{{ pagamento.integrazioneSostanziale ? "Sostanziale" : "Formale" }}</strong></td>
+	</tr>
+	{% if pagamento.notaIntegrazione is not null %}
+		<tr>
+			<td style="width:30%;">Nota</td>
+			<td><strong>{{ pagamento.notaIntegrazione }}	</strong></td>
+		</tr>
+	{% endif %}	
+</table>
+
+{% if pagamento.hasIntegrazioneGiustificativi  %}
+<h4>Giustificativi</h4>	
+<table class="table">
+	<thead>
+		<tr>
+			<th style="width:30%;">Fornitore</th>
+			<th style="width:30%;">Numero e data giustificativo</th>
+			<th style="width:40%;">Nota</th>
+		</tr>
+	</thead>
+	<tbody>
+	{% for giustificativo in pagamento.giustificativi %}
+		{% if giustificativo.integrazione %}
+		<tr>
+			<td>{{ giustificativo.denominazioneFornitore }} - {{ giustificativo.codiceFiscaleFornitore }}</td>
+			<td>{{ giustificativo.numeroGiustificativo }} - {{ giustificativo.dataGiustificativo | date('d/m/Y') }}</td>
+			<td>{{ giustificativo.notaIntegrazione }}</td>
+		</tr>
+		{% endif %}
+	{% endfor %}
+	</tbody>	
+</table>
+{% endif %}
+
+{% if pagamento.hasIntegrazioneDocumenti %}
+<h4>Documenti</h4>	
+<table class="table">
+	<thead>
+		<tr>
+			<th style="width:30%;">Tipologia</th>
+			<th style="width:30%;">Documento</th>
+			<th style="width:40%;">Nota</th>
+		</tr>
+	</thead>
+	<tbody>
+	{% for documento in pagamento.documentiPagamento %}
+		{% if documento.integrazione %}
+		<tr>
+			<td>{{ documento.documentoFile.tipologiaDocumento.descrizione }}</td>
+			<td>{{ scarica_file(documento.documentoFile) }}</td>
+			<td>{{ form_widget(form_documento.nota_integrazione) }}</td>			
+		</tr>
+		{% endif %}
+	{% endfor %}
+	</tbody>	
+</table>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+
+	{% if istruttoria is defined %}
+		{% include 'AttuazioneControlloBundle:RelazioneTecnica:Istruttoria/menu.html.twig' with {'pagamento' : pagamento } %}
+	{% else %}
+		{% include 'AttuazioneControlloBundle:RelazioneTecnica:menu.html.twig' with {'pagamento' : pagamento } %}
+	{% endif %}	
+	
+	<h4>Attrezzatura / strumentazione</h4>		
+    <div>
+        {{ form_start(form) }}
+        {{ form_end(form) }}
+    </div>
+	<script type="text/javascript">		
+		$(document).ready(function(){
+			var nota = 'Giustificare l\'utilizzo ai fini della realizzazione del progetto, indicando la quantità acquistata, il costo unitario, la quantità effettivamente utilizzata e le motivazioni in relazione alla percentuale di utilizzo effettivo, per singola attrezzatura acquistata';
+			$('textarea#attrezzatura_strumentazione_giustificazione_attrezzatura').parent('div').append('<span style="font-style: italic">' + nota + '</span>');
+		});
+		
+	</script>
+{% endblock %}

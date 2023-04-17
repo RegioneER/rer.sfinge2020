@@ -1,0 +1,235 @@
+{% extends '::base.html.twig' %}
+
+{% form_theme form _self %}
+
+{% block form_label_class -%}
+	left
+	{%- endblock form_label_class %}
+
+
+	{% block body %}
+		{% include 'AuditBundle:Audit:menu.html.twig' %}
+
+		{{ form_start(form) }}
+
+		<h4>Controllo</h4>
+		<table class="table">
+			<tbody>
+				<tr>
+					<td style="width: 25%">{{form_label(form.verificatore)}}</td>
+					<td style="width: 25%">{{form_errors(form.verificatore)}}{{form_widget(form.verificatore)}}</td>
+					<td style="width: 25%">{{form_label(form.operazione_conclusa)}}</td>
+					<td style="width: 25%">{{form_errors(form.operazione_conclusa)}}{{form_widget(form.operazione_conclusa)}}</td>						
+				</tr>
+				<tr>
+					<td style="width: 25%">{{form_label(form.sede_legale_controllo)}}</td>
+					<td style="width: 25%">{{form_errors(form.sede_legale_controllo)}}{{form_widget(form.sede_legale_controllo)}}</td>
+					<td style="width: 25%">{{form_label(form.data_sopralluogo)}}</td>
+					<td style="width: 25%">{{form_errors(form.data_sopralluogo)}}{{form_widget(form.data_sopralluogo)}}</td>						
+				</tr>	
+				<tr>
+					<td colspan="1">{{form_label(form.note)}}</td>
+					<td colspan="3">{{form_errors(form.note)}}{{form_widget(form.note)}}</td>					
+				</tr>
+			</tbody>
+		</table>
+
+		<h4>Irregolarità trasversali e spese cuscinetto</h4>
+		<table class="table">
+			<tbody>
+				<tr>
+					<td style="width: 25%">{{form_label(form.spesa_irregolare_pre_contraddittorio)}}</td>
+					<td style="width: 25%">{{form_errors(form.spesa_irregolare_pre_contraddittorio)}}{{form_widget(form.spesa_irregolare_pre_contraddittorio)}}</td>
+					<td style="width: 25%">{{form_label(form.contributo_irregolare_pre_contraddittorio)}}</td>
+					<td style="width: 25%">{{form_errors(form.contributo_irregolare_pre_contraddittorio)}}{{form_widget(form.contributo_irregolare_pre_contraddittorio)}}</td>
+				</tr>
+				<tr>
+					<td style="width: 25%">{{form_label(form.spesa_irregolare_post_contraddittorio)}}</td>
+					<td style="width: 25%">{{form_errors(form.spesa_irregolare_post_contraddittorio)}}{{form_widget(form.spesa_irregolare_post_contraddittorio)}}</td>
+					<td style="width: 25%">{{form_label(form.contributo_irregolare_post_contraddittorio)}}</td>
+					<td style="width: 25%">{{form_errors(form.contributo_irregolare_post_contraddittorio)}}{{form_widget(form.contributo_irregolare_post_contraddittorio)}}</td>
+				</tr>
+				<tr>
+					<td style="width: 25%">{{form_label(form.natura_irregolarita)}}</td>
+					<td style="width: 25%">{{form_errors(form.natura_irregolarita)}}{{form_widget(form.natura_irregolarita)}}</td>	
+					<td style="width: 25%">{{form_label(form.tipo_irregolarita)}}</td>
+					<td style="width: 25%">{{form_errors(form.tipo_irregolarita)}}{{form_widget(form.tipo_irregolarita)}}</td>				
+				</tr>
+				<tr>
+					<td style="width: 25%">{{form_label(form.spesa_cuscinetto)}}</td>
+					<td style="width: 25%">{{form_errors(form.spesa_cuscinetto)}}{{form_widget(form.spesa_cuscinetto)}}</td>	
+					<td style="width: 25%">{{form_label(form.contributo_pubblico_cuscinetto)}}</td>
+					<td style="width: 25%">{{form_errors(form.contributo_pubblico_cuscinetto)}}{{form_widget(form.contributo_pubblico_cuscinetto)}}</td>				
+
+				</tr>
+		</table>
+
+		<h4>Riepilogo controllo operazione e follow up</h4>
+		<table class="table">
+			<tbody>
+				<tr>
+					<td style="width: 25%">{{form_label(form.tot_spesa_irregolare_pre)}}</td>
+					<td style="width: 25%">{{form_errors(form.tot_spesa_irregolare_pre)}}{{form_widget(form.tot_spesa_irregolare_pre)}}</td>			
+					<td style="width: 25%">{{form_label(form.tot_contributo_irregolare_pre)}}</td>
+					<td style="width: 25%">{{form_errors(form.tot_contributo_irregolare_pre)}}{{form_widget(form.tot_contributo_irregolare_pre)}}</td>			
+				</tr>
+				<tr>
+					<td style="width: 25%">{{form_label(form.tot_spesa_irregolare_post)}}</td>
+					<td style="width: 25%">{{form_errors(form.tot_spesa_irregolare_post)}}{{form_widget(form.tot_spesa_irregolare_post)}}</td>			
+					<td style="width: 25%">{{form_label(form.tot_contributo_irregolare_post)}}</td>
+					<td style="width: 25%">{{form_errors(form.tot_contributo_irregolare_post)}}{{form_widget(form.tot_contributo_irregolare_post)}}</td>			
+				</tr>
+				<tr>
+					<td style="width: 25%">{{form_label(form.spesa_sottoposta_audit)}}</td>
+					<td style="width: 25%">{{form_errors(form.spesa_sottoposta_audit)}}{{form_widget(form.spesa_sottoposta_audit)}}</td>			
+					<td style="width: 25%">{{form_label(form.tot_errore_ada)}}</td>
+					<td style="width: 25%">{{form_errors(form.tot_errore_ada)}}{{form_widget(form.tot_errore_ada)}}</td>			
+				</tr>
+				<tr>
+					<td style="width: 25%">{{form_label(form.data_inizio_contraddittorio)}}</td>
+					<td style="width: 25%">{{form_errors(form.data_inizio_contraddittorio)}}{{form_widget(form.data_inizio_contraddittorio)}}</td>		
+					<td style="width: 25%">{{form_label(form.data_fine_contraddittorio)}}</td>
+					<td style="width: 25%">{{form_errors(form.data_fine_contraddittorio)}}{{form_widget(form.data_fine_contraddittorio)}}</td>				
+				</tr>
+
+
+			</tbody>
+		</table>
+
+
+		<h4>Elenco giustificativi selezionati</h4>
+		<table class="table table-striped table-hover table-bordered" id="organismi-elenco">
+			<thead>
+				<tr>
+					<td style="width: 10%">Numero fattura</td>
+					<td style="width: 10%">Data fattura</td>
+					<td style="width: 25%">Fornitore/personale</td>
+					<td style="width: 20%">Tipologia</td>
+					<td style="width: 12%">Importo giustificativo</td>
+					<td style="width: 12%">Importo ammesso</td>
+					<td style="width: 11%">Azioni</td>
+				</tr>
+			</thead>
+			<tbody>
+				{% for campione in campioneOperazione.campioni %}
+					<tr>
+						<td>{{ campione.giustificativo.numerogiustificativo }}</td>
+						<td>{{ campione.giustificativo.datagiustificativo is not null ? campione.giustificativo.datagiustificativo|date('d-m-Y') : '-'}}</td>
+						{% if campione.giustificativo.denominazioneFornitore is not null %}
+							<td>{{ campione.giustificativo.denominazioneFornitore }} - {{ campione.giustificativo.codiceFiscaleFornitore }}</td>
+						{% elseif campione.giustificativo.estensione.nome is defined %}
+							<td>{{ campione.giustificativo.estensione.nome }} {{ campione.giustificativo.estensione.cognome }}</td>
+						{% else %}
+							<td>-</td>
+						{% endif %}
+						{% if campione.giustificativo.tipologiagiustificativo is defined and campione.giustificativo.tipologiagiustificativo is not null %}
+							<td>{{ campione.giustificativo.tipologiagiustificativo.descrizione }}</td>
+						{% else %}
+							<td>-</td>
+						{% endif %}
+						{% if campione.giustificativo.importoGiustificativo is not null%}
+							<td style="text-align: right;">{{ campione.giustificativo.importoGiustificativo|number_format(2, ',', '.') }}</td>
+						{% else %}
+							<td style="text-align: right;">{{ campione.giustificativo.TotaleImputato|number_format(2, ',', '.') }}</td>
+						{% endif %}
+						{% if campione.giustificativo.importoapprovato is not null%}
+							<td style="text-align: right;">{{ campione.giustificativo.importoapprovato|number_format(2,',','.') }}</td>
+						{% else %}
+							<td style="text-align: right;">{{ campione.giustificativo.TotaleImputatoApprovato|number_format(2,',','.') }}</td>
+						{% endif %}
+						<td>
+							<a class="btn btn-primary btn-sm" href="{{ path("dettaglio_giustificativo_audit", {'id_campione_giustificativo': campione.id}) }}" role="button">
+								Entra <span class="fa"></span>
+							</a>
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+
+		{{ form_end(form) }}
+
+		<script type="text/javascript">
+			$(document).ready(function () {
+				//Aggiornamento importi irregolari
+				var irregolare_pre_id = '{{ form.spesa_irregolare_pre_contraddittorio.vars.id }}';
+				var tot_irregolare_pre_id = '{{ form.tot_spesa_irregolare_pre.vars.id }}';
+				var irregolare_pre = parseFloat({{ form.vars.value.calcolaIrregolarePreContraddittorioCampioni }});
+
+				aggiornaIrregolarePre();
+
+				$("#" + irregolare_pre_id).change(aggiornaIrregolarePre);
+
+				function aggiornaIrregolarePre() {
+					altro_irregolare_pre = parseFloat($("#" + irregolare_pre_id).val().deformatMoney());
+					$("#" + tot_irregolare_pre_id).val((altro_irregolare_pre + irregolare_pre).formatMoney());
+				}
+
+				var irregolare_post_id = '{{ form.spesa_irregolare_post_contraddittorio.vars.id }}';
+				var tot_irregolare_post_id = '{{ form.tot_spesa_irregolare_post.vars.id }}';
+				var irregolare_post = parseFloat({{ form.vars.value.calcolaIrregolarePostContraddittorioCampioni }});
+
+				aggiornaIrregolarePost();
+
+				$("#" + irregolare_post_id).change(aggiornaIrregolarePost);
+
+				function aggiornaIrregolarePost() {
+					altro_irregolare_post = parseFloat($("#" + irregolare_post_id).val().deformatMoney());
+					$("#" + tot_irregolare_post_id).val((altro_irregolare_post + irregolare_post).formatMoney());
+				}
+				//Fine aggiornamento importi irregolari
+
+				//Aggiornamento contributi irregolari
+				var contributo_pre_id = '{{ form.contributo_irregolare_pre_contraddittorio.vars.id }}';
+				var tot_contributo_pre_id = '{{ form.tot_contributo_irregolare_pre.vars.id }}';
+				var contributo_pre = parseFloat({{ form.vars.value.calcolaContributoPreContraddittorioCampioni }});
+
+				aggiornaContributoPre();
+
+				$("#" + contributo_pre_id).change(aggiornaContributoPre);
+
+				function aggiornaContributoPre() {
+					altro_contributo_pre = parseFloat($("#" + contributo_pre_id).val().deformatMoney());
+					$("#" + tot_contributo_pre_id).val((altro_contributo_pre + contributo_pre).formatMoney());
+				}
+
+				var contributo_post_id = '{{ form.contributo_irregolare_post_contraddittorio.vars.id }}';
+				var tot_contributo_post_id = '{{ form.tot_contributo_irregolare_post.vars.id }}';
+				var contributo_post = parseFloat({{ form.vars.value.calcolaContributoPostContraddittorioCampioni }});
+				var cuscinetto_id = '{{ form.contributo_pubblico_cuscinetto.vars.id }}';
+				var errore_ada_id = '{{ form.tot_errore_ada.vars.id }}';
+
+				aggiornaContributoPost();
+
+				$("#" + contributo_post_id).change(aggiornaContributoPost);
+
+				function aggiornaContributoPost() {
+					altro_contributo_post = parseFloat($("#" + contributo_post_id).val().deformatMoney());
+					$("#" + tot_contributo_post_id).val((altro_contributo_post + contributo_post).formatMoney());
+					aggiornaErroreAda();
+				}
+				//Fine aggiornamento contributi irregolari
+
+				//Aggiornamento errore ada
+				aggiornaErroreAda();
+
+				$("#" + cuscinetto_id).change(aggiornaErroreAda);
+				debugger;
+				function aggiornaErroreAda() {
+					cuscinetto = parseFloat($("#" + cuscinetto_id).val().deformatMoney());
+					contributo = parseFloat($("#" + tot_contributo_post_id).val().deformatMoney());
+					valore = contributo - cuscinetto;
+					if (valore < 0)
+						valore = 0;
+					$("#" + errore_ada_id).val((valore).formatMoney());
+				}
+				//Fine aggiornamento contributi irregolari
+
+			});
+		</script>
+		<script>
+		CKEDITOR.replace( 'controllo_operazione_note' , {
+			customConfig: '{{ asset('js/ckeditor-config.js') }}'
+		});
+	</script>
+	{% endblock %}

@@ -1,0 +1,29 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+{% if not sediAssociabili %}
+	<div class="alert alert-info" role="alert">
+		&Egrave; necessario inserire una nuova 
+		UL&nbsp;/&nbsp;d&apos;intervento sede prima di procedere 
+		al cambio
+	</div>
+{% endif %}
+	<div class="alert alert-info" role="alert">
+		Se la sede non &egrave; presente in elenco, &egrave; 
+		possibile censirne una utilizzando il pulsante <em>"Aggiungi sede"</em>.
+	</div>
+	<div class="btn-group">
+		<a class="btn btn-primary"
+		href="{{- path('soggetto_aggiungi_sede_operativa', { 
+			id_soggetto: variazione.richiesta.soggetto.id, 
+			referer: app.request.uri
+			}) 
+		-}}">
+		<i class="fas fa-plus"></i>&nbsp;Aggiungi sede
+		</a>
+	</div>
+
+{% if sediAssociabili %}
+	{{ form(form) }}
+{% endif %}
+{% endblock %}

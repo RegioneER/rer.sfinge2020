@@ -1,0 +1,37 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+ 
+    <table class="table table-striped table-hover table-bordered" id="faq">
+		<thead>
+			<tr>
+				<th>Id</th>
+				<th>Titolo</th>
+				<th>Testo</th>
+				<th>Data Inserimento</th>
+				<th>Azioni</th>
+			</tr>
+		</thead>
+		<tbody>
+		    {% for f in faq %}
+				<tr>
+					<td>{{ f.id }}</td>
+					<td>{{ f.titolo }}</td>
+					<td>{{ f.testo }}</td>
+					<td>{% if f.dataInserimento %}{{ f.dataInserimento|date('d-m-Y') }}{% endif %}</td>
+					<td><div class="dropdown">
+							<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuNotizie" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								Azioni
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenuNotizie">
+								<li><a href="{{ path('modifica_faq', { 'id_faq': f.id }) }}">Modifica</a></li>
+								<li><a href="{{ path('elimina_faq', {'id_faq':f.id, '_token': csrfToken }) }}">Elimina</a></li>
+							</ul>
+						</div>
+					</td>
+				</tr>
+		    {% endfor %}
+		</tbody>
+	</table>
+{% endblock %}

@@ -1,0 +1,98 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+
+	{% if giustificativo.estensione is not null  %}
+		{% set tipo = giustificativo.tipologiagiustificativo.codice %}
+		{% if tipo == '1' or tipo == '2' or tipo == '3' %}
+			<h4>Giustificativo personale: {{giustificativo.estensione.nome}} {{giustificativo.estensione.cognome}}</h4>
+		{% elseif tipo == '4L' %}
+			{% if giustificativo.estensione.numeroprimafattura is defined and giustificativo.estensione.numeroultimafattura is defined %} 
+				{% set numerifatture = giustificativo.estensione.numeroprimafattura~' - '~giustificativo.estensione.numeroultimafattura %}
+			{% else %}
+				{% set numerifatture = '-' %}
+			{% endif %}
+			{% if giustificativo.estensione.dataprimafattura is defined and giustificativo.estensione.dataultimafattura is defined %} 
+				{% set datefatture = giustificativo.estensione.dataprimafattura|date('d/m/Y')~' - '~giustificativo.estensione.dataultimafattura|date('d/m/Y') %}
+			{% else %}
+				{% set datefatture = '-' %}
+			{% endif %}
+			<h4>Giustificativo fornitore: {{giustificativo.denominazionefornitore}} - Fatture {{numerifatture}} del {{datefatture}} </h4>
+		{% elseif tipo == '4A' %}
+			{% if giustificativo.numerogiustificativo is defined  %} 
+				{% set numerifatture = giustificativo.numerogiustificativo %}
+			{% else %}
+				{% set numerifatture = '-' %}
+			{% endif %}
+			{% if giustificativo.datagiustificativo is defined  %} 
+				{% set datefatture = giustificativo.datagiustificativo|date('d/m/Y') %}
+			{% else %}
+				{% set datefatture = '-' %}
+			{% endif %}
+			<h4>Giustificativo fornitore: {{giustificativo.denominazionefornitore}} - Fattura {{numerifatture}} del {{datefatture}} </h4>
+		{% else %}
+			<h4>Giustificativo fornitore: {{giustificativo.denominazionefornitore}} - n. {{giustificativo.numerogiustificativo}}</h4>
+		{% endif %}	
+	{% endif %}	
+	
+	{% if istruttoria is not defined %}	
+		{{ mostra_validazione_giustificativo('documenti_giustificativo', path('dettaglio_giustificativo', {'id_giustificativo':giustificativo.id}), "Giustificativi", giustificativo) }}
+	{% endif %}	
+	
+	{% if form is not null %}
+		<div class="form-body">
+			<h4>Carica documento</h4>
+			{% set cg = giustificativo.tipologiagiustificativo.codice %}
+			{% if is_saldo is defined and is_saldo == true and (is_ben_scorr_saldo is not defined or is_ben_scorr_saldo != true) %}
+				{% if cg == 1 %}										
+					{% if giustificativo.estensione.ricercatore is defined and giustificativo.estensione.ricercatore is not null %}
+					<div class="alert alert-warning">
+						<i class="fa fa-exclamation-triangle"></i>
+						<b>ATTENZIONE!</b> Nel caso di personale già rendicontato nel SAL il documento 'Dichiarazione costo orario' non è obbligatorio. In questo caso è necessario spuntare, qualora non sia stato già fatto, la voce 'Personale già rendicontato in fase di SAL e non sono intervenute modifiche' da questa 					
+						<a href="{{path('modifica_ricercatore', {'id_ricercatore': giustificativo.estensione.ricercatore.id})}}" target="_blank">pagina <i class="fa fa-external-link"></i></a> e salvare la modifica.
+					</div>	
+					<br>
+					{% else %}
+						{#Nel caso di personale già rendicontato nel SAL il documento 'Dichiarazione costo orario' non è obbligatorio.#}
+					{% endif %}								
+				{% endif %}
+				{% if cg == 2 or cg == 3 %}
+					<div class="alert alert-warning">
+						<i class="fa fa-exclamation-triangle"></i>
+						<b>ATTENZIONE!</b> La dichiarazione del costo orario  è da compilare solo per il personale non rendicontato in SAL.
+					</div>	
+					<br>					
+				{% endif %}
+			{% endif %}
+
+			{{ form(form) }}
+	    </div>
+	{% endif %}			
+
+	<h4>Elenco documenti caricati</h4>
+	{% if documenti is not empty %}
+    <div class="form-body">	
+		{% for documento in documenti %}
+			{% if not is_richiesta_disabilitata and is_granted('ROLE_UTENTE')%}
+				{% if nascondi_elimina is defined and nascondi_elimina == true %}
+					{{ mostra_file(documento.documentoFile, null) }}
+				{% else %}
+					{{ mostra_file(documento.documentoFile, path('elimina_documento_giustificativo_2', {'id_documento_giustificativo': documento.id,'id_giustificativo': giustificativo.id, '_token': csrfToken, mostra_elimina: true}) ) }}
+				{% endif %}
+			{% else %}			
+            	{{ mostra_file(documento.documentoFile, null )}}
+			{% endif %}			
+            <br/>
+		{% endfor %}
+    </div>
+	{% else %}
+		<h6>Nessun documento caricato</h6>
+	{% endif %}
+	<div class="page-actions">
+		{% if istruttoria is not defined %}
+			{{ pulsante_indietro(path("elenco_giustificativi",{"id_pagamento":id_pagamento})) }}
+		{% else %}
+			{{ pulsante_indietro(path("elenco_giustificativi_istruttoria",{"id_pagamento":id_pagamento})) }}
+		{% endif %}	
+	</div>
+{% endblock %}

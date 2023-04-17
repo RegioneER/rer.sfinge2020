@@ -1,0 +1,101 @@
+{# empty Twig template #}
+{% macro proponente(proponente) %}
+   {% set azienda = proponente.soggetto %}
+
+    Ragione sociale <b>{{ azienda.denominazione }}</b><br/>
+    Indirizzo sede legale - <b>{{ azienda.via }} {{ azienda.civico }} {{ azienda.localita }}</b> c.a.p.  <b> {{ azienda.cap }}</b>
+   {% if azienda.comune is not null %}
+          Comune <b>{{ azienda.comune.denominazione }}</b> Prov <b>{{ azienda.provincia.siglaAutomobilistica }}</b><br/>
+   {% endif %}
+   {% if azienda.comuneEstero is not null %}
+          Città (estera) <b>{{ azienda.comuneEstero }}</b> 
+          {% if azienda.provinciaEstera is not null %}Provincia / Regione (estera) <b>{{ azienda.provinciaEstera }}</b>{% endif %} , Stato <b>{{ azienda.stato }}</b><br/>
+   {% endif %}		 
+   Codice fiscale <b>{{ azienda.codiceFiscale }}</b> P. IVA <b>{{ azienda.partitaiva }}</b><br/>
+   n. REA Repertorio Economico Amministrativo <b>{{ azienda.rea ? azienda.rea : "-" }}</b>, presso Camera di Commerico di <b>{{ azienda.ccia ? azienda.ccia : "-" }}</b><br/>
+   Attiva nel settore con cod. ATECO 2007 primario <b>{{ azienda.codiceAteco ?  azienda.codiceAteco : "-" }}</b>
+   {% if proponente.sedi | length > 0 %}
+       
+       {% set sede = proponente.sedi[0].sede %}
+       <br/>
+       Indirizzo della sede in cui si realizza il progetto, se diverso dalla sede legale 
+           {% if sede.indirizzo.comune is not null %}
+               <b>{{sede.indirizzo.via}}, {{sede.indirizzo.numerocivico}} {{ sede.indirizzo.comune.denominazione }} ({{ sede.indirizzo.comune.provincia.siglaAutomobilistica }}) </b>
+           {% else %}
+               <b>{{sede.indirizzo.via}}, {{sede.indirizzo.numerocivico}} {{sede.indirizzo.comuneEstero}} ({{sede.indirizzo.provinciaEstera}}) {{sede.indirizzo.stato.denominazione}}
+           {% endif %}
+    {% endif %}
+     
+    
+{% endmacro %}
+
+{% macro stampaValore(istanza_fascicolo, value)%}
+{% import '@Richieste/Pdf/macro/macro_richiesta.html.twig' as macro_richiesta %}
+  
+    <p>
+        {{ macro_richiesta.label_frammento(istanza_fascicolo,value) }}
+         <b>{{ macro_richiesta.dato_frammento(istanza_fascicolo,value) }}</b>
+    </p>
+{% endmacro %}
+
+{% macro checkVariabile(value) %}
+{{value ? 'X' : ''}}
+{% endmacro %}
+
+{% macro tabellaCheckBox(label, value) %}
+    {% import _self as self %}
+    <table class="singolo-checkbox">
+        <tbody>
+            <tr>
+                <td>
+                    {{ label }}
+                </td>
+                <td>
+                    {{ self.checkVariabile(value) }}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+{% endmacro %}
+
+{% macro tabellaValue(label, value) %}
+    <table>
+        <tbody>
+            <tr>
+                <td >{{ label }}</td>
+                <td  style="text-align:center; vertical-align: middle;">
+                        {{value}}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+
+{% endmacro %}
+
+{% macro sezionePianoCosto(titolo, sezione) %}
+    <div>
+    <h4>{{titolo}}</h4>
+    <table>
+        <thead>
+            <tr>
+                <th>Voce</th>
+                <th>Azione 1</th>
+                <th>Azione 2</th>
+                <th>Azione 3</th>
+                <th>Azione 4</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for label_voce, voce in sezione %}
+                <tr>
+                    <td>{{label_voce}}</td>
+                    {% for elemento in voce %}
+                        <td>{{elemento| number_format(2,',','.')}}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+{% endmacro %}

@@ -1,0 +1,22 @@
+{% macro checkbox(value, label) %}
+    <table width="100%">
+        <tr>
+            <td width="95%">{{ label|raw }}</td>
+            <td width="5%" align="center" valign="MIDDLE">
+                {% if( value ) %}
+                    X
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+{% endmacro %}
+
+{% macro bool2text(input) %}
+    {% if input %}
+        S&igrave;
+    {% else %}
+        No
+    {% endif %}
+{% endmacro %}
+
+

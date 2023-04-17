@@ -1,0 +1,42 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	
+	<h4>{{asse.titolo}}</h4>	
+	
+	{% for au in asse.autoritaurbane %}
+		
+		{% set azioni_au = au.azioniautoritaurbana %}
+		
+		{% if azioni_au|length > 0 %}
+			
+			<h6>{{au.titolo}}</h6>
+
+				<table class="table table-striped table-hover table-bordered">
+					<thead>
+						<tr>
+							<th>Azione</th>
+							<th>Numero allegati</th>
+							<th>Gestisci</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for az in azioni_au %}
+							<tr>
+								<td>{{ az.titolo }}</td>
+								<td>{{ az.allegati|length }}</td>
+								<td>
+									<a class="btn btn-info dropdown-toggle" href="{{path('gestione_allegati_autorita_urbane', {'id_asse': asse.id , 'id_autorita_urbana': au.id,'id_azione_au': az.id})}}">Gestisci</a>
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+
+				<br><br>	
+			
+		{% endif %}
+			
+	{% endfor %}	
+	
+{% endblock %}	

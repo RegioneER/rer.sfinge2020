@@ -1,0 +1,58 @@
+{% extends '::base.html.twig' %}
+
+{% block intestazione %}
+    {{ parent() }}
+    {{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(form) }}
+    <div>
+        <h4>
+            Denominazione attività
+        </h4>
+        {{ form_row(form.denominazione) }}
+    </div>
+    
+    <div>
+        <h4>
+            Indirizzo unità locale
+        </h4>
+
+        {{ form_row(form.indirizzo) }}
+        <br/>
+    </div>
+
+
+    <div>
+        <h4>
+            Tipologia di unità locale
+        </h4>
+        {{ form_row(form.tipologia) }}
+    </div>
+    
+    <div>
+        <h4>
+            Importi
+        </h4>
+        {{ form_row(form.importoFinanziamento) }}
+        {{ form_row(form.importoSede) }}
+        {{ form_row(form.contributoSede) }}
+    </div>
+
+    <div>
+        <h4>
+            Autodichiarazioni
+        </h4>
+        {{ form_row(form.autodichiarazione) }}
+    </div>
+
+    {{ form_end(form) }}
+
+{% endblock %}
+
+{% block  jquery_page_document_ready %}
+    {% set vars = {'indirizzo': 'sede_indirizzo', 'form' : form.indirizzo } %}
+    {% include "BaseBundle:Base:province_comuni_js.html.twig" with vars %}
+{% endblock %}

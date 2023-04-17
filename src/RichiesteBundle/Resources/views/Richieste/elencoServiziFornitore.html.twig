@@ -1,0 +1,52 @@
+{% extends '::base.html.twig' %}
+
+{% block intestazione %}
+	{{ parent() }}
+	{{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% block body %}
+
+	{{ mostra_validazione('dati_fornitori') }}
+
+	{% if is_richiesta_disabilitata == false %}
+		<a href="{{ path("crea_fornitore_servizio",{"id_richiesta":id_richiesta, "id_fornitore": fornitore.id}) }}" class="btn btn-primary"><i class="fa fa-plus"></i> Aggiungi servizio</a>
+	{% endif %}
+
+	<h4>Elenco servizi</h4>
+    <table class="table table-striped table-hover table-bordered" id="proponenti-elenco">
+        <thead>
+            <tr>
+				<th>Tipologia</th>
+				<th>Costo</th>
+				<th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+			{% for servizio in servizi %}
+				<tr>
+                    <td>{{ servizio.tipologiaServizio.descrizione }}</td>
+                    <td>{{ servizio.costo|number_format(2,',', '.') }}</td>
+                    <td><div class="dropdown">
+							<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								Azioni
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+								<li><a href="{{ path('visualizza_fornitore_servizio', {'id_richiesta':id_richiesta, 'id_fornitore': servizio.fornitore.id, 'id_fornitore_servizio':servizio.id}) }}">Visualizza</a></li>
+								{% if is_richiesta_disabilitata == false %}
+									<li><a href="{{ path('modifica_fornitore_servizio', {'id_richiesta':id_richiesta, 'id_fornitore': servizio.fornitore.id, 'id_fornitore_servizio':servizio.id}) }}">Modifica</a></li>								
+									<li><a href="{{ path('elimina_fornitore_servizio', {'id_richiesta':id_richiesta, 'id_fornitore': servizio.fornitore.id, 'id_fornitore_servizio':servizio.id}) }}">Elimina</a></li>
+								{% endif %}
+							</ul>
+						</div>
+					</td>
+				</tr>
+			{% endfor %}
+        </tbody>
+    </table>
+	<div class="page-actions">
+		{{ pulsante_indietro(path("elenco_fornitori", {"id_richiesta":id_richiesta})) }}
+	</div>
+
+{% endblock %}

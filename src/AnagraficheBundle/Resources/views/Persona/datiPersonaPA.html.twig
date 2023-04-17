@@ -1,0 +1,19 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+
+	{{ form_start(form) }}
+
+		<h4>Dati personali</h4>
+
+		{{ form_row(form.nome) }}
+		{{ form_row(form.cognome) }}
+		
+
+		<h4>Recapito principale</h4>
+		{{ form_row(form.telefono_principale) }}
+		{{ form_row(form.email_principale) }}
+		
+		{{ form_end(form) }}
+
+{% endblock %}
+

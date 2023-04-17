@@ -1,0 +1,21 @@
+
+{% macro bool2text(input) %}
+    {% if input %}
+        S&igrave;
+    {% else %}
+        No
+    {% endif %}
+{% endmacro %}
+
+
+{% macro rigaTable(istanza, label)%}
+
+    <p class="text-medium">{{label_frammento(istanza, label)}}:<b>{{dato_frammento(istanza, label)}}</b></p>
+
+{% endmacro %}
+
+{% macro rigaElenco(istanza, label)%}
+
+    <li><p class="text-medium">{{label_frammento(istanza, label)}}</p></li>
+
+{% endmacro %}

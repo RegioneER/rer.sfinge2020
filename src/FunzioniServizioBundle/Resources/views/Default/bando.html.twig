@@ -1,0 +1,87 @@
+{% extends '::base.html.twig' %}
+
+    {% block body %}
+        <p class="lead">Selezionare il progetto da verificare.</p>
+
+        {% if bando.elenco_progetti|length %}
+            <table class="table table-hover table-bordered" id="dettaglio-progetto">
+                <tbody>
+                <tr>
+                    <td width="200px" class="bold">Id bando</td>
+                    <td>{{ bando.id_bando }}</td>
+                </tr>
+                <tr>
+                    <td width="200px" class="bold">Titolo bando</td>
+                    <td>{{ bando.titolo }}</td>
+                </tr>
+                <tr>
+                    <td width="200px" class="bold">Nr. delibera</td>
+                    <td>{{ bando.numero_delibera }}</td>
+                </tr>
+                <tr>
+                    <td width="200px" class="bold">Data delibera</td>
+                    <td>{{ bando.data_delibera|date('d/m/Y') }}</td>
+                </tr>
+                </tbody>
+            </table>
+            <br />
+            <input type="text" class="form-control" placeholder="Cerca tra i progetti..." id="search_field">
+            <br />
+            <table class="table table-striped table-hover table-bordered" id="bandi-elenco">
+                <thead>
+                <tr class="myHead">
+                    <th>ID</th>
+                    <th>Protocollo</th>
+                    <th>Data Protocollo</th>
+                    <th>Beneficiario</th>
+                    <th>Codice fiscale Beneficiario</th>
+                    <th>P. IVA Beneficiario</th>
+                    <th>Azioni</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for progetto in bando.elenco_progetti %}
+                    <tr>
+                        <td>{{ progetto.id_progetto }}</td>
+                        <td>{{ progetto.numero_protocollo }}</td>
+                        <td>{{ progetto.data_protocollo|date('d/m/Y') }}</td>
+                        <td>{{ progetto.beneficiario }}</td>
+                        <td>{{ progetto.codice_fiscale }}</td>
+                        <td>{{ progetto.partita_iva }}</td>
+                        <td>
+                            <a class="btn btn-info btn-sm" href="{{ path('funzioni_servizio_progetto', {'idBando': bando.id_bando, 'idProgetto': progetto.id_progetto, 'piattaforma': bando.piattaforma}) }}" role="button">
+                                Seleziona <span class="fa fa-arrow-right"></span>
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="row">
+                <div class="col-md-12">
+                    <p>Nessun progetto disponibile</p>
+                </div>
+            </div>
+        {% endif %}
+        <a type="button" class="btn btn-default" href="{{ path('funzioni_servizio_index') }}">Ritorna</a></li>
+    {% endblock %}
+
+{% block  jquery_page_document_ready %}
+    <script>
+        $('#search_field').on('keyup', function() {
+            var value = $(this).val();
+            var patt = new RegExp(value, "i");
+
+            $('#bandi-elenco').find('tr').each(function() {
+                if (!($(this).find('td').text().search(patt) >= 0)) {
+                    $(this).not('.myHead').hide();
+                }
+                if (($(this).find('td').text().search(patt) >= 0)) {
+                    $(this).show();
+                }
+
+            });
+        });
+    </script>
+{% endblock %}

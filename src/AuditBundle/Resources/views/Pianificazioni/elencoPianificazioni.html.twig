@@ -1,0 +1,41 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	{% include 'AuditBundle:Audit:menu.html.twig' %}
+
+	<h4>Pianificazioni {{ pianificazioni[0].tipo.descrizione }}</h4>
+	<table class="table table-striped table-hover table-bordered" id="organismi-elenco">
+		<thead>
+			<tr>
+				<td style="width: 90%">Periodo</td>
+				<td style="width: 10%">Azioni</td>
+			</tr>
+		</thead>
+		<tbody>
+			{% for pianificazione in pianificazioni%}
+				<tr>
+					<td>{{pianificazione.periodocontabile}}</td>
+					<td>
+						{% if pianificazione.tipo.codice == 'ADS' %}
+							<a class="btn btn-primary btn-sm" href="{{ path("elenco_pianificazioni_organismo", {'id_pianificazione': pianificazione.id}) }}" role="button">
+								Gestione <span class="fa"></span>
+							</a>
+						{% elseif pianificazione.tipo.codice == 'ADO' %}
+							<a class="btn btn-primary btn-sm" href="{{ path("elenco_audit_operazione", {'id_pianificazione': pianificazione.id}) }}" role="button">
+								Gestione <span class="fa"></span>
+							</a>
+						{% elseif pianificazione.tipo.codice == 'STR' %}
+							<a class="btn btn-primary btn-sm" href="{{ path("allegati_strategie", {'id_pianificazione': pianificazione.id}) }}" role="button">
+								Strategia <span class="fa"></span>
+							</a>
+						{% else %}
+							<a class="btn btn-primary btn-sm" href="{{ path("elenco_pianificazioni_organismo", {'id_pianificazione': pianificazione.id}) }}" role="button">
+								Gestione <span class="fa"></span>
+							</a>
+						{% endif %}
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>			
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	{% if istanzeFascicolo|length > 0 %}
+    <table class="table table-striped table-hover table-bordered" id="notizie-elenco">
+        <thead>
+            <tr>
+				<th>Istanza Fascicolo</th>
+                <th>Titolo Pagina Indice</th>
+				<th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+			{% for istanzaFascicolo in istanzeFascicolo %}
+				<tr>
+					<td>{{ istanzaFascicolo.id }}</td>
+					<td>{{ istanzaFascicolo.fascicolo.indice.titolo }}</td>
+					<td><div class="dropdown">
+							<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuIstanzaFascicolo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								Azioni
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenuIstanzaFascicolo">
+								<li><a href="{{ path('istanza_pagina', {'id_istanza_pagina':istanzaFascicolo.indice.id}) }}">Modifica</a></li>
+								<li><a href="{{ path('visualizza_istanza_fascicolo_tree', {'id_istanza_fascicolo':istanzaFascicolo.id}) }}">Visualizza (tree)</a></li>
+								<li><a href="{{ path('visualizza_istanza_fascicolo_flat', {'id_istanza_fascicolo':istanzaFascicolo.id}) }}">Visualizza (flat)</a></li>
+								<li><a href="{{ path('elimina_istanza_fascicolo', {'id_istanza_fascicolo':istanzaFascicolo.id, '_token': csrfToken }) }}">Elimina</a></li>
+							</ul>
+						</div>
+					</td>
+				</tr>
+			{% endfor %}
+        </tbody>
+    </table>
+	{% endif %}
+{% endblock %}

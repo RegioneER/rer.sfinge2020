@@ -1,0 +1,47 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+
+	<h4>Dati bancari</h4>
+
+	{% for datiBancariProponente in datiBancariProponenti %}
+		<div>
+			<h5>{{ datiBancariProponente.proponente.soggetto.denominazione }}</h5>
+			<table class="table table-striped table-hover table-bordered">
+				<tr>
+					<td>Banca</td>
+					<td><strong>{{ datiBancariProponente.banca }}</strong></td>
+				</tr>
+				<tr>
+					<td>Agenzia</td>
+					<td><strong>{{ datiBancariProponente.agenzia }}</strong></td>
+				</tr>
+				<tr>
+					<td>Intestatario</td>
+					<td><strong>{{ datiBancariProponente.intestatario }}</strong></td>
+				</tr>
+				{% if datiBancariProponente.contoTesoreria %}
+					<tr>
+						<td>Conto di tesoreria</td>
+						<td><strong>{{ datiBancariProponente.contoTesoreria ? datiBancariProponente.contoTesoreria : '-' }}</strong></td>
+					</tr>
+				{% else %}
+					<tr>
+						<td>IBAN</td>
+						<td><strong>{{ datiBancariProponente.iban ? datiBancariProponente.iban : '-' }}</strong></td>
+					</tr>
+				{% endif %}
+			</table>
+		</div>
+				
+		<br>
+
+	{% endfor %}
+	
+	{% if istruttoria is defined %}
+		<h4>Istruttoria</h4>
+		{{ form_start(form_istruttoria) }}
+		{{ form_end(form_istruttoria) }}
+	{% endif %}	
+		
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+	{% include 'AttuazioneControlloBundle:PA/Richieste:menu.html.twig' with {'attuazione_controllo' : richiesta.attuazionecontrollo }%}	
+	
+	<h4>Comunicazioni</h4>
+	{% if not is_granted('ROLE_CONSULENTE_FESR') and not is_granted('ROLE_OPERATORE_COGEA')  %}	
+		<a class="btn btn-primary" href="{{ path('crea_comunicazione_attuazione', {'id_richiesta' : richiesta.id }) }}">Crea comunicazione</a>
+	{% endif %}
+	<br/><br/>
+	{% if richiesta.comunicazioniattuazione | length > 0 %}
+		<table class="table">
+			<thead>
+				<tr>
+					<th style="width: 20%">Data inserimento</th>
+					<th style="width: 20%">Stato</th>
+					<th style="width: 20%">Protocollo</th>
+					<th style="width: 20%">Data risposta</th>
+					<th style="width: 20%">Azioni</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for comunicazione in richiesta.comunicazioniattuazione %}
+					{% if comunicazione.tipooggetto == 'ATTUAZIONE'%}
+					<tr>
+						<td>{{ comunicazione.data | date('d/m/Y') }}</td>
+						<td>{{ comunicazione.statoleggibile }}</td>
+						<td>{{ comunicazione.protocollocomunicazione }}</td>
+						<td>{{ comunicazione.risposta is null or comunicazione.risposta.data is null ? "-" : comunicazione.risposta.data | date('d/m/Y') }}</td>
+						{% if comunicazione.stato.codice != 'COM_PROTOCOLLATA' and not is_granted('ROLE_CONSULENTE_FESR') and not is_granted('ROLE_OPERATORE_COGEA')%}
+							<td><a class="btn btn-primary" href="{{ path('gestione_comunicazione_attuazione', {'id_comunicazione' : comunicazione.id}) }}">Gestione</a></td>
+						{% else %}
+							<td><a class="btn btn-primary" href="{{ path('dettaglio_comunicazione_attuazione_pa', {'id_comunicazione' : comunicazione.id, 'da_comunicazione' : 'true'}) }}">Dettagli</a></td>
+						{% endif %}
+					</tr>
+					{% endif %}
+				{% endfor %}
+			</tbody>		
+		</table>
+	{% else %}
+		Nessuna comunicazione
+	{% endif %}
+{% endblock %}

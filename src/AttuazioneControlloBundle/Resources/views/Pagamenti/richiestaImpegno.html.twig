@@ -1,0 +1,45 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+<h4>Impegno</h4>
+	{{ form(form) }}
+
+<h4>Allegati</h4>
+	{{form(formDoc)}}
+
+{% set documenti = form.vars.value.documenti %}
+{% if documenti|length > 0 %}
+<table class="table table-striped table-hover table-bordered">
+	<thead>
+		<tr>
+			<th>Documento</th>
+			<th>Azioni</th>
+		</tr>
+	</thead>
+	<tbody>
+	{% for documento in documenti %}
+		{% set file = documento.documento %}
+		<tr>
+			<td>{{ file.nome }}</td>
+			<td>
+				{% if form.vars.disabled == false %}
+					<div class="pull-right">
+						<a href="{{- path('elimina_documento_impegno',{
+								id_pagamento: pagamento.id,
+								id_documento: documento.id,
+								_token: csrfToken
+							}) 
+						-}}" title="Elimina Documento" class="btn btn-sm btn-danger" data-confirm="Eliminare il documento selezionato?">
+							Elimina
+						</a>
+					</div>
+				{% endif %}
+			</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+{% endif %}
+
+
+{% endblock %}

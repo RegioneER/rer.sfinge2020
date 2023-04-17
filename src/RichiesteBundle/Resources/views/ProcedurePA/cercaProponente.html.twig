@@ -1,0 +1,49 @@
+{% extends '::base.html.twig' %}
+
+{% block intestazione %}
+    {{ parent() }}
+    {{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% block body %}
+
+<h4>Proponenti trovati</h4>
+    <div>
+        {{ form(form) }}
+    </div>
+<table class="table table-striped table-hover table-bordered">
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Denominazione</th>
+        <th>Partita Iva</th>
+        <th>Codice fiscale</th>
+        <th>Azioni</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for soggetto in soggetti %}
+        <tr>
+            <td>{{ soggetto.id }}</a></td>
+            <td>{{ soggetto.denominazione }}</a></td>
+            <td>{{ soggetto.partitaiva }}</a></td>
+            <td>{{ soggetto.codicefiscale }}</a></td>
+            <td>
+				{% if is_granted('ROLE_UTENTE_PA') %}
+					<a class="btn btn-info btn-sm" href="{{ path("procedura_pa_sezione", {nome_sezione:'proponente', 'parametro1': 'aggiungi_proponente', 'parametro2':soggetto.id, 'id_richiesta':id_richiesta,}) }}" role="button">
+						Seleziona <span class="fa fa-arrow-right"></span>
+					</a>
+				{% endif %}
+			</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+    {# display navigation #}
+    <div class="navigation">
+        {{ knp_pagination_render(soggetti) }}
+    </div>
+    <div class="page-actions">
+        
+    </div>
+{% endblock %}

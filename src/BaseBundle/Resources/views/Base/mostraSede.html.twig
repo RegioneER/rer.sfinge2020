@@ -1,0 +1,49 @@
+{% set loc = "" %}
+{% if sede.indirizzo.localita is not null %}
+    {% set loc = '- loc. ' ~ sede.indirizzo.localita %}
+{% endif %}
+
+{% set sedeEstero = false %}
+{% if  sede.indirizzo is not null and  sede.indirizzo.stato.codicecompleto != '11101' %}
+    {%  set sedeEstero = true %}
+{% endif %}
+
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-striped table-hover table-bordered">
+            <tr>
+                <th colspan="2">Dati Sede</th>
+            </tr>
+            {% if sede.denominazione is not null %}
+            <tr>
+                <td>Nome sede</td><td>{{ sede.denominazione }}</td>
+            </tr>
+            {% endif %}
+            <tr>
+                <td>Indirizzo</td><td>{{ sede.indirizzo.via }} {{ sede.indirizzo.numeroCivico }} {{ loc }}</td>
+            </tr>
+            <tr>
+                <td>Cap</td><td>{{ sede.indirizzo.cap }}</td>
+            </tr>
+            <tr>
+                <td>Comune</td>
+				<td>
+                    {% if sedeEstero == true %}
+                        {{ sede.indirizzo.comuneEstero }} ({{ sede.indirizzo.provinciaEstera }})
+                    {% else %}
+                        {{ sede.indirizzo.comune }} ({{ sede.indirizzo.comune.provincia.siglaAutomobilistica }})
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td>Codice ATECO</td><td>{{ sede.ateco }}</td>
+            </tr>
+            <tr>
+                <td>Numero REA</td><td>{{ sede.numeroRea }}</td>
+            </tr>
+            {# 11/01/2016: Lascio i dati aggiuntivi in caso di future estensioni delle sedi, al momento non sembrano previste. #}
+            {%  block dati_aggiuntivi %}
+            {% endblock %}
+        </table>
+    </div>
+</div>

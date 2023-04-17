@@ -1,0 +1,38 @@
+{% extends '::base.html.twig' %}
+
+{% block intestazione %}
+	{{ parent() }}
+	{{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% block body %}
+
+	{{ mostra_validazione('documenti_proponente', id_proponente) }}
+
+	{% if form is not null %}
+		<div class="form-body">
+			<h4>Carica documento</h4>
+			{{ form(form) }}
+	    </div>
+		<br/>
+	{% endif %}
+ 	
+	<h4>Elenco documenti caricati</h4>
+	{% if documenti is not empty %}
+    <div class="form-body">		
+		{% for documento in documenti %}
+			{% if not is_richiesta_disabilitata and is_granted('ROLE_UTENTE') %}
+            	{{ mostra_file(documento.documentoFile, path('elimina_documento_proponente', {'id_documento_proponente': documento.id,'id_richiesta': id_richiesta, '_token': csrfToken }) ) }}
+            <br/>
+        	{% else %}
+            	{{ mostra_file(documento, null ) }}
+        	{% endif %}
+		{% endfor %}
+    </div>
+	{% else %}
+		<h6>Nessun documento caricato</h6>
+	{% endif %}
+	<div class="page-actions">
+		{{ pulsante_indietro(path("elenco_proponenti",{"id_richiesta":id_richiesta})) }}
+	</div>
+{% endblock %}

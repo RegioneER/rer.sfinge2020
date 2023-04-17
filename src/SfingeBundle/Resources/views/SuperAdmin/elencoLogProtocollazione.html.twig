@@ -1,0 +1,76 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+    <div class="table-toolbar">
+        <a href="#" data-target="#ricerca-richiesta-protocollo-modal" data-toggle="modal" class="btn btn-info">
+            <i class="fas fa-search"></i>&nbsp;Ricerca</a>
+    </div>
+
+    <div class="count">
+        Numero elementi trovati: {{ logs.getTotalItemCount }} - Filtro attivo: {{ filtro_attivo ? "Sì" : "No" }}
+    </div>
+
+    <table class="table table-striped table-hover table-bordered" id="elenco-log">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Richiesta protocollo id</th>
+                <th>Data</th>
+                <th>App function target</th>
+                <th>Code</th>
+                <th>Message</th>
+                <th>Fase richiesta</th>
+                <th>App function</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+                <tr>
+                    <td>{{ log.id }}</td>
+                    <td>{{ log.richiesta_protocollo_id }}</td>
+                    <td>{{ log.logTime|date('d/m/Y H:i:s') }}</td>
+                    <td>{{ log.appFunctionTarget }}</td>
+                    <td>{{ log.code }}</td>
+                    <td>{{ log.message|base64_decode }}</td>
+                    <td>{{ log.faseRichiesta }}</td>
+                    <td>{{ log.appFunction }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {# display navigation #}
+    <div class="navigation">
+        {{ knp_pagination_render(logs) }}
+    </div>
+
+    <div id="ricerca-richiesta-protocollo-modal" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h3 id="ricerca-richiesta-protocollo-modal-titolo">Ricerca Progetto</h3>
+                </div>
+                <div class="modal-body">
+                    {{ form(form) }}
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Chiudi</button>
+                    <a class="btn btn-default" href="{{ path("elenco_log_protocollazione_pulisci") }}">Annulla Ricerca</a>
+                    <a class="btn btn-primary" href="#" id="ricercaOk">Ricerca</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{ pulsante_indietro(path("utilities")) }}
+{% endblock body %}
+{% block  jquery_page_document_ready %}
+    <script>
+        jQuery(document).ready(function() {
+            $("#ricercaOk").click(function(e){
+                e.preventDefault();
+                $(this).parents(".modal-content").find("form").submit();
+            });
+        });
+    </script>
+{% endblock %}

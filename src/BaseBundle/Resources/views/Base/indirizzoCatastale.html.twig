@@ -1,0 +1,29 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+
+	{{ form_start(form) }}
+
+	<h4>Indirizzo edificio</h4>
+
+	{{ form_row(form.provincia, {'_id': 'luogo_residenza_provincia_row'}) }}
+	{{ form_row(form.comune, {'_id': 'luogo_residenza_comune_row'}) }}
+	{{ form_row(form.via) }}
+	{{ form_row(form.numero_civico) }}
+	{{ form_row(form.cap) }}
+
+	{% if completo == true %}
+		<h4>Estremi catastali edificio</h4>
+		{{ form_row(form.foglio) }}
+		{{ form_row(form.particella) }}
+		{{ form_row(form.subalterno) }}
+	{% endif %}
+	
+	{{ form_row(form.pulsanti) }}
+	{{ form_end(form) }}
+
+
+{% endblock %}
+{% block  jquery_page_document_ready %}
+		{% set vars = {'indirizzo': 'sede_indirizzo', 'form' : form } %}
+		{% include "BaseBundle:Base:province_comuni_js_no_estero.html.twig" with vars %}
+{% endblock %}

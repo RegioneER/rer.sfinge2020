@@ -1,0 +1,87 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+
+{{ form_start(form) }}
+{{ form_errors(form) }}
+{% if form.tipologie_documenti_estesi|length > 0 %}
+	{% set proponente = form.tipologie_documenti_estesi[0].vars.value.proponente %}
+	<h4>Documenti da integrare / {{ proponente is null ? 'Richiesta' : 'Proponente: ' ~ proponente.soggetto }}</h4>
+	<table class="table">
+		<thead>
+			<tr>
+				<th style="width: 40%">Tipologia documento</th>
+				<th style="width: 20%; text-align: center;">Da integrare</th>
+				<th style="width: 40%; text-align: center;">Nota</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for form_documento in form.tipologie_documenti_estesi.children %}
+				{% set new_proponente = form_documento.vars.value.proponente %}
+				{% set documento = form_documento.vars.value.tipologiadocumento %}
+				{% if proponente != new_proponente %}
+					{% set proponente = new_proponente %}
+							</tbody>
+						</table>
+						<h4>Documenti da integrare / {{ proponente is null ? 'Richiesta' : 'Proponente: ' ~ proponente.soggetto }}</h4>
+						<table class="table">
+							<thead>
+								<tr>
+									<th style="width: 40%">Tipologia documento</th>
+									<th style="width: 20%; text-align: center;">Da integrare</th>
+									<th style="width: 40%; text-align: center;">Nota</th>
+								</tr>
+							</thead>
+							<tbody>							
+				{% endif %}
+				<tr>
+					<td>{{ documento.descrizione }}</td>
+					<td style="text-align: center;">{{ form_widget(form_documento.selezionato) }}</td>
+					<td>{{ form_widget(form_documento.nota) }}</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+{% endif %}
+
+<h4>Note alla richiesta di integrazione</h4>
+{{ form_row(form.testo) }}
+
+<h4>Testo da inviare tramite pec al beneficiario</h4>
+{{ form_row(form.testoEmail) }}
+
+<div id="conferma_operazione_invio" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&#x2613;</button>
+				<h3 id="dataConfirmLabel">Conferma necessaria</h3>
+			</div>
+			<div class="modal-body">
+				Confermi l'operazione di invio dell'integrazione ?
+			</div>
+			<div class="modal-footer">
+				<a class="btn" data-dismiss="modal" aria-hidden="true" href="">No</a>
+				<button type="submit" name="integrazione_gestione[pulsanti][pulsante_invio]" class="btn btn-primary">Si</button>					
+			</div>
+		</div>
+	</div>
+</div>
+
+{{ form_end(form) }}
+
+{% if integrazione.stato.codice == 'INT_INSERITA'%}
+	<a href="{{ path('genera_pdf_integrazione_richiesta', {'id_integrazione_istruttoria' : integrazione.id }) }}" class="btn btn-default btn-page-action btn-form-back">Genera fac-simile</a>
+{% endif %}
+
+{% endblock %}
+{%block  jquery_page_document_ready %}
+	<script>
+		jQuery(document).ready(function () {
+			$("#integrazione_gestione_pulsanti_pulsante_invio").click(function (e) {
+				e.preventDefault();
+				$("#conferma_operazione_invio").modal("show");
+			});
+		});
+	</script>
+{% endblock %}

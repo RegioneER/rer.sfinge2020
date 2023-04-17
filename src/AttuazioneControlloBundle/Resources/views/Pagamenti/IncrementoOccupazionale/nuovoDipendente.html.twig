@@ -1,0 +1,56 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+    <h4>Nuovo dipendente</h4>
+    
+    {{ form_start(form) }}
+
+    {{ form_row(form.nome) }}
+    {{ form_row(form.cognome) }}
+    {{ form_row(form.data_assunzione) }}
+    {{ form_row(form.tipologia_assunzione) }}
+
+    {% if personale is defined and (contratto_da_caricare or comunicazione_centro_impiego_da_caricare) %}
+        <h4>Documenti</h4>
+
+        <div class="table-toolbar">
+            <div>
+                {% if contratto is null and contratto_da_caricare and not disabled %}
+                    <a href="{{ path('carica_documento_personale_incremento_occupazionale', {'id_pagamento': personale.pagamento.id, 'id_personale': personale.id, 'tipo_documento': constant('AttuazioneControlloBundle\\Service\\GestoreIncrementoOccupazionaleBase::CONTRATTO_ASSUNZIONE')}) }}"
+                       class="btn btn-primary"><span class="fa fa-plus"></span> Carica contratto di assunzione</a>
+                {% endif %}
+                
+                {% if comunicazione_centro_impiego is null and comunicazione_centro_impiego_da_caricare and not disabled %}
+                    <a href="{{ path('carica_documento_personale_incremento_occupazionale', {'id_pagamento': personale.pagamento.id, 'id_personale': personale.id, 'tipo_documento': constant('AttuazioneControlloBundle\\Service\\GestoreIncrementoOccupazionaleBase::COMUNICAZIONE_CENTRO_IMPIEGO')}) }}"
+                       class="btn btn-primary"><span class="fa fa-plus"></span> Carica comunicazione al centro per l'impiego</a>
+                {% endif %}
+
+                {% if altri_documenti_da_caricare and not disabled %}
+                    <a href="{{ path('carica_documento_personale_incremento_occupazionale', {'id_pagamento': personale.pagamento.id, 'id_personale': personale.id, 'tipo_documento': constant('AttuazioneControlloBundle\\Service\\GestoreIncrementoOccupazionaleBase::ALTRO_DOCUMENTO_PERSONALE')}) }}"
+                       class="btn btn-primary"><span class="fa fa-plus"></span> Carica altro documento</a>
+                {% endif %}
+            </div>
+        </div>
+    
+        {% if contratto is not null %}
+            {{ mostra_file(contratto.documentoFile, disabled ? null : path('elimina_documento_personale_incremento_occupazionale', {'id_documento_personale': contratto.id, 'id_pagamento': contratto.personale.pagamento.id}) ) }}
+            <br/>
+        {% endif %}
+        
+        {% if comunicazione_centro_impiego is not null %}
+            {{ mostra_file(comunicazione_centro_impiego.documentoFile, disabled ? null : path('elimina_documento_personale_incremento_occupazionale', {'id_documento_personale': comunicazione_centro_impiego.id, 'id_pagamento': comunicazione_centro_impiego.personale.pagamento.id}) ) }}
+            <br/>
+        {% endif %}
+        
+        {% for altro_documento in altri_documenti %}
+            {{ mostra_file(altro_documento.documentoFile, disabled ? null : path('elimina_documento_personale_incremento_occupazionale', {'id_documento_personale': altro_documento.id, 'id_pagamento': altro_documento.personale.pagamento.id}) ) }}
+            
+            {% if not loop.last %}
+                <br/>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    {{ form_end(form) }}
+    
+{% endblock %}

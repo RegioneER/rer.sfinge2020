@@ -1,0 +1,316 @@
+{% extends '::base.html.twig' %}
+
+{% block intestazione %}
+    {{ parent() }}
+    {{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+
+{% block body %}
+    {% block headerPianoCosto %}{% endblock %}
+
+    {% if not form.vars.valid %}
+        {{form_errors(form)}}
+    {% endif %}
+
+    {% if esito is defined and esito.esito == false and esito.messaggisezione|length > 0 %}
+        <div class="alert alert-danger">
+            <ul class="list-unstyled">
+                {% for messaggio in esito.messaggisezione %}	
+                    <li>
+                        <span class="glyphicon glyphicon-exclamation-sign"></span>{{messaggio}}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}	
+
+    {{ form_start(form) }}
+    {% set numCol = form.voci_piano_costo.children|length %}
+    {% set primoChild = form.voci_piano_costo.children|first %}
+    {% set precedente = primoChild.vars.value.pianocosto.sezionepianocosto.codice %}
+
+    {% if denominazione_proponente is defined %}
+        <h3 style="margin-bottom: 5px; text-align: center;">{{denominazione_proponente}}</h3>
+    {% endif %}
+
+    <h4 style="margin-bottom: 5px">{{ primoChild.vars.value.pianocosto.sezionepianocosto.titolosezione}}</h4>
+    <table class="sezione table table-bordered table-striped" id="{{precedente}}" style=" width: 100%">
+        <thead>
+            <tr>
+                <th>
+                    <h5>Voci di spesa</h5>
+                </th>
+                {% for child in form.voci_piano_costo.children|first %}
+                    <th style="{% if width is defined and width[child.vars.name] is defined %}width: {{ width[child.vars.name] }};{% endif %} text-align: center;" >
+                        {{ child.vars.label }}		
+                    </th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for voce_piano_costo in form.voci_piano_costo.children %}
+                {% set attuale = voce_piano_costo.vars.value.pianocosto.sezionepianocosto.codice %}
+                {% if attuale != precedente%}
+                </tbody>
+            </table>
+            {% if contributo_sezione is defined and contributo_sezione == true %}
+                <div class="alert alert-info" role="alert">
+                    Contributo: 
+                    <mark>
+                        {{ contributo_sezione_val[precedente]|number_format(2, ',', '.') }}
+                    </mark>
+                </div>
+            {% endif %}
+            <br/>
+            <h4 style="margin-bottom: 5px">{{ voce_piano_costo.vars.value.pianocosto.sezionepianocosto.titolosezione}}</h4>
+            <table class="sezione table table-bordered table-striped" id="{{attuale}}" style="width: 100%">
+                <thead>
+                    <tr>
+                        <th>
+                            <h5>Voci di spesa</h5>
+                        </th>
+                        {% for child in form.voci_piano_costo.children|first %}
+                            <th style="{% if width is defined and width[child.vars.name] is defined %}width: {{ width[child.vars.name] }};{% endif %} text-align: center;" >
+                                {{ child.vars.label }}		
+                            </th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% set precedente = voce_piano_costo.vars.value.pianocosto.sezionepianocosto.codice %}
+                {% endif %}
+
+
+                <tr>
+                    <td class="label-voce" style="width: 55%">
+                        {% if (voce_piano_costo.vars.value.pianocosto.codice != 'TOT') and ('EXTRA' not in voce_piano_costo.vars.value.pianocosto.codice) %}
+                            {{ voce_piano_costo.vars.value.pianocosto.codice}}) 
+                        {% endif %}
+                        {{ voce_piano_costo.vars.value.pianocosto.titolo}}
+                    </td>
+                    {% for child in voce_piano_costo %}
+                        {% set codice = voce_piano_costo.vars.value.pianocosto.codice %}
+                        <td class="{{child.vars.name}}">
+                            {% set classe =  form_errors(child)|length > 0 ? 'cell-red-error' : '' %}
+                            {% set attr = { 
+										'class': classe,'data-totale': ( codice!= 'TOT' ? 'false' : 'true')
+									} %}
+                            {% if child.vars.name starts with 'importo' %}
+                                {% set attr = attr|merge({ 'style': 'text-align: right' }) %}
+                            {% endif %}									
+                            {% if codice == 'TOT' or child.vars.name == 'importo_totale' %}
+                                {% set attr = attr|merge({ 'readonly': 'readonly' }) %}
+                            {% endif %}
+                            {{ form_widget(child, {  'id': 'voce-spesa-'~voce_piano_costo.vars.value.pianocosto.identificativohtml|lower, 
+									'attr': attr
+								}) 
+                            }}
+                        </td>
+                    {% endfor %}
+
+                </tr>
+
+
+            {% endfor %}
+        </tbody>
+    </table>
+    {% if contributo_sezione is defined and contributo_sezione == true %}
+        <div class="alert alert-info" role="alert">
+            Contributo: 
+            <mark>
+                {{ contributo_sezione_val[precedente]|number_format(2, ',', '.') }}
+            </mark>
+        </div>
+    {% endif %}
+    {% if complessivo is not defined %}
+        {% set complessivo = true %}
+    {% endif %}
+
+    {% if complessivo == true  %}
+        <h4 style="margin-bottom: 5px">Complessivo</h4>
+        <table  class = "table table-bordered table-striped">
+            <thead>
+                <tr>
+                    {% if annualita > 1 and labels_anno is defined%}
+                        {% for label_anno in labels_anno %}
+                            <th style="text-align: center" >
+                                {{ label_anno }}		
+                            </th>
+                        {% endfor %}
+                    {% else %}
+                        <th>
+                            Totale
+                        </th>
+                    {% endif %}
+                    {% if annualita > 1 %}
+                        <th style="text-align: center" class="totale">
+                            Totale su {{annualita}} {% if label_totale is defined %} {{label_totale}} {% else %} annualità {% endif %}
+                        </th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    {% for i in 1..annualita %}
+                        <td>
+                            <input readonly="readonly" id="complessivo_importo_{{i}}" class="form-control" type="text" >
+                        </td>
+                    {% endfor %}
+                    {% if annualita > 1 %}
+                        <td>
+                            <input readonly="readonly" id="complessivo_importo_totale" class="form-control" type="text" >
+                        </td>
+                    {% endif %}
+                </tr>
+            </tbody>
+        </table>
+    {% endif %}
+    {% if primoChild.vars.value.richiesta.procedura.modalitafinanziamentoattiva %}
+        <h4 style="margin-bottom: 5px">Modalità finanziamento</h4>
+        <table class="table table-bordered table-striped" id="modalita_fin" style=" width: 100%">
+            <thead>
+                <tr>
+                    <th>
+                        <h5>{{ label_modalita_finanziamento is defined ? label_modalita_finanziamento : "Risorse" }}</h5>
+                    </th>
+                    {% for child in form.voci_modalita_finanziamento.children|first %}
+                        <th style="text-align: center" >
+                            {{ child.vars.label }}		
+                        </th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for voce_modalita_finanziamento in form.voci_modalita_finanziamento.children %}
+                    <tr>
+                        <td>
+                            {{voce_modalita_finanziamento.vars.value.modalitafinanziamento.titolo}}
+                        </td>
+                        {% for child in voce_modalita_finanziamento %}
+                            <td>
+                                {% set classe =  form_errors(child)|length > 0 ? 'cell-red-error' : '' %}
+                                {{ form_widget(child, { 
+									'attr': { 
+										'class': classe,
+										'style': 'text-align: right'
+									} 
+								}) 
+                                }}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    {% block extraForm %}{% endblock %}
+
+    {{ form_end(form) }}
+
+    <script type="text/javascript">
+        'use strict';
+        function update_totale() {
+        $("form .sezione tr").each(function (i, tr) {
+        var totale = 0.00;
+        $(tr).find("td").each(function(i, obj) {
+        if ($(obj).attr("class").indexOf("importo_anno_") == 0) {
+        totale += parseFloat($(this).find("input").val().deformatMoney());
+        }
+        });
+        $(tr).find("td.importo_totale input").val(totale.formatMoney());
+        });
+        }
+    </script>
+    {% block calcolaTotaleSezione %}
+        <script type="text/javascript">
+            'use strict';
+            function calcolaTotaleSezione() {
+            var totali = new Array();
+            for (var i = 0; i < {{annualita}}; i++) {
+            totali[i] = 0.00;
+            }
+            $(".sezione").each(function () {
+            var totaleFinale = 0.00;
+            for (var i = 0; i < {{annualita}}; i++) {
+            var somma = 0.00;
+            var divTotale = '';
+            $(this).find('td:nth-child(' + (i + 2) + ') input').each(function () {
+            var controlloTotale = $(this).attr('data-totale');
+            if (controlloTotale === 'false') {
+            var importo = $(this).val();
+            var ifMatch = importo.match(/(?=.)^\$?(([1-9][0-9]*(\.[0-9]{3})*)|0)?(\,[0-9]{1,2})?$/);
+            //if (!Number.prototype.pattern.test(importo)) {
+            if (!ifMatch){
+            $(this).val('0,00');
+            importo = 0.00;
+            } else{
+            importo = parseFloat(importo.deformatMoney());
+            }
+            somma = parseFloat(somma) + importo;
+            } else {
+            divTotale = $(this);
+            }
+            });
+            // aggiunto controllo perchè in AT e IF manca la sezione totale..non entra nel foreach e si infogna l'universo
+            if (divTotale != ''){
+            divTotale.val(somma.formatMoney());
+            }
+            totali[i] += parseFloat(somma.toFixed(2));
+            }
+            for (var i = 0; i < {{annualita}}; i++) {
+            $("#complessivo_importo_" + (i + 1)).val(totali[i].formatMoney()).trigger('change');
+            totaleFinale += parseFloat(totali[i]);
+            }
+            $("#complessivo_importo_totale").val(totaleFinale.formatMoney()).trigger('change');
+            {% if abilita_contr_impe is defined and abilita_contr_impe %}
+
+                var contributo = $('[name="{{form.contributo.vars.full_name}}"]');
+                if (contributo.val() == "") {
+                contributo.val(totaleFinale.formatMoney()).trigger('change');
+                }
+
+                var impegno = $('[name="{{form.impegno.vars.full_name}}"]');
+                if (impegno.val() == "") {
+                impegno.val(totaleFinale.formatMoney()).trigger('change');
+                }
+
+            {% endif %}
+                });
+                }
+        {% endblock calcolaTotaleSezione %}
+
+    </script>
+
+    {% block extraPianoCosto %}
+        <script type="text/javascript">
+            'use strict';
+            $(document).ready(function () {
+            {{ onKeyUp }}();
+            {% if totale is defined %} 
+                update_totale();
+            {% endif %}
+                });
+        </script>	
+    {% endblock %}
+
+    <script type="text/javascript">
+        'use strict';
+        $(document).ready(function () {
+        var query = ".sezione input";
+        $("form").on('change', query, function(){
+        $(this).formatAmount();
+        {{ onKeyUp }}();
+            });
+        {% if totale is defined %}				
+            $("form").on('change', query, update_totale);
+        {% endif %}
+
+            $("form").on('blur', query, function(){
+            $(this).approximate();
+            });
+            });
+    </script>	
+
+{% endblock %}

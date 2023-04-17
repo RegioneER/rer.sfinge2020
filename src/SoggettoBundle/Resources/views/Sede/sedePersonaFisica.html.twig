@@ -1,0 +1,33 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+
+	<h3>
+		{{ azienda.tipoByFormaGiuridica(1) }}:	<span>{{ azienda.denominazione }}</span>
+	</h3>
+
+	{{ form_start(form) }}
+	<div>
+		<h4>
+			Indirizzo
+		</h4>
+		<br/>
+		{{ form_row(form.indirizzo.via) }}
+		{{ form_row(form.indirizzo.numero_civico) }}
+		{{ form_row(form.indirizzo.stato) }}
+		{{ form_row(form.indirizzo.provincia, {'_id': 'luogo_residenza_provincia_row'}) }}
+		{{ form_row(form.indirizzo.comune, {'_id': 'luogo_residenza_comune_row'}) }}
+
+		{{ form_row(form.indirizzo.provinciaEstera, {'_id': 'luogo_residenza_provincia_estera_row'}) }}
+		{{ form_row(form.indirizzo.comuneEstero, {'_id': 'luogo_residenza_comune_estero_row'}) }}
+
+		{{ form_row(form.indirizzo.cap) }}
+		{{ form_row(form.indirizzo.localita) }}
+	</div>
+
+	{{ form_end(form) }}
+
+{% endblock %}
+	{% block  jquery_page_document_ready %}
+		{% set vars = {'indirizzo': 'sede_indirizzo', 'form' : form.indirizzo } %}
+		{% include "BaseBundle:Base:province_comuni_js.html.twig" with vars %}
+{% endblock %}

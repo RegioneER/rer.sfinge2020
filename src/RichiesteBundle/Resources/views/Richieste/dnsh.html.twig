@@ -1,0 +1,43 @@
+{% extends '::base.html.twig' %}
+
+{% block intestazione %}
+    {{ parent() }}
+    {{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% form_theme form _self %}
+
+
+{% block checkbox_widget %}
+{% spaceless %}
+    <label  for="{{ id }}">
+        <input type="checkbox" {{ block('widget_attributes') }}
+               {% if value is defined %} 
+                   value="{{ value }}"
+               {% endif %}
+               {% if checked %} 
+                   checked="checked"
+               {% endif %} />
+        {{ label|raw }}
+    </label>
+{% endspaceless %}
+{% endblock checkbox_widget %}
+
+{% block body %}
+
+    <h4>Dichiarazioni</h4>
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+    {{ form_widget(form.non_arreca) }}
+    {{ form_label(form.non_arreca) }}
+    <br/><br/>
+    {{ form_widget(form.adotta_misure) }}
+    {{ form_label(form.adotta_misure) }}
+    {{ form_row(form.descrizione_adotta_misure) }}
+    <br/><br/>
+    {{ form_widget(form.specifica_documentazione) }}
+    {{ form_label(form.specifica_documentazione) }}
+    {{ form_row(form.descrizione_specifica_documentazione) }}
+    <br/><br/>
+    {{ form_end(form) }}
+{% endblock %}

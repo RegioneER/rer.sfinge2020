@@ -1,0 +1,115 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+    {% include 'IstruttorieBundle:Istruttoria:menu.html.twig' with {'istruttoria' : istruttoria } %}
+    
+    <h4>Comunicazioni esiti</h4>
+    {% if istruttoria.comunicazioniesiti | length > 0 %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th style="width: 20%">Data inserimento</th>
+                    <th style="width: 20%">Stato</th>
+                    <th style="width: 20%">Protocollo</th>
+                    <th style="width: 20%"></th>
+                    <th style="width: 20%">Azioni</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for comunicazione in istruttoria.comunicazioniesiti  %}
+                    <tr>
+                        <td>{{ comunicazione.data | date('d/m/Y') }}</td>
+                        <td>{{ comunicazione.statoleggibile }}</td>
+                        <td>{{ comunicazione.protocolloesitoistruttoria }}</td>
+                        <td></td>
+                        {% if comunicazione.stato.codice != 'ESI_PROTOCOLLATA'%}
+                            <td><a class="btn btn-primary" href="{{ path('comunicazione_esito', {'id_istruttoria' : istruttoria.id}) }}">Gestione</a></td>
+                        {% else %}
+                            <td><a class="btn btn-primary" href="{{ path('dettaglio_comunicazione_esito_pa', {'id_comunicazione_progetto' : comunicazione.id, 'da_comunicazione' : 'true'}) }}">Dettagli</a></td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>		
+        </table>
+    {% else %}
+        <a class="btn btn-primary" href="{{ path('comunicazione_esito', {'id_istruttoria' : istruttoria.id }) }}">Crea comunicazione</a>
+    {% endif %}
+
+    <h4>Integrazioni</h4>
+    {% if istruttoria.integrazioni | length > 0 %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th style="width: 20%">Data inserimento</th>
+                    <th style="width: 20%">Protocollo</th>
+                    <th style="width: 20%">Data risposta</th>
+                    <th style="width: {{ (istruttoria.richiesta.procedura.id == 118 or istruttoria.richiesta.procedura.id == 125) ? 15 : 20 }}%"></th>
+                    <th style="width: {{ (istruttoria.richiesta.procedura.id == 118 or istruttoria.richiesta.procedura.id == 125) ? 25 : 20 }}%">Azioni</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for integrazione in istruttoria.integrazioni  %}
+                    <tr>
+                        <td>{{ integrazione.data | date('d/m/Y') }}</td>
+                        <td>{{ integrazione.protocollointegrazione }}</td>
+                        <td>{{ integrazione.risposta is null or integrazione.risposta.data is null ? "-" : integrazione.risposta.data | date('d/m/Y') }}</td>
+                        <td></td>
+                        {% if integrazione.stato.codice == 'INT_INVIATA_PA' or integrazione.stato.codice == 'INT_PROTOCOLLATA' %}
+                            <td>
+                                <a class="btn btn-primary" href="{{ path('dettaglio_integrazione_istruttoria_pa', {'id_integrazione_istruttoria' : integrazione.id, 'da_comunicazione' : 'true' }) }}">Dettagli</a>
+                                {#Per il momento mostriamo questa funzionalità solamente per il bando IRAP (in futuro potrebbe essere reso disponibile anche per altre procedure magari con un flag)#}
+                                {% if (integrazione.richiesta.procedura.id == 118 or integrazione.richiesta.procedura.id == 125) and integrazione.risposta is not null and integrazione.risposta.presaVisione == false and (integrazione.risposta.stato.codice == 'INT_INVIATA_PA' or integrazione.risposta.stato.codice == 'INT_PROTOCOLLATA') %}
+                                    <a class="btn btn-primary" href="{{ path('imposta_risposta_integrazione_come_letta', {'id_integrazione_istruttoria': integrazione.id, 'da_comunicazione' : true, '_token' : token }) }}">Imposta come letta</a>
+                                {% endif %}
+                            </td>
+                        {% else %}
+                            <td>
+                                <a class="btn btn-primary" href="{{ path('gestione_integrazione_istruttoria_pa', {'id_integrazione_istruttoria' : integrazione.id, 'da_comunicazione' : 'true' }) }}">Gestione</a>
+                                {% if integrazione.isEliminabile %}
+                                    <a class="btn btn-primary" data-confirm="Eliminare l'integrazione selezionata?" href="{{ path('elimina_integrazione_istruttoria_pa', {'id_integrazione_istruttoria' : integrazione.id }) }}">Elimina</a>
+                                {% endif %}
+                            </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        Nessuna integrazione richiesta
+    {% endif %}
+    
+    <h4>Comunicazioni progetto</h4>
+    <a class="btn btn-primary" href="{{ path('crea_comunicazione_progetto', {'id_istruttoria' : istruttoria.id }) }}">Crea comunicazione progetto</a>
+    <br/><br/>
+    {% if istruttoria.richiesta.comunicazioniprogetto | length > 0 %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th style="width: 20%">Data inserimento</th>
+                    <th style="width: 20%">Stato</th>
+                    <th style="width: 20%">Protocollo</th>
+                    <th style="width: 20%">Data risposta</th>
+                    <th style="width: 20%">Azioni</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for comunicazioneProgetto in istruttoria.richiesta.comunicazioniprogetto %}
+                    {% if comunicazioneProgetto.tipooggetto == 'RICHIESTA'%}
+                    <tr>
+                        <td>{{ comunicazioneProgetto.data | date('d/m/Y') }}</td>
+                        <td>{{ comunicazioneProgetto.statoleggibile }}</td>
+                        <td>{{ comunicazioneProgetto.protocollocomunicazione }}</td>
+                        <td>{{ comunicazioneProgetto.risposta is null or comunicazioneProgetto.risposta.data is null ? "-" : comunicazioneProgetto.risposta.data | date('d/m/Y') }}</td>
+                        {% if comunicazioneProgetto.stato.codice != 'COM_PROTOCOLLATA'%}
+                            <td><a class="btn btn-primary" href="{{ path('gestione_comunicazione_progetto', {'id_comunicazione_progetto' : comunicazioneProgetto.id}) }}">Gestione</a></td>
+                        {% else %}
+                            <td><a class="btn btn-primary" href="{{ path('dettaglio_comunicazione_progetto_pa', {'id_comunicazione_progetto' : comunicazioneProgetto.id, 'da_comunicazione' : 'true'}) }}">Dettagli</a></td>
+                        {% endif %}
+                    </tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody>		
+        </table>
+    {% else %}
+        Nessuna comunicazione
+    {% endif %}
+{% endblock %}

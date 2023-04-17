@@ -1,0 +1,18 @@
+<ul>
+	{% for istanzaFrammento in pagina.istanzeFrammenti %}
+	<li class="jstree-open"><a href="{{ path('modifica_frammento', {'id_frammento':istanzaFrammento.frammento.id}) }}"><span style="color: red;">{{ istanzaFrammento.frammento.alias }}</span> - {{ istanzaFrammento.frammento }}</a>
+			<ul>
+			{% for istanzaCampo in istanzaFrammento.istanzeCampi %}
+				<li><a href="{{ path('modifica_campo', {'id_campo':istanzaCampo.campo.id}) }}"><span style="color: red;">{{ istanzaCampo.campo.alias }}</span> - {{ istanzaCampo.campo }} - {{istanzaCampo.valore}}</a></li>
+			{% endfor %}
+			</ul>
+			<ul>
+			{% for istanzaSottoPagina in istanzaFrammento.istanzeSottoPagine %}
+				<li class="jstree-open"><a href="{{ path('modifica_pagina', {'id_pagina':istanzaSottoPagina.pagina.id}) }}"><span style="color: red;">{{ istanzaSottoPagina.pagina.alias }}</span> - {{ istanzaSottoPagina.pagina.titolo }}</a>
+				{% include 'FascicoloBundle:Default:_pagina_tree.html.twig' with { 'pagina' : istanzaSottoPagina } %}
+				</li>	
+			{% endfor %}
+			</ul>
+		</li>
+	{% endfor %}
+</ul>

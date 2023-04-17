@@ -1,0 +1,70 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+
+<h4>Allegati</h4>
+{% for allegato in form.vars.data.allegati %}
+    <div style="margin-bottom:1.5em;">
+        {{ mostra_file(
+            allegato.documento,
+            form.vars.disabled ?
+            null :
+            path('elimina_allegato_comunicazione_pagamento', { id: allegato.id })
+        )
+        }}
+    </div>
+{% endfor %}
+{{ form(form_allegati) }}
+
+<br/>
+
+{{ form_start(form) }}
+{{ form_errors(form) }}
+
+<h4>Tipologia comunicazione</h4>
+{{ form_row(form.tipologia_comunicazione) }}
+    
+<h4>Note alla comunicazione</h4>
+{{ form_row(form.testo) }}
+
+<h4>Testo da inviare tramite pec al beneficiario</h4>
+{{ form_row(form.testoEmail) }}
+
+{% if not form.vars.disabled %}
+    <h4>PDF per la comunicazione</h4>
+    <a href="{{path('pdf_comunicazione_pagamento', {'id': comunicazionePagamento.id}) }}" class="btn btn-info">Genera fac-simile</a>
+{% endif %}
+    
+<br/><br/>
+
+<div id="conferma_operazione_invio" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&#x2613;</button>
+                <h3 id="dataConfirmLabel">Conferma necessaria</h3>
+            </div>
+            <div class="modal-body">
+                Confermi l'operazione di invio della comunicazione?
+            </div>
+            <div class="modal-footer">
+                <a class="btn" data-dismiss="modal" aria-hidden="true" href="">No</a>
+                <button type="submit" name="comunicazione_pagamento[pulsanti][pulsante_invio]" class="btn btn-primary">Si</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{ form_end(form) }}
+
+{% endblock %}
+{% block jquery_page_document_ready %}
+    <script>
+        jQuery(document).ready(function () {
+            $("#comunicazione_pagamento_pulsanti_pulsante_invio").click(function (e) {
+                e.preventDefault();
+                $("#conferma_operazione_invio").modal("show");
+            });
+        });
+    </script>
+{% endblock %}

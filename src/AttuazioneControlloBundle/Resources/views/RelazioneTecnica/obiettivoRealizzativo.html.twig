@@ -1,0 +1,17 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+
+	{% if istruttoria is defined %}
+		{% include 'AttuazioneControlloBundle:RelazioneTecnica:Istruttoria/menu.html.twig' with {'pagamento' : pagamento } %}
+	{% else %}
+		{% include 'AttuazioneControlloBundle:RelazioneTecnica:menu.html.twig' with {'pagamento' : pagamento } %}
+	{% endif %}		
+
+	<h4>{{ obiettivo.codiceor}} - {{ obiettivo.titoloor}}</h4>
+    <div>
+		{{ form_errors(form) }}
+        {{ form_start(form) }}
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

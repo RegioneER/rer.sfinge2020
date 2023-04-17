@@ -1,0 +1,41 @@
+{% macro dati_referente_tabella(r,qualificaAbilitata, pecAbilitata) %}
+    {% set p = r.persona %}
+    <table style="width:100%;" class="text-small">
+    <tbody>
+        <tr>
+            <td style="width:40%;">Cognome Nome</td>
+            <td style="width:60%;"><b>{{ p.cognome }}</b>&nbsp;<b>{{p.nome}}</b></td>
+        </tr>
+		{% if qualificaAbilitata is not null and qualificaAbilitata == 1 %}
+			<tr>
+				<td style="width:40%;">Ruolo in azienda</td>
+				<td style="width:60%;">
+					<b>{{ r.qualifica }}</b>
+				</td>
+			</tr>
+		{% endif %}
+		<tr>
+            <td style="width:40%;">Email</td>
+            <td style="width:60%;">
+                <b>{{ p.emailPrincipale }}</b> 
+            </td>
+        </tr>
+        <tr>
+            <td style="width:40%;">Telefono</td>
+            <td style="width:60%;">
+                <b>{{ p.telefonoPrincipale }}</b>
+            </td>
+        </tr>
+		{% if p.faxPrincipale %}
+			<tr>
+				<td style="width:40%;">Fax</td>
+				<td style="width:60%;">
+					<b>{{ p.faxPrincipale }}</b> 
+				</td>
+			</tr>
+		{% endif %}
+        </tbody>
+    </table>
+    {# mostro i referenti #}
+
+{% endmacro %}{# empty Twig template #}

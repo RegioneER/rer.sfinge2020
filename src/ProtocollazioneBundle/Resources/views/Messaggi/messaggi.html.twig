@@ -1,0 +1,28 @@
+{% extends "::base.html.twig" %}
+
+{% block body %}
+    {% for msg in messaggi %} 
+        {% for tipo, messaggio in msg %}                   
+            {% if tipo == "errore" %}
+                <div class="alert alert-danger" style="margin-top: 20px;">
+                    {{ messaggio | raw}}
+            {% elseif tipo == "avviso" %}
+                <div class="alert alert-warning" style="margin-top: 20px;">
+                    {{ messaggio | raw }}
+            {% elseif tipo == "msg_titolo_head" %}
+                <div class="alert alert-info" role="alert">
+                    <h3 style="margin-top: 10px; margin-bottom: 10px;">{{ messaggio }}</h3>
+            {% elseif tipo == "msg_titolo_foot" %}
+                <div class="alert alert-info" role="alert" style="margin-top: 20px; margin-bottom: 0px">
+                    <h3 style="margin-top: 10px; margin-bottom: 10px;">{{ messaggio }}</h3>
+            {% elseif tipo == "msg_fase" %}
+                <div style="margin-top: 15px; margin-left: 15px">
+                    <h6>{{ messaggio }}</h6>
+            {% else %}
+                <div style="margin-left: 15px">
+                    {{ messaggio | raw  }}
+            {% endif %}
+            </div>
+        {% endfor %}
+    {% endfor %}
+{% endblock %}

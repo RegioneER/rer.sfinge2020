@@ -1,0 +1,28 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+{% include 'CertificazioniBundle:Appendici:menuAppendici.html.twig' with {'id_chiusura' : chiusura.id }%}	
+
+
+	<table class="table table-striped table-hover table-bordered" id="certificazioni-elenco">
+        <thead>
+            <tr>
+                <th>Numero certificazione</th>
+				<th>Anno contabile</th>				
+				<th>Stato</th>			
+            </tr>
+        </thead>
+		<tbody>
+			{% for certificazione in chiusura.certificazioni %}
+				<tr>
+					<td>{{ certificazione.numero }}</td>
+					<td>{{ certificazione.anno }}</td>
+					<td>{{ certificazione.stato.descrizione }}</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+	<a href="{{ path("elenco_certificazioni")}}" class="btn btn-default btn-page-action btn-form-back pull-left">Indietro</a>	
+
+{% endblock %}

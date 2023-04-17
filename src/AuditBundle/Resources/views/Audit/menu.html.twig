@@ -1,0 +1,82 @@
+<ul class="nav nav-tabs">
+	{% if ruolo_lettura == false %}
+		<li role="presentation"{% if menu|default() == "programmazione" %}class="active"{% endif %}>
+			<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+				Programmazione<span class="caret"></span>
+			</a>
+
+			<ul class="dropdown-menu">
+				<li><a href="{{ path('organismi_requisiti')}}">Organismi & Requisiti</a></li>
+				<li><a href="{{ path('elenco_aree_tematiche')}}">Aree Tematiche</a></li>
+				<li><a href="{{ path('elenco_metodologie_campionamento')}}">Metodologie di Campionamento</a></li>
+				<li><a href="{{ path('elenco_tipi_irregolarita')}}">Tipi Irregolarità</a></li>
+			</ul>
+		</li>
+
+		<li role="presentation"{% if menu|default() == "pianificazione" %}class="active"{% endif %}>
+			<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+				Pianificazione<span class="caret"></span>
+			</a>
+			<ul class="dropdown-menu">
+				{% for tipoAudit in tipiAudit %}
+					{% if tipoAudit.codice == 'ADS' %}
+						<li><a href="{{ path('elenco_pianificazioni', {'id_tipo': tipoAudit.id})}}">{{ tipoAudit.descrizione }}</a></li>
+					{% endif %}
+					{% if tipoAudit.codice == 'ADO' %}
+						<li><a href="{{ path('elenco_pianificazioni', {'id_tipo': tipoAudit.id})}}">{{ tipoAudit.descrizione }}</a></li>
+					{% endif %}
+					{% if tipoAudit.codice == 'STR' %}
+						<li><a href="{{ path('elenco_pianificazioni', {'id_tipo': tipoAudit.id})}}">{{ tipoAudit.descrizione }}</a></li>
+					{% endif %}
+			{% endfor %}
+		</ul> 
+	</li>
+	{% endif %}
+
+	<li role="presentation"{% if menu|default() == "attuazione" %}class="active"{% endif %}>
+		<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+			Attuazione<span class="caret"></span>
+		</a>
+		<ul class="dropdown-menu">		
+			{% for tipoAudit in tipiAudit %}
+			{% if ruolo_lettura == false %}
+				{% if tipoAudit.codice == 'ADS' %}
+					<li><a href="{{ path('elenco_audit_attuazione', {'id_tipo': tipoAudit.id})}}">{{ tipoAudit.descrizione }}</a></li>
+				{% endif %}
+			{% endif %}
+				{% if tipoAudit.codice == 'ADO' %}
+					<li><a href="{{ path('elenco_audit_attuazione', {'id_tipo': tipoAudit.id})}}">{{ tipoAudit.descrizione }}</a></li>
+				{% endif %}
+			{% if ruolo_lettura == false %}
+				{% if tipoAudit.codice == 'ADC' %}
+					<li><a href="{{ path('elenco_audit_attuazione', {'id_tipo': tipoAudit.id})}}">{{ tipoAudit.descrizione }}</a></li>
+				{% endif %}
+			{% endif %}
+			{% endfor %}			
+		</ul> 				
+		<ul class="dropdown-menu">
+		</ul> 
+	</li>
+
+	{% if ruolo_lettura == false %}
+		<li role="presentation"{% if menu|default() == "rac" %}class="active"{% endif %}>
+			<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+				RAC<span class="caret"></span>
+			</a>
+			<ul class="dropdown-menu">
+				{% for tipoAudit in tipiAudit %}
+					{% if tipoAudit.codice == 'RAC' %}
+						<li><a href="{{ path('elenco_audit_rac', {'id_tipo': tipoAudit.id})}}">Audit Rac</a></li>
+					{% endif %}
+				{% endfor %}
+			</ul>
+		</li>
+		<li role="presentation"{% if menu|default() == "monitoraggio" %}class="active"{% endif %}>
+			<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+				Monitoraggio<span class="caret"></span>
+			</a>
+			<ul class="dropdown-menu">
+			</ul>
+		</li>
+	{% endif %}
+</ul>

@@ -1,0 +1,34 @@
+{% extends '::base.html.twig' %}
+
+{% block intestazione %}
+    {{ parent() }}
+    {{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% block body %}
+    {#<p class="lead">Compilare i dati generali della richiesta</p>#}
+
+    <h4>Dati generali della richiesta</h4>
+    {{ form(form) }}
+
+    {% if incremento_occupazionale %}
+        <script type="text/javascript">
+            $(document).ready(function(){
+                incrementoOccupazionaleToggle();
+                $('input#dati_generali_incremento_occupazionale').change(function(){
+                    incrementoOccupazionaleToggle();
+                });
+            });
+
+            function incrementoOccupazionaleToggle(){
+                if ($('input#dati_generali_incremento_occupazionale').prop('checked')) {
+                    $('input#dati_generali_numero_dipendenti_attuale').parent('div').parent('div').show();
+                    $('input#dati_generali_numero_nuove_unita').parent('div').parent('div').show();
+                } else {
+                    $('input#dati_generali_numero_dipendenti_attuale').val('').parent('div').parent('div').hide();
+                    $('input#dati_generali_numero_nuove_unita').val('').parent('div').parent('div').hide();
+                }
+            }
+        </script>
+    {% endif %}
+{% endblock %}

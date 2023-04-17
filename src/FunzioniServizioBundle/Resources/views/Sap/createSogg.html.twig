@@ -1,0 +1,229 @@
+{% extends '::base.html.twig' %}
+
+    {% block body %}
+        <p class="lead">SAP test suite - Crea beneficiario</p>
+
+        {{ form_start(form) }}
+
+        {{ form_row(form.ragioneSociale) }}
+        {{ form_row(form.codiceFiscale) }}
+        {{ form_row(form.partitaIva) }}
+        {{ form_row(form.zzCatEc) }}
+        {{ form_row(form.indirizzo) }}
+        {{ form_row(form.comune) }}
+        {{ form_row(form.cap) }}
+        {{ form_row(form.stato) }}
+        {{ form_row(form.telefono) }}
+        {{ form_row(form.fax) }}
+
+        {{ form_row(form.zzCodCamComm) }}
+        {{ form_row(form.zzNumLocOpere) }}
+        {{ form_row(form.zzNameLast) }}
+        {{ form_row(form.zzNameFirst) }}
+        {{ form_row(form.gbdat) }}
+        {{ form_row(form.sexkz) }}
+
+        {{ form_end(form) }}
+
+        <a href="{{ path('sap_test_suite') }}">Torna alla suite</a>
+
+        {% if result is not null %}
+            <br />
+            <br />
+            <pre>{{ result|json_encode(constant('JSON_PRETTY_PRINT')) }}
+            </pre>
+        {% endif %}
+
+    {% endblock %}
+
+{% block jquery_page_document_ready %}
+    <script>
+        $(document).ready(function() {
+            var catEc = $("#form_zzCatEc");
+
+            var codiceFiscale = $("#form_codiceFiscale");
+
+            impostaForm(catEc.val());
+
+            catEc.on('change', function() {
+                impostaForm(catEc.val())
+            });
+
+            codiceFiscale.on('change', function () {
+                if ($(this).val().length === 16 || $(this).val().length === 11) {
+                    impostaForm(catEc.val())
+                }
+            })
+        });
+
+        function clearValuesByClass(className) {
+            className.each(function () {
+                $(this).val('').trigger('change');
+            })
+        }
+
+        function nascondi(oggetto) {
+            oggetto.removeAttr('required');
+            oggetto.parents('.form-group').hide();
+        }
+
+        function mostra(oggetto) {
+            oggetto.parents('.form-group').show();
+            oggetto.attr('required', 'required');
+        }
+
+        function impostaForm(condizione) {
+            var form_zzCodCamComm = $("#form_zzCodCamComm");
+            var form_zzNumLocOpere = $("#form_zzNumLocOpere");
+            var form_zzNameLast = $("#form_zzNameLast");
+            var form_zzNameFirst = $("#form_zzNameFirst");
+            var form_gbdat = $("#form_gbdat");
+            var form_sexkz = $("#form_sexkz");
+            var form_codiceFiscale = $("#form_codiceFiscale");
+
+            switch (condizione) {
+                case '211':
+                case '212':
+                case '213':
+                case '215':
+                case '220':
+                case '221':
+                case '222':
+                case '223':
+                case '430':
+                case '431':
+                    clearValuesByClass(form_zzCodCamComm);
+                    clearValuesByClass(form_zzNumLocOpere);
+                    clearValuesByClass(form_zzNameLast);
+                    clearValuesByClass(form_zzNameFirst);
+                    clearValuesByClass(form_gbdat);
+                    clearValuesByClass(form_sexkz);
+
+                    mostra(form_zzCodCamComm);
+                    nascondi(form_zzNumLocOpere);
+                    nascondi(form_zzNameLast);
+                    nascondi(form_zzNameFirst);
+                    nascondi(form_gbdat);
+                    nascondi(form_sexkz);
+                    break;
+                case '100':
+                case '334':
+                case '350':
+                case '360':
+                case '362':
+                case '365':
+                case '510':
+                case '520':
+                case '530':
+                case '532':
+                case '601':
+                case '602':
+                case '604':
+                case '700':
+                case '741':
+                case '750':
+                case '800':
+                case '900':
+                case '910':
+                case '920':
+                case '930':
+                    clearValuesByClass(form_zzCodCamComm);
+                    clearValuesByClass(form_zzNumLocOpere);
+                    clearValuesByClass(form_zzNameLast);
+                    clearValuesByClass(form_zzNameFirst);
+                    clearValuesByClass(form_gbdat);
+                    clearValuesByClass(form_sexkz);
+
+                    nascondi(form_zzCodCamComm);
+                    nascondi(form_zzNumLocOpere);
+                    nascondi(form_zzNameLast);
+                    nascondi(form_zzNameFirst);
+                    nascondi(form_gbdat);
+                    nascondi(form_sexkz);
+                    break;
+                case '310':
+                case '320':
+                case '330':
+                    clearValuesByClass(form_zzCodCamComm);
+                    clearValuesByClass(form_zzNumLocOpere);
+                    clearValuesByClass(form_zzNameLast);
+                    clearValuesByClass(form_zzNameFirst);
+                    clearValuesByClass(form_gbdat);
+                    clearValuesByClass(form_sexkz);
+
+                    nascondi(form_zzCodCamComm);
+                    mostra(form_zzNumLocOpere);
+                    nascondi(form_zzNameLast);
+                    nascondi(form_zzNameFirst);
+                    nascondi(form_gbdat);
+                    nascondi(form_sexkz);
+                    break;
+                case '210':
+                    clearValuesByClass(form_zzCodCamComm);
+                    clearValuesByClass(form_zzNumLocOpere);
+                    clearValuesByClass(form_zzNameLast);
+                    clearValuesByClass(form_zzNameFirst);
+                    clearValuesByClass(form_gbdat);
+                    clearValuesByClass(form_sexkz);
+
+                    nascondi(form_zzCodCamComm);
+                    nascondi(form_zzNumLocOpere);
+
+                    if (form_codiceFiscale.val().length === 16) {
+                        mostra(form_zzNameLast);
+                        mostra(form_zzNameFirst);
+                        mostra(form_gbdat);
+                        mostra(form_sexkz);
+                    } else if (form_codiceFiscale.val().length === 11) {
+                        nascondi(form_zzNameLast);
+                        nascondi(form_zzNameFirst);
+                        nascondi(form_gbdat);
+                        nascondi(form_sexkz);
+                    } else {
+                        nascondi(form_zzCodCamComm);
+                        nascondi(form_zzNumLocOpere);
+                        nascondi(form_zzNameLast);
+                        nascondi(form_zzNameFirst);
+                        nascondi(form_gbdat);
+                        nascondi(form_sexkz);
+                    }
+                    break;
+                case '224':
+                case '231':
+                case '232':
+                case '410':
+                case '411':
+                case '531':
+                    clearValuesByClass(form_zzCodCamComm);
+                    clearValuesByClass(form_zzNumLocOpere);
+                    clearValuesByClass(form_zzNameLast);
+                    clearValuesByClass(form_zzNameFirst);
+                    clearValuesByClass(form_gbdat);
+                    clearValuesByClass(form_sexkz);
+
+                    mostra(form_zzCodCamComm);
+                    nascondi(form_zzNumLocOpere);
+                    nascondi(form_zzNameLast);
+                    nascondi(form_zzNameFirst);
+                    nascondi(form_gbdat);
+                    nascondi(form_sexkz);
+                    break;
+                default:
+                    clearValuesByClass(form_zzCodCamComm);
+                    clearValuesByClass(form_zzNumLocOpere);
+                    clearValuesByClass(form_zzNameLast);
+                    clearValuesByClass(form_zzNameFirst);
+                    clearValuesByClass(form_gbdat);
+                    clearValuesByClass(form_sexkz);
+
+                    nascondi(form_zzCodCamComm);
+                    nascondi(form_zzNumLocOpere);
+                    nascondi(form_zzNameLast);
+                    nascondi(form_zzNameFirst);
+                    nascondi(form_gbdat);
+                    nascondi(form_sexkz);
+                    break;
+            }
+        }
+    </script>
+{% endblock %}

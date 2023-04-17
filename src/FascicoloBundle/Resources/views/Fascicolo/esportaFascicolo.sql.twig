@@ -1,0 +1,7 @@
+{% import 'FascicoloBundle:Fascicolo:macro_esportazione.sql.twig' as macro %}
+{{ macro.insert_pagina(fascicolo.indice, true) }}
+SET @id_pagina = (SELECT MAX(id) FROM fascicoli_pagine WHERE alias='{{fascicolo.indice.alias}}');
+INSERT INTO `fascicoli_fascicoli` (`indice_id`, `template`) VALUES (@id_pagina, {{fascicolo.template is null ? 'NULL' : fascicolo.template|quote|raw }});
+SET @id_fascicolo = LAST_INSERT_ID();
+
+{{ macro.insert_frammenti_pagina(fascicolo.indice) }}

@@ -1,0 +1,176 @@
+{% extends '::base.html.twig' %}
+  
+{% block body %}
+
+	<h4 id="riepilogocerh4" data-toggle="collapse" data-target="#riepilogocer">Riepilogo certificazione
+		<i id="iconacer" style="float: right; color: activeborder" class="more-less glyphicon glyphicon-plus"></i>
+	</h4>
+	<div id="riepilogocer" class="collapse">
+	<table class="table table-striped">
+		<tr>
+			<td style="width:30%;">Numero</td>
+			<td><strong>{{ certificazione.numero }}</strong></td>
+		</tr>
+		<tr>
+			<td>Anno</td>
+			<td><strong>{{ certificazione.anno }}</strong></td>
+		</tr>
+		<tr>
+			<td>Stato</td>
+			<td><strong>{{ certificazione.stato }}</strong></td>
+		</tr>
+		<tr>
+			<td>Tipologia</td>
+			<td><strong>{{ certificazione.tipologiacertificazione.descrizione }}</strong></td>
+		</tr>
+		<tr>
+			<td>Data proposta</td>
+			<td><strong>{{ certificazione.dataPropostaAdg is not null ? certificazione.dataPropostaAdg|date('d-m-Y') : "-" }}</strong></td>
+		</tr>
+		<tr>
+			<td>Data Approvazione</td>
+			<td><strong>{{ certificazione.dataApprovazione is not null ? certificazione.dataApprovazione|date('d-m-Y') : "-" }}</strong></td>
+		</tr>
+		<tr>
+			<td>Importo Proposto</td>
+			<td><strong>€ {{ certificazione.importoProposto|number_format(2, ',', '.') }}</strong></td>
+		</tr>
+		<tr>
+			<td>Tagli AdC</td>
+			<td><strong>€ {{ certificazione.importoTagliAdC|number_format(2, ',', '.') }}</strong></td>
+		</tr>	
+		<tr>
+			<td>Tagli AdA</td>
+			<td><strong>€ {{ certificazione.importoTagliAdA|number_format(2, ',', '.') }}</strong></td>
+		</tr>		
+		<tr>
+			<td>Importo Certificato</td>
+			<td><strong>€ {{ certificazione.importoCertificato|number_format(2, ',', '.') }}</strong></td>
+		</tr>	
+	</table>
+	</div>
+	<h4 id="riepilogoh4" data-toggle="collapse" data-target="#riepilogo">Riepilogo importi proposti per certificazione
+		<i id="icona" style="float: right; color: activeborder" class="more-less glyphicon glyphicon-plus"></i>
+	</h4>
+	<div id="riepilogo" class="collapse">
+	<table class="table table-striped table-hover table-bordered" id="appendice">
+		<thead>
+			<tr>
+				<th>Asse prioritario</th>				
+				<th>Importo proposto per la certificazione</th>									
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>1</td>
+				<td>{{importi_asse['A1']|number_format(2, ',', '.')}}</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td>{{importi_asse['A2']|number_format(2, ',', '.')}}</td>
+			</tr>
+			<tr>
+				<td>3</td>
+				<td>{{importi_asse['A3']|number_format(2, ',', '.')}}</td>
+			</tr>
+			<tr>
+				<td>4</td>
+				<td>{{importi_asse['A4']|number_format(2, ',', '.')}}</td>
+			</tr>
+			<tr>
+				<td>5</td>
+				<td>{{importi_asse['A5']|number_format(2, ',', '.')}}</td>
+			</tr>
+			<tr>
+				<td>6</td>
+				<td>{{importi_asse['A6']|number_format(2, ',', '.')}}</td>
+			</tr>
+			<tr>
+				<td>7</td>
+				<td>{{importi_asse['A7']|number_format(2, ',', '.')}}</td>
+			</tr>
+			<tr>
+				<td style="font-weight: bold">Totale</td>
+				<td style="font-weight: bold">{{importi_asse['TOTALE']|number_format(2, ',', '.')}}</td>
+			</tr>
+		</tbody>
+	</table>
+	</div>
+		
+	{% if is_granted('ROLE_CERTIFICATORE') or is_granted('ROLE_SUPER_ADMIN') or is_granted('ROLE_CERTIFICATORE_AGREA') %}	
+		<h4>Allegati</h4>
+		{% if (stato_certificazione == 'CERT_INVIATA' or stato_certificazione == 'CERT_APPROVATA') and  is_granted('ROLE_CERTIFICATORE_AGREA')%}
+			<a href="{{ path("scarica_allegato_a_certificazione", {"id_certificazione" : certificazione.id }) }}" class="btn btn-info">Scarica Allegato A</a>	
+			<a href="{{ path("scarica_allegato_b_certificazione", {"id_certificazione" : certificazione.id }) }}" class="btn btn-info">Scarica Allegato B</a>
+		{% elseif is_granted('ROLE_CERTIFICATORE') %}
+			<a href="{{ path("scarica_allegato_a_certificazione", {"id_certificazione" : certificazione.id }) }}" class="btn btn-info">Scarica Allegato A</a>	
+			<a href="{{ path("scarica_allegato_b_certificazione", {"id_certificazione" : certificazione.id }) }}" class="btn btn-info">Scarica Allegato B</a>
+		{% endif %}
+		{% endif %}
+
+
+		{% if is_granted('ROLE_CERTIFICATORE') or is_granted('ROLE_SUPER_ADMIN') or is_granted('ROLE_CERTIFICATORE_AGREA') %}
+
+			<h4>Documenti certificazione</h4>		
+			{% for documento in documenti_cert  %}
+				{% if stato_certificazione == 'CERT_INSERITA' and is_granted('ROLE_CERTIFICATORE') %}
+					{{ mostra_file_dettaglio_utente(documento.documentoFile, path('cancella_documento_certificazione', {'id_documento': documento.id}) ) }}
+				{% elseif stato_certificazione == 'CERT_INSERITA' and is_granted('ROLE_CERTIFICATORE_AGREA') %}
+					{{ mostra_file_dettaglio_utente(documento.documentoFile) }}
+				{% else %}
+					{{ mostra_file_dettaglio_utente(documento.documentoFile) }}
+				{% endif %}
+				<br/>
+			{% endfor %}
+			{% if stato_certificazione == 'CERT_VALIDATA' and is_granted('ROLE_CERTIFICATORE')%}
+				<h4>Carica documento</h4>
+				<div class="form-body">
+					{{ form(form_upload_validazione_view) }}
+				</div>	
+			{% endif %}
+		{% endif %}	
+		
+		{% if is_granted('ROLE_CERTIFICATORE_AGREA') or is_granted('ROLE_CERTIFICATORE') or is_granted('ROLE_SUPER_ADMIN') %}
+			<h4>Documenti caricati AdC</h4>
+				{% for documento in documenti_cert_agrea  %}
+					{% if stato_certificazione == 'CERT_INVIATA' and is_granted('ROLE_CERTIFICATORE_AGREA') %}
+						{{ mostra_file_dettaglio_utente(documento.documentoFile, path('cancella_documento_certificazione', {'id_documento': documento.id}) ) }}
+					{% else %}
+						{{ mostra_file_dettaglio_utente(documento.documentoFile) }}
+					{% endif %}
+					<br/>
+				{% endfor %}
+			{% if stato_certificazione == 'CERT_INVIATA' and is_granted('ROLE_CERTIFICATORE_AGREA')%}
+				<h4>Carica documenti AdC</h4>
+				<div class="form-body">
+					{{ form(form_upload_agrea_view) }}
+				</div>
+			{% endif %}
+		{% endif %}
+	
+{% endblock %}
+{%block  jquery_page_document_ready %}
+<script>
+	jQuery(document).ready(function() {
+			
+		$('#riepilogo').on('hidden.bs.collapse', function () {
+			$('#icona').addClass('glyphicon-plus').removeClass('glyphicon-minus');
+		})
+		
+		$('#riepilogo').on('shown.bs.collapse', function () {
+			$('#icona').addClass('glyphicon-minus').removeClass('glyphicon-plus');
+		})
+		
+		$('#riepilogocer').on('hidden.bs.collapse', function () {
+			$('#iconacer').addClass('glyphicon-plus').removeClass('glyphicon-minus');
+		})
+		
+		$('#riepilogocer').on('shown.bs.collapse', function () {
+			$('#iconacer').addClass('glyphicon-minus').removeClass('glyphicon-plus');
+		})	
+		
+		$('#riepilogocer').collapse('show');
+		
+	});
+</script>
+{% endblock %}

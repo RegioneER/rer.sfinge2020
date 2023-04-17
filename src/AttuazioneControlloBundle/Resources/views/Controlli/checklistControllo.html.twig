@@ -1,0 +1,146 @@
+{% extends 'AttuazioneControlloBundle:Controlli:base_istruttoria.html.twig' %}
+
+{% form_theme form _self %}
+
+{% block form_label_class -%}
+    {% if compound is defined and not compound or (form.vars["empty_value_in_choices"] is defined and compound) %}
+
+    {% else %}
+form-compound-child compound-label
+    {% endif %}
+	left
+{%- endblock form_label_class %}
+
+{% block checkbox_label -%}
+    {{- block('form_label') -}}
+{%- endblock checkbox_label %}
+
+{%- block checkbox_widget -%}
+    <input type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
+{%- endblock checkbox_widget -%}
+
+{% block body %}
+
+{% include 'AttuazioneControlloBundle:Controlli:menu_principale.html.twig' %}		
+{% include 'AttuazioneControlloBundle:Controlli:menu.html.twig' with {'controllo' : controllo } %}		
+
+<h4>Dati riepilogo del progetto</h4>
+{% set richiesta = controllo.richiesta %}	
+<div class="row">
+<div class="col-md-12">
+	<table class="table table-striped table-hover table-bordered">
+		<tr>
+			<td style="width: 30%;">Procedura</td><td>{{ richiesta.procedura.titolo }}</td>
+		</tr>
+		<tr>
+			<td>Beneficiario</td><td>{{ richiesta.mandatario.soggettoVersion }}</td>
+		</tr>
+		<tr>
+			<td>Titolo del progetto</td><td>{{ richiesta.titolo is not null ? richiesta.titolo : "-" }}</td>
+		</tr>
+		<tr>
+			<td>Numero protocollo</td><td>{{ richiesta.protocollo }}</td>
+		</tr>
+		<tr>
+			<td>Codice CUP</td><td>{{ richiesta.istruttoria.codicecup }}</td>
+		</tr>
+		<tr>
+			<td>Importo delle spese ammesse dalla/e check-list relative alle verifiche sul 100% della spesa rendicontata:</td>
+			<td>{{ richiesta.importorendicontatoammesso|number_format(2,',', '.') }}</td>
+		</tr>				
+	</table>
+</div>
+</div>
+
+
+{{ form_start(form) }}
+{{ form_errors(form) }}
+
+{% block pre_form %}{% endblock %}
+
+{% set sezione = (form.valutazioni_elementi|first).vars.value.elemento.sezioneChecklist %}	
+<h4>{{ sezione.descrizione }}</h4>	
+
+<table class="table">
+	<thead>
+		<tr>
+			<th style="width:22%; text-align: center;">Campo</th>
+			<th style="width:10%; text-align: center;">Valore</th>
+			{% if sezione.documentibool %}
+				<th style="width:17%; text-align: center;">Documento</th>
+			{% endif %}
+			{% if sezione.collocazionebool %}
+				<th style="width:17%; text-align: center;">Collocazione</th>
+			{% endif %}
+			{% if sezione.collocazionebenbool %}
+				<th style="width:17%; text-align: center;">Collocazione C/O Beneficiario</th>
+			{% endif %}
+			{% if sezione.commento %}
+				<th style="width:17%; text-align: center;">Commento</th>
+			{% endif %}
+		</tr>
+	</thead>
+	<tbody>
+	{% for valutazione in form.valutazioni_elementi %}
+		{% set elemento = valutazione.vars.value.elemento %}
+		
+		{% if elemento.isSpecifica == 0  or (elemento.isSpecifica == 1 and (procedura in elemento.procedure ))  %}
+			{% if elemento.sezioneChecklist.id != sezione.id %}
+				{% set sezione = elemento.sezioneChecklist %}
+				</tbody></table>
+				<h4>{{sezione.descrizione}}</h4>
+				<table class="table">
+					<thead>
+						<tr>
+							<th style="width:22%; text-align: center;">Campo</th>
+							<th style="width:10%; text-align: center;">Valore</th>
+							{% if sezione.documentibool %}
+								<th style="width:17%; text-align: center;">Documento</th>
+							{% endif %}
+							{% if sezione.collocazionebool %}
+								<th style="width:17%; text-align: center;">Collocazione</th>
+							{% endif %}
+							{% if sezione.collocazionebenbool %}
+								<th style="width:17%; text-align: center;">Collocazione C/O Beneficiario</th>
+							{% endif %}
+							{% if sezione.commento %}
+								<th style="width:17%; text-align: center;">Commento</th>
+							{% endif %}
+						</tr>
+					</thead>
+					<tbody>			
+					{% endif %}
+			<tr>
+				<td>{{ form_label(valutazione.valore) }}<br />
+					{% if valutazione.vars.value.elemento.note is not null %}
+						<br /><span style="font-size: 90%;">{{ valutazione.vars.value.elemento.note }}</span><br />
+					{% endif %}
+					{{ form_errors(valutazione.valore) }}</td>
+				<td>{{ form_widget(valutazione.valore) }}</td>
+				{% if valutazione.documenti_text is defined %}
+					<td>{{ form_widget(valutazione.documenti_text) }}</td>
+				{% endif %}
+				{% if valutazione.collocazione is defined %}
+					<td>{{ form_widget(valutazione.collocazione) }}</td>
+				{% endif %}
+				{% if valutazione.collocazione_ben is defined %}
+					<td>{{ form_widget(valutazione.collocazione_ben) }}</td>
+				{% endif %}
+				{% if valutazione.commento is defined %}
+					<td>{{ form_widget(valutazione.commento) }}</td>
+				{% endif %}
+			</tr>
+		{% else  %}
+			{% do valutazione.setRendered %}
+		{% endif %}
+	{% endfor %}
+	</tbody>	
+</table>
+	
+{% if valutazione_checklist.valutatore is not null %}
+	<p class="well alert alert-info">Validata da {{ valutazione_checklist.valutatore }} in data {{ valutazione_checklist.dataValidazione|date('d/m/Y') }}</p>
+{% endif %}	
+
+{{ form_end(form) }}
+
+{% endblock %}

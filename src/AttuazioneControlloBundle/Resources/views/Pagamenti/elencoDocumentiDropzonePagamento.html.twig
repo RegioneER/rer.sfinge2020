@@ -1,0 +1,97 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block begin_page_level_plugin_style %}
+	<link href="{{ asset('assets/css/dropzone.min.css') }}" rel="stylesheet" type="text/css"/>
+{% endblock %}
+
+{% block body %}
+	{{ mostra_validazione_attuazione('gestione_documenti_dropzone', null, null, pagamento) }}
+
+	{% if documenti_caricati is empty %}
+		<div class="alert alert-warning">
+			Dimensione massima del file: <strong>{{ dimensione_massima_documento }}MB</strong>
+			<br/>
+			Formato del file: <strong>{{ formato_ammesso_documento|upper }}</strong>
+			<br/>
+			<br/>
+			L’operazione di caricamento potrebbe richiedere qualche minuto,
+			si consiglia di attendere la conclusione dell’operazione e non uscire dalla sottosezione “Video di presentazione".
+		</div>
+
+		<form
+			action="{{ path("carica_documento_dropzone_pagamento", {"id_pagamento":pagamento.id}) }}"
+			class="dropzone"
+			id="myDrop">
+		</form>
+	{% else %}
+		{% if documenti_caricati is not empty %}
+			<div class="form-body">
+				{% for documento in documenti_caricati %}
+					{% if not is_richiesta_disabilitata and is_granted('ROLE_UTENTE')%}
+						{{ mostra_file(documento.documentoFile, is_richiesta_disabilitata ? null : path('elimina_documento_pagamento', {'id_documento_pagamento': documento.id }) ) }}
+					{% else %}
+						{{ mostra_file(documento.documentoFile, null )}}
+					{% endif %}
+					<br/>
+				{% endfor %}
+			</div>
+		{% endif %}
+	{% endif %}
+
+	<div class="page-actions">
+		{{ pulsante_indietro( path("dettaglio_pagamento",{"id_pagamento" : pagamento.id} )) }}
+	</div>
+{% endblock %}
+
+{% block  jquery_page_document_ready %}
+	<script src="{{ asset('assets/scripts/dropzone.min.js') }}"></script>
+
+	<script type="text/javascript">
+		Dropzone.autoDiscover = false;
+		$(document).ready(function() {
+			$("#myDrop").dropzone({
+				maxFiles:1,
+				acceptedFiles: '.{{ formato_ammesso_documento }}',
+				init: function(){
+					this.on("error", function(file, errorMessage) {
+						alert("error : " + errorMessage );
+					});
+					this.on("maxfilesexceeded", function(file) {
+						alert("error : " + errorMessage );
+					});
+				},
+
+				maxFilesize: {{ dimensione_massima_documento }}, // in Mb
+				chunking: true,
+				forceChunking: true,
+				chunkSize: 5*1024*1024,
+				timeout: 0,
+				chunksUploaded: function (file, done) {
+					var currentFile = file;
+
+					// This calls server-side code to merge all chunks for the currentFile
+					$.ajax({
+						url: '{{ path("concat_chunks_documento_dropzone_pagamento", { 'id_pagamento' : pagamento.id }) }}',
+						method: "POST",
+						data: {
+							dzuuid: currentFile.upload.uuid,
+							dztotalchunkcount: currentFile.upload.totalChunkCount,
+							filename: currentFile.name,
+						},
+						success: function (data) {
+							file.recordId = data.recordId;
+							file.downloadUrl = data.downloadUrl;
+							window.location.replace('{{ path("gestione_documenti_dropzone_pagamento", { 'id_pagamento' : pagamento.id }) }}');
+							done();
+						},
+						error: function (msg) {
+							currentFile.accepted = false;
+							dropzone._errorProcessing([currentFile], msg.responseText);
+						}
+					});
+				}
+			}
+			);
+		});
+	</script>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	{% include 'AuditBundle:Audit:menu.html.twig' %}
+	{% if ruolo_lettura == false %}
+		{{ form_start(form) }}
+		{{ form_end(form) }}
+	{% endif %}
+
+	<h4>Documenti e allegati</h4>
+	{% for documento_campione in campioneOperazione.documenticampioneoperazione%}
+		{% if ruolo_lettura == false %}
+			{{ mostra_file(documento_campione.documentofile, path('elimina_documento_campione_operazione', {'id_doc_campione_operazione': documento_campione.id, '_token': csrfToken }) ) }}
+		{% else %}
+			{{ mostra_file(documento_campione.documentofile) }}
+		{% endif %}
+
+		<br/>
+	{% endfor %}
+	<br/><br/>
+	{{ pulsante_indietro(path("visualizza_audit_operazione_attuazione",{"id_audit":campioneOperazione.auditoperazione.audit.id, "id_audit_operazione":campioneOperazione.auditoperazione.id})) }}
+
+{% endblock %}

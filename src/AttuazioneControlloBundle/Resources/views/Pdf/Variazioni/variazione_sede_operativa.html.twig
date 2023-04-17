@@ -1,0 +1,114 @@
+{% extends '@AttuazioneControllo/Pdf/Variazioni/variazione_generica.html.twig' %}
+{% block chiede %}
+
+    <p class="text-medium" align="center"><b>A TAL FINE</b><p>
+    <p class="text-small">
+        <b>consapevole delle conseguenze, anche penali previste nel medesimo decreto per chi presenta dichiarazioni false o mendaci.</b>
+    </p>
+    <p class="text-medium" align="center"><b>CHIEDE</b><p>
+    <p class="text-small">
+        l&apos;autorizzazione alla variazione della Unit&agrave; locale/sede del progetto.
+    </p>
+
+{% endblock chiede %}
+
+{% block comunica %}
+
+    <p class="text-medium" align="center"><b>COMUNICA</b><p>
+    <p class="text-small">
+        La variazione della sede di intervento (UL / Sede del progetto)
+    </p>
+    <p class="text-small">
+        {{variazione.note}}
+    </p>
+    <br/>
+    <table class="singolo-checkbox">
+        <tbody>
+            <tr>
+                <td>
+                    La nuova UL / sede progetto rispecchia i criteri previsti dal bando in merito alla localizzazione territoriale della sede di intervento
+                </td>
+                <td >
+                        {{- variazione.autodichiarazione == 1 ? 'X' : '' -}}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+{% endblock comunica %}
+
+{% block body_variazione %}
+	{% set attuale = variazione.sedeOperativa|default(variazione.soggetto.sede) %}
+	{% set prossima = variazione.sedeOperativaVariata %}
+    <h4 style="text-align:center;">{{variazione.richiesta.soggetto}}</h4>
+<table>
+		<tbody>
+            <tr>
+                <th colspan="3" style="text-align:center">Sede</th>
+            </tr>
+			<tr>
+				<th></th>
+				<th>Valore precedente</th>
+				<th>Valore Variato</th>
+			</tr>
+			<tr>
+				<th>Ragione sociale</th>
+				<td>{{ attuale.denominazione }}</td>
+				<td>{{ prossima.denominazione }}</td>
+			</tr>
+			<tr>
+				<th>Numero REA</th>
+				<td>{{ attuale.numeroRea }}</td>
+				<td>{{ prossima.numeroRea }}</td>
+			</tr>
+			<tr>
+				<th>Codice Ateco</th>
+				<td>{{ attuale.ateco }}</td>
+				<td>{{ prossima.ateco }}</td>
+			</tr>
+			<tr>
+				<th>Codice Ateco secondario</th>
+				<td>{{ attuale.atecoSecondario }}</td>
+				<td>{{ prossima.atecoSecondario }}</td>
+			</tr>
+            <tr>
+                <th colspan="3" style="text-align:center">Indirizzo</th>
+            </tr>
+			<tr>
+				<th>Indirizzo</th>
+				<td>{{ attuale.indirizzo.via }}</td>
+				<td>{{ prossima.indirizzo.via }}</td>
+			</tr>
+			<tr>
+				<th>Numero civico</th>
+				<td>{{ attuale.indirizzo.numeroCivico }}</td>
+				<td>{{ prossima.indirizzo.numeroCivico }}</td>
+			</tr>
+			<tr>
+				<th>Stato</th>
+				<td>{{ attuale.indirizzo.stato }}</td>
+				<td>{{ prossima.indirizzo.stato }}</td>
+			</tr>
+
+			<tr>
+				<th>Provincia / Regione (estera)</th>
+				<td>{{ attuale.indirizzo.comune.provincia ? attuale.indirizzo.comune.provincia : attuale.indirizzo.comune.provinciaEstera }}</td>
+				<td>{{ prossima.indirizzo.comune.provincia ? prossima.indirizzo.comune.provincia : prossima.indirizzo.comune.provinciaEstera }}</td>
+			</tr>
+			<tr>
+				<th>Città (estera)</th>
+				<td>{{ attuale.indirizzo.comune ? attuale.indirizzo.comune : attuale.indirizzo.comuneEstero }}</td>
+				<td>{{ prossima.indirizzo.comune ? prossima.indirizzo.comune : prossima.indirizzo.comuneEstero}}</td>
+			</tr>
+			<tr>
+				<th>CAP</th>
+				<td>{{ attuale.indirizzo.cap }}</td>
+				<td>{{ prossima.indirizzo.cap }}</td>
+			</tr>
+			<tr>
+				<th>Località/Frazione</th>
+				<td>{{ attuale.indirizzo.localita }}</td>
+				<td>{{ prossima.indirizzo.localita }}</td>
+			</tr>
+		</tbody>
+	</table>
+{% endblock body_variazione %}

@@ -1,0 +1,91 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+{% form_theme form _self %}
+{# <div id="form-noscript"> #}
+{{ form(form) }}
+{# </div>
+<div id="form-ajax">
+
+<div id="dropzone"  style="height:200px; background-color:rgb(237, 237, 237); margin-top:5em; margin-bottom:2em; display: flex;  align-items: center;  justify-content: center;    border-style: dashed;
+border-radius: 5%;
+border-color: grey;
+border-width: thick;">
+    <p style=" color: gray; font-size: xx-large;"><i class="fa fa-download" aria-hidden="true" style=" font-size: xx-large;" ></i>Trascina qui i files</p>
+</div>
+
+<div class="table table-striped" class="files" id="previews">
+
+  <div id="template" class="file-row">
+    <div class="row">
+      <div class="col-md-5">
+        <p class="name" data-dz-name></p>
+        <strong class="error text-danger" data-dz-errormessage></strong>
+      </div>
+      <div class="progress progress-striped active col-md-5" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="padding:0;">
+        <div class="progress-bar progress-bar-success" style="padding:0; width:0%;" data-dz-uploadprogress></div>
+      </div>
+      <div class="col-md-2">
+        <button data-dz-remove class="btn btn-danger delete pull-right">
+          <i class="glyphicon glyphicon-trash"></i>
+          <span>Cancella</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div> <!-- Fine del template -->
+<button id="avvia-tutti-uploads" class="btn btn-primary" style="width:100%;">Avvia importazione</button>
+<button id="nuovo-upload" class="btn btn-primary" style="width:100%; display:none;" onclick="nuovaImportazione();">Nuova importazione</button>
+</div> <!-- fine form -->
+
+{% endblock %}
+{% block jquery_page_document_ready %}
+<script type="text/javascript" src="{{- asset('assets/scripts/dropzone.js') -}}"></script>
+<script type="text/javascript">
+{% include 'MonitoraggioBundle:Esportazioni:importazioneAjax.js.twig' %}
+</script> #}
+{% endblock %}
+
+{% block file_widget %}
+    {% spaceless %}
+
+    {{ block('form_widget') }}
+
+    {% if estensione is not null %}
+        <div class="label_estensioni_documenti">Formati ammessi: <span id="lista_estensioni">{{ estensione }}</span></div>
+    {% else %}
+        <div class="label_estensioni_documenti">Formati ammessi: 
+            <img id="loader_estensione" src="{{ asset('assets/img/ajax-loading.gif') }}"/>  
+            <span id="lista_estensioni"></span>
+        </div>
+        <script type="text/javascript">
+        'use strict';
+            $(document).ready(function () {
+                $("select").change(function () {
+                    $('#documento_file_file').attr('disabled',true);
+                    var id_documento = $(this).val();
+                    if(id_documento){
+                        var url = '{{ path("mostra_estensione_documento", { 'id_documento' : 'id_documento' }) }}';
+                        url = url.replace("id_documento", id_documento);
+                        $("#lista_estensioni").html('');
+                        $("#loader_estensione").show();
+                        $.ajax({
+                            url: url,
+                            success: function (res) {
+                                $("#lista_estensioni").append(res);
+                                $("#loader_estensione").hide();
+                                $('#documento_file_file').attr('disabled', false);
+                            }
+                        });    
+                    }else{
+                        $("#lista_estensioni").html('');
+                    }
+                })
+                .trigger('change');
+            });
+        </script>
+    {% endif %}
+    {% endspaceless %}
+
+{% endblock %}

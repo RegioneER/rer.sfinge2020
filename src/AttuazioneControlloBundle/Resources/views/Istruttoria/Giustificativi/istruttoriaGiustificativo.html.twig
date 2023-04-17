@@ -1,0 +1,234 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+
+    <h4>Fornitore</h4>
+    <table class="table table-striped table-hover">
+        <tr>
+            <th style="width: 50%">Denominazione</th>
+            <td>{{ giustificativo.denominazioneFornitore }}</td>
+        </tr>
+        <tr>
+            <th>Codice fiscale</th>
+            <td>{{ giustificativo.codiceFiscaleFornitore }}</td>
+        </tr>
+    </table>
+
+    <h4>Dati giustificativo</h4>
+    <table class="table table-striped table-hover">
+        <tr>
+            <th style="width: 50%;">Numero</th>
+            <td>{{ giustificativo.numeroGiustificativo }}</td>
+        </tr>
+        <tr>
+            <th style="width: 50%;">Data</th>
+            <td>{{ giustificativo.dataGiustificativo | date('d/m/Y') }}</td>
+        </tr>
+        <tr>
+            <th>Tipologia</th>
+            <td>{{ giustificativo.tipologiaGiustificativo ? giustificativo.tipologiaGiustificativo : '-' }}</td>
+        </tr>
+        <tr>
+            <th>Importo giustificativo</th>
+            <td>{{ giustificativo.importoGiustificativo |number_format(2, ',', '.') }}</td>
+        </tr>
+        <tr>
+            <th>Importo su cui si richiede il contributo</th>
+            <td>{{ giustificativo.importoRichiesto|number_format(2, ',', '.') }}</td>
+        </tr>
+        {% if giustificativo.proponente is not null %}
+            <tr>
+                <th>Proponente</th>
+                <td>{{ giustificativo.proponente }}</td>
+            </tr>
+        {% endif %}
+        <tr>
+            <th>Nota/Descrizione</th>
+            <td>{{ giustificativo.notaBeneficiario }}</td>
+        </tr>
+        <tr>
+            <th>Documento</th>
+            <td>{{ giustificativo.documentoGiustificativo ? scarica_file(giustificativo.documentoGiustificativo) : '-' }}</td>
+        </tr>
+    </table>
+
+    <h4>Elenco quietanze</h4>
+    {% if giustificativo.quietanze |length > 0 %}
+        <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+            <thead>
+                <tr>
+                    <th>Numero</th>
+                    <th>Data quietanza</th>
+                    <th>Tipologia</th>
+                    <th>Azioni</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for quietanza in giustificativo.quietanze %}
+                    <tr>
+                        <td>{{ quietanza.numero is null ? "-" : quietanza.numero }}</td>
+                        <td>{{ quietanza.dataQuietanza is null ? "-" : quietanza.dataQuietanza | date('d/m/Y') }}</td>
+                        <td>{{ quietanza.tipologiaQuietanza }}</td>
+                        <td>
+                            <div class="dropdown">
+                                <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    Azioni
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                    <li><a href="{{ path("istruttoria_dettaglio_quietanza", {"id_quietanza" : quietanza.id }) }}">Dettagli</a></li>														
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    <h4>Elenco voci di costo</h4>
+    {% if form.voci_piano_costo.children |length > 0 %}
+
+        {# per il bando 24 l'annualità è stata usata impropriamente per indicare le azioni #}
+        {% set label_annualita = 'Annualità' %}
+        {% if giustificativo.pagamento.procedura.id == 24 %}{# chiedo perdono #}
+            {% set label_annualita = 'Azione' %}
+        {% endif %}
+        {% form_theme form.pulsanti _self %}
+        {{ form_start(form) }}
+        <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+            <thead>
+                <tr>
+                    <th style="width: 30%">Voce piano costo</th>
+                    <th>{{ label_annualita }}</th>
+                    <th>Importo richiesto</th>
+                        {% if ripresentazione_spesa %}
+                        <th>Importo ammesso pagamento attuale</th>
+                        <th>Importo ammesso pagamento successivo</th>
+                        <th>Importo non ammesso pagamento attuale</th>
+                        {% else %}
+                        <th>Importo ammesso</th>
+                        <th>Importo non ammesso</th>
+                        {% endif %}
+                    <th>Nota</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for form_voce in form.voci_piano_costo.children %}
+                    {% set voce = form_voce.vars.value %}
+                    <tr>
+                        <td>{{ giustificativo.pagamento.procedura.hasPianoCostiMultiSezione ? voce.vocePianoCosto.mostraLabelRendicontazioneConSezione : voce.vocePianoCosto.mostraLabelRendicontazione }}</td>
+                        <td>{{ voce.annualita ? annualita[voce.annualita] : '-' }}</td>
+                        <td>
+                            {# Utilizzo il tag span per poter recuperare più facilmente l'importo tramite JQuery #}
+                            &euro; <span>{{ voce.importo|number_format(2, ',', '.') }}</span>
+                            <br>
+                            {% if form.vars.disabled|default(false) == false %}
+                                <button type="button" class="ammettiTutto btn-xs btn-success" style="padding:0; margin:1px; white-space:nowrap; font-size: 11px;">Ammetti tutto</button>
+                                <button type="button" class="nonAmmettiTutto btn-xs btn-danger" style="padding:0; margin:1px; white-space:nowrap; font-size: 11px;">Non ammissibile</button>
+                            {% endif %}
+                        </td>
+                        <td class="importoAmmesso">{{ form_widget(form_voce.importo_approvato) }}{{ form_errors(form_voce.importo_approvato) }}</td>
+                        {% if ripresentazione_spesa %}
+                            <td>{{ form_widget(form_voce.importo_pagamento_successivo) }}{{ form_errors(form_voce.importo_pagamento_successivo) }}</td>
+                        {% endif %}
+                        <td>
+                            {% set importoNonAmmesso = voce.calcolaImportoNonAmmesso %}
+                            {% if importoNonAmmesso is null %}
+                                -
+                            {% else %}
+                                &euro; {{ voce.calcolaImportoNonAmmesso|number_format(2, ',', '.') }}
+                            {% endif %}
+                        </td>
+                        <td>{{ form_widget(form_voce.nota) }}{{ form_errors(form_voce.nota) }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {{ form_end(form) }}
+    {% endif %}
+
+    <h4>Elenco documenti giustificativo</h4>
+    {% set documentiGiustificativo = giustificativo.documentiGiustificativo %}
+    {% if documentiGiustificativo |length > 0 %}
+
+        <table class="table table-striped table-hover table-bordered" id="giustificativo-documenti">
+            <thead>
+                <tr>
+                    <th style="width: 20%">Tipologia</th>
+                    <th style="width: 30%">Documento</th>
+                    <th style="width: 35%">Nota</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for documento in documentiGiustificativo %}
+                    <tr>
+                        <td>{{ documento.documentoFile.tipologiaDocumento.descrizione }}</td>
+                        <td>{{ scarica_file(documento.documentoFile) }}</td>
+                        <td>{{ documento.nota }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    {% if istruttoria is defined %}
+        <h4>Istruttoria</h4>
+        {{ form_start(form_istruttoria) }}
+        {{ form_end(form_istruttoria) }}
+    {% endif %}
+
+{% endblock %}
+
+
+{% block indietro_widget %}
+    {% if form.vars.disabled|default(false) == false %}
+        <a data-toggle="modal" data-target="#modal-variazione-piano-costi" 
+           class='btn btn-page-action  pull-left btn-primary' 
+           role="button" >
+            {{ label|trans({}, translation_domain) }}
+        </a>
+
+        <div class="modal fade" tabindex="-1" role="dialog" id="modal-variazione-piano-costi">
+            <div class="modal-dialog"  role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h3 class="modal-title">
+                            &Egrave; stata acquisita la richiesta di modifica degli importi da parte del beneficiario 
+                            (DSAN o Risposta ad integrazione)
+                        </h3>
+                    </div>
+                    <div class="modal-body">
+                        <strong>Attenzione:</strong>
+                        questa operazione cancellerà le imputazioni presenti e potranno essere ripristinate
+                        solo con un intervento tecnico
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-default" data-dismiss="modal">No</button>
+                        <a class="btn btn-primary" 
+                           {% for attrname, attrvalue in attr %}{{ attrname }}="{{ attrvalue }}" {% endfor %}
+                           >
+                            Sì
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div><!-- /.modal -->
+    {% endif %}
+{% endblock indietro_widget %}
+
+{% block jquery_page_document_ready %}
+    <script type="text/javascript" language="javascript">
+        $(document).ready(function () {
+            $(".ammettiTutto").click(function (ev) {
+                var importoRichiesto = $(this).parent().find("span").text();
+                $(this).parent().next(".importoAmmesso").find("input").val(importoRichiesto.replace(".", ""));
+            });
+
+            $(".nonAmmettiTutto").click(function (ev) {
+                $(this).parent().next(".importoAmmesso").find("input").val("0,00");
+            });
+        });
+    </script>
+{% endblock jquery_page_document_ready %}

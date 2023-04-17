@@ -1,0 +1,62 @@
+{% macro dati_regione_chiarimenti(procedura) %}
+    <p class="text-small" align="right">
+        {% if procedura.id == 129 or procedura.id == 130 %}
+            Spett.le Regione Emilia-Romagna<br>
+            Servizio Coordinamento delle Politiche europee,<br>Programmazione, Cooperazione, Valutazione<br><br>
+            Regione Emilia-Romagna<br><br>
+            Viale Aldo Moro 30 <br><br>
+            40127 – Bologna <br>
+        {% else %}
+            Spett.le Regione Emilia-Romagna<br>
+            Direzione Generale Conoscenza, Ricerca, Lavoro, Imprese <br><br>
+            Area Liquidazione dei Programmi per lo Sviluppo <br> Economico e Supporto alla Autorità di Gestione FESR
+            <br><br>
+            Viale Aldo Moro 44 <br><br>
+            40127 – Bologna <br>
+        {% endif %}
+    </p>
+{% endmacro %}
+
+{% macro dati_regione_integrazioni(procedura) %}
+    <p class="text-small" align="right">
+        {% if procedura.isBandoPaceOCittadinanza %}
+            Spett.le Regione Emilia-Romagna<br>
+            Servizio Coordinamento delle Politiche europee,<br>
+            Programmazione, Riordino istituzionale e sviluppo territoriale,<br>
+            Partecipazione, Cooperazione e Valutazione<br><br>
+
+            Regione Emilia-Romagna<br><br>
+            Viale Aldo Moro 30 <br><br>
+            40127 – Bologna <br>
+        {% else %}
+            Spett.le Regione Emilia-Romagna<br>
+            Direzione Generale Conoscenza, Ricerca, Lavoro, Imprese <br><br>
+            Area Liquidazione dei Programmi per lo Sviluppo <br> Economico e Supporto alla Autorità di Gestione FESR
+            <br><br>
+            Viale Aldo Moro 44 <br><br>
+            40127 – Bologna <br>
+        {% endif %}
+    </p>
+{% endmacro %}
+
+{% macro dati_regione_comunicazioni_pagamenti(procedura) %}
+    <p class="text-small" align="right">
+        {% if procedura.isBandoPaceOCittadinanza %}
+            Spett.le Regione Emilia-Romagna<br>
+            Servizio Coordinamento delle Politiche europee,<br>
+            Programmazione, Riordino istituzionale e sviluppo territoriale,<br>
+            Partecipazione, Cooperazione e Valutazione<br><br>
+
+            Regione Emilia-Romagna<br><br>
+            Viale Aldo Moro 30 <br><br>
+            40127 – Bologna <br>
+        {% else %}
+            Spett.le Regione Emilia-Romagna<br>
+            Direzione Generale Conoscenza, Ricerca, Lavoro, Imprese <br><br>
+            Area Liquidazione dei Programmi per lo Sviluppo <br> Economico e Supporto alla Autorità di Gestione FESR
+            <br><br>
+            Viale Aldo Moro 44 <br><br>
+            40127 – Bologna <br>
+        {% endif %}
+    </p>
+{% endmacro %}

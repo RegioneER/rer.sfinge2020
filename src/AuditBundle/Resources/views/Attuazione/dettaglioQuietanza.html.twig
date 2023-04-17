@@ -1,0 +1,27 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+	
+	<h4>Dati quietanza</h4>
+	<table class="table table-striped table-hover">
+		<tr>
+			<td>Numero</td>
+			<td><strong>{{ quietanza.numero }}</strong></td>
+		</tr>	
+		<tr>
+			<td>Data quietanza</td>
+			<td><strong>{{ quietanza.dataQuietanza|date('d/m/Y') }}</strong></td>
+		</tr>	
+		<tr>
+			<td style="width: 50%;">Tipologia quietanza</td>
+			<td><strong>{{ quietanza.tipologiaQuietanza }}</strong></td>
+		</tr>	
+		<tr>
+			<td>Documento</td>
+			<td><strong>{{ scarica_file(quietanza.documentoQuietanza) }}</strong></td>
+		</tr>			
+	</table>	
+		
+	<a href="{{path('dettaglio_giustificativo_audit', {'id_campione_giustificativo' : id_campione})}}" class="btn btn-default btn-page-action btn-form-back">Indietro</a>
+			
+{% endblock %}

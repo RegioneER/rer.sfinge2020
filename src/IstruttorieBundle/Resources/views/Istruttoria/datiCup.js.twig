@@ -1,0 +1,91 @@
+'use strict';
+
+function attachOptions( element, values ){
+	element.empty();
+	
+	$('select:not([required])').each(function(){
+		$('<option></option>')
+			.text('-')
+			.attr('value',"")
+			.appendTo(this);
+	});
+	
+	$.each(values, function(idx, value){
+		$('<option></option>')
+			.text(value.descrizione)
+			.attr('value',value.id)
+			.appendTo(element);
+	});
+}
+
+
+function aggiornaSelect(url, select, valoreRicerca){
+	select = $(select)
+			.attr("disabled", "disabled");
+	select.select2("enable", false);		
+	url = url.replace("codice", valoreRicerca);
+	$.ajax({
+		url: url,
+		success: function (res) {
+			attachOptions( select, res);
+				select.removeAttr("disabled")
+				.trigger("change");
+		}
+	});
+}
+
+$(document).ready(function () {
+	
+	var settore_natura_url = '{{ path("settore_natura", { richiesta_id: istruttoria.richiesta.id ,codice : 'codice' }) }}';
+	var tipologia_natura_url = '{{ path("tipologia_natura", { richiesta_id: istruttoria.richiesta.id ,'codice' : 'codice' }) }}';
+	var sottosettore_settore_url = '{{ path("sottosettore_settore", { richiesta_id: istruttoria.richiesta.id ,'codice' : 'codice' }) }}';
+	var categoria_sottosettore_url = '{{ path("categoria_sottosettore", { richiesta_id: istruttoria.richiesta.id ,'codice' : 'codice' }) }}';
+	
+	$("#dati_cup_cup_natura").change(function () {
+		var url = settore_natura_url;
+		var cupSettore = $("#dati_cup_cup_settore");
+		var value = $(this).val();
+		if( !value  ){
+			return;
+		}
+
+		aggiornaSelect(url, cupSettore, value);
+
+	});
+	
+	$("#dati_cup_cup_natura").change(function () {
+		var url = tipologia_natura_url;
+		var cupTipologia = $("#dati_cup_cup_tipologia");
+		var value = $(this).val();
+		if( !value  ){
+			return;
+		}
+
+		aggiornaSelect(url, cupTipologia, value);
+	});
+	
+	$("#dati_cup_cup_settore").change(function () {
+		var url = sottosettore_settore_url;
+		var cupSottoSettore = $("#dati_cup_cup_sottosettore");
+		var value = $(this).val();
+		if( !value  ){
+			return;
+		}
+
+		aggiornaSelect(url, cupSottoSettore, value);
+
+	});
+	
+	$("#dati_cup_cup_sottosettore").change(function () {
+			var url = categoria_sottosettore_url;
+			var cupCategoria = $("#dati_cup_cup_categoria");			
+			var value = $(this).val();
+			if( !value  ){
+				return;
+			}
+
+			aggiornaSelect(url, cupCategoria, value);			
+	});
+
+	
+});

@@ -1,0 +1,29 @@
+default:
+    resource: "@AuditBundle/Controller/ProgrammazioneController.php"
+    type:    annotation
+    prefix:   /audit/programmazione    
+    
+organismo:
+    resource: "@AuditBundle/Controller/OrganismoController.php"
+    type:    annotation
+    prefix:   /audit/programmazione/organismo    
+    
+pianificazione:
+    resource: "@AuditBundle/Controller/PianificazioneController.php"
+    type:    annotation
+    prefix:   /audit/pianificazione   
+    
+attuazione:
+    resource: "@AuditBundle/Controller/AttuazioneController.php"
+    type:    annotation
+    prefix:   /audit/attuazione
+    
+rac:
+    resource: "@AuditBundle/Controller/RacController.php"
+    type:    annotation
+    prefix:   /audit/rac
+
+estrazioni:
+    resource: "@AuditBundle/Controller/EstrazioniController.php"
+    type:    annotation
+    prefix:   /audit/estrazioni

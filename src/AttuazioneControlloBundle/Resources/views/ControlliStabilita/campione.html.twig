@@ -1,0 +1,16 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+
+<h4>Valutazione controllo</h4>
+
+{{ form_start(form) }}
+{{ form_errors(form) }}
+{{ form_row(form.descrizione) }}
+{{ form_row(form.tipo_controllo) }}
+{{ form_row(form.tipo) }}
+{{ form_row(form.data_inizio) }}
+{{ form_row(form.data_termine) }}
+{{ form_row(form.file) }}
+{{ form_end(form) }}
+{% endblock %}

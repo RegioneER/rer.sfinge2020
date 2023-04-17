@@ -1,0 +1,27 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet box green">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <span class="fa fa-reorder"></span>Inserire i dati
+                    </div>
+                </div>
+                <div class="portlet-body">
+					<div class="portlet-body">
+					<div class="form-body">
+						{{ form_start(form) }}
+						<div>
+							{{ form_row(form.titolo) }}
+							{{ form_row(form.testo) }}	
+							{{ form_row(form.dataInserimento) }}
+						</div>
+						{{ form_end(form) }}
+					</div>
+				</div>
+				</div>
+			</div>
+		</div>
+	{% endblock %}

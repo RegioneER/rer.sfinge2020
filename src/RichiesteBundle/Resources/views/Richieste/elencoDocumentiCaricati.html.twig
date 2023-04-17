@@ -1,0 +1,24 @@
+{% extends '::base.html.twig' %}
+
+{% block intestazione %}
+	{{ parent() }}
+	{{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% block body %}
+
+    <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+        <tbody>
+			{% for documento in documenti %}
+				<tr>
+				<td>{{ mostra_file(documento.documentoFile, null )}}</td>
+				</tr>
+			{% endfor %}
+			{% if domanda_importata == 0%}
+			<tr>
+				<td>{{ mostra_file(domanda, null )}}</td>
+			</tr>
+			{% endif %}
+        </tbody>
+    </table>
+{% endblock %}

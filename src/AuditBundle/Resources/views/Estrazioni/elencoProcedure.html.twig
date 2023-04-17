@@ -1,0 +1,82 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	<h4>Estrazioni complete</h4>
+	<div class="table-toolbar">
+        <div>
+			<a href="{{ path('scarica_estrazione_procedure') }}" class="btn btn-primary"><span class="fa"></span>Estrazione procedure</a>
+			<a href="{{ path('scarica_estrazione_operazioni') }}" class="btn btn-primary"><span class="fa"></span>Estrazione operazioni</a>
+			<a href="{{ path('scarica_estrazione_aggiudicazioni') }}" class="btn btn-primary"><span class="fa"></span>Estrazione procedure aggiudicazione</a>
+			<a href="{{ path('scarica_estrazione_controlli') }}" class="btn btn-primary"><span class="fa"></span>Estrazione controlli loco</a>
+			<a href="{{ path('scarica_estrazione_decertificazioni') }}" class="btn btn-primary"><span class="fa"></span>Estrazione rettifiche finanziarie</a>
+			<a href="{{ path('scarica_estrazione_pagamenti') }}" class="btn btn-primary"><span class="fa"></span>Estrazione pagamenti</a>
+                        <a href="{{ path('scarica_estrazione_contratti') }}" class="btn btn-primary"><span class="fa"></span>Estrazione contratti </a>
+			{#<a href="{{ path('scarica_estrazione_giustificativi') }}" class="btn btn-primary"><span class="fa"></span>Estrazione giustificativi</a>#}
+		</div>
+    </div>
+	<h4>Elenco procedure</h4>
+    <div class="table-toolbar">
+        <div>
+			<a class="btn btn-info" href="#ricerca-procedura-modal" data-toggle="modal">
+				<span class="fa fa-search"></span> Ricerca
+			</a>
+        </div>
+    </div>
+    <div class="count">
+        Numero elementi trovati: {{ procedure.getTotalItemCount }} - Filtro attivo: {{ filtro_attivo ? "Si" : "No" }}
+    </div>
+    <table class="table table-striped table-hover table-bordered" id="notizie-elenco">
+        <thead>
+            <tr>
+                <th>id</th>
+                <th>Numero atto</th>
+                <th>Asse</th>
+                <th>Tipo</th>
+                <th>Titolo</th>
+                <th>Amministrazione emittente</th>
+                <th>Responsabile bando</th>
+                <th>Fondo</th>
+                <th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for procedura in procedure %}
+				{% if procedura.asse != 'A0: Asse fittizio per progetti non POR FESR' %}
+					<tr>
+						<td>{{ procedura.id }}</td>
+						<td>{{ procedura.numero_atto }}</td>
+						<td>{{ procedura.asse }}</td>
+						<td>{{ procedura.tipologia_procedura }}</td>
+						<td>{{ procedura.titolo }}</td>
+						<td>{{ procedura.amministrazione_emittente }}</td>
+						<td>{{ procedura.responsabile }}</td>
+						<td>{{ procedura.fondo }}</td>
+						<td><div class="dropdown">
+								<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+									Azioni
+									<span class="caret"></span>
+								</button>							
+								<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+									<li><a href="{{ path('scarica_estrazione_operazioni', {'id_procedura':procedura.id})}}">Estrazione Operazioni</a></li>
+									<li><a href="{{ path('scarica_estrazione_pagamenti', {'id_procedura':procedura.id})}}">Estrazione Pagamenti</a></li>
+									<li><a href="{{ path('scarica_estrazione_giustificativi', {'id_procedura':procedura.id})}}">Estrazione Giustificativi</a></li>
+									<li><a href="{{ path('scarica_estrazione_aggiudicazioni', {'id_procedura':procedura.id})}}">Estrazione procedure aggiudicazione</a></li>
+									<li><a href="{{ path('scarica_estrazione_controlli', {'id_procedura':procedura.id})}}">Estrazione controlli loco</a></li>
+									<li><a href="{{ path('scarica_estrazione_decertificazioni', {'id_procedura':procedura.id})}}">Estrazione rettifiche finanziarie</a></li>
+								</ul>
+							</div>
+						</td>
+					</tr>
+				{% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+    {# display navigation #}
+    <div class="navigation">
+        {{ knp_pagination_render(procedure) }}
+    </div>
+
+    {{ modale_ricerca("Atti Amministrativi",form_ricerca_procedure,"elenco_atti_amministrativi_audit_pulisci","ricerca-procedura-modal") }}
+
+{% endblock %}
+

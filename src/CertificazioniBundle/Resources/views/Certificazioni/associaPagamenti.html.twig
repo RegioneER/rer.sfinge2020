@@ -1,0 +1,182 @@
+{% extends '::base.html.twig' %}
+{% block begin_page_level_plugin_style %}
+	<style>
+		#appendice #appendice td:nth-child(2) {
+			text-align: right;
+		}
+	</style>
+{% endblock %}
+{% block body %}
+    <div class="table-toolbar">
+		<a href="#" data-target="#ricerca-istruttoria-modal" data-toggle="modal" class="btn btn-info"><span class="fa fa-search"></span> Ricerca</a>
+    </div>
+	<div class="count">
+		Numero elementi trovati: {{ risultati.getTotalItemCount }} - Filtro attivo: {{ filtro_attivo ? "Si" : "No" }}
+	</div>
+
+	<h4 id="riepilogoh4" data-toggle="collapse" data-target="#riepilogo">Riepilogo importi proposti per certificazione
+		<i id="icona" style="float: right; color: activeborder" class="more-less glyphicon glyphicon-plus"></i>
+	</h4>
+	<div id="riepilogo" class="collapse">
+	<table class="table table-striped table-hover table-bordered" id="appendice">
+		<thead>
+			<tr>
+				<th>Asse prioritario</th>				
+				<th>Importo proposto per la certificazione</th>									
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>1</td>
+				<td>{{importi_asse['A1']|number_format(2, ',', '.')}}</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td>{{importi_asse['A2']|number_format(2, ',', '.')}}</td>
+			</tr>
+			<tr>
+				<td>3</td>
+				<td>{{importi_asse['A3']|number_format(2, ',', '.')}}</td>
+			</tr>
+			<tr>
+				<td>4</td>
+				<td>{{importi_asse['A4']|number_format(2, ',', '.')}}</td>
+			</tr>
+			<tr>
+				<td>5</td>
+				<td>{{importi_asse['A5']|number_format(2, ',', '.')}}</td>
+			</tr>
+			<tr>
+				<td>6</td>
+				<td>{{importi_asse['A6']|number_format(2, ',', '.')}}</td>
+			</tr>
+			<tr>
+				<td>7</td>
+				<td>{{importi_asse['A7']|number_format(2, ',', '.')}}</td>
+			</tr>
+			<tr>
+				<td style="font-weight: bold">Totale</td>
+				<td style="font-weight: bold">{{importi_asse['TOTALE']|number_format(2, ',', '.')}}</td>
+			</tr>
+		</tbody>
+	</table>
+	</div>
+	<br/>
+	{% if risultati.getTotalItemCount > 0 %}
+		{{ form_start(form) }}
+		<h4>Elenco pagamenti</h4>
+		<table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+			<thead>
+				<tr>
+					<th>Titolo procedura</th>
+					<th>Soggetto</th>
+					<th>Data invio pagamento</th>				
+					<th>Titolo progetto</th>
+					<th>Codice CUP</th>
+					<th>Importo pagato/erogabile</th>
+					<th>Importo certificato</th>
+					<th style="text-align: center;">Associa</th>
+					<th style="text-align: center;">Anticipi Aiuto di stato</th>
+					<th style="text-align: center;">Strumenti fin.</th>
+					<th style="text-align: center;"> Importo da certificare</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for form_pagamento in form.pagamenti_estesi.children %}
+					{% set pagamento = form_pagamento.vars.value.pagamento %}
+					{% set richiesta = pagamento.attuazioneControlloRichiesta.richiesta %}
+					{% if pagamento.mandatoPagamento is not null and pagamento.mandatoPagamento.importoPagato is not null%}
+						<tr data-importo="{{ (pagamento.mandatoPagamento.importoPagato - pagamento.importoCertificato)|number_format(2, ',', '') }}">
+					{% else %}
+						<tr data-importo="{{ pagamento.importoCertificato|number_format(2, ',', '') }}">
+					{% endif %}
+						<td>{{ richiesta.procedura.titolo }}</td>
+						<td>{{ richiesta.mandatario.soggetto.denominazione|capitalize }}</td>
+						<td>{{ pagamento.dataInvio | date("d/m/Y") }}</td>					
+						<td>{{ richiesta.titolo }}</td>
+						{% if pagamento.attuazioneControlloRichiesta.cup is not null %}
+							<td>{{ pagamento.attuazioneControlloRichiesta.cup }}</td>
+						{% elseif richiesta.istruttoria.codicecup is not null %}
+							<td>{{ richiesta.istruttoria.codicecup }}</td>
+						{% else %}
+							<td>-</td>
+						{% endif %}
+						{% if pagamento.mandatoPagamento is not null %} 
+							<td>{{(pagamento.mandatoPagamento.importoPagato is null ? "-" : "€ " ~ pagamento.mandatoPagamento.importoPagato|number_format(2, ',', '.')) }}</td>
+						{% elseif pagamento.valutazionichecklist|length > 0  %}
+							<td>{{(pagamento.importoerogabilechecklist is null ? "-" : "€ " ~ pagamento.importoerogabilechecklist|number_format(2, ',', '.')) }}</td>
+						{% else %}
+							<td>-</td>
+						{% endif %}
+						<td class="importoCert">{{ pagamento.importoCertificato|number_format(2, ',', '.') }}</td>
+						<td style="text-align: center;" class="selezionato">{{ form_widget(form_pagamento.selezionato) }}</td>
+						<td style="text-align: center;">{{ form_widget(form_pagamento.aiuto_di_stato) }}</td>
+						<td style="text-align: center;">{{ form_widget(form_pagamento.strumento_finanziario) }}</td>
+						<td style="text-align: center;" class="importo">{{ form_widget(form_pagamento.importo) }}{{ form_errors(form_pagamento.importo) }}</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+			
+		{# display navigation #}
+		<div class="navigation">
+			{{ knp_pagination_render(risultati) }}
+		</div>			
+
+		{{ form_end(form) }}
+	{% endif %}
+
+	<div id="ricerca-istruttoria-modal" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3 id="ricerca-istruttoria-modal-titolo">Ricerca Pagamenti</h3>
+				</div>
+				<div class="modal-body">
+					{{ form(formRicerca) }}
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Chiudi</button>
+					<a class="btn btn-default" href="{{ path("associa_pagamenti_pulisci", {'id_certificazione' : certificazione.id }) }}">Annulla Ricerca</a>
+					<a class="btn btn-primary" href="#" id="ricercaOk">Ricerca</a>
+				</div>
+			</div>
+		</div>
+	</div>			
+{% endblock %}
+
+{%block  jquery_page_document_ready %}
+<script>
+	jQuery(document).ready(function() {
+		$("#ricercaOk").click(function(e){
+			e.preventDefault();
+			$(this).parents(".modal-content").find("form").submit();
+		})
+			
+		$('#riepilogo').on('hidden.bs.collapse', function () {
+			$('#icona').addClass('glyphicon-plus').removeClass('glyphicon-minus');
+		})
+		
+		$('#riepilogo').on('shown.bs.collapse', function () {
+			$('#icona').addClass('glyphicon-minus').removeClass('glyphicon-plus');
+		})
+		
+		$("#richieste-elenco .selezionato input").change(function() {
+			if ($(this).is(":checked")) {
+				var input_importo = $(this).closest("tr").find(".importo input");
+				var cert_importo = $(this).closest("tr").find(".importoCert").text().deformatMoney();
+				var cert_importo_fl = parseFloat(cert_importo);
+				if (input_importo.val() == "") {
+					var importoFinale = $(this).closest("tr").attr("data-importo").deformatMoney() - cert_importo_fl;
+					input_importo.val(importoFinale.toFixed(2));
+				}
+			}
+			if (!$(this).is(":checked")) {
+				var input_importo = $(this).closest("tr").find(".importo input");
+				input_importo.val("");
+			}
+		});
+	});
+</script>
+{% endblock %}

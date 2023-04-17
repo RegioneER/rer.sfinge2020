@@ -1,0 +1,80 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <p class="lead">SAP test suite - Popola ID soggetti bando</p>
+
+    {{ form_start(form) }}
+
+    {{ form_end(form) }}
+
+    <a href="{{ path('sap_test_suite') }}" type="button">Torna alla suite</a>
+
+    <br />
+    <br />
+
+    {% if soggettiBandoDaPopolare is not null %}
+        <h5>Soggetti ancora da popolare: {{ soggettiBandoDaPopolare }}</h5>
+    {% endif %}
+
+    <br />
+    <br />
+
+    {% set successCounter = 1 %}
+    {% if success is not empty %}
+        <h5>ID soggetto trovato per:</h5>
+        <table class="table table-striped table-hover table-bordered" id="proponenti-elenco">
+            <thead>
+                <tr>
+                    <th>Incrementale</th>
+                    <th>Soggetto</th>
+                    <th>Codice fiscale</th>
+                    <th>Partita IVA</th>
+                    <th>LIFNR</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in success %}
+                    <tr>
+                        <td>{{ successCounter }}</td>
+                        <td>{{ item.soggetto.denominazione }}</td>
+                        <td>{{ item.soggetto.codice_fiscale }}</td>
+                        <td>{{ item.soggetto.partita_iva }}</td>
+                        <td>{{ item.lifnr }}</td>
+                    </tr>
+                    {% set successCounter = successCounter + 1 %}
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    <br />
+    <br />
+
+    {% set errorCounter = 1 %}
+    {% if error is not empty %}
+        <h5>ID <strong>non</strong> soggetto trovato per:</h5>
+        <table class="table table-striped table-hover table-bordered" id="proponenti-elenco">
+            <thead>
+            <tr>
+                <th>Incrementale</th>
+                <th>Soggetto</th>
+                <th>Codice fiscale</th>
+                <th>Partita IVA</th>
+                <th>LIFNR</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for item in error %}
+                    <tr>
+                        <td>{{ errorCounter }}</td>
+                        <td>{{ item.soggetto.denominazione }}</td>
+                        <td>{{ item.soggetto.codice_fiscale }}</td>
+                        <td>{{ item.soggetto.partita_iva }}</td>
+                        <td>{{ item.lifnr }}</td>
+                    </tr>
+                    {% set errorCounter = errorCounter + 1 %}
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}

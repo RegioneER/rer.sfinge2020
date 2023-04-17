@@ -1,0 +1,10 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	{% include 'AttuazioneControlloBundle:RelazioneTecnica:Istruttoria/menu.html.twig' with {'pagamento' : pagamento } %}
+	<h4>Brevetto</h4>		
+    <div>
+        {{ form_start(form) }}
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

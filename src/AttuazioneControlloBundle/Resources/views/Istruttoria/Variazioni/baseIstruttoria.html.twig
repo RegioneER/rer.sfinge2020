@@ -1,0 +1,8 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    {% include 'AttuazioneControlloBundle:Istruttoria/Variazioni:menu.html.twig' with {'variazione' : variazione } %}	
+
+    {% block content %}
+    {% endblock content %}
+{% endblock %}

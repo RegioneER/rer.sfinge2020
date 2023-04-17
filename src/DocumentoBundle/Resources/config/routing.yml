@@ -1,0 +1,9 @@
+default:
+    resource: "@DocumentoBundle/Controller/DefaultController.php"
+    type:    annotation
+    prefix:   /
+
+gestione:
+    resource: "@DocumentoBundle/Controller/GestioneController.php"
+    type:    annotation
+    prefix:   /gestione

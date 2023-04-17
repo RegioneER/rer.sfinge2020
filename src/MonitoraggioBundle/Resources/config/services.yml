@@ -1,0 +1,471 @@
+services:
+    gestore_tabelle_contesto:
+        class: MonitoraggioBundle\Service\GestoreTabelleContestoService
+        arguments: ["@service_container"]
+
+    gestore_strutture_protocollo:
+        class: MonitoraggioBundle\Service\GestoreStruttureService
+        arguments: ["@service_container"]
+
+    gestore_voci_piano_costo_monitoraggio:
+        class: MonitoraggioBundle\Service\GestorePianoCostoService
+        arguments: ["@service_container"]
+    
+    gestore_monitoraggio_esportazione:
+        class: MonitoraggioBundle\Service\GestoreEsportazioneService
+        arguments: ["@service_container"]
+    
+    gestore_esportazione_igrue:
+        class: MonitoraggioBundle\Service\GestoreEsportazioneIgrueService
+        arguments: 
+            - '@doctrine.orm.entity_manager'
+            - '@monolog.logger'
+            - '@session'
+
+    gestore_importazione_igrue:
+        class: MonitoraggioBundle\Service\GestoreImportazioneIgrueService
+        arguments: 
+            - '@service_container'
+        
+    monitoraggio.form.type.localizzazioneGeografica:
+        class: MonitoraggioBundle\Form\Type\LocalizzazioneGeograficaType
+        arguments: 
+            - '@doctrine.orm.entity_manager'
+        tags:
+            - { name: form.type, alias: monitoraggio.form.localizzazioneGeografica }
+            
+    monitoraggio.form.type.livelloGerarchico:
+        class: MonitoraggioBundle\Form\Type\LivelloGerarchicoType
+        arguments: 
+            - '@doctrine.orm.entity_manager'
+        tags:
+            - { name: form.type, alias: monitoraggio.form.livelloGerarchico }
+    
+    monitoraggio.form.validator.validators.AbstractValidator:
+        class: MonitoraggioBundle\Validator\Validators\AbstractValidator
+        abstract:  true
+        arguments: 
+            - '@doctrine.orm.entity_manager'
+            
+    monitoraggio.form.validator.validators.AP03_001Validator:
+        class: MonitoraggioBundle\Validator\Validators\AP03_001Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.AP03_001Validator }
+
+    monitoraggio.form.validator.validators.SC00_004Validator:
+        class: MonitoraggioBundle\Validator\Validators\SC00_004Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.SC00_004Validator }
+            
+    monitoraggio.form.validator.validators.AP05_002Validator:
+        class: MonitoraggioBundle\Validator\Validators\AP05_002Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.AP05_002Validator }
+            
+    monitoraggio.form.validator.validators.AP06_003Validator:
+        class: MonitoraggioBundle\Validator\Validators\AP06_003Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.AP06_003Validator }
+            
+    monitoraggio.form.validator.validators.FN00_005Validator:
+        class: MonitoraggioBundle\Validator\Validators\FN00_005Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.FN00_005Validator }
+            
+    monitoraggio.form.validator.validators.FN01_006Validator:
+        class: MonitoraggioBundle\Validator\Validators\FN01_006Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.FN01_006Validator }
+            
+    monitoraggio.form.validator.validators.IN00_007Validator:
+        class: MonitoraggioBundle\Validator\Validators\IN00_007Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.IN00_007Validator }
+            
+    monitoraggio.form.validator.validators.IN01_008Validator:
+        class: MonitoraggioBundle\Validator\Validators\IN01_008Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.IN01_008Validator }
+            
+    monitoraggio.form.validator.validators.PR00_009Validator:
+        class: MonitoraggioBundle\Validator\Validators\PR00_009Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.PR00_009Validator }
+            
+    monitoraggio.form.validator.validators.PR01_010Validator:
+        class: MonitoraggioBundle\Validator\Validators\PR01_010Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.PR01_010Validator }
+
+    monitoraggio.form.validator.validators.FN03_011Validator:
+        class: MonitoraggioBundle\Validator\Validators\FN03_011Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.FN03_011Validator }
+            
+    monitoraggio.form.validator.validators.AP00_012Validator:
+        class: MonitoraggioBundle\Validator\Validators\AP00_012Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.AP00_012Validator }
+            
+    monitoraggio.form.validator.validators.AP01_013Validator:
+        class: MonitoraggioBundle\Validator\Validators\AP01_013Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.AP01_013Validator }
+            
+    monitoraggio.form.validator.validators.AP03_014Validator:
+        class: MonitoraggioBundle\Validator\Validators\AP03_014Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.AP03_014Validator }
+            
+    monitoraggio.form.validator.validators.AP03_015Validator:
+        class: MonitoraggioBundle\Validator\Validators\AP03_015Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.AP03_015Validator }
+            
+    monitoraggio.form.validator.validators.AP03_016Validator:
+        class: MonitoraggioBundle\Validator\Validators\AP03_016Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.AP03_016Validator }
+            
+    monitoraggio.form.validator.validators.AP03_017Validator:
+        class: MonitoraggioBundle\Validator\Validators\AP03_017Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.AP03_017Validator }
+            
+    monitoraggio.form.validator.validators.FN02_AP00_018Validator:
+        class: MonitoraggioBundle\Validator\Validators\FN02_AP00_018Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.FN02_AP00_018Validator }
+            
+    monitoraggio.form.validator.validators.FN04_FN06_019Validator:
+        class: MonitoraggioBundle\Validator\Validators\FN04_FN06_019Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.FN04_FN06_019Validator }
+            
+    monitoraggio.form.validator.validators.FN01_AP04_020Validator:
+        class: MonitoraggioBundle\Validator\Validators\FN01_AP04_020Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.FN01_AP04_020Validator }
+            
+    monitoraggio.form.validator.validators.FN05_AP04_021Validator:
+        class: MonitoraggioBundle\Validator\Validators\FN05_AP04_021Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.FN05_AP04_021Validator }
+            
+    monitoraggio.form.validator.validators.FN07_AP04_022Validator:
+        class: MonitoraggioBundle\Validator\Validators\FN07_AP04_022Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.FN07_AP04_022Validator }
+            
+    monitoraggio.form.validator.validators.FN09_AP04_023Validator:
+        class: MonitoraggioBundle\Validator\Validators\FN09_AP04_023Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.FN09_AP04_023Validator }
+            
+    monitoraggio.form.validator.validators.FN00_FN01_FN10_024Validator:
+        class: MonitoraggioBundle\Validator\Validators\FN00_FN01_FN10_024Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.FN00_FN01_FN10_024Validator }
+            
+    monitoraggio.form.validator.validators.FN04_FN05_025Validator:
+        class: MonitoraggioBundle\Validator\Validators\FN04_FN05_025Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.FN04_FN05_025Validator }
+            
+    monitoraggio.form.validator.validators.FN06_FN07_026Validator:
+        class: MonitoraggioBundle\Validator\Validators\FN06_FN07_026Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.FN06_FN07_026Validator }
+            
+    monitoraggio.form.validator.validators.FN00_FN04_FN10_027Validator:
+        class: MonitoraggioBundle\Validator\Validators\FN00_FN04_FN10_027Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.FN00_FN04_FN10_027Validator }
+            
+    monitoraggio.form.validator.validators.FN04_FN06_028Validator:
+        class: MonitoraggioBundle\Validator\Validators\FN04_FN06_028Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.FN04_FN06_028Validator }
+            
+    monitoraggio.form.validator.validators.FN01_FN05_029Validator:
+        class: MonitoraggioBundle\Validator\Validators\FN01_FN05_029Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.FN01_FN05_029Validator }
+            
+    monitoraggio.form.validator.validators.FN05_FN07_030Validator:
+        class: MonitoraggioBundle\Validator\Validators\FN05_FN07_030Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.FN05_FN07_030Validator }
+            
+    monitoraggio.form.validator.validators.TR00_031Validator:
+        class: MonitoraggioBundle\Validator\Validators\TR00_031Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.TR00_031Validator }
+            
+    monitoraggio.form.validator.validators.FN04_032Validator:
+        class: MonitoraggioBundle\Validator\Validators\FN04_032Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.FN04_032Validator }
+            
+    monitoraggio.form.validator.validators.FN06_033Validator:
+        class: MonitoraggioBundle\Validator\Validators\FN06_033Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.FN06_033Validator }
+            
+    monitoraggio.form.validator.validators.FN05_034Validator:
+        class: MonitoraggioBundle\Validator\Validators\FN05_034Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.FN05_034Validator }
+            
+    monitoraggio.form.validator.validators.FN07_035Validator:
+        class: MonitoraggioBundle\Validator\Validators\FN07_035Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.FN07_035Validator }
+            
+    monitoraggio.form.validator.validators.PR01_036Validator:
+        class: MonitoraggioBundle\Validator\Validators\PR01_036Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.PR01_036Validator }
+            
+    monitoraggio.form.validator.validators.FN06_FN08_037Validator:
+        class: MonitoraggioBundle\Validator\Validators\FN06_FN08_037Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.FN06_FN08_037Validator }
+            
+    monitoraggio.form.validator.validators.FN00_FN10_038Validator:
+        class: MonitoraggioBundle\Validator\Validators\FN00_FN10_038Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.FN00_FN10_038Validator }
+            
+    monitoraggio.form.validator.validators.FN00_FN03_FN10_039Validator:
+        class: MonitoraggioBundle\Validator\Validators\FN00_FN03_FN10_039Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.FN00_FN03_FN10_039Validator }
+            
+    monitoraggio.form.validator.validators.PR00_IN01_040Validator:
+        class: MonitoraggioBundle\Validator\Validators\PR00_IN01_040Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.PR00_IN01_040Validator }
+            
+    monitoraggio.form.validator.validators.PR00_041Validator:
+        class: MonitoraggioBundle\Validator\Validators\PR00_041Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.PR00_041Validator }
+            
+    monitoraggio.form.validator.validators.PR00_042Validator:
+        class: MonitoraggioBundle\Validator\Validators\PR00_042Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.PR00_042Validator }
+            
+    monitoraggio.form.validator.validators.AP04_IN00_043Validator:
+        class: MonitoraggioBundle\Validator\Validators\AP04_IN00_043Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.AP04_IN00_043Validator }
+            
+    monitoraggio.form.validator.validators.AP04_IN01_044Validator:
+        class: MonitoraggioBundle\Validator\Validators\AP04_IN01_044Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.AP04_IN01_044Validator }
+            
+    monitoraggio.form.validator.validators.FN02_AP00_045Validator:
+        class: MonitoraggioBundle\Validator\Validators\FN02_AP00_045Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.FN02_AP00_045Validator }
+            
+    monitoraggio.form.validator.validators.PR00_AP00_046Validator:
+        class: MonitoraggioBundle\Validator\Validators\PR00_AP00_046Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.PR00_AP00_046Validator }
+            
+    monitoraggio.form.validator.validators.FN04_FN05_047Validator:
+        class: MonitoraggioBundle\Validator\Validators\FN04_FN05_047Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.FN04_FN05_047Validator }
+            
+    monitoraggio.form.validator.validators.FN06_FN07_048Validator:
+        class: MonitoraggioBundle\Validator\Validators\FN06_FN07_048Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.FN06_FN07_048Validator }
+            
+    monitoraggio.form.validator.validators.FN06_FN08_049Validator:
+        class: MonitoraggioBundle\Validator\Validators\FN06_FN08_049Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.FN06_FN08_049Validator }
+            
+    monitoraggio.form.validator.validators.FN04_050Validator:
+        class: MonitoraggioBundle\Validator\Validators\FN04_050Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.FN04_050Validator }
+            
+    monitoraggio.form.validator.validators.FN05_051Validator:
+        class: MonitoraggioBundle\Validator\Validators\FN05_051Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.FN05_051Validator }
+            
+    monitoraggio.form.validator.validators.FN06_052Validator:
+        class: MonitoraggioBundle\Validator\Validators\FN06_052Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.FN06_052Validator }
+            
+    monitoraggio.form.validator.validators.FN07_053Validator:
+        class: MonitoraggioBundle\Validator\Validators\FN07_053Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.FN07_053Validator }
+            
+    monitoraggio.form.validator.validators.FN04_FN05_054Validator:
+        class: MonitoraggioBundle\Validator\Validators\FN04_FN05_054Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.FN04_FN05_054Validator }
+
+    monitoraggio.form.validator.validators.FN06_FN07_055Validator:
+        class: MonitoraggioBundle\Validator\Validators\FN06_FN07_055Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.FN06_FN07_055Validator }
+
+
+
+
+    monitoraggio.form.validator.validators.VistaAP03_001Validator:
+        class: MonitoraggioBundle\Validator\Validators\Viste\AP03_001Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.VistaAP03_001Validator }
+
+    monitoraggio.form.validator.validators.VistaAP05_002Validator:
+        class: MonitoraggioBundle\Validator\Validators\Viste\AP05_002Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.VistaAP05_002Validator }
+
+    monitoraggio.form.validator.validators.VistaAP06_003Validator:
+        class: MonitoraggioBundle\Validator\Validators\Viste\AP06_003Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.VistaAP06_003Validator }
+
+    monitoraggio.form.validator.validators.VistaSC00_004Validator:
+        class: MonitoraggioBundle\Validator\Validators\Viste\SC00_004Validator
+        parent: monitoraggio.form.validator.validators.AbstractValidator
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.VistaSC00_004Validator }
+
+    monitoraggio.form.validator.validators.ControlloIGRUEValidator:
+        class: MonitoraggioBundle\Validator\Validators\ControlloIGRUEValidator
+        arguments: 
+            - '@doctrine.orm.entity_manager'
+            - '%monitoraggio.controlliIGRUE%'
+        tags:
+            - { name: validator.constraint_validator, alias: monitoraggio.form.validator.validators.ControlloIGRUEValidator }
+
+    monitoraggio.twig_extension:
+        class: MonitoraggioBundle\Twig\EsportazioneExtention
+        public: false
+        arguments: 
+            - '@doctrine.orm.entity_manager'
+        tags:
+            - { name: twig.extension }
+
+    monitoraggio.form.type.richiestaprogrammaclassificazionetype:
+        class: MonitoraggioBundle\Form\Type\RichiestaProgrammaClassificazioneType
+        arguments: 
+            - '@doctrine.orm.entity_manager'
+        tags:
+            - { name: form.type, alias: monitoraggio.form.richiestaprogrammaclassificazionetype }
+    
+    monitoraggio.gestore_importazione:
+        class: MonitoraggioBundle\Service\GestoreImportazioneMonitoraggio
+        arguments:
+            - '@service_container'
+    
+    monitoraggio.gestore_finanziamento:
+        class: MonitoraggioBundle\Service\GestoreFinanziamentoService
+        arguments:
+            - '@service_container'
+   
+    monitoraggio.iter_progetto:
+        class: MonitoraggioBundle\Service\GestoreIterProgettoService
+        arguments:
+            - '@service_container'
+
+    monitoraggio.impegni:
+        class: MonitoraggioBundle\Service\GestoreImpegniService
+        arguments:
+            - '@service_container'
+
+    monitoraggio.indicatori_output:
+        class: MonitoraggioBundle\Service\GestoreIndicatoreService
+        arguments:
+            - '@service_container'
+
+    monitoraggio.esportazione_strutture:
+        class: MonitoraggioBundle\Service\GestoreEsportazioneStruttureService
+        arguments:
+            - '@service_container'
+    
+    monitoraggio.excel_controlli_igrue:
+        class: MonitoraggioBundle\Service\EstrazioneExcelIgrueService
+        arguments:
+            - '@service_container'
+            - '%monitoraggio.controlliIGRUE%'
+
+    ignore_tables_listener:
+        class: MonitoraggioBundle\EventListener\IgnoreTablesListener
+        arguments:
+        - '%monitoraggio.ignoredEntities%'
+        tags:
+        - {name: doctrine.event_listener, event: postGenerateSchema }

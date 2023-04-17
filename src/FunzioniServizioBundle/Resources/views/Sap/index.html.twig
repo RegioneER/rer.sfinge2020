@@ -1,0 +1,27 @@
+{% extends '::base.html.twig' %}
+
+    {% block body %}
+        <p class="lead">SAP test suite</p>
+        <ul>
+            <li><a href="{{ path('sap_find_sogg') }}">Ricerca beneficiari</a></li>
+            <li><a href="{{ path('sap_view_sogg') }}">Visualizza beneficiari</a></li>
+            <li><a href="{{ path('sap_create_sogg') }}">Crea beneficiari</a></li>
+            <li><a href="{{ path('sap_fatture_da_impegno') }}">Fatture da impegno</a></li>
+            <li><a href="{{ path('sap_totalizzatore_impegno') }}">Totalizzatori impegno</a></li>
+            <li><a href="{{ path('sap_crea_partite') }}">Crea partite</a></li>
+            <li><a href="{{ path('sap_check_iban') }}">Controlla IBAN</a></li>
+            <li><a href="{{ path('sap_crea_quietanze') }}">Crea quietanza</a></li>
+            <li><a href="{{ path('sap_capitoli_impegni_cup_cig') }}">Dati capitoli impegni da cup e/o cig</a></li>
+            <li><a href="{{ path('sap_dati_fatture_cup_cig') }}">Dati fatture da cup e/o cig</a></li>
+            <li><a href="{{ path('sap_dati_mandati_cup_cig') }}">Dati mandati da cup e/o cig</a></li>
+            <li><a href="{{ path('popola_id_soggetti_bando') }}">Popola id soggetti bando</a></li>
+            <li><a href="{{ path('crea_soggetti_bando') }}">Crea soggetti bando</a></li>
+            <li><a href="{{ path('crea_persone_fisiche_bando') }}">Crea persone fisiche bando</a></li>
+            <li><a href="{{ path('crea_soggetti_bando_135') }}">Crea soggetti bando Salvamento (ID 135)</a></li>
+            <li><a href="{{ path('popola_importi_bando_135') }}">Popola importi bando Salvamento (ID 135)</a></li>
+            <li><a href="{{ path('verifica_soggetti_bando') }}">Verifica soggetti bando</a></li>
+            <li><a href="{{ path('sap_edit_sogg') }}">Modifica beneficiario</a></li>
+            <li><a href="{{ path('controllo_persone_fisiche_bando') }}">Controllo persone fisiche bando</a></li>
+            <li><a href="{{ path('edit_soggetti_bando', {'procedura_id': 139, 'ambiente': 'Prod', 'limit_da': 0, 'limit_length': 10}) }}">Modifica soggetti bando 139</a></li>
+        </ul>
+    {% endblock %}

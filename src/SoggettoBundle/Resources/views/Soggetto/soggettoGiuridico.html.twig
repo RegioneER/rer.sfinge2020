@@ -1,0 +1,19 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+
+	{{ form_start(form) }}
+
+{#	<div class="alert alert-warning">#}
+{#		I proponenti che avranno intenzione di partecipare al bando#}
+{#		<strong>"Bando Montagna 2022 - DGR 1333 del 01/08/2022 - Incentivazione al ripopolamento delle aree montane"</strong>,#}
+{#		dovranno selezionare <strong>Persona fisica</strong> nel campo "Tipo".#}
+{#	</div>#}
+
+	<h4>Dati Base Soggetto Giuridico</h4>
+
+    {{ form_row(form.tipo) }}
+    {{ form_row(form.codice_fiscale) }}
+
+	{{ form_end(form) }}
+
+{% endblock %}

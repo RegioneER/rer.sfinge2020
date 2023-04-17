@@ -1,0 +1,22 @@
+{% extends '::base.html.twig' %}
+
+{% block intestazione %}
+    {{ parent() }}
+
+    {{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% block body %}
+    <p class="lead">Selezionare il tipo di incarico da associare</p>
+    {{ form(form) }}<br /><br />
+    <div class="alert alert-warning">Legenda:
+		<ul style="font-size:12px">
+			<li><strong>Operatore</strong>: Utente che avr&agrave; possibilit&agrave; di gestire le domande presenti a sistema e inserirne di nuove. Non pu&ograve; creare altre utenze.</li>
+			<li><strong>Legale Rappresentate</strong>: Non &eacute; richiesto che il Legale Rappresentante sia un utente di Sfinge &eacute; sufficiente che sia stato registrato come Persona. Serve esclusivamente per la firma digitale sui documenti che da caricare per la richiesta del bando.</li>
+			<li><strong>Delegato</strong>: Un delegato che pu&ograve; agire per conto del Legale Rappresentante, previa sua delega, e che pu&ograve; quindi firmare le domande. Non &eacute; richiesto che il delegato sia un utente di Sfinge &eacute; sufficiente che sia stato registrato come Persona.</li>
+			<li><strong>Consulente</strong>: Un utente, che &eacute; autorizzato a operare e inserire/gestire le richieste per conto di un altro Soggetto sia esso privato o pubblico.</li>
+			<li><strong>Utente Principale</strong>: &Eacute; il primo utente che registra l'entit&agrave; legale. Inoltre pu&ograve; autorizzare altri utenti a operare come Consulente oppure Operatore. Gestisce l'inserimento del legale rappresentante e dei suoi delegati. Pu&ograve; creare altri Utenti principali.</li>
+			<li><strong>Operatore progetto</strong>: può gestire solo i progetti a lui assegnati e niente altro. Una volta creato l'operatore progetto sarà possibile assegnargli uno o più progetti dalla sezione presentazioni -> Elenco richieste -> azioni -> incarica operatore progetto.</li>
+		</ul>
+	</div>
+{% endblock %}

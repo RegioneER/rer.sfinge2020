@@ -1,0 +1,42 @@
+{% extends '::base.html.twig' %}
+{% block begin_page_level_plugin_style %}
+	<style>
+		#appendice td:nth-child(2){
+			text-align: right;
+		}
+	</style>
+{% endblock %}
+{% block body %}
+
+	<h4>Non regolari </h4>
+
+	<table class="table table-striped table-hover table-bordered" id="appendice">
+		<thead>
+			<tr>
+				<th style="width: 65%">Asse prioritario</th>
+				<th style="width: 25%">Importo non regolare</th>	
+				{#<th style="width: 10%">Azioni</th>#}					
+			</tr>
+		</thead>
+		<tbody>
+			{% for dati_asse in data %}
+			<tr>
+				<td>{{ dati_asse["asse"].codice }}: {{ dati_asse["asse"].descrizione }}</td>
+				<td>{{ 0|number_format(2, ',', '.')}}</td>
+				{#<td>
+					<div class="dropdown">
+						<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+							Azioni
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+							<li><a href="{{ path('richieste_elenco_assi', {'codice_asse' : dati_asse["asse"].codice }) }}">Elenco operazioni</a></li>
+						</ul>
+					</div>
+				</td>#}
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+{% endblock %}

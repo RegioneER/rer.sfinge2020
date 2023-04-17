@@ -1,0 +1,48 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+    <div class="table-toolbar">
+        <div>
+			<a class="btn btn-primary" href="{{ path('aggiungi_variazione', {'id_richiesta' : richiesta.id }) }}">
+				<span class="fa fa-plus"></span> Aggiungi Variazione
+			</a>
+        </div>
+    </div>
+	{% if richiesta.attuazioneControllo.variazioni |length > 0 %}			
+    <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+        <thead>
+            <tr>
+				<th>Stato</th>
+				<th>Tipo</th>
+				<th>Data invio richiesta</th>
+				<th>Esito istruttoria</th>
+				<th>Azioni</th>
+            </tr>
+        </thead>	
+        <tbody>
+			{% for variazione in richiesta.attuazioneControllo.variazioni %}
+				<tr>
+					<td>{{ variazione.stato }}</td>
+					<td>{{ variazione.tipo }}</td>
+					<td>{{ variazione.dataInvio is null ? "-" : variazione.dataInvio | date('d/m/Y') }}</td>
+					<td>{{ variazione.descrizioneEsito }}</td>
+					<td>
+						<div class="dropdown">
+							<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								Azioni
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+								<li><a href="{{ path('dettaglio_variazione', {'id_variazione' : variazione.id }) }}">Gestisci</a></li>
+								{% if variazione.isEliminabile %}
+									<li><a href="{{ path("elimina_variazione", {"id_variazione" : variazione.id, '_token': csrfToken }) }}">Elimina</a></li>
+								{% endif %}												
+							</ul>
+						</div>
+					</td>
+				</tr>
+			{% endfor %}
+        </tbody>
+    </table>
+	{% endif %}
+{% endblock %}

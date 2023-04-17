@@ -1,0 +1,47 @@
+{% macro insert_pagina(pagina, indice) %}
+{% import _self as m %}
+{% if indice %}
+SET @id_frammento = NULL;
+{% else %}
+SET @id_frammento = (SELECT MAX(id) FROM fascicoli_frammenti WHERE alias='{{pagina.frammentoContenitore.alias}}');
+{% endif %}
+
+INSERT INTO `fascicoli_pagine` (`titolo`, `maxMolteplicita`, `ordinamento`, `alias`, `callback`, `frammentoContenitore_id`, `callbackPresenza`, `minMolteplicita`) VALUES ({{ pagina.titolo|quote|raw }}, {{ pagina.maxMolteplicita }}, {{ pagina.ordinamento }}, '{{ pagina.alias }}', {{ pagina.callback is null ? 'NULL' : pagina.callback|quote|raw }}, @id_frammento, {{ pagina.callbackPresenza is null ? 'NULL' : pagina.callbackPresenza|quote|raw }}, {{ pagina.minMolteplicita }});
+	
+{% endmacro %}
+
+{% macro insert_frammenti_pagina(pagina) %}
+{% import _self as m %}
+{% for frammento in pagina.frammenti %}{{ m.insert_frammento(frammento) }}{% endfor %}
+{% endmacro %}	
+	
+{% macro insert_pagina_completa(pagina) %}
+{% import _self as m %}
+{{ m.insert_pagina(pagina, false) }}
+{{ m.insert_frammenti_pagina(pagina) }}
+{% endmacro %}	
+
+{% macro insert_frammento(frammento) %}
+{% import _self as m %}
+SET @id_pagina = (SELECT MAX(id) FROM fascicoli_pagine WHERE alias='{{frammento.pagina.alias}}');
+INSERT INTO `fascicoli_frammenti` (`pagina_id`, `titolo`, `action`, `ordinamento`, `alias`, `tipoFrammento_id`, `callbackPresenza`, `nota`) VALUES (@id_pagina, {{frammento.titolo is null ? 'NULL' : frammento.titolo|quote|raw}}, {{ frammento.action is null ? 'NULL' : frammento.action }}, {{ frammento.ordinamento }}, '{{frammento.alias}}', {{frammento.tipoFrammento.id}}, {{ frammento.callbackPresenza is null ? 'NULL' : frammento.callbackPresenza|quote|raw }}, {{frammento.nota is null ? 'NULL' : frammento.nota|quote|raw}});
+
+{% for campo in frammento.campi %}{{ m.insert_campo(campo) }}{% endfor %}
+
+{% for sottoPagina in frammento.sottoPagine %}{{ m.insert_pagina_completa(sottoPagina) }}{% endfor %}
+{% endmacro %}
+	
+{% macro insert_campo(campo) %}
+{% import _self as m %}
+SET @id_frammento = (SELECT MAX(id) FROM fascicoli_frammenti WHERE alias='{{campo.frammento.alias}}');
+INSERT INTO `fascicoli_campi` (`frammento_id`, `label`, `required`, `evidenziato`, `scelte`, `expanded`, `multiple`, `query`, `ordinamento`, `alias`, `tipoCampo_id`, `callbackPresenza`, `precisione`, `note`, `righeTextArea`) VALUES (@id_frammento, {{campo.label|quote|raw}}, {{campo.required ? '1' : '0'}}, {{campo.evidenziato is null ? 'NULL' : (campo.evidenziato ? '1' : '0') }}, '{{campo.scelte|serialize|raw}}', {{campo.expanded is null ? 'NULL' : (campo.expanded ? '1' : '0') }}, {{campo.multiple is null ? 'NULL' : (campo.multiple ? '1' : '0') }}, {{campo.query is null ? 'NULL' : campo.query|quote|raw }}, {{campo.ordinamento}}, '{{campo.alias}}', {{campo.tipoCampo.id}}, {{ campo.callbackPresenza is null ? 'NULL' : campo.callbackPresenza|quote|raw }}, {{campo.precisione is null ? 'NULL' : campo.precisione }}, {{campo.note is null ? 'NULL' : campo.note|quote|raw }}, {{campo.righeTextArea is null ? 'NULL' : campo.righeTextArea }});
+
+{% for vincolo in campo.vincoli %}{{ m.insert_vincolo(vincolo) }}{% endfor %}
+{% endmacro %}	
+	
+{% macro insert_vincolo(vincolo) %}
+{% import _self as m %}
+SET @id_campo = (SELECT MAX(id) FROM fascicoli_campi WHERE alias='{{vincolo.campo.alias}}');
+INSERT INTO `fascicoli_vincoli` (`campo_id`, `parametri`, `tipoVincolo_id`) VALUES (@id_campo, '{{vincolo.parametri|serialize|raw}}', {{vincolo.tipoVincolo.id}});
+{% endmacro %}
+

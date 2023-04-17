@@ -1,0 +1,25 @@
+<div class="form-group">
+	<label for="quietanza_documento_quietanza_file" class="col-sm-3 col-md-3 col-lg-4 control-label required">{{ label }}</label>
+	<div class="col-sm-9 col-md-9 col-lg-8">
+		<table id="richieste-elenco" class="table table-striped table-hover table-bordered">
+			<tbody>
+				<tr>
+					<td><div class="row">
+							<div class="col-md-8 wrap-text">
+								{{ nome_file }}
+							</div>
+							<div class="col-md-4 pull-right">
+								<div class="pull-right">
+									<a target="_blank" href="{{ url_scarica }}" class="btn btn-sm btn-primary">Scarica</a>
+									{% if url_elimina is not null %}
+										<a href="{{ url_elimina }}" title="Elimina Documento" class="btn btn-sm btn-danger">Elimina</a>
+									{% endif %}
+								</div>
+							</div>
+
+						</div></td>
+				</tr>
+			</tbody>
+		</table>			
+	</div>
+</div>

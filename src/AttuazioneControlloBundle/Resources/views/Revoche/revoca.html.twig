@@ -1,0 +1,129 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+	{% include 'AttuazioneControlloBundle:PA/Richieste:menu.html.twig' with {'attuazione_controllo' : richiesta.attuazioneControllo } %}	
+
+	<div class="form-body">
+		{{ form_start(form) }}
+		{{ form_errors(form) }}
+		<div>
+			<h4>Dati revoca</h4>
+			{{ form_row(form.atto_revoca) }}
+		</div>
+		<div id="completo1">
+			{{ form_row(form.tipo_revoca) }}
+			{{ form_row(form.tipo_motivazione) }}
+			{{ form_row(form.data_atto) }}
+		</div>
+		<div id="invio_conti1">
+			{{ form_row(form.contributo_revocato) }}	
+			{{ form_row(form.contributo) }}	
+			{{ form_row(form.contributo_ada) }}	
+		</div>
+		<div id="invio_conti2">
+			{{ form_row(form.nota_invio_conti) }}	
+		</div>
+		<div id="completo2">
+			{{ form_row(form.tipo_irregolarita) }}	
+			<div id="specificare">
+				{{ form_row(form.specificare) }}
+			</div>
+			{{ form_row(form.altro) }}	
+		</div>
+		<div>
+			{% if penalita == true %}
+				{{ form_row(form.con_penalita) }}	
+				{{ form_row(form.importo_penalita) }}	
+				{{ form_row(form.data_corresponsione) }}	
+			{% endif %}
+
+			{{ form_row(form.con_ritiro) }}	
+			{{ form_row(form.con_recupero) }}
+			{{ form_row(form.invio_conti) }}
+			{{ form_row(form.taglio_ada) }}
+			{{ form_row(form.articolo_137) }}
+		</div>
+		<br/>
+		{{ form_row(form.pulsanti) }}
+		{{ form_row(form._token) }}
+		
+		{{ form_end(form) }}
+	</div>
+	<script>
+	'use strict';
+	{% if form.atto_revoca is defined %}
+		var data_atto_id = "{{ form.data_atto.vars.id }}";
+		var tipo_revoca_id = "{{ form.tipo_revoca.vars.id }}";
+		var tipo_motivazione_id = "{{ form.tipo_motivazione.vars.id }}";
+	{% endif %}
+
+	$(document).ready(function () {
+		var contratto_input_id = '{{ form.children['atto_revoca'].vars['id'] }}';
+		var atto_revoca_url = '{{ path("dati_atto_revoca_ajax", { 'atto_id' : 'atto_id' }) }}';
+			
+		$("#" + contratto_input_id).change(function () {	
+			var url = atto_revoca_url;
+			url = url.replace("atto_id", $(this).val());
+			$("#" + data_atto_id).val('');
+			$("#" + tipo_revoca_id ).val('');
+			$("#" + tipo_motivazione_id).val('');
+			if($(this).val() !== '') {
+				$.ajax({
+					url: url,
+					success: function (res) {
+						$("#" + data_atto_id).val(res.data_atto);
+						$("#" + tipo_revoca_id ).val(res.tipo_atto);
+						$("#" + tipo_motivazione_id).val(res.motivazione);
+						if($("#" + tipo_motivazione_id).val() === 'Per rinuncia beneficiario') {
+							$("#completo1").show();
+							$("#completo2").hide();
+							$("#invio_conti1").show();
+							$("#invio_conti2").hide();
+						}
+						else {
+							$("#completo1").show();
+							$("#completo2").show();
+							$("#invio_conti1").show();
+							$("#invio_conti2").hide();
+						}
+					}
+				});
+			} else {
+				$("#completo1").hide();
+				$("#completo2").hide();
+				$("#invio_conti1").show();
+				$("#invio_conti2").show();
+			}
+		});
+		if( $("#" + contratto_input_id).val() === '') {
+			$("#completo1").hide();
+			$("#completo2").hide();
+			$("#invio_conti1").show();
+			$("#invio_conti2").show();
+		}
+		else {
+			if($("#" + tipo_motivazione_id).val() === 'Per rinuncia beneficiario') {
+				$("#completo1").show();
+				$("#completo2").hide();
+				$("#invio_conti1").show();
+				$("#invio_conti2").hide();
+			}
+			else {
+				$("#completo1").show();
+				$("#completo2").show();
+				$("#invio_conti1").show();
+				$("#invio_conti2").hide();
+			}
+		}
+		$('[name="{{- form.tipo_irregolarita.vars.full_name -}}"]').change(function (event) {
+			var altro = $(event.target).find('option[value=23]:selected');
+			if(altro.length > 0) {
+				$("#specificare").show();
+			}
+			else {
+				$("#specificare").hide();
+			}
+		}).change();
+	
+	});
+	</script>	
+{% endblock %}

@@ -1,0 +1,137 @@
+{{ form_row(form.disabilitaCombo) }}
+
+<script type="text/javascript">
+			$(document).ready(function () {
+				
+				{% if stato_name is not defined %}
+					{% set stato_name = 'stato' %}	
+				{% endif %}
+				
+				{% if form.children['provinciaEstera'] is defined %} 
+					var provinciaEstera_input_id = '{{ form.children['provinciaEstera'].vars['id'] }}';
+				{% endif %}
+					
+				{% if form.children['comuneEstero'] is defined %} 
+					var comuneEstero_input_id = '{{ form.children['comuneEstero'].vars['id'] }}';
+				{% endif %}					
+								
+				var containerCombo = '{{indirizzo}}_disabilitaCombo';
+
+				var provincia_input_id = '{{ form.children['provincia'].vars['id'] }}';
+				var comune_input_id = '{{ form.children['comune'].vars['id'] }}';
+				var stato_input_id = '{{ form.children[stato_name].vars['id'] }}';
+				
+				$("#" + stato_input_id).change(selezioneStato);
+
+				function selezioneStato() {				
+					if ($("#" + stato_input_id).val() == 1) {
+						mostraProvinciaComuneItaliane();
+					} else if (!$("#" + stato_input_id).val())
+						nascontiTutto();
+					else {
+						mostraProvinciaComuneEsteri();
+					}
+					if($('#' + containerCombo).val() == 1) {
+						disabilitaTutto();
+					}
+				}
+				
+				function getContainer(element) {
+					return element.closest(".form-group");
+				}
+
+				function mostraProvinciaComuneItaliane() {
+					getContainer($("#" + provincia_input_id)).show();
+					$("#" + provincia_input_id).removeAttr("disabled");
+					
+					getContainer($("#" + comune_input_id)).show();
+					$("#" + comune_input_id).removeAttr("disabled");					
+					
+					{% if form.children['provinciaEstera'] is defined %}
+						getContainer($("#" + provinciaEstera_input_id)).hide();
+						$("#" + provinciaEstera_input_id).attr("disabled", "disabled");
+						$("#" + provinciaEstera_input_id + " option:selected").removeAttr("selected");
+					{% endif %}
+					
+					{% if form.children['comuneEstero'] is defined %}
+						getContainer($("#" + comuneEstero_input_id)).hide();
+						$("#" + comuneEstero_input_id).attr("disabled", "disabled");
+						$("#" + comuneEstero_input_id + " option:selected").removeAttr("selected");
+					{% endif %}
+				}
+
+				function mostraProvinciaComuneEsteri() {
+					{% if form.children['provinciaEstera'] is defined %}
+						getContainer($("#" + provinciaEstera_input_id)).show();
+						$("#" + provinciaEstera_input_id).removeAttr("disabled");
+					{% endif %}
+					
+					{% if form.children['comuneEstero'] is defined %}
+						getContainer($("#" + comuneEstero_input_id)).show();					
+						$("#" + comuneEstero_input_id).removeAttr("disabled");
+					{% endif %}
+
+					getContainer($("#" + provincia_input_id)).hide();
+					$("#" + provincia_input_id).attr("disabled", "disabled");
+					$("#" + provincia_input_id + " option:selected").removeAttr("selected");
+
+					getContainer($("#" + comune_input_id)).hide();
+					$("#" + comune_input_id).attr("disabled", "disabled");
+					$("#" + comune_input_id + " option:selected").removeAttr("selected");
+				}
+
+				function nascontiTutto() {
+					{% if form.children['provinciaEstera'] is defined %}
+						getContainer($("#" + provinciaEstera_input_id)).hide();
+						$("#" + provinciaEstera_input_id).attr("disabled", "disabled");
+						$("#" + provinciaEstera_input_id + " option:selected").removeAttr("selected");
+					{% endif %}
+						
+					{% if form.children['comuneEstero'] is defined %}	
+						getContainer($("#" + comuneEstero_input_id)).hide();
+						$("#" + comuneEstero_input_id).attr("disabled", "disabled");
+						$("#" + comuneEstero_input_id + " option:selected").removeAttr("selected");
+					{% endif %}
+
+					getContainer($("#" + provincia_input_id)).hide();
+					$("#" + provincia_input_id).attr("disabled", "disabled");
+					$("#" + provincia_input_id + " option:selected").removeAttr("selected");
+
+					getContainer($("#" + comune_input_id)).hide();
+					$("#" + comune_input_id).attr("disabled", "disabled");
+					$("#" + comune_input_id + " option:selected").removeAttr("selected");
+				}
+				
+				function disabilitaTutto() {
+					{% if form.children['provinciaEstera'] is defined %}
+						$("#" + provinciaEstera_input_id).attr("disabled", "disabled");
+					{% endif %}
+					
+					{% if form.children['comuneEstero'] is defined %}
+						$("#" + comuneEstero_input_id).attr("disabled", "disabled");
+					{% endif %}
+					$("#" + provincia_input_id).attr("disabled", "disabled");
+					$("#" + comune_input_id).attr("disabled", "disabled");
+				}
+ 
+				var comuni_provincia_url = '{{ path("comuni_provincia_options", { 'provincia_id' : 'provincia_id' }) }}';
+
+				$("#" + provincia_input_id).change(function () {
+					$("#" + comune_input_id).attr("disabled", "disabled");
+					$("#" + comune_input_id).trigger("change");
+					var url = comuni_provincia_url;
+					url = url.replace("provincia_id", $(this).val());
+					$.ajax({
+						url: url,
+						success: function (res) {
+							$("#" + comune_input_id).removeAttr("disabled");
+							$("#" + comune_input_id).html(res);
+							$("#" + comune_input_id).trigger("change");
+						}
+					});
+
+				});
+
+				selezioneStato();
+			});
+		</script>

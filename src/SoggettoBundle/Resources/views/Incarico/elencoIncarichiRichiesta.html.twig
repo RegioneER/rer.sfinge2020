@@ -1,0 +1,57 @@
+{% extends '::base.html.twig' %}
+
+{% block intestazione %}
+	{{ parent() }}
+	{{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% block body %}
+	<div class="alert alert-info">
+		Elenco degli incaricati o dei possibili incaricabili per il progetto:<br/>
+		<ul>
+			<li>
+				{{ richiesta.titolo }} {{ richiesta.protocollo is not null ? '('~richiesta.protocollo~')': '' }}
+			</li>
+		</ul>
+	</div>
+
+	<table class="table table-striped table-hover table-bordered" id="notizie-elenco">
+		<thead>
+		<tr>
+			<th>Nome</th>
+			<th>Cognome</th>
+			<th>Codice fiscale</th>
+			<th>Email</th>
+			<th>Progetto assegnato</th>
+			<th>Azioni</th>
+		</tr>
+		</thead>
+		<tbody>
+		{% for incarico in incaricabili %}
+			<tr>
+				<td>{{ incarico.incaricato.nome }}</td>
+				<td>{{ incarico.incaricato.cognome }}</td>
+				<td>{{ incarico.incaricato.codicefiscale }}</td>
+				<td>{{ incarico.incaricato.emailprincipale }}</td>
+				<td>
+					{% if incarico.hasIncaricoProgetto(richiesta.id) == true %}
+						Si
+					{% else %}
+						No
+					{% endif %}
+				</td>	
+				<td>
+					{% if incarico.hasIncaricoProgetto(richiesta.id) == false%}
+						<a href="{{ path("associa_operatore_richiesta",{"incarico_id":incarico.id, "richiesta_id":richiesta.id, '_token': csrfToken}) }}">
+						<button id="seleziona" class="btn btn-info">Associa <span class="fa fa-arrow-right"></span></button></a>
+					{% else %}
+						<a href="{{ path("rimuovi_operatore_richiesta",{"incarico_id":incarico.id, "richiesta_id":richiesta.id, '_token': csrfToken}) }}">
+						<button id="seleziona" class="btn btn-info">Rimuovi <span class="fa fa-arrow-right"></span></button></a>
+					{% endif %}
+				</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+{% endblock %}
+

@@ -1,0 +1,61 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+    {% for proponente in variazione.richiesta.proponenti %}
+        <h4>{{ proponente }}</h4>
+        <table class="table table-striped table-hover table-bordered">
+            <thead>
+                <tr>
+                    <th>Persona referente</th>
+                    <th>Tipo referenza</th>
+                    <th>referente variato</th>
+                    {% if not variazione.isRichiestaDisabilitata %}
+                    <th>Azione</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for referente in proponente.referenti %}
+                <tr>
+                    <td>{{ referente.persona }}</td>
+                    <td>{{ referente.tipoReferenza.descrizione }}</td>
+                    <td>
+                        {% set variazioneSingola = variazione.variazioniSingoloReferente|filter(v => v.referenza  == referente )|first %}
+                        {% if variazioneSingola %}
+                            {{ variazioneSingola.persona }}
+                        {% endif %}
+                    </td>
+                    {% if not variazione.isRichiestaDisabilitata %}
+                        <td>
+                            <div class="dropdown">
+                                <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    Azioni
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                    <li>
+                                        <a href="{{- path('modifica_referente_variazione', {id_variazione: variazione.id, id_referente: referente.id}) -}}">
+                                            Modifica
+                                        </a>
+                                    </li>
+                                    {% if variazioneSingola %}
+                                    <li>
+                                        <a href="{{- path('elimina_referente_variazione', {
+                                                id_variazione: variazione.id, 
+                                                id_variazione_singolo: variazioneSingola.id,
+                                                '_token': csrfToken
+                                            }) -}}">
+                                            Elimina
+                                        </a>
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endfor %}
+{% endblock body %}

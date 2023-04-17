@@ -1,0 +1,19 @@
+{% if is_granted('ROLE_GESTIONE_PROCEDURA_PA') or is_granted('ROLE_SUPER_ADMIN') or is_granted('ROLE_GESTIONE_PROCEDURA_PA_READONLY') %}
+<li class="">
+    <a href="javascript:;">
+        <span class="fa fa-users"></span>
+        <span class="title">Richieste PA</span>
+        <span class="arrow "></span>
+    </a>
+    <ul class="sub-menu" id="procedure-pa-menu">		
+		<li id="procedure-pa-elenco">
+			<a href="{{- path("procedura_pa_elenco") -}}">Elenco richieste</a>
+		</li>
+		{% if is_granted('ROLE_GESTIONE_PROCEDURA_PA') or is_granted('ROLE_SUPER_ADMIN') %}
+			<li id="procedure-pa-inserisci">
+				<a href="{{- path('procedura_pa_inserisci') -}}">Crea richiesta</a>
+			</li>
+		{% endif %}
+    </ul>
+</li>
+ {% endif %}

@@ -1,0 +1,24 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	{% if elenco|length > 0 %}
+    <table class="table table-striped table-hover table-bordered" id="notizie-elenco">
+        <thead>
+            <tr>
+				<th>Chiave</th>
+                <th>Valore</th>
+            </tr>
+        </thead>
+        <tbody>
+			{% for elemento in elenco %}
+				<tr>
+					<td>{{ elemento[0] }}</td>
+					<td>{{ elemento[1] }}</td>
+				</tr>
+			{% endfor %}
+        </tbody>
+    </table>
+	{% else %}
+<div class="well">Nessun dato presente</div>
+	{% endif %}
+{% endblock %}

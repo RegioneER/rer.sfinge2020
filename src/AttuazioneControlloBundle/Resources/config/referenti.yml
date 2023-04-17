@@ -1,0 +1,36 @@
+parameters:
+  opzioni_referente:
+    '5':
+      - qualifica
+      - email_pec
+    '6':
+      - qualifica
+    '23':
+      - qualifica
+    '33':
+      - qualifica
+    '61':
+      - email_pec
+    '65':
+      - qualifica
+      - ruolo
+    '95':
+      - email_pec
+    '98':
+      - email_pec
+    '99':
+      - email_pec
+    '103':
+      - qualifica
+    '109':
+      - email_pec
+    '114':
+      - qualifica
+    '118':
+      - email_pec
+    '123':
+      - email_pec
+    '124':
+      - email_pec
+    '125':
+      - email_pec

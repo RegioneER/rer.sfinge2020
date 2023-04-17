@@ -1,0 +1,43 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+
+	{% include 'AttuazioneControlloBundle:Istruttoria/Variazioni:menu.html.twig' with {'variazione' : variazione } %}	
+
+	<h4>Totali piano costi </h4>
+	<table class="table">
+		<thead>
+			<tr>
+				<th style="text-align: center; width: 20%">Anno</th>
+				<th style="text-align: center; width: 20%">Costo variato</th>
+				<th style="text-align: center; width: 20%">Costo ammesso</th>
+				<th style="text-align: center; width: 20%">Contributo</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% if annualita_piano_costi | length > 0 %}
+				{% for chiave, anno in annualita_piano_costi %}
+					<tr>
+						<td style="text-align: center;">{{ anno }}</td>
+						<td style="text-align: center;">{{ totali_variazione['variato_'~chiave]|number_format(2,',', '.') }}</td>
+						<td style="text-align: center;">{{ totali_variazione['approvato_'~chiave]|number_format(2,',', '.') }}</td>
+						<td style="text-align: center;">-</td>
+					</tr>
+				{% endfor %}	
+			{% endif %}	
+		</tbody>
+		<tfoot>
+			<tr>
+				<td style="text-align: center;"><strong>Totali</strong></td>
+				<td style="text-align: center;"><strong>{{ somme_variazione['variato']|number_format(2,',', '.') }}</strong></td>
+				<td style="text-align: center;"><strong>{{ somme_variazione['approvato']|number_format(2,',', '.') }}</strong></td>
+				<td style="text-align: center;"><strong>{{ variazione.contributoAmmesso|number_format(2,',', '.') }}</strong></td>
+			</tr>
+		</tfoot>
+	</table>
+
+	<h4>Contributo</h4>
+	{{ form_start(form) }}
+	{{ form_row(form.contributo_ammesso) }}
+	{{ form_end(form) }}
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+<section style="margin-top:2em;">
+    <article class="note-info alert">
+        Inserire solo il CIG o i restanti campi
+    </article>
+</section>
+{{ form(form) }}
+<section style="margin-top:2em;">
+    <article class="alert alert-warning">
+        Qualora il CIG non fosse valorizzato il sistema inserirà il valore 9999
+    </article>
+</section>
+{% endblock %}
+
+{% block  jquery_page_document_ready %}
+    {% set pa = form %}
+    <script>
+        'use strict';
+        var cig = $('#{{- pa.cig.vars.id -}}');
+        var motivo_assenza = $('#{{- pa.motivo_assenza_cig.vars.id -}}');
+        var descrizione = $('#{{- pa.descrizione_procedura_aggiudicazione.vars.id -}}');
+        var tipo = $('#{{- pa.tipo_procedura_aggiudicazione.vars.id -}}');
+        var importoProcedura = $('#{{- pa.importo_procedura_aggiudicazione .vars.id-}}');
+        var data_pubblicazione = $('#{{- pa.data_pubblicazione.vars.id -}}');
+        var importo_aggiudicato = $('#{{- pa.importo_aggiudicato.vars.id -}}');
+        var data_aggiudicazione = $('#{{- pa.data_aggiudicazione.vars.id -}}');
+
+        function disabilitaCampi(){
+            var disabled = cig.val() && cig.val().trim() != 9999 ? 'disabled' : false;
+
+            motivo_assenza.prop('disabled',disabled);
+            descrizione.prop('disabled',disabled);
+            tipo.prop('disabled',disabled);
+            importoProcedura.prop('disabled',disabled);
+            data_pubblicazione.prop('disabled',disabled);
+            importo_aggiudicato.prop('disabled',disabled);
+            data_aggiudicazione.prop('disabled',disabled);
+
+            App.initAjax();
+        }
+        $(document).ready(function(){
+            disabilitaCampi();
+            cig.on('keyup', disabilitaCampi);
+            cig.on('change', disabilitaCampi);
+        });
+    </script>
+{% endblock %}	

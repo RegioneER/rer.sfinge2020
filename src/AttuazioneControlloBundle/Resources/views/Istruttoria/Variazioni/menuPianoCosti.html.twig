@@ -1,0 +1,22 @@
+
+	{% set richiesta = variazione.richiesta %}
+	{% set proponenti_piano_costi = richiesta.proponentiPianoCosto %}
+	{% if proponenti_piano_costi | length > 0 %}
+		<li role="presentation"{% if menu|default() == "piano_costi" %}class="active"{% endif %}>
+			<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+				Piano costi<span class="caret"></span>
+			</a>
+			<ul class="dropdown-menu">
+				{% for proponente in proponenti_piano_costi %}
+					{% set annualita_piano_costi = annualita_piano_costo(proponente.id) %}
+					{% for chiave, valore in annualita_piano_costi %}
+						{% set label = proponenti_piano_costi|length > 1 ? (proponente.denominazione ~ " / Annualità " ~ valore) : ("Annualità " ~ valore) %}
+						<li><a href="{{ path('piano_costi_istruttoria_variazione', {'id_variazione':variazione.id, 'id_proponente':proponente.id, 'annualita' : chiave}) }}">{{ label }}</a></li>
+					{% endfor %}
+				{% endfor %}
+				<li>
+					<a href="{{ path('totali_piano_costi_variazione', {'id_variazione':variazione.id}) }}">Totali</a>
+				</li>
+			</ul>
+		</li>
+	{% endif %}

@@ -1,0 +1,11 @@
+<ul class="nav nav-tabs">
+    <li role="presentation"{% if menu|default() == "riepilogo" %}class="active"{% endif %}><a href="{{path('riepilogo_controllo_stabilita', {'id_controllo':controllo.id})}}">Riepilogo</a></li>
+        {% for valutazione in controllo.valutazionichecklistordinate %}
+            {% set corrente = valutazione_checklist is defined and valutazione_checklist.id == valutazione.id %}
+            <li role="presentation" {% if corrente %}class="active"{% endif %}><a href="{{ path("valuta_checklist_controlli_stabilita", {'id_valutazione_checklist': valutazione.id}) }}">{{ valutazione }}</a></li>
+            <li role="presentation"{% if menu|default() == "verbalesopralluogo" %}class="active"{% endif %}><a href="{{path('verbale_sopralluogo_form_stabilita', {'id_controllo':controllo.id})}}">Verbale verifica</a></li>
+        {% endfor %}
+     <li role="presentation"{% if menu|default() == "sopralluogo" %}class="active"{% endif %}><a href="{{path('valuta_sopralluogo_form_stabilita', {'id_controllo':controllo.id})}}">Documenti verifica</a></li>
+    <li role="presentation"{% if menu|default() == "documenti" %}class="active"{% endif %}><a href="{{path('documenti_controlli_stabilita', {'id_controllo':controllo.id})}}">Documenti</a></li>
+    <li role="presentation"{% if menu|default() == "esito" %}class="active"{% endif %}><a href="{{path('esito_finale_controlli_stabilita', {'id_controllo':controllo.id})}}">Esito finale</a></li>
+</ul>

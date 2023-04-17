@@ -1,0 +1,58 @@
+{#<li class="">
+    <a href="javascript:;">
+        <span class="fa fa-building"></span>
+        <span class="title">Accreditamento</span>
+        <span class="arrow "></span>
+    </a>
+    <ul class="sub-menu">
+        <li id="elencoAziende">
+            <a href="{{ path("elenco_aziende") }}">Elenco aziende</a>
+        </li>
+        {% if is_granted("ROLE_SUPER_ADMIN") or is_granted("ROLE_ADMIN_PA")%}
+        <li id="creaAzienda">
+            <a href="{{ path("crea_azienda") }}">Crea azienda</a>
+        </li>
+        {% endif %}
+        <li id="elencoSoggetti">
+            <a href="{{ path("elenco_soggetti") }}">Elenco altri soggetti</a>
+        </li>
+        {% if is_granted("ROLE_SUPER_ADMIN") or is_granted("ROLE_ADMIN_PA")%}
+        <li id="creaSoggetto">
+            <a href="{{ path("crea_soggetto") }}">Crea soggetto</a>
+        </li>
+        {% endif %}        
+        <li id="elencoComuniUnioni">
+            <a href="{{ path("elenco_comuni_unioni") }}">Elenco comuni</a>
+        </li>
+        {% if is_granted("ROLE_SUPER_ADMIN") or is_granted("ROLE_ADMIN_PA")%}
+        <li id="creaComuneUnione">
+            <a href="{{ path("crea_comune_unione") }}">Crea comune</a>
+        </li>
+        {% endif %}
+        {% if is_granted("ROLE_UTENTE_PA") or is_granted("ROLE_ADMIN_PA") or is_granted("ROLE_SUPER_ADMIN") %}
+        <li id="elencoIncarichi">
+            <a href="{{ path("elenco_incarichi") }}">Incarichi</a>
+        </li>
+        {% endif %}
+    </ul>
+</li>#}
+{% if is_granted("ROLE_VALUTATORE_FESR") == false and is_granted("ROLE_CONSULENTE_FESR") == false and is_granted("ROLE_OPERATORE_COGEA") == false %}
+	<li class="">
+		<a href="javascript:">
+			<span class="fa fa-users"></span>
+			<span class="title">Soggetti giuridici</span>
+			<span class="arrow "></span>
+		</a>
+		<ul class="sub-menu">
+			<li id="elencoSoggettiGiuridici">
+				<a href="{{ path("elenco_soggetti_giuridici") }}">Elenco</a>
+			</li>
+			<li id="creaSoggettoGiuridico">
+				<a href="{{ path("crea_soggetto_giuridico") }}">Crea</a>
+			</li>
+			<li id="elencoIncarichi">
+				<a href="{{ path("elenco_incarichi") }}">Incarichi</a>
+			</li>
+		</ul>
+	</li>
+{% endif %}	

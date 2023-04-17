@@ -1,0 +1,8 @@
+{% import 'SfingeBundle:Procedura:macro_esportazione.sql.twig' as macro %}
+
+{{ macro.insert_procedura(procedura) }}
+{% for documento in procedura.documentiRichiesti %}{{ macro.insert_documento_richiesto(documento) }}{% endfor %}
+{% for sezione_piano_costo in procedura.sezioniPianiCosto %}{{ macro.insert_sezione(sezione_piano_costo) }}{% endfor %}
+
+	
+	

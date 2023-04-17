@@ -1,0 +1,16 @@
+{% extends '::base.html.twig' %}
+
+
+{% block body %}
+
+    {% include 'MonitoraggioBundle:Progetti:menu.html.twig' with {'page_view' : page_view }%}
+   <ul class="list-group">
+        {% for violazione in lista_errori %}
+            <li class="list-group-item list-group-item-danger   ">
+                    {{violazione.parameters.strutture  }} :
+                    &nbsp;
+                    {{ violazione.message }}
+            </li>
+       {% endfor %}
+   </ul>
+{% endblock body %}

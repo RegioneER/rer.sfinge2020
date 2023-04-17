@@ -1,0 +1,26 @@
+parameters:
+    cipe.cipe_entity_service.class: CipeBundle\Services\CipeEntityService 
+
+    cipe.ws_genera_cup_service.class: CipeBundle\Services\WsGeneraCupService 
+
+    cipe.cipe_service.class: CipeBundle\Services\CipeService
+    
+    cipe.cup_batch_service.class: CipeBundle\Services\CupBatchService
+
+services:
+    cipe.cipe_entity_service:
+        class: '%cipe.cipe_entity_service.class%'
+        arguments: ['@doctrine']
+
+    cipe.ws_genera_cup_service:
+        class: '%cipe.ws_genera_cup_service.class%'
+        arguments: ['@service_container']
+
+    cipe.cup_batch_service:
+        class: '%cipe.cup_batch_service.class%'
+        arguments: ['@service_container', '@doctrine', '@documenti', '@adapter_memory_service']
+        
+    cipe.cipe_service:
+        class: '%cipe.cipe_service.class%'
+        arguments: ['@service_container', '@doctrine', '@cipe.cipe_entity_service', '@cipe.ws_genera_cup_service', '@cipe.cup_batch_service']
+       

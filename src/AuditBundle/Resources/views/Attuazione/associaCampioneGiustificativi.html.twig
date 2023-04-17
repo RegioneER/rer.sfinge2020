@@ -1,0 +1,100 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	{% include 'AuditBundle:Audit:menu.html.twig' %}
+
+    <div class="table-toolbar">
+		<a href="#" data-target="#ricerca-modal" data-toggle="modal" class="btn btn-info"><span class="fa fa-search"></span> Ricerca</a>
+    </div>
+	<div class="count">
+		Numero elementi trovati: {{ risultati.getTotalItemCount }} - Filtro attivo: {{ filtro_attivo ? "Si" : "No" }}
+	</div>	
+
+	{{ form_start(form) }}
+
+	<table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+		<thead>
+			<tr>
+				<th style="width: 10%">Numero fattura</th>
+				<th style="width: 10%">Data fattura</th>
+				<th style="width: 30%">Fornitore/Personale</th>
+				<th style="width: 20%">Tipologia</th>
+				<th style="width: 15%">Importo giustificativo</th>
+				<th style="width: 15%">Importo ammesso</th>
+				<th>Associa</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for form_giustifivativo in form.campioni_estesi.children %}
+				{% set giustificativo = form_giustifivativo.vars.value.giustificativo %}
+				<tr>
+					<td>{{ giustificativo.numerogiustificativo }}</td>
+					<td>{{ giustificativo.datagiustificativo is not null ? giustificativo.datagiustificativo|date('d-m-Y') : '-'}}</td>
+					{% if giustificativo.denominazioneFornitore is not null %}
+						<td>{{ giustificativo.denominazioneFornitore }} - {{ giustificativo.codiceFiscaleFornitore }}</td>
+					{% else %}
+						{% if giustificativo.estensione.nome is defined %}
+							<td>{{ giustificativo.estensione.nome }} {{ giustificativo.estensione.cognome }}</td>
+						{% else %}
+							<td>-</td>
+						{% endif %}
+					{% endif %}
+					{% if giustificativo.tipologiagiustificativo is defined and giustificativo.tipologiagiustificativo is not null %}
+						<td>{{ giustificativo.tipologiagiustificativo.descrizione }}</td>
+					{% else %}
+						<td>-</td>
+					{% endif %}
+					{% if giustificativo.importoGiustificativo is not null%}
+						<td style="text-align: right;">{{ giustificativo.importogiustificativo|number_format(2,',','.') }}</td>
+					{% else %}
+						<td style="text-align: right;">{{ giustificativo.TotaleImputato|number_format(2, ',', '.') }}</td>
+					{% endif %}
+					{% if giustificativo.importoapprovato is not null%}
+						<td style="text-align: right;">{{ giustificativo.importoapprovato|number_format(2,',','.') }}</td>
+					{% else %}
+						<td style="text-align: right;">{{ giustificativo.TotaleImputatoApprovato|number_format(2, ',', '.') }}</td>
+					{% endif %}
+					<td style="text-align: center;" class="selezionato">{{ form_widget(form_giustifivativo.selezionato) }}</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+	{{ form_end(form) }}
+
+	{# display navigation #}
+	<div class="navigation">
+		{{ knp_pagination_render(risultati) }}
+	</div>
+
+	<div id="ricerca-modal" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3 id="ricerca-istruttoria-modal-titolo">Ricerca giustificativi</h3>
+				</div>
+				<div class="modal-body">
+					{{ form(formRicerca) }}
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Chiudi</button>
+					<a class="btn btn-default" href="{{ path("associa_giustificativi_campione_attuazione_pulisci", {'id_audit_campione_operazione' : id_audit_campione_operazione }) }}">Annulla Ricerca</a>
+					<a class="btn btn-primary" href="#" id="ricercaOk">Ricerca</a>
+				</div>
+			</div>
+		</div>
+	</div>		
+
+{% endblock %}
+
+{% block  jquery_page_document_ready %}
+	<script>
+		jQuery(document).ready(function () {
+			$("#ricercaOk").click(function (e) {
+				e.preventDefault();
+				$(this).parents(".modal-content").find("form").submit();
+			})
+		});
+	</script>
+{% endblock %}

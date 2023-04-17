@@ -1,0 +1,198 @@
+services:
+  gestore_richieste:
+    class: RichiesteBundle\Service\GestoreRichiestaService
+    arguments: ['@service_container', '@documenti']
+    
+  gestore_piano_costo:
+    class: RichiesteBundle\Service\GestorePianoCostoService
+    arguments: ['@service_container']
+    
+  gestore_proponenti:
+      class: RichiesteBundle\Service\GestoreProponenteService
+      arguments: ['@service_container']
+    
+  gestore_fase_procedurale:
+      class: RichiesteBundle\Service\GestoreFaseProceduraleService
+      arguments: ['@service_container']
+  
+  gestore_modalita_finanziamento:
+      class: RichiesteBundle\Service\GestoreModalitaFinanziamentoService
+      arguments: ['@service_container']
+      
+  gestore_priorita:
+      class: RichiesteBundle\Service\GestorePrioritaService
+      arguments: ['@service_container']  
+      
+  gestore_esportazione:
+      class: RichiesteBundle\Service\GestoreEsportazioneService
+      arguments: ['@service_container']        
+   
+  validator.valida_piano:
+    class: RichiesteBundle\Validator\Constraints\ValidaPianoCostoValidator
+    arguments: ["@service_container"]
+    tags:
+        - { name: validator.constraint_validator, alias: valida_piano }
+
+  validator.valida_dati_marca_da_bollo:
+    class: RichiesteBundle\Validator\Constraints\ValidaDatiMarcaDaBolloValidator
+    arguments: ["@service_container"]
+    tags:
+      - { name: validator.constraint_validator, alias: valida_dati_marca_da_bollo }
+
+  validator.valida_dati_generali:
+    class: RichiesteBundle\Validator\Constraints\ValidaDatiGeneraliValidator
+    arguments: ["@service_container"]
+    tags:
+        - { name: validator.constraint_validator, alias: valida_dati_generali }
+        
+  validator.valida_fase_procedurale:
+    class: RichiesteBundle\Validator\Constraints\ValidaFaseProceduraleValidator
+    arguments: ["@service_container"]
+    tags:
+        - { name: validator.constraint_validator, alias: valida_fase_procedurale }
+
+  dati_frammento:
+      class: RichiesteBundle\TwigExtension\DatiFrammentoTwigExtension
+      arguments: ['@service_container']
+      tags:
+        - { name: twig.extension }
+        
+  schema.twig.mostra_validazione_extension:
+        class: RichiesteBundle\TwigExtension\MostraValidazioneTwigExtension
+        arguments: ['@service_container']
+        tags:
+          - { name: twig.extension }
+          
+  schema.twig.voci_menu_presentazione:
+        class: RichiesteBundle\TwigExtension\VociMenuTwigExtension
+        arguments: ['@service_container']
+        tags:
+          - { name: twig.extension }
+
+  richieste_listener:
+        class: RichiesteBundle\EventListener\RichiesteListener
+        tags: [{name: kernel.event_listener, event: kernel.request, method: onKernelRequest}]
+        arguments: ['@router', '@security.authorization_checker', '@security.token_storage', '@doctrine']
+
+  ebollo_listener:
+      class: RichiesteBundle\EventListener\EbolloListener
+      tags: [ { name: kernel.event_listener, event: payer.ebollo.notifica_esito, method: onNotificaEsito } ]
+      arguments: ['@service_container']
+        
+  priorita_proponente.type:
+      class: RichiesteBundle\Form\PrioritaProponenteType
+      arguments: ['@service_container']
+      tags:
+      - { name: form.type, alias: priorita_proponente_type }   
+      
+  priorita_strategia_proponente.type:
+      class: RichiesteBundle\Form\PrioritaStrategiaProponenteType
+      arguments: ['@service_container']
+      tags:
+      - { name: form.type, alias: priorita_strategia_proponente_type }     
+      
+  richiesta_cipe_service:
+      class: RichiesteBundle\Service\Cipe\RichiestaCipeService 
+      arguments: ['@service_container', '@doctrine', '@cipe.cipe_service']
+      
+  gestore_richiesta_cup_batch:
+      class: RichiesteBundle\Service\GestoreRichiestaCupBatch
+      arguments: ['@service_container']
+
+  sfinge.richiesta_voter:
+    class: RichiesteBundle\Security\RichiestaVoter
+    arguments: ['@security.access.decision_manager', '@doctrine']
+    tags:
+        - { name: security.voter }
+    public: false
+
+  sfinge.richiesta_legge_14_voter:
+      class: RichiesteBundle\Security\RichiestaLegge14Voter
+      arguments: ['@security.access.decision_manager', '@doctrine']
+      tags:
+        - { name: security.voter }
+      public: false
+
+  piano_costo:
+      class: RichiesteBundle\TwigExtension\PianoCostoTwigExtension
+      arguments: ['@service_container']
+      tags:
+        - { name: twig.extension }
+
+  selezione_bando.type:
+      class: RichiesteBundle\Form\SelezioneBandoType
+      arguments: ['@security.authorization_checker', '@service_container']
+      tags:
+          - { name: form.type, alias: selezione_bando_type}
+
+  seleziona_tipologia_richiesta98.type:
+      class: RichiesteBundle\Form\Bando98\Richiesta98Type
+      arguments: ['@security.authorization_checker', '@service_container']
+      tags:
+          - { name: form.type, alias: seleziona_tipologia_richiesta98_type}
+
+  seleziona_tipologia_richiesta141.type:
+      class: RichiesteBundle\Form\Bando141\Richiesta141Type
+      arguments: [ '@security.authorization_checker', '@service_container' ]
+      tags:
+          - { name: form.type, alias: seleziona_tipologia_richiesta141_type }
+
+  seleziona_tipologia_richiesta156.type:
+    class: RichiesteBundle\Form\Bando156\Richiesta156Type
+    arguments: [ '@security.authorization_checker', '@service_container' ]
+    tags:
+      - { name: form.type, alias: seleziona_tipologia_richiesta156_type }
+
+  seleziona_tipologia_richiesta169.type:
+    class: RichiesteBundle\Form\Bando169\Richiesta169Type
+    arguments: [ '@security.authorization_checker', '@service_container' ]
+    tags:
+      - { name: form.type, alias: seleziona_tipologia_richiesta169_type }
+
+  ricerca_richiesta.type:
+      class: RichiesteBundle\Form\RicercaRichiestaType
+      arguments: ['@doctrine']
+      tags:
+        - { name: form.type, alias: ricerca_richiesta_type }
+
+  ricerca_richiesta_pa.type:
+      class: RichiesteBundle\Form\RicercaRichiestaLatoPAType
+      arguments: ['@doctrine']
+      tags:
+        - { name: form.type, alias: ricerca_richiesta_pa_type }
+            
+  gestore_richiesta_pa:
+      class: RichiesteBundle\Service\GestoreRichiestaPAService
+      arguments:
+        - '@service_container'
+
+  ricerca_richiesta_procedura_pa.type:
+      class: RichiesteBundle\Form\RicercaRichiestaProceduraPAType
+      arguments: ['@doctrine']
+      tags:
+        - { name: form.type, alias: ricerca_richiesta_procedura_pa_type }
+
+  gestore_risorse:
+      class: RichiesteBundle\Service\GestoreRisorseService
+      arguments:
+        - '@service_container'
+
+  stato_richiesta:
+      class: RichiesteBundle\Service\GestoreStatoRichiestaService
+      arguments:
+        - '@service_container'
+  
+  gestore_obiettivi_realizzativi:
+      class: RichiesteBundle\Service\GestoreObiettiviRealizzativiService
+      arguments:
+        - '@service_container'
+
+  gestore_ambiti_tematici_s3:
+      class: RichiesteBundle\Service\GestoreAmbitiTematiciS3Service
+      arguments: [ '@service_container' ]
+
+  gestore_ambiti_tematici_s3_proponente.type:
+    class: RichiesteBundle\Form\AmbitoTematicoS3ProponenteType
+    arguments: [ '@service_container' ]
+    tags:
+      - { name: form.type, alias: ambito_tematico_s3_proponente_type }

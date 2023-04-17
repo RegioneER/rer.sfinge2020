@@ -1,0 +1,70 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <div class="table-toolbar">
+        <div>
+            <button class="btn btn-info" data-target="#ricerca-contesto-modal" data-toggle="modal">
+                    <span class="fa fa-search"></span> Ricerca
+            </button>
+        </div>
+    </div>
+    <div class="count">
+        Numero elementi trovati: {{ risultato.getTotalItemCount }} - Filtro attivo: {{ filtro_attivo ? "Si" : "No" }}
+    </div>
+    <table class="table table-striped table-hover table-bordered" id="trasferimenti-elenco">
+        <thead>
+            <tr>
+                <th>Asse</th>
+                <th>Codice locale Procedura attivazione</th>
+                <th>Titolo Procedura attivazione</th>
+                <th>Causale trasferimento</th>
+                <th>Destinatario</th>
+                <th>Data trasferimento</th>
+                <th>Importo trasferimento</th>
+                {% if ruolo_scrittura == true %}
+                    <th>Azioni</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for trasferimento in risultato %}
+                <tr>
+                    <td>{{ trasferimento.bando.asse }}</td>
+                    <td>{{ trasferimento.bando.atto.numero }}</td>
+                    <td>{{ trasferimento.bando.titolo }}</td>
+                    <td>{{ trasferimento.causaletrasferimento}}</td>
+                    <td>{{ trasferimento.soggetto }}</td>
+                    <td>{{ (trasferimento.datatrasferimento is not null ? trasferimento.datatrasferimento|date("d/m/Y") : "-") }}</td>
+                    <td>{{ trasferimento.importotrasferimento }}</td>
+                    {% if ruolo_scrittura == true %}
+                    <td>
+                        <div class="dropdown">
+                            <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    Azioni
+                                    <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                <li><a href="{{ path('dettaglio_trasferimento',{'idTrasferimento': trasferimento.id}) }}">Modifica</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="navigation">
+        {{ knp_pagination_render(risultato) }}
+    </div>
+
+    {% if ruolo_scrittura == true %}
+        <div style="margin-top:3em;">
+            <a href="{{path('nuovo_trasferimento')}}" class="btn btn-primary">
+                <i class="fa fa-plus"></i>Aggiungi
+            </a>
+        </div>
+    {% endif %}
+
+    {{ modale_ricerca("Trasferimenti",form_ricerca,"elenco_trasferimenti_pulisci","ricerca-contesto-modal") }}
+{% endblock %}

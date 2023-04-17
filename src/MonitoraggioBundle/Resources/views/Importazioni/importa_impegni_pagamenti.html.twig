@@ -1,0 +1,21 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	<div class="warning">
+		{% for struttura, messaggi in warnings %}
+		<ul>
+			<li>
+				{{ struttura }}
+				<ul>
+					{% for msg in messaggi %}
+					<li>
+						{{ msg }}
+					</li>
+					{% endfor %}
+				</ul>
+			</li>
+		{% endfor %}
+		</ul>
+	</div>
+	{{ form(form) }}
+{% endblock %}

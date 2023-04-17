@@ -1,0 +1,71 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+    <div class="table-toolbar" style="overflow: overlay;">
+		<a href="#" data-target="#ricerca-modal" data-toggle="modal" class="btn btn-info">
+        <i class="fa fa-search"></i>Ricerca
+    </a>
+        <a class="btn btn-primary pull-right" href="{{- path('aggiungi_proroghe_rendicontazione') -}}">
+            <span class="fa fa-plus"></span>
+            Aggiungi proroga
+        </a>
+    </div>
+    <div class="count">
+		Numero elementi trovati: {{ risultato.getTotalItemCount }} - Filtro attivo: {{ filtro_attivo ? "Si" : "No" }}
+	</div>
+    <table class="table table-striped table-hover table-bordered" >
+        <thead>
+            <tr>
+				<th>Id</th>
+                <th>Protocollo progetto</th>
+                <th>Modalita pagamento</th>
+				<th>Data inzio</th>
+				<th>Data scadenza</th>
+				<th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+			{% for proroga in risultato %}
+			<tr>
+				<td>{{ proroga.id }}</td>
+				<td>{{ proroga.richiesta.protocollo }}</td>
+				<td>{{ proroga.modalitaPagamento }}</td>
+				<td>{{ proroga.dataInizio ? proroga.dataInizio|date('d/m/Y'): '' }}</td>
+				<td>{{ proroga.dataScadenza ? proroga.dataScadenza|date('d/m/Y'): '' }}</td>
+				<td>
+						<div class="dropdown">
+							<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								Azioni
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+									<li>
+										<a href="{{- path('modifica_proroghe_rendicontazione',{ id: proroga.id }) -}}" 
+											{{ voceMenu.attr is defined ? (voceMenu.attr |raw) : "" }}
+										>
+											<i class="far fa-edit"></i>&nbsp;Modifica
+										</a>
+									</li>
+									<li>
+										<a href="{{- path('elimina_proroga_rendicontazione',{ id: proroga.id, _token: csrfToken }) -}}" 
+											{{ voceMenu.attr is defined ? (voceMenu.attr |raw) : "" }}
+											data-confirm="Eliminare la proroga selezionata?"
+											class="text-danger"
+										>
+											<i class="far fa-trash-alt"></i>&nbsp;Elimina
+										</a>
+									</li>
+							</ul>
+						</div>
+				</td>
+			</tr>
+            {% endfor %}
+          </tbody>
+		</table>  	
+
+	<div class="navigation">
+		{{ knp_pagination_render(risultato) }}
+	</div>
+{{ modale_ricerca("Proroghe di rendicontazione",form_ricerca, "elenco_proroghe_rendicontazione_pulisci", "ricerca-modal") }}
+
+{% endblock body %}

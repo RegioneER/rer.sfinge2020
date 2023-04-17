@@ -1,0 +1,177 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+	
+	{{form_errors(form)}}
+	{{ form_start(form) }}
+	{% set numCol = form.voci_piano_costo.children|length %}
+	{% set primoChild = form.voci_piano_costo.children|first %}
+	{% set precedente = primoChild.vars.value.vocePianoCosto.pianocosto.sezionepianocosto.codice %}
+	<h4 style="margin-bottom: 5px">{{ primoChild.vars.value.vocePianoCosto.pianocosto.sezionepianocosto.titolosezione}}</h4>
+	<table class="sezione table table-bordered table-striped" id="{{precedente}}" style=" width: 100%">
+		<thead>
+			<tr>
+				<th style="width: 30%"><h5>Voci di spesa</h5></th>
+				<th style="text-align: center; width: 22%">Costo ammesso</th>
+				<th style="text-align: center; width: 23%">Variazione (inserire costo che si intende sostenere)</th>
+				<th style="text-align: center; width: 25%">Commento</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for voce_piano_costo in form.voci_piano_costo.children %}
+				{% set attuale = voce_piano_costo.vars.value.vocePianoCosto.pianocosto.sezionepianocosto.codice %}
+				{% if attuale != precedente%}
+		</tbody>
+	</table>
+	<br/>
+			<h4 style="margin-bottom: 5px">{{ voce_piano_costo.vars.value.vocePianoCosto.pianocosto.sezionepianocosto.titolosezione}}</h4>
+			<table class="sezione table table-bordered table-striped" id="{{attuale}}" style="width: 100%">
+				<thead>
+					<tr>
+						<th>
+							<h5>Voci di spesa</h5>
+						</th>
+						<th style="text-align: center; width: 22%">Costo ammesso</th>
+						<th style="text-align: center; width: 23%">Variazione (inserire costo che si intende sostenere)</th>
+						<th style="text-align: center; width: 25%">Commento</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% set precedente = voce_piano_costo.vars.value.vocePianoCosto.pianocosto.sezionepianocosto.codice %}
+				{% endif %}
+
+				{% set codice = voce_piano_costo.vars.value.vocePianoCosto.pianocosto.codice %}
+				<tr data-totale="{{ codice != 'TOT' ? 'false' : 'true' }}">
+					<td>
+						{% if voce_piano_costo.vars.value.vocePianoCosto.pianocosto.codice != 'TOT' %}
+							{{ voce_piano_costo.vars.value.vocePianoCosto.pianocosto.codice}}) 
+						{% endif %}
+						{{ voce_piano_costo.vars.value.vocePianoCosto.pianocosto.titolo}}
+					</td>
+					{% set child = attribute(voce_piano_costo,'importo_variazione_anno_'~annualita) %}
+					
+					<td>
+						{% set classe =  form_errors(child)|length > 0 ? 'cell-red-error' : '' %}
+						<input type="text" style="text-align: right" class="form-control" disabled="disabled"
+							   value="{{ voce_piano_costo.vars.value.vocePianoCosto.importoAmmesso(annualita, variazione)|number_format(2,',', '.') }}"
+							   >
+					</td>
+					{% for child_istruttoria in voce_piano_costo %}
+						<td>{{ form_widget(child_istruttoria,
+							{	
+								'attr': { 
+									'class': classe, 'style': 'text-align: right'
+								} 
+							}) }}</td>
+					{% endfor %}
+				</tr>
+
+
+			{% endfor %}
+		</tbody>
+	</table>
+
+	<h4 style="margin-bottom: 5px">Complessivo</h4>
+	
+	<table class="table table-bordered table-striped" id ="totali" style=" width: 75%">
+		<thead>
+			<tr>
+				<th style="width: 30%"></th>
+				<th style="text-align: center; width: 22%">Costo ammesso</th>
+				<th style="text-align: center; width: 23%">Variazione</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><h5>Totale</h5></td>
+				<td>
+					<input id="totale_presentato" class="form-control" type="text" style="text-align: right" data-totale="false" disabled="disabled">
+				</td>
+				<td>
+					<input id="totale_variazione" class="form-control" type="text" style="text-align: right" data-totale="false" disabled="disabled">									
+				</td>
+			</tr>
+			
+		</tbody>
+	</table>
+	
+	{% block extraForm %}{% endblock %}
+
+	{{ form_end(form) }}
+
+	<script type="text/javascript" language="javascript">
+
+		function calcolaTotaleSezione() {
+
+		totalePresentatoSezioni = 0.00;
+		totaleVariazioniSezioni = 0.00;
+		
+		$(".sezione").each(function () {
+			totaleVariazioniSezione = 0.00;
+			totalePresentatoSezione = 0.00;
+			var divTotale = '';
+			$(this).find('tbody tr').each(function () {		
+				var controlloTotale = $(this).attr('data-totale');
+				var presentato = $(this).find('td:nth-child(2) input');
+				var variazione = $(this).find('td:nth-child(3) input');
+				if (controlloTotale === 'false') {
+					var importo = variazione.val();
+					var ifMatch = (importo.match(/(?=.)^\$?(([1-9][0-9]{0,2}(.[0-9]{3})*)|0)?(\,[0-9]{1,2})?$/)) ? true : false;
+					if(!ifMatch){
+						importo = 0.00;
+					} else {
+						importo = parseFloat(importo.deformatMoney());
+					}
+					totaleVariazioniSezione = parseFloat(totaleVariazioniSezione) + importo;
+				} else {
+					divTotale = $(this);
+					totalePresentatoSezione = parseFloat(divTotale.find('td:nth-child(2) input').val().deformatMoney());
+				}		
+			});
+			divTotale.find('td:nth-child(3) input').val(totaleVariazioniSezione.formatMoney());
+			totalePresentatoSezioni += totalePresentatoSezione;
+			totaleVariazioniSezioni += totaleVariazioniSezione;
+		});
+		
+		$("#totale_presentato").val(parseFloat(totalePresentatoSezioni).formatMoney());
+		$("#totale_variazione").val(parseFloat(totaleVariazioniSezioni).formatMoney());
+		}
+	</script>
+
+	{% block extraPianoCosto %}
+	<script type="text/javascript" language="javascript">
+		$(document).ready(function () {
+			{{ onKeyUp }}();
+		});
+	</script>
+	{% endblock %}
+	
+	<script type="text/javascript">
+		$(document).ready(function () {
+			var query = ".sezione input";
+			
+			$(".sezione").each(function () {
+				$(this).find('tbody tr').each(function () {		
+					var presentato = $(this).find('td:nth-child(2) input');
+					var variazione = $(this).find('td:nth-child(3) input');
+					var nota = $(this).find('td:nth-child(4) textarea');
+					
+					/*if (presentato.val() == "0,00") {
+						variazione.attr("disabled", "disabled");
+						nota.attr("disabled", "disabled");
+					}*/
+				});
+			});
+					
+			$("form").on('keyup', query, function(){
+				$(this).formatAmount();
+				{{ onKeyUp }}();
+			});
+
+			$("form").on('blur', query, function(){
+				$(this).approximate();
+			});	
+		});
+	</script>	
+	
+{% endblock %}

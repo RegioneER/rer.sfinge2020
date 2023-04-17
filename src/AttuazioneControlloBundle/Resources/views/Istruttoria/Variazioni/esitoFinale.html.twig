@@ -1,0 +1,11 @@
+{% extends 'AttuazioneControlloBundle:Istruttoria/Variazioni:baseIstruttoria.html.twig' %}
+
+{% block content %}
+    <h4>Valutazione variazione</h4>
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+    {{ form_row(form.esito_istruttoria) }}
+    {{ form_row(form.note_istruttore) }}
+    {{ form_end(form) }}
+{% endblock content %}

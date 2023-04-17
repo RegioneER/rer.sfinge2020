@@ -1,0 +1,61 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+    <table class="table table-striped table-hover table-bordered">
+        <thead>
+            <tr>
+                <th>Link</th>
+                <th>Descrizione</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <a href="{{path("elenco_richieste_protocollo")}}">Re-invia PEC</a>
+                </td>
+                <td>
+                    Funzionalità per eseguire un nuovo invio di una PEC che è stata precedentemente inviata a un indirizzo sbagliato
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a href="{{path("elenco_scadenze_procedure")}}">Prossime scadenze procedure</a>
+                </td>
+                <td>
+                    Elenco delle procedure di attivazione in scadenza
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a href="{{path("elenco_log_protocollazione")}}">Visualizza LOG protocollazione</a>
+                </td>
+                <td>
+                    Visualizzazione LOG protocollazione
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a href="{{path("elenco_proposte_impegno")}}">Creazione proposte impegno</a>
+                </td>
+                <td>
+                    Funzionalità per creare massivamente le proposte di impegno
+                </td>
+            </tr>
+             <tr>
+                <td>
+                    <a href="{{path("passaggio_attuazione")}}">Passa in attuazione procedura</a>
+                </td>
+                <td>
+                    Passaggio attuazione per bando
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a href="{{path("aggiorna_giustificativi_rinviati")}}">Aggiorna giustificativi rinviati pagamento</a>
+                </td>
+                <td>
+                    Aggiorna giustificativi rinviati pagamento
+                </td>
+            </tr>
+        </tbody>
+    </table>
+{% endblock body %}

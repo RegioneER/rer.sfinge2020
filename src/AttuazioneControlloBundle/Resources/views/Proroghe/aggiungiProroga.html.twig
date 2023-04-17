@@ -1,0 +1,39 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+	{{ form_start(form) }}
+	<h4>Firmatario richiesta proroga</h4>
+	{{ form_row(form.firmatario) }}
+	<h4>Dati proroga</h4>
+	{{ form_row(form.tipo_proroga) }}
+	<div id="avvio">{{ form_row(form.data_avvio_progetto) }}</div>
+	<div id="fine">{{ form_row(form.data_fine_progetto) }}</div>
+	{{ form_row(form.motivazioni) }}
+	{{ form_end(form) }}
+	  
+	<script type="text/javascript" language="javascript">
+		$(document).ready(function () {
+			dataBytTipo();
+		});
+		
+		$("#creazione_proroga_tipo_proroga").change(function () {
+			dataBytTipo();
+		});
+		
+		function dataBytTipo() {
+			valore = $("#creazione_proroga_tipo_proroga").val();
+			if(valore === "") {
+				$("#avvio").hide();
+				$("#fine").hide();
+			}
+			if(valore === 'PROROGA_AVVIO') {
+				$("#avvio").show();
+				$("#fine").hide();
+			}
+			if(valore === 'PROROGA_FINE') {
+				$("#avvio").hide();
+				$("#fine").show();
+			}
+		};
+	</script>
+{% endblock %}

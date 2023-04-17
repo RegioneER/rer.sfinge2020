@@ -1,0 +1,77 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+
+    <div class="table-toolbar">
+        <a href="#" data-target="#ricerca-modal" data-toggle="modal" class="btn btn-info"><span class="fa fa-search"></span> Ricerca</a>
+    </div>
+    <div class="count">
+        Numero elementi trovati: {{ risultati.getTotalItemCount }} - Filtro attivo: {{ filtro_attivo ? "Si" : "No" }}
+    </div>	
+
+    {{ form_start(form) }}
+
+    <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+        <thead>
+            <tr>
+                <th>Protocollo</th>
+                <th>Ragione Sociale</th>
+                <th>PMI</th>
+                <th>Bando</th>
+                <th>Importo Pagato</th>
+                <th>Associa</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for form_richiesta in form.campioni_estesi.children %}
+                {% set richiesta = form_richiesta.vars.value.richiesta %}
+                <tr>
+                    <td>{{ richiesta.protocollo }}</td>
+                    <td>{{ richiesta.soggetto }}</td>
+                    <td>{{ richiesta.mandatario.isPMIControlloLoco }}</td>
+                    <td>{{ richiesta.procedura.titolo }}</td>
+                    <td style="text-align: right;">{{ richiesta.TotalePagato|number_format(2, ',', '.') }}</td>
+                    <td style="text-align: center;" class="selezionato">{{ form_widget(form_richiesta.selezionato) }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {# display navigation #}
+    <div class="navigation">
+        {{ knp_pagination_render(risultati) }}
+    </div>
+
+    {{ form_end(form) }}
+
+    <div id="ricerca-modal" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h3 id="ricerca-istruttoria-modal-titolo">Ricerca Universo</h3>
+                </div>
+                <div class="modal-body">
+                    {{ form(formRicerca) }}
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Chiudi</button>
+                    <a class="btn btn-default" href="{{ path("associa_operazioni_campione_stabilita_pulisci", {'id_campione' : form.vars.value.id }) }}">Annulla Ricerca</a>
+                    <a class="btn btn-primary" href="#" id="ricercaOk">Ricerca</a>
+                </div>
+            </div>
+        </div>
+    </div>		
+
+{% endblock %}
+
+{% block  jquery_page_document_ready %}
+    <script>
+        jQuery(document).ready(function () {
+            $("#ricercaOk").click(function (e) {
+                e.preventDefault();
+                $(this).parents(".modal-content").find("form").submit();
+            })
+        });
+    </script>
+{% endblock %}

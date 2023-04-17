@@ -1,0 +1,167 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+	
+	{% set pagamento = giustificativo.pagamento %}
+	
+	{% include 'AttuazioneControlloBundle:PA/Richieste:menu.html.twig' with {'attuazione_controllo' : pagamento.attuazioneControlloRichiesta }%}	
+	
+		{% if giustificativo.denominazioneFornitore is not null %}
+			<h4>Fornitore</h4>
+			<table class="table table-striped table-hover">
+				<tr>
+					<td style="width: 50%;">Denominazione</td>
+					<td><strong>{{ giustificativo.denominazioneFornitore }}</strong></td>
+				</tr>
+				<tr>
+					<td style="width: 50%;">Codice fiscale</td>
+					<td><strong>{{ giustificativo.codiceFiscaleFornitore }}</strong></td>
+				</tr>				
+			</table>
+		{% else %}
+			{% if giustificativo.estensione.nome is defined %}
+				<h4>Personale</h4>
+				<table class="table table-striped table-hover">
+					<tr>
+						<td style="width: 50%;">Nome</td>
+						<td><strong>{{ giustificativo.estensione.nome }}</strong></td>
+					</tr>
+					<tr>
+						<td style="width: 50%;">Cognome</td>
+						<td><strong>{{ giustificativo.estensione.cognome }}</strong></td>
+					</tr>				
+				</table>
+			{% endif %}
+		{% endif %}
+		{% if giustificativo.estensione.nome is not defined %}
+			<h4>Dati giustificativo</h4>
+			<table class="table table-striped table-hover">
+				<tr>
+					<td style="width: 50%;">Descrizione</td>
+					<td><strong>{{ giustificativo.descrizioneGiustificativo }}</strong></td>
+				</tr>
+				<tr>
+					<td style="width: 50%;">Numero</td>
+					<td><strong>{{ giustificativo.numeroGiustificativo }}</strong></td>
+				</tr>
+				<tr>
+					<td style="width: 50%;">Data</td>
+					<td><strong>{{ giustificativo.dataGiustificativo | date('d/m/Y') }}</strong></td>
+				</tr>
+				<tr>
+					<td style="width: 50%;">Importo</td>
+					<td><strong>&euro; {{ giustificativo.importoGiustificativo |number_format(2, ',', '.') }}</strong></td>
+				</tr>	
+				{% if giustificativo.documentoGiustificativo %}
+				<tr>
+					<td style="width: 50%;">Documento</td>
+					<td><strong>{{ scarica_file(giustificativo.documentoGiustificativo) }}</strong></td>
+				</tr>
+				{% endif %}
+			</table>	
+		{% endif %}
+		{% if giustificativo.estensione.nome is not defined %}
+			<h4>Dati richiesta</h4>
+			<table class="table table-striped table-hover">
+				<tr>
+					<td style="width: 50%;">Importo richiesto</td>
+					<td><strong>&euro; {{ giustificativo.importoRichiesto|number_format(2, ',', '.') }}</strong></td>
+				</tr>				
+			</table>	
+		{% endif %}
+		<h4>Altri dati</h4>
+		<table class="table table-striped table-hover">
+			<tr>
+				<td style="width: 50%;">Nota richiesta</td>
+				<td><strong>{{ giustificativo.notaBeneficiario }}</strong></td>
+			</tr>				
+		</table>	
+
+		<h4>Elenco quietanze</h4>
+		{% if giustificativo.quietanze |length > 0 %}			
+		<table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+			<thead>
+				<tr>
+					<th>Numero</th>
+					<th>Importo</th>
+					<th>Data valuta</th>
+					<th>Data quietanza</th>
+					<th>Azioni</th>
+				</tr>
+			</thead>	
+			<tbody>
+				{% for quietanza in giustificativo.quietanze %}
+					<tr>
+						<td>{{ quietanza.numero }}</td>
+						<td>&euro; {{ quietanza.importo|number_format(2, ",", ".") }}</td>
+						<td>{{ quietanza.dataValuta is null ? "-" : quietanza.dataValuta | date('d/m/Y') }}</td>
+						<td>{{ quietanza.dataQuietanza is null ? "-" : quietanza.dataQuietanza | date('d/m/Y') }}</td>
+						<td>
+							<div class="dropdown">
+								<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+									Azioni
+									<span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+									<li><a href="{{ path("dettaglio_quietanza_attuazione", {"id_quietanza" : quietanza.id }) }}">Dettagli</a></li>														
+								</ul>
+							</div>
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		{% endif %}
+	<h4>Elenco voci di costo</h4>
+	{% if giustificativo.vociPianoCosto |length > 0 %}			
+    <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+        <thead>
+            <tr>
+                <th>Voce piano costo</th>
+				<th>Annualità</th>
+				<th>Importo</th>
+				<th>Importo approvato</th>
+            </tr>
+        </thead>	
+        <tbody>
+			{% for voce in giustificativo.vociPianoCosto %}
+				<tr>
+					{% if giustificativo.tipologiagiustificativo is defined and giustificativo.tipologiagiustificativo is not null%}
+						<td>{{ giustificativo.tipologiagiustificativo.descrizione }} ({{voce.vocePianoCosto.pianocosto.codice}})</td>
+					{% else %}
+						 <td>{{ pagamento.procedura.hasPianoCostiMultiSezione ? voce.vocePianoCosto.mostraLabelRendicontazioneConSezione : voce.vocePianoCosto.mostraLabelRendicontazione }}</td>
+					{% endif %}
+					<td>{{ annualita[voce.annualita] }}</td>
+
+					<td>&euro;  {{ voce.importo|number_format(2, ',', '.') }}</td>
+					<td>{% if voce.importoApprovato is not null%}&euro; {{voce.importoApprovato|number_format(2, ',', '.')}} {% else %} - {% endif %}</td>
+				</tr>
+			{% endfor %}
+        </tbody>
+    </table>
+	{% endif %}	
+	
+	{% set id_procedura = pagamento.richiesta.procedura.id %}
+	{# if id_procedura in {1:7,2:8} #}
+		<h4>Altri Documenti del Giustificativo</h4>
+		{% if documenti is not empty %}
+		<div class="form-body">	
+			<table class="table table-striped table-hover table-bordered">
+				<thead>
+					<tr>
+						<th>Nome File</th><th>Descrizione</th><th>Azioni</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for documento in documenti %}	
+						{{ mostra_file_tr(documento.documentoFile)}}
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+		{% else %}
+			Nessun documento caricato
+		{% endif %}		
+	{# endif #}	
+	
+{% endblock %}

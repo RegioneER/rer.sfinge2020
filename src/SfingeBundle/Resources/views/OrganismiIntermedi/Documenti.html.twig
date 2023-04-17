@@ -1,0 +1,37 @@
+{% extends '::base.html.twig' %}
+
+{% block intestazione %}
+	{{ parent() }}
+	{{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% block body %}
+
+	{# mostra_validazione('documenti_richiesta') #}
+
+	{% if form is not null %}
+		<div class="form-body">
+			<h4>Carica documento</h4>
+				{{ form(form) }}
+	    </div>
+	{% endif %}			
+
+	<h4>Elenco documenti caricati</h4>
+	{% if documenti is not empty %}
+    <div class="form-body">	
+		{% for documento in documenti %}
+			{% if is_granted('ROLE_GESTORE_OI') or is_granted('ROLE_SUPER_ADMIN') %}
+            	{{ mostra_file(documento.documentoFile, path('cancella_documento_oi', {'id_documento': documento.id}) ) }}
+			{% else %}			
+            	{{ mostra_file(documento.documentoFile, null )}}
+			{% endif %}			
+            <br/>
+		{% endfor %}
+    </div>
+	{% else %}
+		<h6>Nessun documento caricato</h6>
+	{% endif %}
+	<div class="page-actions">
+		{{ pulsante_indietro(path("organismi_intermedi")) }}
+	</div>
+{% endblock %}

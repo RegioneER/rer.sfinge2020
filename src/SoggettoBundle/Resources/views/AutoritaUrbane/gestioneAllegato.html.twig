@@ -1,0 +1,32 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	
+	<h4>{{asse.titolo}} - {{autorita_urbana.titolo}}: {{azione_au.titolo}}</h4>	
+	
+	{% if form is not null and (is_granted("ROLE_SUPER_ADMIN") or is_granted("ROLE_GESTIONE_PROCEDURA_PA")) %}
+		<div class="form-body">
+			<h4>Carica documento</h4>
+				{{ form(form) }}
+	    </div>
+	{% endif %}			
+
+	<h4>Elenco documenti caricati</h4>
+	{% if documenti is not empty %}
+    <div class="form-body">	
+		{% for documento in documenti %}
+			{% if is_granted("ROLE_SUPER_ADMIN") or is_granted("ROLE_GESTIONE_PROCEDURA_PA") %}
+            	{{ mostra_file(documento.documentoFile, path('cancella_allegato_au', {'id_documento': documento.id}) ) }}
+			{% else %}			
+            	{{ mostra_file(documento.documentoFile, null )}}
+			{% endif %}			
+            <br/>
+		{% endfor %}
+    </div>
+	{% else %}
+		<h6>Nessun documento caricato</h6>
+	{% endif %}
+	
+	<a class="btn btn-info dropdown-toggle" href="{{path('elenco_autorita_urbane', {'id_asse': asse.id})}}">Indietro</a>
+	
+{% endblock %}	

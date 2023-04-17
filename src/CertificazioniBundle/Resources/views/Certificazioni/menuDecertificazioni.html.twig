@@ -1,0 +1,11 @@
+<ul class="nav nav-tabs">
+	<li role="presentation"{% if menu|default() == "pagamenti" %}class="active"{% endif %}>
+		<a href="{{ path("elenco_decertificazione_pagamenti")}}">Decertificazioni</a>
+	</li>
+	<li role="presentation"{% if menu|default() == "chiusure" %}class="active"{% endif %}>
+		<a href="{{ path("elenco_decertificazione_chiusure")}}">Decertificazioni in chiusure</a>
+	</li>
+</ul>
+
+
+

@@ -1,0 +1,29 @@
+# Swiftmailer Configuration
+# rimuovere i parametri non necessari
+swiftmailer:
+    transport: sendmail
+    encryption:
+    auth_mode:
+    host: localhost
+    username:
+    password:
+
+parameters:
+    mailer_transport:       gmail
+    mailer_encryption:      ssl
+    mailer_auth_mode:       login
+    mailer_host:            
+    mailer_username:        @@mailSender@@
+    mailer_password:        @@mailSenderPass@@
+    mailer_from:            %mailer.from%
+
+    pec_mailer_transport:   smtp
+    pec_mailer_encryption:  ssl
+    pec_mailer_auth_mode:   ~
+    pec_mailer_host: @@mailPECHost@@
+    pec_mailer_port: @@mailPECPort@@
+    pec_mailer_username: @@mailPECSender@@
+    pec_mailer_password: @@mailPECSenderPass@@  
+    pec_mailer_from: @@mailPECSender@@
+    pec_mailer_email:       ~ 
+   

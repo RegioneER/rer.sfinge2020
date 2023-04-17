@@ -1,0 +1,30 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+    {% if ripeti_password %}
+        <table class="table alert alert-warning" id="avviso_segnalazioni">
+            <tbody>
+            <tr>
+                <td>ATTENZIONE: La <strong>password mantis</strong> è una nuova password, svincolata dalla password con la quale si accede a Sfinge2020. Può essere scelta dall'utente
+                la prima volta che inserisce una segnalazione e va ripetuta due volte per conferma. Fare riferimento al relativo <strong>Manuale inserimento e gestione segnalazioni</strong>
+                presente nella sezione manuali per ulteriori dettagli.</td>
+            </tr>
+            </tbody>
+        </table>
+    {% endif %}
+    {{ form_start(form) }}
+    {{ form_row(form.username) }}
+    {{ form_row(form.numero_bando) }}
+    {{ form_row(form.processo) }}
+    {{ form_row(form.protocollo_progetto) }}
+    {{ form_row(form.oggetto) }}
+    {{ form_row(form.descrizione) }}
+    {{ form_row(form.file ) }}
+    {{ form_row(form.contatto_telefonico) }}
+
+    {{ form_row(form.password) }}
+    {% if ripeti_password %}
+        {{ form_row(form.ripeti_password) }}
+    {% endif %}
+    {{ form_end(form) }}
+
+{% endblock %}

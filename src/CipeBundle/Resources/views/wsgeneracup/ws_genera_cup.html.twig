@@ -1,0 +1,70 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    
+    <h4>Richiesta Genera CUP</h4>
+	{% if WsGeneraCup %}
+				<p class="lead">Riepilogo dati:</p>
+				<table class="table table-striped">
+					<tbody>
+						<tr><th>Id-Progetto</th><td>{{WsGeneraCup.idProgetto}}</td></tr>
+						<tr><th>Id-Richiesta</th><td>{{WsGeneraCup.idRichiesta}}</td></tr>
+						<tr><th>Richiesta Valida</th><td>{% if WsGeneraCup.idRichiesta == true %}Si{% else %}No{% endif %}</td></tr>
+						<tr><th>Data Richiesta</th><td>{{WsGeneraCup.timeStampRichiesta|date("m-d-Y h:i:s")}}</td></tr>
+						<tr><th>Data Risposta</th><td>{% if WsGeneraCup.timeStampRisposta %}{{WsGeneraCup.timestampRisposta|date("m-d-Y h:i:s")}}{% else %}-{% endif %}</td></tr>
+						<tr><th>Esito</th><td>{% if WsGeneraCup.esito == true %}OK{% else %}KO{% endif %}</td></tr>
+						{% if profile =='admin' %}
+							<tr><th>Curl Http Status:</th><td>{% if WsGeneraCup.curlHttpStatusCode %}{{WsGeneraCup.curlHttpStatusCode}}{% else %}-{% endif %}</td></tr>
+							<tr><th>Curl Error:</th><td>{% if WsGeneraCup.curlError %}Si{% else %}No{% endif %}</td></tr>
+							<tr><th>Curl Error Messages </th><td>{% if WsGeneraCup.curlErrorMessages %}
+												<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#curl_error_message">visualizza</button>
+							{% else %}-{% endif %}</td></tr>
+							<tr><th>Xml curlResponse </th><td>{% if WsGeneraCup.curlResponse %}
+												<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#curl_response">visualizza</button>
+							{% else %}-{% endif %}</td></tr>
+							<tr><th>Xml RichiestaCupGenerazione </th><td>{% if WsGeneraCup.textRichiestaCupGenerazione %}
+												<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#textRichiestaCupGenerazione">visualizza</button>
+							{% else %}-{% endif %}</td></tr>
+							<tr><th>Xml RispostaCupGenerazione </th><td>{% if WsGeneraCup.TextRispostaCupGenerazione %}
+												<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#textRispostaCupGenerazione">visualizza</button>
+							{% else %}-{% endif %}</td></tr>				
+						{% endif %}
+					</tbody>
+				</table>
+				<br>
+				{% if WsGeneraCup.richiestaValida == false %}
+				<p class="lead">Errori di validazione:</p>
+				<table class="table table-striped">
+					<tbody>
+						{% for erroreValidazione in WsGeneraCup.getErroriValidazione %}
+						<tr><th>Errore</th><td>{{erroreValidazione}}</td></tr>
+						{% endfor %}
+					</tbody>
+
+				</table>	
+				{% endif %}	
+
+
+				{% if WsGeneraCup.RispostaCupGenerazione %}
+				<p class="lead">Dettaglio Esito:</p>
+				<table class="table table-striped">
+					<tbody>
+						<tr><th>Esito</th><td>{{WsGeneraCup.RispostaCupGenerazione.DettaglioElaborazione.EsitoElaborazione}}</td></tr>
+						<tr><th>Descrizione</th><td>{{WsGeneraCup.RispostaCupGenerazione.DettaglioElaborazione.DescrizioneEsitoElaborazione}}</td></tr>
+
+					</tbody>
+
+				</table>	
+				{% endif %}
+				{% if profile =='admin' %}
+					{% if WsGeneraCup.curlErrorMessages %}  {{ include('::modal.html.twig', { 'modal_id': 'curl_error_message', 'modal_title': 'curl error message', 'modal_body': WsGeneraCup.curlErrorMessages }) }} {% endif %}
+					{% if WsGeneraCup.curlResponse %}  {{ include('::modal.html.twig', { 'modal_id': 'curl_response', 'modal_title': 'curl response', 'modal_body': WsGeneraCup.curlResponse }) }} {% endif %}
+					{% if WsGeneraCup.textRichiestaCupGenerazione %}  {{ include('::modal.html.twig', { 'modal_id': 'textRichiestaCupGenerazione', 'modal_title': 'Xml RichiestaCupGenerazione', 'modal_body': WsGeneraCup.textRichiestaCupGenerazione }) }} {% endif %}
+					{% if WsGeneraCup.curlResponse %}  {{ include('::modal.html.twig', { 'modal_id': 'textRispostaCupGenerazione', 'modal_title': 'Xml RispostaCupGenerazione', 'modal_body': WsGeneraCup.TextRispostaCupGenerazione }) }} {% endif %}
+				{% endif %}
+	{% else %}
+		<p class="lead">Nessuna richiesta trovata</p>
+	{% endif %}
+	
+			
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends '::base.html.twig' %}
+
+{% block intestazione %}
+	{{ parent() }}
+	{{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% block body %}
+
+	{#{ mostra_validazione('dati_fornitori') }#}
+
+	{% if disabled == false %}
+		<a href="{{ path("aggiungi_risorsa_progetto",{"id_richiesta":richiesta.id}) }}" class="btn btn-primary"><i class="fa fa-plus"></i> Aggiungi risorsa</a>
+	{% endif %}
+
+	<h4>Elenco servizi</h4>
+    <table class="table table-striped table-hover table-bordered" id="proponenti-elenco">
+        <thead>
+            <tr>
+				<th>Tipologia</th>
+				<th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+			{% for risorsa in risorse %}
+				<tr>
+                    <td>{{ risorsa.tipologiarisorsa.descrizione }}</td>
+                    <td><div class="dropdown">
+							<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								Azioni
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+								<li><a href="#">Visualizza</a></li>
+								{% if disabled == false %}
+									<li><a href="#">Modifica</a></li>								
+									<li><a href="#">Elimina</a></li>
+								{% endif %}
+							</ul>
+						</div>
+					</td>
+				</tr>
+			{% endfor %}
+        </tbody>
+    </table>
+	<div class="page-actions">
+		{{ pulsante_indietro(path("dettaglio_richiesta", {"id_richiesta":richiesta.id})) }}
+	</div>
+
+{% endblock %}

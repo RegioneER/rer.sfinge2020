@@ -1,0 +1,10 @@
+{{ procedura.titolo }} ({{ procedura.atto.numero }} del {{ procedura.atto.datapubblicazione|date("d/m/Y") }})
+{# Mostro l’indicazione della finestra solamente dalla seconda finestra in poi #}
+{% if procedura.attualeFinestraTemporalePresentazione > 1 %}
+	{% set finestre = {2 : 'Seconda', 3 : 'Terza', 4 : 'Quarta', 5 : 'Quinta', 6 : 'Sesta'} %}
+	- <strong>{{ finestre[procedura.attualeFinestraTemporalePresentazione] }} finestra</strong> 
+{% endif %}
+<br>
+Importo totale domande presentate all’amministrazione: {{ procedura.richiesteInviate|number_format(2,',','.') }}€ di {{ procedura.risorsedisponibili|number_format(2,',','.') }}€.
+</li>
+

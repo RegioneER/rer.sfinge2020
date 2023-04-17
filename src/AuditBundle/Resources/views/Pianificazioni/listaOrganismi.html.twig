@@ -1,0 +1,29 @@
+
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	{% include 'AuditBundle:Audit:menu.html.twig' %}
+
+	<table class="table table-striped table-hover table-bordered" id="organismi-elenco">
+		<thead>
+			<tr>
+				<td style="width: 10%">Nome</td>
+				<td style="width: 80%">Descrizione</td>
+				<td style="width: 10%">Azioni</td>
+			</tr>
+		</thead>
+		<tbody>
+			{% for organismo in organismi%}
+				<tr>
+					<td>{{organismo.codice}}</td>
+					<td>{{organismo.denominazione}}</td>
+					<td>
+						<a class="btn btn-primary btn-sm" href="{{ path("crea_pianificazione_organismo", {'id_pianificazione': pianificazione.id, 'id_organismo': organismo.id}) }}" role="button">
+							inserisci <span class="fa"></span>
+						</a>
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>			
+{% endblock %}

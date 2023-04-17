@@ -1,0 +1,115 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	{% include 'IstruttorieBundle:Istruttoria:menu.html.twig' with {'istruttoria' : istruttoria }%}
+
+	<br/>
+	<h6>Dati operazione</h6>
+	<div class="row">
+		<div class="col-md-12">
+			<table class="table table-striped table-hover table-bordered">
+				<tr>
+					<td style="width: 30%">Numero operazione</td>
+					<td style="width: 70%">{{ istruttoria.richiesta.id }}</td>
+				</tr>
+				<tr>
+					<td style="width: 30%">Numero protocollo</td>
+					<td style="width: 70%">{{ istruttoria.richiesta.protocollo }}</td>
+				</tr>
+
+				{% if istruttoria.richiesta.titolo is not null %}
+					<tr>
+						<td style="width: 30%">Titolo operazione</td>
+						<td style="width: 70%">{{ istruttoria.richiesta.titolo }}</td>
+					</tr>
+				{% endif %}
+
+				{% if istruttoria.procedura.sezioneIstruttoriaCup %}
+					<tr>
+						<td style="width: 30%">Codice CUP</td>
+						<td style="width: 70%">{{ istruttoria.codicecup is not null ? istruttoria.codicecup : "-" }}</td>
+					</tr>
+				{% endif %}
+
+				<tr>
+					<td style="width: 30%">Stato</td>
+					<td style="width: 70%">{{ istruttoria.richiesta.stato.descrizione }}</td>
+				</tr>
+				<tr>
+					<td style="width: 30%">Soggetto mandatario</td>
+					<td style="width: 70%">
+						{{ istruttoria.richiesta.mandatario.soggetto }}
+						({{ istruttoria.richiesta.proponenti|length == 1 ? "singolo soggetto" : "rete di soggetti" }})
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+
+	{% block dati_presentatore_richiesta %}
+		<br/>
+		<h6>
+			{% if istruttoria.procedura.richiestaFirmaDigitale %}
+				Firmatario (presentazione con firma digitale)
+			{% else %}
+				Presentatore (presentazione senza firma digitale)
+			{% endif %}
+		</h6>
+		<div class="row">
+			<div class="col-md-12">
+				<table class="table table-striped table-hover table-bordered">
+					<tr>
+						<td style="width: 30%">
+							{% if istruttoria.richiesta.presentatoreRichiesta %}
+								{{ istruttoria.richiesta.presentatoreRichiesta }} ({{ istruttoria.richiesta.presentatoreRichiesta.codiceFiscale }})
+							{% else %}
+								-
+							{% endif %}
+						</td>
+						<td style="width: 70%">
+							{% for incaricoPersona in istruttoria.richiesta.incarichiPresentatoreRichiesta %}
+								<strong>{{ incaricoPersona.tipoIncarico.descrizione }}</strong> (incarico attivo: {{ incaricoPersona.attivo ? 'Sì' : 'No' }})
+								<br/>
+								<a href="{{ path("dettaglio_incarico", { 'id_incarico' : incaricoPersona.id }) }} " target="_blank">
+									Vai all'incarico
+								</a>
+								{% if not loop.last %}
+									<br/>
+								{% endif %}
+							{%  endfor %}
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	{% endblock %}
+
+	{% block dati_sede_intervento %}
+		<br/>
+		{{ mostra_sede_intervento(istruttoria.richiesta) }}
+	{% endblock %}
+
+	{% if istruttoria.cor %}
+		<br/>
+		<h6>
+			COR
+		</h6>
+		<div class="row">
+			<div class="col-md-12">
+				<table class="table table-striped table-hover table-bordered">
+					<tr>
+						<td style="width: 30%">
+							Numero COR
+						</td>
+						<td style="width: 70%">
+							{{ istruttoria.cor }}
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	{% endif %}
+
+	{% block dati_specifici_bando %}
+	{% endblock %}
+{% endblock %}

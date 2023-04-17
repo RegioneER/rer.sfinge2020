@@ -1,0 +1,52 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <div class="table-toolbar">
+        <div>
+			<button class="btn btn-info" data-target="#ricerca-contesto-modal" data-toggle="modal">
+				<span class="fa fa-search"></span> Ricerca
+			</button>
+        </div>
+    </div>
+    <div class="count">
+        Numero elementi trovati: {{ risultato.getTotalItemCount }} - Filtro attivo: {{ filtro_attivo ? "Si" : "No" }}
+    </div>
+    <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+        <thead>
+            <tr>
+                <th>Codice</th>
+				<th>Descrizione</th>
+				<th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+			{% for tabella in risultato %}
+				
+				<tr>
+                    <td>{{ tabella.codice }}</td>
+					<td>{{ tabella.descrizione }}</td>
+					<td>
+						<div class="dropdown">
+							<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								Azioni
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                <li><a href="{{path('dettaglio_tabelle_contesto',{'tabellaId': tabella.id})}}">Visualizza</a></li>
+                                {% if app.user is not null and (is_granted('ROLE_MONITORAGGIO_SCRITTURA')) %}
+                                    <li><a href="{{ path('inserisci_tabelle_contesto',{'tabellaId': tabella.id}) }}">Inserisci</a></li>
+                                {% endif %}
+							</ul>
+						</div>
+					</td>
+				</tr>
+			{% endfor %}
+        </tbody>
+    </table>
+    {# display navigation #}
+    <div class="navigation">
+        {{ knp_pagination_render(risultato) }}
+    </div>
+		
+	{{ modale_ricerca("Tabelle di contesto",form_ricerca,"elenco_tabelle_contesto_pulisci","ricerca-contesto-modal") }}
+{% endblock %}

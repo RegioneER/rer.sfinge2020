@@ -1,0 +1,337 @@
+{% extends ':pdf:base.pdf.html.twig' %}
+
+{% import '@Richieste/Pdf/macro/macro_richiesta.html.twig' as macro_richiesta %}
+
+{% set singolo = (richiesta.proponenti | length) == 1 %}
+
+{% block style_extra %}
+    {{ parent() }}
+    table.singolo-checkbox {
+        width: 100%;
+        margin-bottom:5px;
+        page-break-inside: avoid;
+    }
+
+    table.singolo-checkbox  tr > td {
+        width: 5%;
+        text-align: center;
+    }
+
+    table.singolo-checkbox  tr > td:first-of-type {
+        width: 95%;
+        text-align: justify;
+    }
+
+    table.singolo-checkbox-a-sinistra  tr > td {
+        width: 95%;
+        text-align: justify;
+    }
+
+    table.singolo-checkbox-a-sinistra  tr > td:first-of-type {
+        width: 5%;
+        text-align: center;
+    }
+
+    table.piano-costi {
+        width: 100%;
+        page-break-inside: avoid;
+        margin-bottom: 2em;
+    }
+
+    table.piano-costi tr > th,
+    table.piano-costi tr > td{
+        text-align: center;
+    }
+
+    table.piano-costi tr > td:first-of-type,
+    table.piano-costi tr > th:first-of-type {
+        text-align: left;
+    }
+
+    table.piano-costi tr.totale > td {
+        font-weight:bold;
+    }
+
+    .euro:after {
+        content: ' \20AC';
+    }
+
+    .percentuale:after {
+        content: ' %';
+    }
+
+
+{% endblock style_extra %}
+
+{% block content %}
+
+    {% block dati_intestazione %}
+        <div class="center">
+            {% if procedura.asse.codice == 'A0' %}
+                <img src="assets/img/regione/logo_ue-regione-emilia-romagna.jpg" alt="Loghi regione" height="60px">
+                <h2 style="text-align: center">{{ procedura.titolo }}</h2>
+            {% elseif richiesta.procedura.isNuovaProgrammazione %}
+                <img src="assets/img/regione/Loghi_CoesioneITA_UE_REP_ER_21_27.jpg" alt="Loghi regione" height="45px">
+                <h2 style="text-align: center">PR-FESR EMILIA ROMAGNA 2021-2027</h2>
+            {% else %}
+                <img src="assets/img/regione/logo_ue-por_fesr_2020.jpg" alt="Loghi regione" height="60px">
+                <h2 style="text-align: center">POR-FESR EMILIA ROMAGNA 2014-2020</h2>
+            {% endif %}
+        </div>
+    {% endblock dati_intestazione %}
+
+    {% block dati_bando %}
+        <h3 class="center">{{ procedura.asse.titolo }} - {{ procedura.asse.descrizione }}</h3>
+        {% for azione in procedura.azioni %}
+            <p class="text-medium italic center">Azione {{ azione.codice }} {{ azione.descrizione }}</p>
+        {% endfor %}
+
+		<h3 class="bold center">Bando per</h3>
+        <h3 class="bold center">{{ procedura.titolo }}</h3>
+        
+    {% endblock dati_bando %}
+
+    {% block dati_regione %}
+        {% if direzione is not defined %}
+            {% set direzione = "attivita_produttive" %}
+        {% endif %}
+        {% if sportello is not defined %}
+            {% set sportello = "sviluppo_economico" %}
+        {% endif %}		
+        <div style="right:0; text-align:right;">
+				{{ macro_richiesta.dati_regione(direzione, sportello) }}
+            </div>
+        
+    {% endblock dati_regione %}
+
+    {% block marca_da_bollo %}
+        {% set numeroMarcaDaBollo = richiesta.numeroMarcaDaBollo %}
+        {% set numeroMarcaDaBolloDigitale = richiesta.numeroMarcaDaBolloDigitale %}
+        {% set dataMarcaDaBollo = richiesta.dataMarcaDaBollo is not null ? richiesta.dataMarcaDaBollo | date("d/m/Y") : '' %}
+        {% if richiesta.esenteMarcaDaBollo == true %}
+            {% set numeroMarcaDaBollo = '' %}
+            {% set dataMarcaDaBollo = '' %}
+        {% endif %}
+        {% if procedura.marcaDaBollo is not null and procedura.marcaDaBollo == 1 %}
+
+            {% if richiesta.tipologiaMarcaDaBollo == constant('SfingeBundle\\Entity\\Procedura::MARCA_DA_BOLLO_FISICA') %}
+                <table style="border: 0; width: 100%;">
+                    <tbody>
+                    <tr style="border: 0">
+                        <td style="border: 0; width: 30%;">
+                            <table style="border: 0; width: 100%">
+                                <tr>
+                                    <td style="height:100px; text-align:center">
+                                        <p>MARCA DA BOLLO</p>
+                                        <p>(euro 16,00)</p>
+                                        <p>da applicare sull'originale</p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td style="border: 0; width:5%;">&nbsp;</td>
+                        <td style="border: 0; width:65%;">
+                            <p>
+                                Codice Marca da Bollo: {{ numeroMarcaDaBollo }}
+                            </p>
+                            <p>
+                                Data emissione Marca da Bollo: {{ dataMarcaDaBollo }}
+                            </p>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            {% elseif richiesta.tipologiaMarcaDaBollo == constant('SfingeBundle\\Entity\\Procedura::MARCA_DA_BOLLO_DIGITALE') %}
+                <table style="border: 0; width: 100%;">
+                    <tbody>
+                    <tr style="border: 0">
+                        <td style="border: 0; width:5%;">&nbsp;</td>
+                        <td style="border: 0; width:65%;">
+                            <p>
+                                Codice Marca da Bollo Digitale: {{ numeroMarcaDaBolloDigitale }}
+                            </p>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            {% endif %}
+
+            <br />
+			
+			{% block esenzione_bollo %}
+                {% if richiesta.esenteMarcaDaBollo == true %}
+                    <table style="width: 100%">
+                    <tbody>
+                        <tr>
+                            <td style="width: 95%">
+                                Dichiaro di essere esente perché soggetto di diritto pubblico
+                                {% if richiesta.esenteMarcaDaBollo == true and richiesta.riferimentoNormativoEsenzione %}
+                                    <br><strong>Riferimento normativo esenzione:</strong> {{ richiesta.riferimentoNormativoEsenzione }}
+                                {% endif %}
+                            </td>
+                            <td style="width: 5%; text-align:center; vertical-align: middle">
+                                {% if richiesta.esenteMarcaDaBollo == true %}
+                                    X
+                                {% endif %}
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+				{% endif %}
+			{% endblock esenzione_bollo %}
+        {% endif %}
+    {% endblock marca_da_bollo %}
+
+    {% block dati_soggetto %}
+        <div style="page-break-after: always"></div>
+        {% block dati_firmatario %}
+            <p class="text-medium">
+                Il/La sottoscritto/a <b>{{ firmatario.nome }} {{ firmatario.cognome }}</b> 
+                nato/a 
+                {% if firmatario.comune is not null %}
+                    a <b>{{ firmatario.comune }}</b>
+                {% else %}
+                    in <b>{{ firmatario.statoNascita }}</b> 
+                {% endif %} 
+                il <b>{{ firmatario.dataNascita | date("d/m/Y") }}</b>
+                codice fiscale <b>{{ firmatario.codiceFiscale }}</b>
+            </p>
+        {% endblock dati_firmatario %}
+        {% block anagrafica_soggetto %}
+            <p class="text-medium">
+                In qualità di legale rappresentante/delegato del soggetto
+            </p>
+            <p class="text-medium">
+                Denominazione/Ragione sociale <b>{{ capofila.denominazione }}</b> forma giuridica <b>{{ capofila.formaGiuridica.descrizione }}</b> codice fiscale <b>{{ capofila.codiceFiscale }}</b>
+                {% if capofila.partitaIva is not null %}
+                    partita IVA <b>{{ capofila.partitaIva }}</b>
+                {% endif %}
+            </p>
+        {% endblock anagrafica_soggetto %}
+    {% endblock dati_soggetto %}
+
+    {% block dati_proponenti %}
+
+        <div style="page-break-after: always"></div>
+        {{ macro_richiesta.titolo_sezione("1. Soggetti proponenti") }}
+
+        <span class="text">Numero dei soggetti proponenti: {{ richiesta.proponenti | length }}</span>
+        <br/><br/>
+        {# capofila #}
+        {% set capofila = "" %}
+        {% if richiesta.proponenti|length > 1 %}
+            {% set capofila = "(capofila)" %}
+        {% endif %}
+        Soggetto Nr.1 {{ capofila }}
+        <br/><br/>
+        {% for proponente in richiesta.proponenti %}
+            {% if proponente.mandatario is not null and proponente.mandatario == 1 %}
+                {{ macro_richiesta.dati_proponente(proponente) }}
+                <br/>
+            {% endif %}
+        {% endfor %}
+
+        {# altri proponenti #}
+        {% for proponente in richiesta.proponenti %}
+            {% if not (proponente.mandatario is not null and proponente.mandatario == 1) %}
+                Soggetto Nr. {{ loop.index }}
+                <br/><br/>
+                {{ macro_richiesta.dati_proponente(proponente) }}
+                <br/>
+            {% endif %}
+        {% endfor %}
+
+        {% block addizionale_proponenti %}
+
+        {% endblock addizionale_proponenti %}
+
+    {% endblock dati_proponenti %}
+
+    {% block chiede %}
+
+    {% endblock chiede %}
+
+    {% block dichiara %}
+
+    {% endblock dichiara %}
+
+
+    {% block dati_generali_progetto %}
+        <div style="page-break-after: always"></div>
+        {{ macro_richiesta.titolo_sezione("2. Dati generali del progetto") }}
+        {{ macro_richiesta.text_area("2.1 Titolo del progetto", richiesta.titolo) }}
+        {{ macro_richiesta.text_area("2.2 Abstract", richiesta.abstract) }}
+
+        {% block addizionale_dati_generali_progetto %}
+
+        {% endblock addizionale_dati_generali_progetto %}
+    {% endblock dati_generali_progetto %}
+
+    {% block dati_progetto %}
+
+    {% endblock dati_progetto %}
+
+
+    {% block dati_piano_dei_costi %}
+		{% if procedura.pianocostoattivo == true %}
+			{{ macro_richiesta.titolo_sezione("6. DATI INTERVENTO: sezione finanziaria") }}
+
+            <span class="text"><b>6.1 Quadro economico dell'intervento</b></span>
+			{% if procedura.multipianocosto == true %}
+				{% for denominazioneProponenti,pdc in pdc_proponenti %}
+					{% if pdc_proponenti|length > 1 %}
+						<h5>Piano finanziario proponente: {{ denominazioneProponenti }}</h5>
+					{% endif %}
+					<table style="width:90%">
+						{% for voceSpesa,riga in pdc %}
+							<tr>
+								<td>
+									{{ voceSpesa }}
+								</td>
+								{% for elemento in riga %}
+									<td style="text-align: right;">
+										{{ elemento }}
+									</td>
+								{% endfor %}
+							</tr>
+						{% endfor %}
+					</table>
+					<br/>
+				{% endfor %}
+			{% else %}
+				<h5>Piano finanziario proponente: {{ capofila.denominazione }}</h5>
+				<table style="width:90%">
+					{% for denominazioneProponenti,pdc in pdc_proponenti %}
+						{% for voceSpesa,riga in pdc %}
+							<tr>
+								<td>
+									{{ voceSpesa }}
+								</td>
+								{% for elemento in riga %}
+									<td>
+										{{ elemento }}
+									</td>
+								{% endfor %}
+							</tr>
+						{% endfor %}
+					{% endfor %}
+				</table>
+				<br/>
+			{% endif %}
+
+			{% block addizionale_piano_dei_costi %}
+
+			{% endblock addizionale_piano_dei_costi %}
+		{% endif %}
+    {% endblock dati_piano_dei_costi %}
+
+{% block autodichiarazioni %}
+{% endblock autodichiarazioni%}
+
+{% block documenti %}
+{% endblock documenti%}
+
+{% block firma %}
+{% endblock firma %}
+	
+{% endblock %}

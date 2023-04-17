@@ -1,0 +1,18 @@
+<ul class="nav nav-tabs">
+	<li role="presentation"{% if menu|default() == "riepilogo" %}class="active"{% endif %}><a href="{{path('riepilogo_istruttoria_variazione', {'id_variazione':variazione.id})}}">Riepilogo</a></li>
+	<li role="presentation"{% if menu|default() == "documenti" %}class="active"{% endif %}><a href="{{path('documenti_istruttoria_variazione', {'id_variazione':variazione.id})}}">Documenti</a></li>	
+	{% if variazione is instanceof('AttuazioneControlloBundle\\Entity\\VariazionePianoCosti') %}
+		{% include 'AttuazioneControlloBundle:Istruttoria/Variazioni:menuPianoCosti.html.twig' %}
+	{% endif %}
+	{% if variazione is instanceof('AttuazioneControlloBundle\\Entity\\VariazioneDatiBancari') %}
+		{% include 'AttuazioneControlloBundle:Istruttoria/Variazioni:menuDatiBancari.html.twig' %}
+	{% endif %}
+	{% if variazione is instanceof('AttuazioneControlloBundle\\Entity\\VariazioneSedeOperativa') %}
+		{% include 'AttuazioneControlloBundle:Istruttoria/Variazioni:menuSedeOperativa.html.twig' %}
+	{% endif %}
+	{% if variazione is instanceof('AttuazioneControlloBundle\\Entity\\VariazioneReferente') %}
+		{% include 'AttuazioneControlloBundle:Istruttoria/Variazioni:menuReferenti.html.twig' %}
+	{% endif %}
+	<li role="presentation"{% if menu|default() == "esito" %}class="active"{% endif %}><a href="{{path('esito_finale_istruttoria_variazioni', {'id_variazione':variazione.id})}}">Esito finale</a></li>
+	<li role="presentation"{% if menu|default() == "comunicazioni" %}class="active"{% endif %}><a href="{{path('elenco_comunicazioni_variazione', {'id_variazione':variazione.id})}}">Comunicazione</a></li>
+</ul>

@@ -1,0 +1,56 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	{% include 'AuditBundle:Audit:menu.html.twig' %}
+	<br/>
+	<a class="btn btn-primary btn-sm" href="{{ path("crea_audit_operazione", {'id_pianificazione': pianificazione.id}) }}" role="button">
+		Aggiungi campione <span class="fa fa-plus"></span>
+	</a>
+	<h4>Pianificazioni del periodo {{pianificazione.periodocontabile}} tipo {{pianificazione.tipo.descrizione}}</h4>
+	<table class="table table-striped table-hover table-bordered" id="organismi-elenco">
+		<thead>
+			<tr>
+				<td style="width: 10%">Id</td>
+				<td style="width: 40%">Nome</td>
+				<td style="width: 40%">Tipo campione</td>
+				<td style="width: 10%"></td>
+				<td style="width: 10%"></td>
+			</tr>
+		</thead>
+		<tbody>
+			{% if campioni_operazioni|length > 0%}
+				{% for campione in campioni_operazioni %}
+					<tr>
+						<td>{{campione.id}}</td>
+						<td>{{campione.nome}}</td>
+						<td>{{campione.tipocampione.descrizione}}</td>
+						<td>
+							<div class="dropdown">
+								<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+									Azioni
+									<span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+									<li><a href="{{ path("visualizza_audit_operazione", {'id_pianificazione': pianificazione.id, 'id_audit_operazione': campione.id}) }}">Visualizza</a></li>
+									<li><a href="{{ path("modifica_audit_operazione", {'id_pianificazione': pianificazione.id, 'id_audit_operazione': campione.id}) }}">Modifica</a></li>
+								</ul> 
+							</div>
+						</td>
+						<td>
+							<div class="dropdown">
+								<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+									Lista operazioni campionate
+									<span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+									<li><a href="{{ path("campioni_audit_operazione", {'id_pianificazione': pianificazione.id, 'id_audit_operazione': campione.id}) }}">Lista</a></li>
+									<li><a href="{{ path("associa_operazioni_campione", {'id_audit_operazione': campione.id}) }}">Associa</a></li>
+								</ul> 
+							</div>
+						</td>
+					</tr>
+				{% endfor %}
+			{% endif %}
+		</tbody>
+	</table>			
+{% endblock %}

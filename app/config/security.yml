@@ -1,0 +1,197 @@
+security:
+    providers:
+        fos_userbundle:
+            id: fos_user.user_provider.username
+
+    encoders:
+        FOS\UserBundle\Model\UserInterface: plaintext
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        main:
+            pattern: ^/
+            form_login:
+                provider: fos_userbundle
+                csrf_token_generator: security.csrf.token_manager
+                login_path: /login
+                always_use_default_target_path: true
+                default_target_path: /
+                #check_path: /login_check
+            logout:       false
+            anonymous:    true
+            access_denied_handler: app.security.access_denied_handler
+
+    access_control:
+
+        - { path: ^/utenti/registrazione_federa, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/utenti/errore_registrazione, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/login$, role: IS_ANONYMOUS }
+        - { path: ^/register, role: ROLE_NO_ROLE }
+        - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        
+        - { path: ^/admin/, role: ROLE_ADMIN }
+        - { path: ^/protocollazione/, role: ROLE_SUPER_ADMIN }
+        - { path: ^/utenti/, role: [ROLE_ADMIN_PA, ROLE_SUPER_ADMIN] }
+        - { path: ^/utentipa/, role: ROLE_UTENTE_PA }
+        - { path: ^/superadmin/, role:  [ROLE_ADMIN_PA, ROLE_SUPER_ADMIN] }
+        
+        - { path: ^/richieste/consultazione, role:  [ROLE_UTENTE] }
+        - { path: ^/richieste/beneficiario, role:  [ROLE_UTENTE, ROLE_UTENTE_PA, ROLE_SUPER_ADMIN] }
+        - { path: ^/richieste/common, role:  [ROLE_UTENTE, ROLE_UTENTE_PA, ROLE_SUPER_ADMIN] }
+        - { path: ^/richieste/stato, role:  [ROLE_UTENTE, ROLE_UTENTE_PA, ROLE_SUPER_ADMIN] }
+        - { path: ^/richieste/bonifiche, role:  [ROLE_SUPER_ADMIN] }
+        - { path: ^/richieste/estrazione, role:  [ROLE_UTENTE_PA, ROLE_SUPER_ADMIN] }        
+        
+        - { path: ^/attuazione/beneficiario, role:  [ROLE_UTENTE] }
+        - { path: ^/attuazione/pa, role:  [ROLE_UTENTE_PA, ROLE_VALUTATORE_FESR, ROLE_SUPER_ADMIN] }
+        - { path: ^/attuazione/istruttoria/atti_liquidazione, role:  [ROLE_ISTRUTTORE_SUPERVISORE_ATC, ROLE_SUPER_ADMIN] }
+        - { path: ^/attuazione/istruttoria/pagamenti, role:  [ROLE_ISTRUTTORE_ATC, ROLE_SUPER_ADMIN, ROLE_PAGAMENTI_READONLY] }
+        - { path: ^/attuazione/istruttoria/variazioni, role:  [ROLE_ISTRUTTORE_ATC, ROLE_SUPER_ADMIN] }
+        - { path: ^/attuazione/istruttoria/cruscotto_pagamenti, role:  [ROLE_ISTRUTTORE_SUPERVISORE_ATC, ROLE_SUPER_ADMIN] }        
+        - { path: ^/attuazione/controlli, role:  [ROLE_ISTRUTTORE_CONTROLLI, ROLE_AUDIT, ROLE_ISTRUTTORE_ATC, ROLE_SUPER_ADMIN] }
+                 
+        - { path: ^/attuazione/revoche/consultazione, role:  [ROLE_UTENTE_PA, ROLE_SUPER_ADMIN] }
+        - { path: ^/attuazione/revoche/gestione, role:  [ROLE_UTENTE_PA, ROLE_SUPER_ADMIN] }
+
+        - { path: ^/pa/proroghe_rendicontazione, role:  [ROLE_SUPER_ADMIN] }
+        
+        - { path: ^/certificazioni/consultazione, role:  [ROLE_CERTIFICATORE, ROLE_CERTIFICATORE_ASSE, ROLE_CERTIFICATORE_AGREA, ROLE_SUPER_ADMIN, ROLE_CERTIFICATORE_READONLY] }
+        - { path: ^/certificazioni/inserimento, role:  [ROLE_CERTIFICATORE, ROLE_SUPER_ADMIN] }  
+        - { path: ^/certificazioni/registro, role:  [ROLE_CERTIFICATORE, ROLE_SUPER_ADMIN] }  
+        - { path: ^/certificazioni/validazione, role:  [ROLE_CERTIFICATORE_ASSE, ROLE_SUPER_ADMIN] }  
+        - { path: ^/certificazioni/approvazione, role:  [ROLE_CERTIFICATORE_AGREA, ROLE_SUPER_ADMIN] }  
+        
+        - { path: ^/aziende/consultazione, role:  [ROLE_UTENTE, ROLE_UTENTE_PA, ROLE_SUPER_ADMIN, ROLE_MONITORAGGIO_SCRITTURA] }        
+        - { path: ^/aziende/gestione, role:  [ROLE_UTENTE, ROLE_ADMIN_PA, ROLE_SUPER_ADMIN, ROLE_MONITORAGGIO_SCRITTURA] }   
+        
+        - { path: ^/comuni/consultazione, role:  [ROLE_UTENTE, ROLE_UTENTE_PA, ROLE_SUPER_ADMIN] }        
+        - { path: ^/comuni/gestione, role:  [ROLE_UTENTE, ROLE_ADMIN_PA, ROLE_SUPER_ADMIN] }
+        
+        - { path: ^/soggetti/consultazione, role:  [ROLE_UTENTE, ROLE_UTENTE_PA, ROLE_SUPER_ADMIN] }        
+        - { path: ^/soggetti/gestione, role:  [ROLE_UTENTE, ROLE_ADMIN_PA, ROLE_SUPER_ADMIN] }
+        
+        - { path: ^/incarichi/consultazione, role:  [ROLE_UTENTE, ROLE_UTENTE_PA, ROLE_APPROVAZIONE_INCARICHI, ROLE_ADMIN_PA, ROLE_SUPER_ADMIN] }        
+        - { path: ^/incarichi/gestione, role:  [ROLE_UTENTE, ROLE_SUPER_ADMIN] }           
+        - { path: ^/incarichi/approvazione, role:  [ROLE_APPROVAZIONE_INCARICHI, ROLE_SUPER_ADMIN] }
+        
+        - { path: ^/istruttorie/risposta_integrazione, role:  [ROLE_UTENTE, ROLE_UTENTE_PA, ROLE_SUPER_ADMIN] }  
+        - { path: ^/istruttorie/risposta_comunicazione, role:  [ROLE_UTENTE, ROLE_UTENTE_PA, ROLE_SUPER_ADMIN] }  
+        - { path: ^/istruttorie, role:  [ROLE_UTENTE_PA, ROLE_SUPER_ADMIN] }           
+        
+        - { path: ^/segnalazioni, role:  ROLE_USER } 
+        - { path: ^/manuali/consultazione, role:  ROLE_USER }  
+        - { path: ^/manuali/gestione/visualizza, role:  ROLE_USER } 
+        - { path: ^/manuali/gestione, role:  [ROLE_SUPER_ADMIN,ROLE_ADMIN_PA] }  
+        
+        - { path: ^/documenti/gestione, role:  ROLE_SUPER_ADMIN }   
+        - { path: ^/documenti, role:  ROLE_USER }      
+            
+        - { path: ^/anagrafica/persona, role:  ROLE_USER }
+        - { path: ^/anagrafica/persone/gestione, role:  [ROLE_ADMIN_PA, ROLE_SUPER_ADMIN] }
+        - { path: ^/anagrafica/persone/utente, role:  [ROLE_UTENTE] }
+          
+        - { path: ^/fascicolo, role:  ROLE_SUPER_ADMIN }
+        - { path: ^/notizie, role:  [ROLE_ADMIN_PA, ROLE_SUPER_ADMIN] }
+        
+        - { path: ^/permessi, role:  [ROLE_ADMIN_PA, ROLE_SUPER_ADMIN] }
+        
+        - { path: ^/atti/consultazione, role: [ROLE_UTENTE_PA, ROLE_SUPER_ADMIN] }
+        - { path: ^/atti/gestione, role: [ROLE_MANAGER_PA, ROLE_SUPER_ADMIN, ROLE_ISTRUTTORE_SUPERVISORE_ATC] }
+        
+        - { path: ^/procedure/consultazione, role: [ROLE_UTENTE_PA, ROLE_SUPER_ADMIN] }
+
+        - { path: ^/faq/faq, role: [ROLE_UTENTE, ROLE_SUPER_ADMIN] }
+        - { path: ^/faq/crea-faq, role: [ROLE_SUPER_ADMIN] }
+        - { path: ^/faq/visualizza-faq, role: [ROLE_SUPER_ADMIN] }
+        - { path: ^/faq/modifica-faq, role: [ROLE_SUPER_ADMIN] }
+        - { path: ^/faq/elimina-faq, role: [ROLE_SUPER_ADMIN] }
+
+
+        - { path: ^/procedure/gestione, role: [ROLE_MANAGER_PA, ROLE_MANAGER_PA_LIV_2,ROLE_SUPER_ADMIN] }
+        - { path: ^/procedure/definizione, role: [ROLE_SUPER_ADMIN] }        
+        
+        - { path: ^/assistenze_tecniche/gestione, role: [ROLE_GESTIONE_ASSISTENZA_TECNICA, ROLE_SUPER_ADMIN] } 
+        - { path: ^/ingegneria_finanziaria/gestione, role: [ROLE_GESTIONE_INGEGNERIA_FINANZIARIA, ROLE_SUPER_ADMIN] }  
+        - { path: ^/acquisizioni/gestione, role: [ROLE_GESTIONE_ACQUISIZIONI, ROLE_SUPER_ADMIN] }  
+        - { path: ^/richieste/assistenza_tecnica, role: [ROLE_GESTIONE_ASSISTENZA_TECNICA, ROLE_SUPER_ADMIN, ROLE_GESTIONE_ASSISTENZA_TECNICA_READONLY] } 
+        - { path: ^/richieste/ingegneria_finanziaria, role: [ROLE_GESTIONE_INGEGNERIA_FINANZIARIA, ROLE_SUPER_ADMIN, ROLE_GESTIONE_INGEGNERIA_FINANZIARIA_READONLY] } 
+        - { path: ^/richieste/acquisizioni, role: [ROLE_GESTIONE_ACQUISIZIONI, ROLE_SUPER_ADMIN, ROLE_GESTIONE_ACQUISIZIONI_READONLY] } 
+
+        - { path: ^/audit/attuazione, role: [ROLE_AUDIT_LETTURA, ROLE_AUDIT, ROLE_SUPER_ADMIN] }
+        - { path: ^/audit, role: [ROLE_AUDIT, ROLE_SUPER_ADMIN] }
+
+
+        - { path: ^/organismi_intermedi, role: [ROLE_GESTORE_OI, ROLE_SUPER_ADMIN] }
+        
+        - { path: ^/import, role: ROLE_SUPER_ADMIN }
+        - { path: ^/attiva_manutenzione, role: ROLE_SUPER_ADMIN }
+        - { path: ^/importa_comuni, role: ROLE_SUPER_ADMIN }
+        - { path: ^/disattiva_manutenzione, role: ROLE_SUPER_ADMIN }
+        - { path: ^/attuazione/job, role:  ROLE_SUPER_ADMIN }        
+
+        - { path: ^/monitoraggio/contesto/modifica/, role: [ROLE_MONITORAGGIO_SCRITTURA, ROLE_SUPER_ADMIN] }
+        - { path: ^/monitoraggio/importazioni/, role: [ROLE_MONITORAGGIO_SCRITTURA, ROLE_SUPER_ADMIN] }
+        - { path: ^/monitoraggio, role: [ROLE_MONITORAGGIO_LETTURA, ROLE_SUPER_ADMIN] }
+
+        - { path: ^/procedura_pa, role: [ROLE_GESTIONE_PROCEDURA_PA_READONLY] }
+
+        - { path: ^/payer/ebollo/notifica, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        
+        - { path: ^/, role: ROLE_USER }
+
+    role_hierarchy:
+
+        ROLE_UTENTE:       ROLE_USER
+        
+        ROLE_UTENTE_PA:    ROLE_USER
+        ROLE_MANAGER_PA:   ROLE_UTENTE_PA
+        ROLE_MANAGER_PA_LIV_2: ROLE_UTENTE_PA
+        ROLE_ADMIN_PA:     ROLE_MANAGER_PA
+        
+        ROLE_ISTRUTTORE:   ROLE_UTENTE_PA
+        ROLE_VALUTATORE:   ROLE_UTENTE_PA
+        ROLE_VALUTATORE_FESR:   ROLE_UTENTE_PA
+        ROLE_CONSULENTE_FESR:   ROLE_UTENTE_PA
+        ROLE_OPERATORE_COGEA:   ROLE_PAGAMENTI_READONLY
+        ROLE_ISTRUTTORE_SUPERVISORE:   [ROLE_ISTRUTTORE, ROLE_VALUTATORE]
+        
+        ROLE_ISTRUTTORE_ATC: ROLE_UTENTE_PA
+        ROLE_ISTRUTTORE_INVITALIA: ROLE_ISTRUTTORE_ATC
+        ROLE_ISTRUTTORE_SUPERVISORE_ATC: ROLE_ISTRUTTORE_ATC
+        ROLE_PAGAMENTI_READONLY: ROLE_UTENTE_PA
+        
+        ROLE_ISTRUTTORE_CONTROLLI: ROLE_UTENTE_PA
+        ROLE_SUPERVISORE_CONTROLLI: ROLE_ISTRUTTORE_CONTROLLI
+        
+        ROLE_CERTIFICATORE: ROLE_UTENTE_PA
+        ROLE_CERTIFICATORE_ASSE: ROLE_UTENTE_PA
+        ROLE_CERTIFICATORE_AGREA: ROLE_UTENTE_PA
+        ROLE_CERTIFICATORE_READONLY: ROLE_UTENTE_PA
+        
+        ROLE_REVOCHE: ROLE_UTENTE_PA
+        
+        ROLE_AUDIT: ROLE_UTENTE_PA
+        ROLE_AUDIT_LETTURA: ROLE_UTENTE_PA
+         
+        ROLE_SUPER_ADMIN:  [ROLE_USER, ROLE_MONITORAGGIO_SCRITTURA, ROLE_GESTIONE_PROCEDURA_PA]
+
+        ROLE_GESTORE_OI: ROLE_UTENTE_PA
+        
+        ROLE_GESTIONE_INGEGNERIA_FINANZIARIA: ROLE_MANAGER_PA
+        ROLE_GESTIONE_INGEGNERIA_FINANZIARIA_READONLY: ROLE_UTENTE_PA
+        
+        ROLE_GESTIONE_ASSISTENZA_TECNICA: ROLE_MANAGER_PA
+        ROLE_GESTIONE_ASSISTENZA_TECNICA_READONLY: ROLE_UTENTE_PA
+        
+        ROLE_GESTIONE_ACQUISIZIONI: ROLE_MANAGER_PA
+        ROLE_GESTIONE_ACQUISIZIONI_READONLY: ROLE_UTENTE_PA
+        
+        ROLE_MONITORAGGIO_LETTURA: ROLE_USER
+        ROLE_MONITORAGGIO_SCRITTURA: ROLE_MONITORAGGIO_LETTURA
+
+        ROLE_GESTIONE_PROCEDURA_PA_READONLY: ROLE_UTENTE_PA
+        ROLE_GESTIONE_PROCEDURA_PA: ROLE_UTENTE_PA
+
+        ROLE_VERIFICHE_ESTERNE: ROLE_VERIFICHE_ESTERNE

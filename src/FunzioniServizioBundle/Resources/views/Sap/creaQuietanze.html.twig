@@ -1,0 +1,23 @@
+{% extends '::base.html.twig' %}
+
+    {% block body %}
+        <p class="lead">SAP test suite - Fatture da impegno</p>
+
+        {{ form_start(form) }}
+
+        {{ form_row(form.i_iban) }}
+        {{ form_row(form.i_lifnr) }}
+        {{ form_row(form.i_swift) }}
+        {{ form_row(form.i_nome_banca_estera) }}
+
+        {{ form_end(form) }}
+
+        <a href="{{ path('sap_test_suite') }}">Torna alla suite</a>
+
+        {% if result is not null %}
+            <br /><br />
+            <pre>{{ result|json_encode(constant('JSON_PRETTY_PRINT')) }}
+            </pre>
+        {% endif %}
+
+    {% endblock %}

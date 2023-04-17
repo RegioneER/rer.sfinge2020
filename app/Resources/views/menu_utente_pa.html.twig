@@ -1,0 +1,51 @@
+{% include 'menu_accreditamento.html.twig' %}
+{% if is_granted("ROLE_VALUTATORE_FESR") == false and is_granted("ROLE_CONSULENTE_FESR") == false and is_granted("ROLE_OPERATORE_COGEA") == false %}
+	<li class="">
+		<a href="javascript:;">
+			<span class="fa fa-file"></span>
+			<span class="title">Atti amministrativi</span>
+			<span class="arrow "></span>
+		</a>
+		<ul class="sub-menu">
+			<li id="elencoAtti">
+				<a href="{{ path("elenco_atti_amministrativi") }}">Elenco procedure</a>
+			</li>
+			<li id="elencoAtto">
+				<a href="{{ path("elenco_atti") }}">Elenco atti</a>
+			</li>
+			{% if is_granted('ROLE_ISTRUTTORE_SUPERVISORE_ATC') %}
+				<li id="elencoAttoLiquidazione">
+					<a href="{{ path("elenco_atti_liquidazione") }}">Atti di liquidazione</a>
+				</li>	
+				<li id="estrazioneRsiGenerale">
+					<a href="{{ path('estrazione_rsi_generale') }}">Estrazione RSI</a>
+				</li>
+				<li id="estrazioneRsiGenerale">
+					<a href="{{ path('estrazione_rsi_generale_new') }}">Estrazione Nuovo RSI</a>
+				</li>		
+			{% endif %}		
+		</ul>
+	</li>
+{% endif %}	
+{% if is_granted('ROLE_GESTIONE_ASSISTENZA_TECNICA_READONLY') %}
+	{% include 'menu_assistenza_tecnica.html.twig' %}
+{% endif %}	
+
+{% include 'menu_procedure_pa.html.twig' %}
+{% if is_granted('ROLE_GESTIONE_INGEGNERIA_FINANZIARIA_READONLY') %}
+	{% include 'menu_ingegneria_finanziaria.html.twig' %}
+{% endif %}	
+
+{% if is_granted('ROLE_GESTIONE_ACQUISIZIONI_READONLY') %}
+	{% include 'menu_acquisizioni.html.twig' %}
+{% endif %}	
+
+{% include 'menu_richieste_pa.html.twig' %}
+
+{% if is_granted('ROLE_CERTIFICATORE') or is_granted('ROLE_CERTIFICATORE_ASSE') or is_granted('ROLE_CERTIFICATORE_AGREA') or is_granted('ROLE_CERTIFICATORE_READONLY') %}
+	{% include 'menu_certificazioni.html.twig' %}
+{% endif %}	
+
+{% if is_granted("ROLE_GESTORE_OI") %}
+	{% include 'menu_organismo_intermedio.html.twig' %}
+{% endif %}	

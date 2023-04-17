@@ -1,0 +1,73 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <div class="table-toolbar">
+        <div>
+            <button class="btn btn-info" data-target="#ricerca-contesto-modal" data-toggle="modal">
+                <span class="fa fa-search"></span> Ricerca
+            </button>
+        </div>
+    </div>
+    <div class="count">
+        Numero elementi trovati: {{ ricerca.risultato.getTotalItemCount }} - Filtro attivo: {{ ricerca.filtro_attivo ? "Si" : "No" }}
+    </div>
+     {% if ricerca.risultato|length > 0 %}
+        <table class="table table-striped table-hover table-bordered" id="progetti-elenco">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Azione</th>
+                    <th>Asse</th>
+                    <th>Indicatore</th>
+                    <th>Valido da</th>
+                    <th>Valido a</th>
+                    <th>Azioni</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for associazione in ricerca.risultato %}
+                    <tr >
+                        <td>{{ associazione.id }}</td>
+                        <td>{{ associazione.azione }}</td>
+                        <td>{{ associazione.asse }}</td>
+                        <td>{{ associazione.indicatoreOutput }}</td>
+                        <td>{{ associazione.validoDa is null ? '-' : associazione.validoDa|date("d/m/Y")}}</td>
+                        <td>{{ associazione.validoA is null ? '-' : associazione.validoA|date("d/m/Y")}}</td>
+                        <td>
+                            <div class="dropdown">
+                                <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    Azioni
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                        <li>
+                                            <a 
+                                                href="{{- path('monitoraggio_associazioni_azioni_indicatori_edit',{id:associazione.id}) -}}"
+                                            >
+                                                Modifica
+                                            </a>
+                                        </li>                                       
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <h2>Nessuna esportazione trovata</h2>
+    {% endif %}
+   
+    <div class="navigation">
+        {{ knp_pagination_render(ricerca.risultato) }}
+    </div>
+
+    <div class="pull-right mr-2">
+        <a class="btn btn-primary" href="{{- path('monitoraggio_associazioni_azioni_indicatori_add') -}}">
+            <i class="fa fa-plus"></i>&nbsp;Aggiungi
+        </a>
+    </div>
+
+    {{ modale_ricerca("Ricerca esportazioni",ricerca.form_ricerca,"monitoraggio_associazioni_azioni_indicatori_pulisci","ricerca-contesto-modal") }} 
+{% endblock %}
+

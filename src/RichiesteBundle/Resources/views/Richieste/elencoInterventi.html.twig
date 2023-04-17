@@ -1,0 +1,72 @@
+{% extends '::base.html.twig' %}
+
+{% block intestazione %}
+	{{ parent() }}
+	{{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% block body %}
+
+	{{ mostra_validazione('dati_interventi') }}
+
+	{% if is_richiesta_disabilitata == false %}
+		<a href="{{ path("crea_intervento",{"id_richiesta": richiesta.id}) }}" class="btn btn-primary"><i class="fa fa-plus"></i> Aggiungi sede di intervento</a>
+	{% endif %}
+
+	<h4>Sedi di intervento inserite</h4>
+    <table class="table table-striped table-hover table-bordered" id="proponenti-elenco">
+        <thead>
+            <tr>
+                <th>Indirizzo</th>
+                <th>Proponente</th>
+				<th>Referente</th>
+				<th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+			{% for intervento in richiesta.oggettiRichiesta.0.interventi %}
+				<tr>
+                    <td>{{ intervento.indirizzo }}</td>
+                    <td>{{ intervento.proponente.soggetto }}</td>
+					{% if intervento.referenti|length > 0%}
+						<td>{{ intervento.referenti[0].persona.nome }}&nbsp;{{ intervento.referenti[0].persona.cognome }}</td>
+					{% else %}
+						<td>-</td>
+					{% endif %}
+					<td><div class="dropdown">
+							<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								Azioni
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+								{#<li><a href="{{ path('visualizza_intervento', {'id_richiesta':id_richiesta,'id_intervento':intervento.id}) }}">Visualizza</a></li>#}							
+								{% if is_richiesta_disabilitata == false %}
+									<li><a href="{{ path('modifica_intervento', {'id_richiesta':richiesta.id,'id_intervento':intervento.id}) }}">Modifica</a></li>
+										{% if intervento.istanzafascicolo is not null %}
+										<li><a href="{{ path('dati_aggiuntivi_intervento', {'id_istanza_pagina':intervento.istanzafascicolo.indice.id}) }}">Dati aggiuntivi</a></li>
+										{% endif %}
+										{% if intervento.referenti|length == 0%}
+										<li><a href="{{ path('cerca_referente_intervento', {'id_richiesta':richiesta.id,'id_intervento':intervento.id}) }}">Referente</a></li>													
+										{% else %}
+										<li><a href="{{ path('rimuovi_referente_intervento', {'id_richiesta':richiesta.id,'id_referente':intervento.referenti[0].id, '_token': csrfToken}) }}">Elimina referente</a></li>													
+										<li><a href="{{ path('dettaglio_referente_intervento', {'id_richiesta':richiesta.id,'id_referente':intervento.referenti[0].id}) }}">Visualizza referente</a></li>													
+										{% endif %}
+									<li><a href="{{ path('elimina_intervento', {'id_richiesta':richiesta.id,'id_intervento':intervento.id}) }}">Elimina</a></li>			
+								{% endif %}
+								{% if is_granted('ROLE_UTENTE_PA') or is_richiesta_disabilitata == true %}
+									<li><a href="{{ path('modifica_intervento', {'id_richiesta':richiesta.id,'id_intervento':intervento.id}) }}">Visualizza</a></li>
+									<li><a href="{{ path('dati_aggiuntivi_intervento', {'id_istanza_pagina':intervento.istanzafascicolo.indice.id}) }}">Dati aggiuntivi</a></li>
+									<li><a href="{{ path('dettaglio_referente_intervento', {'id_richiesta':richiesta.id,'id_referente':intervento.referenti[0].id}) }}">Visualizza referente</a></li>													
+								{% endif %}
+							</ul>
+						</div>
+					</td>
+				</tr>
+			{% endfor %}
+        </tbody>
+    </table>
+	<div class="page-actions">
+		{{ pulsante_indietro(path("dettaglio_richiesta", {"id_richiesta":richiesta.id})) }}
+	</div>
+
+{% endblock %}

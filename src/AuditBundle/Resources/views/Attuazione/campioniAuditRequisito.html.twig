@@ -1,0 +1,49 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	{% include 'AuditBundle:Audit:menu.html.twig' %}
+
+	<h4>Elenco campioni</h4>
+	<table class="table table-striped table-hover table-bordered" id="organismi-elenco">
+		<thead>
+			<tr>
+				<th>Cup</th>
+				<th>Protocollo</th>
+				<th>Ragione Sociale</th>
+				<th>Bando</th>
+				<th>Totale Certificato</th>
+				<th>Azioni</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% if campioni|length > 0%}
+				{% for campione in campioni %}
+					{% set richiesta = campione.richiesta %}
+					<tr>
+						<td>{{ richiesta.istruttoria is not null ? richiesta.istruttoria.codiceCup : "-" }}</td>
+						<td>{{ richiesta.protocollo }}</td>
+						<td>{{ richiesta.soggetto }}</td>
+						<td>{{ richiesta.procedura.titolo }}</td>
+						<td style="text-align: right;">{{ richiesta.totaleCertificato|number_format(2, ',', '.') }}</td>
+						<td style="text-align: center;" class="selezionato">
+							<div class="dropdown">
+								<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+									Azioni
+									<span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+									<li>
+										<a href="{{ path("valutazione_audit_campione_attuazione", {'id_audit_campione': campione.id}) }}">
+											Valuta 
+										</a>
+									</li>
+								</ul> 
+							</div>
+						</td>
+					</tr>
+
+				{% endfor %}
+			{% endif %}
+		</tbody>
+	</table>			
+{% endblock %}

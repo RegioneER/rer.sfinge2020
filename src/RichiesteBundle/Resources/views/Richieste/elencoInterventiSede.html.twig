@@ -1,0 +1,95 @@
+{% extends '::base.html.twig' %}
+
+{% block intestazione %}
+    {{ parent() }}
+    {{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% block body %}
+    {% if richiesta.procedura.id != 97 %}
+        <div class="alert alert-info">
+            PER INTERVENTO SI INTENDE OGNI SINGOLO BENE, OGNI SINGOLA OPERA, OGNI SINGOLO SERVIZIO AVENTE UNA FUNZIONALITA' AUTONOMA
+        </div>
+    {% endif %}
+    {% if is_richiesta_disabilitata == false %}
+        {% if sede is not null %}
+            <a href="{{ path("aggiungi_intervento_sede",{"id_richiesta": richiesta.id, "id_sede": sede.id}) }}" class="btn btn-primary"><i class="fa fa-plus"></i> Aggiungi intervento</a>
+        {% else %}
+            <a href="{{ path("aggiungi_intervento_sede",{"id_richiesta": richiesta.id, "id_sede": 'null'}) }}" class="btn btn-primary"><i class="fa fa-plus"></i> Aggiungi intervento</a>
+        {% endif %}
+    {% endif %}
+
+    <h4>Elenco interventi</h4>
+    <table class="table table-striped table-hover table-bordered" id="proponenti-elenco">
+        <thead>
+            <tr>
+                <th style="width: 20%">Voce</th>
+                <th style="width: 45%">Descrizione</th>
+                <th style="width: 20%">Costo stimato</th>
+                <th style="width: 5%">Annualità</th>
+                <th style="width: 10%">Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if sede is not null %}
+                {% for intervento in sede.interventisede %}
+                    <tr>
+                        <td>{{ intervento.pianocosto is not null ? intervento.pianocosto.titolo : '-'}}</td>
+                        <td>{{ intervento.descrizione is not null ? intervento.descrizione : '-'}}</td>
+                        <td style="text-align: right">{{ intervento.costo is not null ? intervento.costo|number_format(2,',', '.') : '-'}}</td>
+                        <td style="text-align: right">{{ intervento.annualita is not null ? intervento.annualita : '-'}}</td>
+                        <td><div class="dropdown">
+                                <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    Azioni
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                    {% if is_richiesta_disabilitata == false %}
+                                        <li><a href="{{ path('modifica_intervento_sede', {'id_richiesta':richiesta.id,'id_intervento':intervento.id,'id_sede':sede.id}) }}">Modifica</a></li>
+                                        <li><a href="{{ path('elimina_intervento_sede', {'id_richiesta':richiesta.id,'id_proponente':proponente.id,'id_intervento':intervento.id}) }}">Elimina</a></li>			
+                                        {% endif %}
+                                        {% if is_granted('ROLE_UTENTE_PA') or is_richiesta_disabilitata == true %}
+                                        <li><a href="{{ path('modifica_intervento_sede', {'id_richiesta':richiesta.id,'id_intervento':intervento.id,'id_sede':sede.id}) }}">Visualizza</a></li>
+                                        {% endif %}
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                {% for intervento in richiesta.interventosede %}
+                    <tr>
+                        <td>{{ intervento.pianocosto is not null ? intervento.pianocosto.codice ~ ') ' ~ intervento.pianocosto.titolo : '-'}}</td>
+                        <td>{{ intervento.descrizione is not null ? intervento.descrizione : '-'}}</td>
+                        <td style="text-align: right">{{ intervento.costo is not null ? intervento.costo|number_format(2,',', '.') : '-'}}</td>
+                        <td style="text-align: right">{{ intervento.annualita is not null ? intervento.annualita : '-'}}</td>
+                        <td><div class="dropdown">
+                                <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    Azioni
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                    {% if is_richiesta_disabilitata == false %}
+                                        <li><a href="{{ path('modifica_intervento_sede', {'id_richiesta':richiesta.id,'id_intervento':intervento.id,'id_sede':'null'}) }}">Modifica</a></li>
+                                        <li><a href="{{ path('elimina_intervento_sede', {'id_richiesta':richiesta.id,'id_proponente':proponente.id,'id_intervento':intervento.id}) }}">Elimina</a></li>			
+                                        {% endif %}
+                                        {% if is_granted('ROLE_UTENTE_PA') or is_richiesta_disabilitata == true %}
+                                        <li><a href="{{ path('modifica_intervento_sede', {'id_richiesta':richiesta.id,'id_intervento':intervento.id,'id_sede':'null'}) }}">Visualizza</a></li>
+                                        {% endif %}
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+        </tbody>
+    </table>
+    <div class="page-actions">
+        {% if sede is not null %}
+            {{ pulsante_indietro(path("dettaglio_proponente", {"id_proponente":proponente.id, 'id_richiesta': richiesta.id})) }}
+        {% else %}
+            {{ pulsante_indietro(path("dettaglio_richiesta", {'id_richiesta': richiesta.id})) }}
+        {% endif %}
+    </div>
+
+{% endblock %}

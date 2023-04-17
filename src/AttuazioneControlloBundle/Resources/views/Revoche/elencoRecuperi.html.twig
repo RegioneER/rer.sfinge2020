@@ -1,0 +1,110 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+	{% include 'AttuazioneControlloBundle:PA/Richieste:menu.html.twig' with {'attuazione_controllo' : richiesta.attuazioneControllo } %}	
+
+	<h4>Riepilogo</h4>
+	<div class="row">
+		<div class="col-md-12">
+			<table class="table table-striped table-hover table-bordered">
+				<tr>
+					<td>Numero operazione</td><td>{{ richiesta.id }}</td>
+				</tr>
+				<tr>
+					<td>Numero protocollo</td><td>{{ richiesta.protocollo }}</td>
+				</tr>
+				<tr>
+					<td>CUP</td><td>{{ richiesta.istruttoria.codiceCup }}</td>
+				</tr>
+				<tr>
+					<td>Titolo operazione</td><td>{{ richiesta.titolo is not null ? richiesta.titolo : "-" }}</td>
+				</tr>
+				<tr>
+					<td>Soggetto mandatario</td><td>{{richiesta.mandatario.soggettoVersion }}</td>
+				</tr>
+				<tr>
+					<td>Contributo da recuperare</td><td></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	
+	{% if revoche|length > 0 %}	
+		<h4>Elenco revoche</h4>
+			<table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+				<thead>
+					<tr>
+						<th>Atto</th>
+						<th>Tipo revoca</th>
+						<th>Motivazione</th>
+						<th>Importo</th>
+						<th>Azioni</th>
+					</tr>
+				</thead>	
+				<tbody>
+		{% for revoca in revoche %}
+			{% if revoca.conrecupero == 1  %}
+			<tr>
+				<td>{{ revoca.attorevoca.numero}}: {{ revoca.attorevoca.descrizione}}</td>
+				<td>{{ revoca.attorevoca.tipo.descrizione}}</td>
+				<td>{{ revoca.attorevoca.tipomotivazione.descrizione}}</td>
+				<td>{{ revoca.contributo | number_format(2,',', '.')}}</td>				<td>
+					<div class="dropdown">
+						<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+							Azioni
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+							{% if is_granted('ROLE_REVOCHE') or is_granted('ROLE_SUPER_ADMIN') %}
+								<li><a href="{{ path("crea_recupero",{"id_revoca":revoca.id}) }}" >Recupero</a></li>
+							{% endif %}
+						</ul>
+					</div>
+				</td>
+			</tr>
+			{% endif %}
+		{% endfor %}
+			</tbody>
+		</table>
+	{% else %}
+		<h4>Dati revoca</h4>
+		Nessun revoca 
+	{% endif %}
+	
+	<h4>Recuperi</h4>
+	<table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+		<thead>
+			<tr>
+				<th>id</th>
+				<th>Fase</th>
+				<th>Data incasso</th>
+				<th>Azioni</th>
+			</tr>
+		</thead>	
+		<tbody>
+		{% for revoca in revoche %}
+			{% for recupero in revoca.recuperi %}
+				<tr>
+					<td>{{ recupero.id }}</td>
+					<td>{{ recupero.tipofaserecupero.descrizione }}</td>
+					<td>{{ recupero.DataIncasso is null ? '-' : recupero.DataIncasso|date("d/m/Y") }}</td>
+					<td>
+						<div class="dropdown">
+							<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								Azioni
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+								<li><a href="{{ path("visualizza_recupero",{"id_recupero":recupero.id}) }}" >Visualizza</a></li>
+								{% if (is_granted('ROLE_REVOCHE') or is_granted('ROLE_SUPER_ADMIN')) and recupero.tipofaserecupero.codice == 'CORSO' %}
+									<li><a href="{{ path("modifica_recupero",{"id_recupero":recupero.id}) }}" >Modifica</a></li>
+									<li><a href="{{ path("cancella_recupero",{"id_recupero":recupero.id}) }}" >cancella</a></li>
+								{% endif %}
+							</ul>
+						</div>
+					</td>
+				</tr>
+			{% endfor %}
+		{% endfor %}
+		</tbody>
+	</table>
+{% endblock %}

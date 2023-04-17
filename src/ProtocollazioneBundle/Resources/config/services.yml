@@ -1,0 +1,269 @@
+parameters:
+    domande_contributo.codice_processo:                        protocollazione_domande_contributo
+    pagamenti.codice_processo:                                 protocollazione_pagamenti
+    variazioni.codice_processo:                                protocollazione_variazioni
+    integrazioni_istruttoria.codice_processo:                  protocollazione_integrazione_istruttoria
+    integrazioni_istruttoria_risposta.codice_processo:         protocollazione_risposta_integrazione_istruttoria
+    integrazioni_pagamento.codice_processo:                    protocollazione_integrazione_pagamento
+    integrazioni_pagamento_risposta.codice_processo:           protocollazione_risposta_integrazione_pagamento
+    comunicazione_esito_istruttoria.codice_processo:           protocollazione_esito_istruttoria_richiesta
+    comunicazione_esito_istruttoria_risposta.codice_processo:  protocollazione_esito_istruttoria_risposta
+    esito_istruttoria_pagamento.codice_processo:               protocollazione_esito_istruttoria_pagamento
+    richiesta_chiarimenti.codice_processo:                     protocollazione_richiesta_chiarimenti
+    risposta_richiesta_chiarimenti.codice_processo:            protocollazione_risposta richiesta_chiarimenti
+    proroga_progetto.codice_processo:                          protocollazione_proroga
+    comunicazione_progetto_pa.codice_processo:		           protocollazione_comunicazione_progetto_pa
+    comunicazione_progetto_risposta.codice_processo:		   protocollazione_comunicazione_progetto_risposta
+    comunicazione_attuazione_pa.codice_processo:		       protocollazione_comunicazione_attuazione_pa
+    comunicazione_attuazione_risposta.codice_processo:		   protocollazione_comunicazione_attuazione_risposta
+    comunicazioni_pagamento.codice_processo:                   protocollazione_comunicazione_pagamento
+    comunicazioni_pagamento_risposta.codice_processo:          protocollazione_risposta_comunicazione_pagamento
+    
+services:        
+    docerlogger:
+        class:  ProtocollazioneBundle\Service\DocERLogService
+        arguments: 
+            -   '@doctrine'    
+            
+    docerinitprotocollazione:
+        class: ProtocollazioneBundle\Service\DocERInitProtocollazioneService
+        arguments: ['@doctrine', '@service_container']
+            
+    docerxmlprotocollazione:
+        class: ProtocollazioneBundle\Service\DocERXmlProtocollazioneService
+        arguments:
+            -   '@recursive_xml_builder'
+                        
+    docerintegrazione:
+        class:  ProtocollazioneBundle\Service\IntegrazioneDocERService
+        arguments:
+            -   '@service_container'
+            -   '@docerautenticazione'
+            
+    docerregistrazione:
+        class:  ProtocollazioneBundle\Service\RegistrazioneDocERService
+        arguments:
+            -   '@service_container'
+            -   '@docerautenticazione'
+
+    docerautenticazione:
+        class: ProtocollazioneBundle\Service\DocERAuthenticationService
+        arguments: 
+            -   '@service_container'
+    
+
+    docersoap:
+        class: ProtocollazioneBundle\Service\SoapService
+
+    
+    crea_richieste:
+        class: ProtocollazioneBundle\Service\DocERInitProtocollazioneService
+        arguments: 
+            -   '@doctrine'
+            -   '@service_container'
+       
+    crea_variazione:
+        class: ProtocollazioneBundle\Service\DocERInitProtocollazioneService
+        arguments: 
+            -   '@doctrine'
+            -   '@service_container'
+            
+    domande_contributo:
+        class:  ProtocollazioneBundle\Service\DocERCronjobService
+        arguments: 
+            -   '%domande_contributo.codice_processo%'
+            -   '@doctrine'
+            -   '@docerlogger'
+            -   '@service_container'            
+            -   '@docerintegrazione'
+            -   '@docerregistrazione'
+            
+    pagamenti:
+        class: ProtocollazioneBundle\Service\DocERCronjobService
+        arguments: 
+            -   '%pagamenti.codice_processo%'
+            -   '@doctrine'
+            -   '@docerlogger'
+            -   '@service_container'            
+            -   '@docerintegrazione'
+            -   '@docerregistrazione'
+    
+    variazioni:
+        class: ProtocollazioneBundle\Service\DocERCronjobService
+        arguments: 
+            -   '%variazioni.codice_processo%'
+            -   '@doctrine'
+            -   '@docerlogger'
+            -   '@service_container'            
+            -   '@docerintegrazione'
+            -   '@docerregistrazione'
+            
+    integrazioni_istruttoria:
+        class: ProtocollazioneBundle\Service\DocERCronjobService
+        arguments: 
+            -   '%integrazioni_istruttoria.codice_processo%'
+            -   '@doctrine'
+            -   '@docerlogger'
+            -   '@service_container'            
+            -   '@docerintegrazione'
+            -   '@docerregistrazione'
+            
+    integrazioni_istruttoria_risposta:
+        class: ProtocollazioneBundle\Service\DocERCronjobService
+        arguments: 
+            -   '%integrazioni_istruttoria_risposta.codice_processo%'
+            -   '@doctrine'
+            -   '@docerlogger'
+            -   '@service_container'            
+            -   '@docerintegrazione'
+            -   '@docerregistrazione'
+    
+    integrazioni_pagamento:
+        class: ProtocollazioneBundle\Service\DocERCronjobService
+        arguments: 
+            -   '%integrazioni_pagamento.codice_processo%'
+            -   '@doctrine'
+            -   '@docerlogger'
+            -   '@service_container'            
+            -   '@docerintegrazione'
+            -   '@docerregistrazione'
+            
+    integrazioni_pagamento_risposta:
+        class: ProtocollazioneBundle\Service\DocERCronjobService
+        arguments: 
+            -   '%integrazioni_pagamento_risposta.codice_processo%'
+            -   '@doctrine'
+            -   '@docerlogger'
+            -   '@service_container'            
+            -   '@docerintegrazione'
+            -   '@docerregistrazione'
+            
+    comunicazione_esito_istruttoria:
+        class: ProtocollazioneBundle\Service\DocERCronjobService
+        arguments: 
+            -   '%comunicazione_esito_istruttoria.codice_processo%'
+            -   '@doctrine'
+            -   '@docerlogger'
+            -   '@service_container'            
+            -   '@docerintegrazione'
+            -   '@docerregistrazione'
+            
+    comunicazione_esito_istruttoria_risposta:
+        class: ProtocollazioneBundle\Service\DocERCronjobService
+        arguments: 
+            -   '%comunicazione_esito_istruttoria_risposta.codice_processo%'
+            -   '@doctrine'
+            -   '@docerlogger'
+            -   '@service_container'            
+            -   '@docerintegrazione'
+            -   '@docerregistrazione'
+            
+     
+    comunicazione_progetto_pa:
+        class: ProtocollazioneBundle\Service\DocERCronjobService
+        arguments: 
+            -   '%comunicazione_progetto_pa.codice_processo%'
+            -   '@doctrine'
+            -   '@docerlogger'
+            -   '@service_container'            
+            -   '@docerintegrazione'  
+            -   '@docerregistrazione'
+     
+    comunicazione_progetto_risposta:
+        class: ProtocollazioneBundle\Service\DocERCronjobService
+        arguments: 
+            -   '%comunicazione_progetto_risposta.codice_processo%'
+            -   '@doctrine'
+            -   '@docerlogger'
+            -   '@service_container'            
+            -   '@docerintegrazione'  
+            -   '@docerregistrazione'
+      
+
+    esito_istruttoria_pagamento:
+        class: ProtocollazioneBundle\Service\DocERCronjobService
+        arguments: 
+            -   '%esito_istruttoria_pagamento.codice_processo%'
+            -   '@doctrine'
+            -   '@docerlogger'
+            -   '@service_container'            
+            -   '@docerintegrazione'   
+            -   '@docerregistrazione'
+      
+    richiesta_chiarimenti:
+        class: ProtocollazioneBundle\Service\DocERCronjobService
+        arguments: 
+            -   '%richiesta_chiarimenti.codice_processo%'
+            -   '@doctrine'
+            -   '@docerlogger'
+            -   '@service_container'            
+            -   '@docerintegrazione'   
+            -   '@docerregistrazione'
+            
+    risposta_richiesta_chiarimenti:
+        class: ProtocollazioneBundle\Service\DocERCronjobService
+        arguments:
+            -   '%risposta_richiesta_chiarimenti.codice_processo%'
+            -   '@doctrine'
+            -   '@docerlogger'
+            -   '@service_container'            
+            -   '@docerintegrazione'   
+            -   '@docerregistrazione'
+
+    proroga_progetto:
+        class: ProtocollazioneBundle\Service\DocERCronjobService
+        arguments: 
+            -   '%proroga_progetto.codice_processo%'
+            -   '@doctrine'
+            -   '@docerlogger'
+            -   '@service_container'
+            -   '@docerintegrazione'   
+            -   '@docerregistrazione'
+            
+    egrammata_ws:
+        class: ProtocollazioneBundle\Service\EGrammataWsService
+        arguments:
+            -   '%egrammata.requestParams%'
+            -   '%egrammata.wsdl%'
+            -   '@doctrine'
+            -   '@service_container' 
+            
+    comunicazione_attuazione_pa:
+        class: ProtocollazioneBundle\Service\DocERCronjobService
+        arguments: 
+            -   '%comunicazione_attuazione_pa.codice_processo%'
+            -   '@doctrine'
+            -   '@docerlogger'
+            -   '@service_container'            
+            -   '@docerintegrazione'   
+            -   '@docerregistrazione'
+     
+    comunicazione_attuazione_risposta:
+        class: ProtocollazioneBundle\Service\DocERCronjobService
+        arguments: 
+            -   '%comunicazione_attuazione_risposta.codice_processo%'
+            -   '@doctrine'
+            -   '@docerlogger'
+            -   '@service_container'            
+            -   '@docerintegrazione'   
+            -   '@docerregistrazione'
+
+    comunicazioni_pagamento:
+        class: ProtocollazioneBundle\Service\DocERCronjobService
+        arguments:
+        -   '%comunicazioni_pagamento.codice_processo%'
+        -   '@doctrine'
+        -   '@docerlogger'
+        -   '@service_container'
+        -   '@docerintegrazione'   
+        -   '@docerregistrazione'
+
+    comunicazioni_pagamento_risposta:
+        class: ProtocollazioneBundle\Service\DocERCronjobService
+        arguments:
+            -   '%comunicazioni_pagamento_risposta.codice_processo%'
+            -   '@doctrine'
+            -   '@docerlogger'
+            -   '@service_container'
+            -   '@docerintegrazione'   
+            -   '@docerregistrazione'

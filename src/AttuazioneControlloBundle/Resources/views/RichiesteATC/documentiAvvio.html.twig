@@ -1,0 +1,40 @@
+{% extends '::base.html.twig' %}
+
+{% block intestazione %}
+	{{ parent() }}
+	{{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% block body %}
+	<section style="margin-top:2em;">
+		<article class="note-info alert">
+			Indicare la data della prima fattura imputabile al progetto e caricare la fattura stessa.
+		</article>
+	</section>
+	{% if form_data is not null %}
+		<div class="form-body">
+			<h4>Data avvio</h4>
+			{{ form(form_data) }}
+	    </div>
+	{% endif %}		
+	
+	{% if form_documento is not null %}
+		<div class="form-body">
+			<h4>Carica documento</h4>
+			{{ form(form_documento) }}
+	    </div>
+	{% endif %}			
+
+	<h4>Elenco documenti caricati</h4>
+	{% if documenti is not empty %}
+    <div class="form-body">	
+		{% for documento in documenti %}	
+            {{ mostra_file(documento.documentoFile, null )}}
+            <br/>
+		{% endfor %}
+    </div>
+	{% else %}
+		<h6>Nessun documento caricato</h6>
+	{% endif %}
+	
+{% endblock %}

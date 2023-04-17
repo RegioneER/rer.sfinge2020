@@ -1,0 +1,100 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+    <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <!--<th>Titolo procedura</th>-->
+                <th>Protocollo</th>
+                <th>Titolo operazione</th>
+                <th>Bando</th>
+                <th>Contributo concesso</th>
+                <th>Contributo accettato</th>
+                <th>Stato progetto</th>
+                <th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for richiesta in richieste %}
+                <tr>
+                    <td>{{ richiesta.id }}</td>
+<!--<td>{{ richiesta.procedura.titolo }}</td>-->
+                    <td>{{ richiesta.protocollo }}</td>
+                    <td>{{ richiesta.titolo is null ? "-" : richiesta.titolo }}</td>
+                    <td>{{ richiesta.procedura.titolo }}</td>
+                    {% if richiesta.procedura.id == 7 or richiesta.procedura.id == 8 %}
+                        {% set oggetto = richiesta.oggettirichiesta|first %}
+                        <td>{{ "€ " ~ oggetto.ContributoImportatoExcel|number_format(2, ',', '.') }}</td>
+                    {% else %}
+                        <td>{{ "€ " ~ richiesta.istruttoria.contributoAmmesso|number_format(2, ',', '.') }}</td>
+                    {% endif %}
+                    <td>{{ richiesta.attuazioneControllo.contributoAccettato is null ? "-" : (richiesta.attuazioneControllo.contributoAccettato ? "Sì" : "No") }}</td>
+                    <td>{{ richiesta.DescrizioneStatoProgetto }}</td>
+                    <td>
+                        <div class="dropdown">
+                            <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                Azioni
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                {% set label_accettazione = richiesta.procedura.id in [7,8] ? "Conferma accettazione contributo" : "Accetta contributo" %}
+                                {% if richiesta.attuazioneControllo.contributoAccettabile %}
+                                    <li><a href="{{ path("accetta_contributo", {"id_richiesta" : richiesta.id }) }}">{{ label_accettazione }}</a></li>
+                                    {% else %}
+                                    <li><a href="{{ path("riepilogo_accetta_contributo", {"id_richiesta" : richiesta.id }) }}">Riepilogo progetto</a></li>
+                                    {% endif %}
+                                    {% if richiesta.attuazioneControllo.contributoAccettato %}
+                                        {% set codiceNaturaCup = richiesta.montipooperazione.codicenaturacup|default("CipeBundle\\\Entity\\Classificazioni\\CupNatura::REALIZZAZIONE_LAVORI_PUBBLICI") %}
+                                        {% if richiesta.procedura.id != 118 and richiesta.procedura.id != 125 %}
+                                        <li><a href="{{ path("elenco_pagamenti", {"id_richiesta" : richiesta.id }) }}">Gestisci domande di pagamento</a></li>
+                                        {% endif %}
+                                    <li><a href="{{ path("elenco_variazioni", {"id_richiesta" : richiesta.id }) }}">Variazioni</a></li>
+                                        {% if richiesta.procedura.prorogaattiva == true%}
+                                        <li><a href="{{ path("elenco_proroghe", {"id_richiesta" : richiesta.id }) }}">Proroghe</a></li>
+                                        {% endif %}	
+                                        {% if richiesta.comunicazioniattuazione|length > 0%}
+                                        <li><a href="{{ path("elenco_comunicazioni_atc", {"id_richiesta" : richiesta.id }) }}">Comunicazioni</a></li>
+                                        {% endif %}
+                                        {% if richiesta is indicatoriManuali %}
+                                        <li><a href="{{ path('gestione_monitoraggio_indicatori_ben', {'id_richiesta':richiesta.id}) }}">Indicatori di output</a></li>
+                                        {% endif %}
+                                        {% if richiesta.moniterprogetti|length > 0 and codiceNaturaCup in [
+                                                                            constant('CipeBundle\\\Entity\\Classificazioni\\CupNatura::REALIZZAZIONE_LAVORI_PUBBLICI')
+                                                                    ] and richiesta.procedura.id not in [71, 81, 126, 120, 162, 137, 166, 170] %}
+                                    <li><a href="{{ path('gestione_monitoraggio_fasi_procedurali_ben', {'id_richiesta':richiesta.id})}}">Fasi procedurali</a></li>
+                                    {% endif %}
+                                    {% if (richiesta.procedura.id not in [170] and richiesta.istruttoria.soggettoPubblico) or codiceNaturaCup in [
+                                                                            constant('CipeBundle\\\Entity\\Classificazioni\\CupNatura::CONCESSIONE_AIUTI_SOGGETTI_DIVERSI_UNITA_PRODUTTIVE'),
+                                                                            constant('CipeBundle\\\Entity\\Classificazioni\\CupNatura::REALIZZAZIONE_LAVORI_PUBBLICI')
+                                                                    ]  and richiesta.procedura.id not in [71, 81, 126, 120, 162, 137,166] %}
+                                <li><a href="{{ path('gestione_monitoraggio_impegni_ben', {'id_richiesta':richiesta.id}) }}">Impegni e disimpegni</a></li>
+                                    {% endif %}
+                                        {% if codiceNaturaCup in [
+                                                                            constant('CipeBundle\\\Entity\\Classificazioni\\CupNatura::REALIZZAZIONE_LAVORI_PUBBLICI'),
+                                                                            constant('CipeBundle\\\Entity\\Classificazioni\\CupNatura::CONCESSIONE_AIUTI_SOGGETTI_DIVERSI_UNITA_PRODUTTIVE'),
+                                                                            constant('CipeBundle\\\Entity\\Classificazioni\\CupNatura::REALIZZAZIONE_BENI_SERVIZI')
+                                                                    ] and richiesta.procedura.id not in [71, 81, 126, 120, 162, 137, 166, 170] %}
+                                    <li><a href="{{ path('gestione_monitoraggio_procedura_aggiudicazione_ben', {'id_richiesta':richiesta.id}) }}">Procedura di aggiudicazione</a></li>
+                                        {% endif %}
+                                            {% if codiceNaturaCup in [constant('CipeBundle\\\Entity\\Classificazioni\\CupNatura::CONCESSIONE_INCENTIVI_ATTIVITA_PRODUTTIVE')] %}
+                                            <li><a href="{{ path('gestione_documenti_avvio', {'id_richiesta':richiesta.id}) }}">Documenti avvio</a></li>
+                                            {% endif %}                       
+                                            {% if richiesta.procedura.id not in [160, 170, 171] %}
+                                            <li><a href="{{ path('azioni_comunicazione_cartellone', {'idRichiesta':richiesta.id}) }}">Stampa Cartellone Temporaneo</a></li>
+                                            <li><a href="{{ path('azioni_comunicazione_targa', {'idRichiesta':richiesta.id}) }}">Stampa Targa permanente</a></li>
+                                            {% endif %}
+
+                                        {% if richiesta.procedura.asse.codice != 'A0' %}
+                                            <li><a href="{{ path('azioni_comunicazione_poster', {'idRichiesta':richiesta.id}) }}">Stampa Poster</a></li>
+                                            {% endif %}
+
+                                        {% endif %}
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        {% endblock %}

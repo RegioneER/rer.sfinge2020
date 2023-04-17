@@ -1,0 +1,150 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+
+	{{ form_start(form) }}
+
+        {% if hasPesonale == true %}
+            <h4>Tipologia giustificativo/Timesheet</h4>
+        {% else %}
+            <h4>Tipologia giustificativo</h4>
+        {% endif %}
+        {{ form_row(form.tipologia_giustificativo) }}
+
+		{% if hasPesonale == true %}
+			<h4>Fornitore/Dipendente</h4>
+		{% else %}
+			<h4>Fornitore</h4>
+		{% endif %}
+		{{ form_row(form.denominazione_fornitore) }}
+		{{ form_row(form.codice_fiscale_fornitore) }}
+
+		{% if hasPesonale == true %}
+			<h4>Dati giustificativo/Timesheet</h4>
+		{% else %}
+			<h4>Dati giustificativo</h4>
+		{% endif %}
+		{{ form_row(form.numero_giustificativo) }}
+		{{ form_row(form.data_giustificativo) }}
+		{{ form_row(form.importo_giustificativo) }}
+
+		{% if form.proponente is defined %}
+			{{ form_row(form.proponente) }}
+		{% endif %}
+
+		{{ form_row(form.nota_beneficiario) }}
+
+		{{ form_row(form.documento_giustificativo) }}
+
+	{{ form_end(form) }}
+
+{% endblock %}
+
+{% block  jquery_page_document_ready %}
+	<script>
+        $(document).ready(function () {
+            if($("#giustificativo_id_tipologia_fattura_elettronica").length) {
+                var precedente;
+
+                if($("#giustificativo_tipologia_giustificativo").val() === $("#giustificativo_id_tipologia_fattura_elettronica").val()) {
+
+                    $(".label_estensioni_documenti").html('Formati ammessi: xml, p7m');
+
+                    $('#giustificativo_denominazione_fornitore').attr('readonly', true);
+                    $('#giustificativo_codice_fiscale_fornitore').attr('readonly', true);
+                    $('#giustificativo_numero_giustificativo').attr('readonly', true);
+                    $('#giustificativo_data_giustificativo').attr('readonly', true);
+                    $('#giustificativo_importo_giustificativo').attr('readonly', true);
+                    $('#giustificativo_nota_beneficiario').attr('readonly', true);
+                } else {
+
+                    $(".label_estensioni_documenti").html('Formati ammessi: pdf, p7m');
+
+                    $('#giustificativo_denominazione_fornitore').removeAttr('readonly');
+                    $('#giustificativo_codice_fiscale_fornitore').removeAttr('readonly');
+                    $('#giustificativo_numero_giustificativo').removeAttr('readonly');
+                    $('#giustificativo_data_giustificativo').removeAttr('readonly');
+                    $('#giustificativo_importo_giustificativo').removeAttr('readonly');
+                    $('#giustificativo_nota_beneficiario').removeAttr('readonly');
+                }
+
+                $("#giustificativo_tipologia_giustificativo").change(function () {
+
+                    if(precedente === $("#giustificativo_id_tipologia_fattura_elettronica").val()) {
+                        cancellaDatiFatturaElettronica();
+                    }
+
+                    precedente = $(this).val();
+
+                    if ($(this).val() === $("#giustificativo_id_tipologia_fattura_elettronica").val()) {
+
+                        $(".label_estensioni_documenti").html('Formati ammessi: xml, p7m');
+
+                        $('#giustificativo_denominazione_fornitore').attr('readonly', true);
+                        $('#giustificativo_codice_fiscale_fornitore').attr('readonly', true);
+                        $('#giustificativo_numero_giustificativo').attr('readonly', true);
+                        $('#giustificativo_data_giustificativo').attr('readonly', true);
+                        $('#giustificativo_importo_giustificativo').attr('readonly', true);
+                        $('#giustificativo_nota_beneficiario').attr('readonly', true);
+
+                        cancellaDatiFatturaElettronica();
+                    } else {
+
+                        $(".label_estensioni_documenti").html('Formati ammessi: pdf, p7m');
+
+                        $('#giustificativo_denominazione_fornitore').removeAttr('readonly');
+                        $('#giustificativo_codice_fiscale_fornitore').removeAttr('readonly');
+                        $('#giustificativo_numero_giustificativo').removeAttr('readonly');
+                        $('#giustificativo_data_giustificativo').removeAttr('readonly');
+                        $('#giustificativo_importo_giustificativo').removeAttr('readonly');
+                        $('#giustificativo_nota_beneficiario').removeAttr('readonly');
+                    }
+                });
+
+                $("#giustificativo_documento_giustificativo_file").change(function () {
+                    if($("#giustificativo_tipologia_giustificativo").val() === $("#giustificativo_id_tipologia_fattura_elettronica").val()) {
+                        getDatiFatturaElettronica(this);
+                    }
+                });
+
+                function cancellaDatiFatturaElettronica() {
+                    $('#giustificativo_denominazione_fornitore').val('');
+                    $('#giustificativo_codice_fiscale_fornitore').val('');
+                    $('#giustificativo_numero_giustificativo').val('');
+                    $('#giustificativo_data_giustificativo').val('');
+                    $('#giustificativo_importo_giustificativo').val('');
+                    $('#giustificativo_nota_beneficiario').val('');
+                }
+
+                function getDatiFatturaElettronica(input) {
+                    if (input.files && input.files[0]) {
+
+                        var $data = new FormData();
+
+                        $data.append('fatturaElettronica', input.files[0]);
+
+                        $.ajax({
+                            type: "POST",
+                            url: '{{ path("leggi_fattura_elettronica") }}',
+                            data: $data,
+                            processData: false,
+                            contentType: false,
+                            success: function (response) {
+                                $('#giustificativo_denominazione_fornitore').val(response.denominazione);
+                                $('#giustificativo_codice_fiscale_fornitore').val(response.codiceFiscale);
+                                $('#giustificativo_numero_giustificativo').val(response.numeroFattura);
+                                $('#giustificativo_data_giustificativo').val(response.dataFattura);
+                                $('#giustificativo_importo_giustificativo').val(response.importo);
+                                $('#giustificativo_nota_beneficiario').val(response.descrizione);
+                            },
+                            error: function (response) {
+                                console.log(response.responseText);
+								alert(response.responseText);
+                            }
+                        });
+                    }
+                }
+            }
+        });
+	</script>
+{% endblock %}

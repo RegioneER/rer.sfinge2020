@@ -1,0 +1,67 @@
+{% extends '::base_ente.html.twig' %}
+  
+{% block body %}
+	
+	{% if giustificativo.pagamento.isAssistenzaTecnica == true %} 
+		{% set prefisso = "_at" %}
+	{% elseif giustificativo.pagamento.isIngegneriaFinanziaria == true %}
+		{% set prefisso = "_ing_fin" %}
+	{% elseif giustificativo.pagamento.isAcquisizioni == true %}
+		{% set prefisso = "_acquisizioni" %}
+	{% endif %}
+
+	{{ form_start(form) }}
+	<h4>Fornitore</h4>
+	{{ form_row(form.denominazione_fornitore) }}
+	{{ form_row(form.codice_fiscale_fornitore) }}
+	
+	<h4>Dati giustificativo</h4>
+	{{ form_row(form.descrizione_giustificativo) }}
+	{{ form_row(form.numero_giustificativo) }}
+	{{ form_row(form.data_giustificativo) }}
+	{{ form_row(form.importo_imponibile_giustificativo) }}
+	{{ form_row(form.importo_iva_giustificativo) }}
+	{{ form_row(form.importo_giustificativo) }}
+	<h4>Documento</h4>
+	{% if documento_caricato %}
+		
+		{% include 'AttuazioneControlloBundle::_file.html.twig' with {
+			label: "Documento giustificativo",
+			nome_file: giustificativo.documentoGiustificativo.nomeOriginale,
+			url_scarica: path("scarica", {"path_codificato":path}),
+			url_elimina: giustificativo.pagamento.richiestaDisabilitata ? null : path('elimina_documento_giustificativo'~prefisso, {'id_giustificativo': giustificativo.id, 'id_documento_giustificativo': giustificativo.documentoGiustificativo.id, '_token': csrfToken }) } %}
+	{% else %}
+		{{ form_row(form.documento_giustificativo) }}		
+	{% endif %}	
+	{#<h4>Dati richiesta</h4>
+	{{ form_row(form.importo_richiesto) }}#}
+	
+	<h4>Altri dati</h4>
+	{{ form_row(form.nota_beneficiario) }}
+	
+	{{ form_end(form) }}
+	{%block  jquery_page_document_ready %}
+	<script type="text/javascript" language="javascript">
+		$(document).ready(function () {
+			calcolaTotale();
+		});
+		$("#giustificativo_procedura_particolari_importo_imponibile_giustificativo").keyup(function () {
+			calcolaTotale();
+		});
+		$("#giustificativo_procedura_particolari_importo_iva_giustificativo").keyup(function () {
+			calcolaTotale();
+		});
+		function calcolaTotale() {
+			var imponibile = 0.00;
+			var iva = 0.00;
+			var totale = 0.00;
+
+			imponibile = $("#giustificativo_procedura_particolari_importo_imponibile_giustificativo").val();
+			iva = $("#giustificativo_procedura_particolari_importo_iva_giustificativo").val();
+
+			totale = (parseFloat(imponibile.deformatMoney()) + parseFloat(iva.deformatMoney())).toFixed(2);
+			$("#giustificativo_procedura_particolari_importo_giustificativo").val(parseFloat(totale).formatMoney());
+		}
+	</script>
+{% endblock %}
+{% endblock %}

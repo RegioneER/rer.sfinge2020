@@ -1,0 +1,105 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+
+	<h4>Richiesta integrazione</h4>
+	<table class="table table-striped">
+		<tbody>
+			<tr>
+				<td style="width: 50%;"><strong>Data inserimento</strong></td>
+				<td>{{ integrazione_istruttoria.data | date('d/m/Y') }}</td>
+			</tr>
+			<tr>
+				<td style="width: 50%;"><strong>Protocollo</strong></td>
+				<td>{{ integrazione_istruttoria.protocolloIntegrazione }}</td>
+			</tr>
+			<tr>
+				<td style="width: 50%;"><strong>Data protocollazione</strong></td>
+				<td>{{ integrazione_istruttoria.dataProtocolloIntegrazione ? integrazione_istruttoria.dataProtocolloIntegrazione | date('d/m/Y') : '-' }}</td>
+			</tr>
+			<tr>
+				<td><strong>Nota richiesta</strong></td>
+				<td>{{ integrazione_istruttoria.testo is null ? "-" : integrazione_istruttoria.testo|replace({'\r\n' : '<br>', '\n' : '<br>'})|raw }}</td>
+			</tr>
+			<tr>
+				<td><strong>Testo email richiesta</strong></td>
+				<td>{{ integrazione_istruttoria.testoEmail }}</td>
+			</tr>
+			<tr>
+				<td><strong>Documento richiesta</strong></td>
+				<td>{{ integrazione_istruttoria.documento is null ? '-' : scarica_file(integrazione_istruttoria.documento) }}</td>
+			</tr>
+		</tbody>
+	</table>
+	
+	{% if integrazione_istruttoria.hasRispostaInviata %}
+		<h4>Risposta integrazione</h4>
+		<table class="table table-striped">
+			<tbody>
+				<tr>
+					<td style="width: 50%;"><strong>Data invio</strong></td>
+					<td>{{ integrazione_istruttoria.risposta is null or integrazione_istruttoria.risposta.data is null ? "-" : integrazione_istruttoria.risposta.data | date('d/m/Y') }}</td>
+				</tr>
+				<tr>
+				<td style="width: 50%;"><strong>Protocollo</strong></td>
+				<td>{{ integrazione_istruttoria.risposta.protocolloRispostaIntegrazione }}</td>
+				</tr>
+				<tr>
+					<td style="width: 50%;"><strong>Data protocollazione</strong></td>
+					<td>{{ integrazione_istruttoria.risposta.dataProtocolloRispostaIntegrazione ? integrazione_istruttoria.risposta.dataProtocolloRispostaIntegrazione | date('d/m/Y') : '-' }}</td>
+				</tr>
+				<tr>
+					<td><strong>Nota risposta</strong></td>
+					<td>{{ integrazione_istruttoria.risposta is null or integrazione_istruttoria.risposta.testo is null ? "-" : integrazione_istruttoria.risposta.testo|replace({'\r\n' : '<br>', '\n' : '<br>'})|raw }}</td>
+				</tr>
+				<tr>
+					<td><strong>Documento risposta</strong></td>
+					<td>{{ integrazione_istruttoria.risposta.documentoRispostaFirmato is null ? '-' : scarica_file(integrazione_istruttoria.risposta.documentoRispostaFirmato) }}</td>
+				</tr>
+			</tbody>
+		</table>
+		{#Per il momento mostriamo questa funzionalità solamente per il bando IRAP (in futuro potrebbe essere reso disponibile anche per altre procedure magari con un flag)#}
+		{% if (integrazione_istruttoria.richiesta.procedura.id == 118 or integrazione_istruttoria.richiesta.procedura.id == 125) and integrazione_istruttoria.risposta.presaVisione == false %}
+			<a class="btn btn-primary" href="{{ path('imposta_risposta_integrazione_come_letta', {'id_integrazione_istruttoria': integrazione_istruttoria.id, 'da_comunicazione' : true, '_token' : token }) }}">Imposta come letta</a>
+		{% endif %}
+	{% endif %}
+	
+	{% if integrazione_istruttoria.tipologieDocumenti | length > 0 %}
+		<h4>Documenti in integrazione</h4>
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th style="width: 45%">Tipologia</th>
+					<th style="width: 25%">Proponente</th>
+					{% if integrazione_istruttoria.hasRispostaInviata %}
+						<th style="width: 30%">Documenti</th>
+					{% endif %}
+				</tr>
+			</thead>
+			<tbody>
+			{% for tipologia_documento in integrazione_istruttoria.tipologieDocumenti %}
+				{% set proponente_id = tipologia_documento.proponente is null ? null : tipologia_documento.proponente.id %}
+				<tr>
+					<td>{{ tipologia_documento.tipologiaDocumento.descrizione }}</td>
+					<td>{{ tipologia_documento.proponente is null ? "-" : tipologia_documento.proponente.soggetto }}</td>
+					{% if integrazione_istruttoria.hasRispostaInviata %}
+					<td>
+						{% if documenti_indicizzati[tipologia_documento.tipologiaDocumento.id][proponente_id] is defined %}
+							{% for doc in documenti_indicizzati[tipologia_documento.tipologiaDocumento.id][proponente_id]|filter(d => d is not null) %}
+								{{ scarica_file(doc.documentoFile) }}<br><br>
+							{% endfor %}
+						{% endif %}
+					</td>
+					{% endif %}
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	{% endif %}
+	
+	{% if da_comunicazione == false %}
+		<a href="{{ path('valuta_checklist_istruttoria', {'id_valutazione_checklist' : integrazione_istruttoria.valutazioneChecklist.id }) }}" class="btn btn-default btn-page-action btn-form-back pull-left"><span class="fa fa-arrow-left"></span> Indietro</a>
+	{% else %}
+		<a href="{{ path('elenco_comunicazioni', {'id_istruttoria' : integrazione_istruttoria.istruttoria.id }) }}" class="btn btn-default btn-page-action btn-form-back pull-left"><span class="fa fa-arrow-left"></span> Indietro</a>
+	{% endif %}
+{% endblock %}

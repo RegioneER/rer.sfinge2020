@@ -1,0 +1,27 @@
+<div id="{{ id_modale }}" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3 id="ricerca-azienda-modal-titolo">Ricerca {{ titolo }}</h3>
+            </div>
+            <div class="modal-body">
+                {{ form(form) }}
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Chiudi</button>
+                <a class="btn btn-default" href="{{ path(route_annulla, parametriRouteAnnulla) }}">Annulla Ricerca</a>
+                <a class="btn btn-primary" href="#" id="ricerca-ok-{{ id_modale }}">Ricerca</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    jQuery(document).ready(function() {
+        $("#ricerca-ok-{{ id_modale }}").click(function(e){
+            e.preventDefault();
+            $(this).parents(".modal-content").find("form").submit();
+        });
+    });
+</script>

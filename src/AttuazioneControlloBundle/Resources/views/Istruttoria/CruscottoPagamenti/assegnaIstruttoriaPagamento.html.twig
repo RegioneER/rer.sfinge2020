@@ -1,0 +1,34 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+
+{% if pagamento.assegnamentiIstruttoria|length > 0 %}
+	<h4>Storico assegnamenti</h4>
+	<table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+		<thead>
+			<tr>
+				<th style="width: 30%">Data</th>
+				<th style="width: 50%">Istruttore</th>
+				<th style="width: 20%">Attivo</th>
+			</tr>
+		</thead>	
+		<tbody>
+		{% for assegnamento in pagamento.assegnamentiIstruttoria %}
+			<tr>
+				<td>{{ assegnamento.dataAssegnamento|date('d-m-Y H:i:s') }}</td>
+				<td>{{ assegnamento.istruttore }}</td>
+				<td>{{ assegnamento.attivo ? "Si" : "No" }}</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>	
+{% endif %}	
+
+<h4>Assegnazione istruttoria pagamento</h4>
+
+{{ form_start(form) }}
+{{ form_row(form.istruttore) }}
+{{ form_end(form) }}
+
+{% endblock %}
+

@@ -1,0 +1,25 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+	{{ form_start(form) }}
+
+	{{ form_row(form.responsabile) }}
+	{{ form_row(form.atto) }}
+	{{ form_row(form.titolo) }}
+	{{ form_row(form.risorse_disponibili) }}
+	{{ form_row(form.asse) }}
+	{{ form_row(form.obiettivi_specifici) }}
+	{{ form_row(form.azioni) }}
+	{{ form_row(form.amministrazione_emittente) }}
+	{{ form_row(form.tipo_procedura_monitoraggio) }}
+	{{ form_row(form.tipi_operazioni) }}
+	{{ form_row(form.tipo_iter) }}
+	{{ form_row(form.tipo_finanziamento) }}
+	{{ form_row(form.tipo_aiuto) }}
+	{{ form_row(form.anno_programmazione) }}
+	{{ form_end(form) }}
+
+	{%block  jquery_page_document_ready %}
+		{% set vars = {'procedura': 'assistenza_tecnica', 'form' : form }%}
+		{% include "BaseBundle:Base:assi_obiettivi_js.html.twig" with vars %}
+	{% endblock %}
+{% endblock %}

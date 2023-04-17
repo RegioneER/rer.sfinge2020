@@ -1,0 +1,7 @@
+{% extends '::base.html.twig' %}
+
+{% block intestazione %}
+	{{ parent() }}
+	{{ mostra_soggetto_rappresentato() }}
+	{{ mostra_soggetto_istruendo() }}
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <div class="table-toolbar">
+        <div>
+			<button class="btn btn-info" data-target="#ricerca-contesto-modal" data-toggle="modal">
+				<span class="fa fa-search"></span> Ricerca
+			</button>
+        </div>
+    </div>
+    <div class="count">
+        Numero elementi trovati: {{ risultato.getTotalItemCount }} - Filtro attivo: {{ filtro_attivo ? "Si" : "No" }}
+    </div>
+
+    {% if  risultato.getTotalItemCount > 0 %}
+
+    <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+        <thead>
+            <tr>
+                <th>Asse</th>
+                <th>Tipo</th>
+                <th>Numero procedura attivazione</th>
+                <th>Titolo</th>
+                <th>Data avvio procedura</th>
+                <th>Stato</th>
+                <th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for i in risultato %}
+            <tr>
+                <td>{{ i.asse }}</td>
+                <td>{{  i.getTipoProcedura()  }}</td>
+                <td>{{ i.atto is null ? '' : i.atto.numero }}</td>
+                <td>{{ i.titolo }}</td>
+                <td align="center">{{ i.mondataavvioprocedura is not null ? i.mondataavvioprocedura|date('d/m/Y') : '-' }}</td>
+                <td>{{ i.statoprocedura.descrizione }}</td>
+                <td>
+                    <div class="dropdown">
+                        <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            Azioni
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                            {% if app.user is not null and (is_granted('ROLE_MONITORAGGIO_SCRITTURA')) %}
+                                <li><a href="{{- path('dettaglio_procedure_attivazione', { procedura_id: i.id }) -}}">Gestisci</a></li>
+                                <li><a href="{{- path('voci_spesa_procedura', { id: i.id }) -}}">Voci spesa</a></li>
+                                <li><a 
+                                    href="{{- path('ricalcolo_finanziamento_procedura', { procedura_id: i.id, _token: csrfToken }) -}}"
+                                    data-confirm="Confermi il ricalcolo dei finanziamenti per la procedura?"
+                                >
+                                    Ricalcolo finanziamento
+                                </a></li>
+                            {% else %}
+                                <li><a href="{{- path('dettaglio_procedure_attivazione', { procedura_id: i.id }) -}}">Visualizza</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {% else %}
+        <h5>Nessuna procedura attivazione trovata</h5>
+    {% endif %}
+
+     {# display navigation #}
+    <div class="navigation">
+        {{ knp_pagination_render(risultato) }}
+    </div>
+		
+	{{ modale_ricerca("Tabelle di contesto",form_ricerca,"elenco_procedure_attivazione_pulisci","ricerca-contesto-modal") }}
+{% endblock %}

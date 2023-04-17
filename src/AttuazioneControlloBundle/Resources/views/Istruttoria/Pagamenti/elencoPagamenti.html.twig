@@ -1,0 +1,121 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <div class="table-toolbar">
+        <a href="#" data-target="#ricerca-istruttoria-modal" data-toggle="modal" class="btn btn-info"><span class="fa fa-search"></span> Ricerca</a>
+    </div>
+    <div class="count">
+        Numero elementi trovati: {{ risultati.getTotalItemCount }} - Filtro attivo: {{ filtro_attivo ? "Si" : "No" }}
+    </div>
+
+    <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+        <thead>
+        <tr>
+            <th>Asse e procedura</th>
+            <th>Soggetto</th>
+            <th style="width: 120px">Protocollo richiesta</th>
+            <th style="width: 120px">Protocollo pagamento</th>
+            <th>Data invio pag.</th>
+            <th>Contatore</th>
+            <th>Modalità pag.</th>
+            <th>Importo Pagato</th>
+            <th>Istruttore</th>
+            <th>Stato pagamento</th>
+            <th>Stato progetto</th>
+            <th>Certificazione</th>
+            <th>Azioni</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for pagamento in risultati %}
+            <tr>
+                <td>{{ pagamento.asse_procedura }} / {{pagamento.titolo_procedura }} {{ pagamento.descrizione == 'SAL' and pagamento.data_inizio_rendicontazione | date("d/m/Y") == '01/01/2017' ? ' - DGR1002/2017 ' : '' }} </td>
+                <td>{{ pagamento.soggetto|capitalize }}</td>
+                <td><a href="{{ path("riepilogo_richiesta_attuazione", {'id_richiesta':pagamento.id_richiesta}) }}">{{ pagamento.protocollo_richiesta }}</a></td>
+                <td>
+                    {{ pagamento.protocollo_pagamento }}
+                    {% if pagamento.data_protocollo_pag %}
+                        del {{ pagamento.data_protocollo_pag | date("d/m/Y") }}
+                    {% endif %}
+                </td>
+                <td>{{ pagamento.dataInvio | date("d/m/Y") }}</td>
+                <td {% if pagamento.contatore < 0  %} style="color: red" {% endif %}>
+                    {{ pagamento.contatore }}
+                </td>
+                <td>
+                    {{ pagamento.descrizione}}
+                    {{ pagamento.descrizione == 'SAL'          and pagamento.data_inizio_rendicontazione | date("d/m/Y") == '01/01/2017' ? ' Scorrimento' : '' }}
+                    {# pagamento.descrizione == 'Saldo finale' and pagamento.data_inizio_rendicontazione | date("d/m/Y") == '01/05/2016' ? ' Scorrimento' : '' #}
+                </td>
+                <td>{{ pagamento.importo_mandato is null ? "-" : "€ " ~ pagamento.importo_mandato|number_format(2, ',', '.') }}</td>
+                <td>{{ pagamento.assegnatario is null ? "-" : pagamento.assegnatario }}</td>
+                {% if pagamento.descrizione_esito == "In integrazione" or pagamento.descrizione_esito == "Non integrato" %}
+                    {% if pagamento.stato_pec_integrazione == "CONSEGNATA" %}
+                        <td> {{  pagamento.descrizione_esito }} <br>PEC: <span style="color: #4C9900;" class="glyphicon glyphicon-ok"></span></td>
+                    {% elseif pagamento.stato_pec_integrazione == "NON_CONSEGNATA" %}
+                        <td> {{  pagamento.descrizione_esito }} <br>PEC: <span style="color: #ff0000;" class="glyphicon glyphicon-remove"></span></td>
+                    {% else %}
+                        <td> {{  pagamento.descrizione_esito }} <br>PEC: <span style="color: #ff8000;" class="glyphicon glyphicon-send"></span></td>
+                    {% endif %}
+                {% else %}
+                    <td> {{  pagamento.descrizione_esito }} </td>
+                {% endif %}
+                <td>{{ pagamento.esito_progetto }}</td>
+                <td>{{ pagamento.certificazioni }}</td>
+                <td>
+                    <div class="dropdown">
+                        <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            Azioni
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                            <li><a href="{{ path("riepilogo_istruttoria_pagamento", {'id_pagamento':pagamento.id_pagamento}) }}">Gestisci</a></li>
+                            {% if pagamento.descrizione_esito != '-'  and is_granted("ROLE_CERTIFICATORE")%}
+                                <li><a href="{{ path("decertificazioni_pagamento", {'id_pagamento':pagamento.id_pagamento}) }}">Decertificazioni</a></li>
+                            {% endif %}
+                            {% if (is_granted("ROLE_ISTRUTTORE_SUPERVISORE_ATC") or is_granted("ROLE_SUPER_ADMIN")) and pagamento.esito_istruttoria is null %}
+                                <li><a href="{{ path("assegna_istruttoria_pagamento", {'id_pagamento':pagamento.id_pagamento}) }}">{{ pagamento.assegnatario is null ? "Assegna" : "Riassegna" }}</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+            
+    {# display navigation #}
+    <div class="navigation">
+        {{ knp_pagination_render(risultati) }}
+    </div>
+
+    <div id="ricerca-istruttoria-modal" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h3 id="ricerca-istruttoria-modal-titolo">Ricerca Pagamenti</h3>
+                </div>
+                <div class="modal-body">
+                    {{ form(formRicerca) }}
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Chiudi</button>
+                    <a class="btn btn-default" href="{{ path("elenco_istruttoria_pagamenti_pulisci") }}">Annulla Ricerca</a>
+                    <a class="btn btn-primary" href="#" id="ricercaOk">Ricerca</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{%block  jquery_page_document_ready %}
+<script>
+    jQuery(document).ready(function() {
+        $("#ricercaOk").click(function(e){
+            e.preventDefault();
+            $(this).parents(".modal-content").find("form").submit();
+        })
+    });
+</script>
+{% endblock %}

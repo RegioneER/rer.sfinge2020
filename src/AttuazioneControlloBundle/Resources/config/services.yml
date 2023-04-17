@@ -1,0 +1,276 @@
+imports:
+- { resource: "@AttuazioneControlloBundle/Resources/config/referenti.yml" }
+
+services:
+    
+  schema.twig.mostra_validazione_attuazione_extension:
+        class: AttuazioneControlloBundle\TwigExtension\MostraValidazioneAttuazioneTwigExtension
+        arguments: ['@service_container']
+        tags:
+          - { name: twig.extension }
+          
+  schema.twig.mostra_validazione_giustificativo_extension:
+        class: AttuazioneControlloBundle\TwigExtension\MostraValidazioneGiustificativoTwigExtension
+        arguments: ['@service_container']
+        tags:
+          - { name: twig.extension }
+          
+  schema.twig.mostra_validazione_variazione_extension:
+        class: AttuazioneControlloBundle\TwigExtension\MostraValidazioneVariazioneTwigExtension
+        arguments: ['@service_container']
+        tags:
+          - { name: twig.extension }
+  
+  schema.twig.mostra_validazione_istruttoria_extension:
+        class: AttuazioneControlloBundle\TwigExtension\MostraValidazioneIstruttoriaTwigExtension
+        arguments: ['@service_container']
+        tags:
+          - { name: twig.extension }
+  
+  schema.twig.voci_menu_pagamento:
+        class: AttuazioneControlloBundle\TwigExtension\VociMenuPagamentoTwigExtension
+        arguments: ['@service_container']
+        tags:
+          - { name: twig.extension }
+        
+  schema.twig.voci_menu_variazione:
+        class: AttuazioneControlloBundle\TwigExtension\VociMenuVariazioneTwigExtension
+        arguments: ['@service_container']
+        tags:
+          - { name: twig.extension }
+          
+  gestore_richieste_atc:
+    class: AttuazioneControlloBundle\Service\GestoreRichiesteATCService
+    arguments: ['@service_container']
+    
+  gestore_pagamenti:
+    class: AttuazioneControlloBundle\Service\GestorePagamentiService
+    arguments: ['@service_container']
+  
+  gestore_giustificativi:
+    class: AttuazioneControlloBundle\Service\GestoreGiustificativiService
+    arguments: ['@service_container']   
+    
+  gestore_quietanze:
+    class: AttuazioneControlloBundle\Service\GestoreQuietanzeService
+    arguments: ['@service_container']
+    
+  gestore_voci_piano_costo_giustificativo:
+    class: AttuazioneControlloBundle\Service\GestoreVociPianoCostoService  
+    arguments: ['@service_container']
+    
+  gestore_proroghe:
+    class: AttuazioneControlloBundle\Service\GestoreProrogheService
+    arguments: ['@service_container']    
+    
+  gestore_variazioni:
+    class: AttuazioneControlloBundle\Service\GestoreVariazioniService
+    arguments: ['@service_container']
+    
+  gestore_incremento_occupazionale:
+    class: AttuazioneControlloBundle\Service\GestoreIncrementoOccupazionaleService
+    arguments: ['@service_container']
+
+  gestore_incremento_occupazionale_istruttoria:
+    class: AttuazioneControlloBundle\Service\Istruttoria\GestoreIncrementoOccupazionaleService
+    arguments: ['@service_container']
+    
+  gestore_istruttoria_pagamenti:  
+    class: AttuazioneControlloBundle\Service\Istruttoria\GestorePagamentiService
+    arguments: ['@service_container']
+    
+  gestore_istruttoria_variazioni:  
+    class: AttuazioneControlloBundle\Service\Istruttoria\GestoreVariazioniService
+    arguments: ['@service_container']    
+    
+  gestore_controlli:
+    class: AttuazioneControlloBundle\Service\Controlli\GestoreControlliService
+    arguments: ['@service_container']
+ 
+  gestore_controlli_stabilita:
+    class: AttuazioneControlloBundle\Service\ControlliStabilita\GestoreControlliStabilitaService
+    arguments: ['@service_container']
+    
+  gestore_relazione_tecnica:
+    class: AttuazioneControlloBundle\Service\GestoreRelazioneTecnicaService
+    arguments: ['@service_container']
+    
+  gestore_relazione_tecnica_istruttoria:
+    class: AttuazioneControlloBundle\Service\Istruttoria\GestoreRelazioneTecnicaService
+    arguments: ['@service_container']
+    
+  gestore_giustificativi_istruttoria:
+    class: AttuazioneControlloBundle\Service\Istruttoria\GestoreGiustificativiService
+    arguments: ['@service_container']    
+    
+  gestore_integrazione_pagamento:
+    class: AttuazioneControlloBundle\Service\GestoreIntegrazionePagamentoService
+    arguments: ["@service_container"]
+
+  gestore_comunicazione_pagamento:
+    class: AttuazioneControlloBundle\Service\GestoreComunicazionePagamentoService
+    arguments: ["@service_container"]
+
+  gestore_esito_pagamento:
+    class: AttuazioneControlloBundle\Service\Istruttoria\GestoreEsitoPagamentoService
+    arguments: ["@service_container"]
+    
+  schema.twig.mostra_validazione_integrazione:
+    class: AttuazioneControlloBundle\TwigExtension\MostraValidazioneIntegrazioneTwigExtension
+    arguments: ['@service_container']
+    tags:
+       - { name: twig.extension }
+       
+  gestore_richieste_chiarimenti:
+    class: AttuazioneControlloBundle\Service\GestoreRichiesteChiarimentiService
+    arguments: ["@service_container"]      
+    
+  schema.twig.mostra_validazione_risposta_rich_chiarimenti:
+    class: AttuazioneControlloBundle\TwigExtension\MostraValidazioneRispostaRichChiarimentiTwigExtension
+    arguments: ['@service_container']
+    tags:
+       - { name: twig.extension } 
+       
+  creazione_giustificativi_da_dicui:
+    class: AttuazioneControlloBundle\Service\Job\CreazioneGiustificativiDaDiCui
+    arguments: ["@service_container"]   
+    
+  bonifica_giustificativi_bando_8:
+    class: AttuazioneControlloBundle\Service\Job\BonificaGiustificativiBando8
+    arguments: ["@service_container"]       
+    
+  gestore_proroghe.form.type.shipping:
+      class: AttuazioneControlloBundle\Form\DocumentazioneProrogaType
+      arguments:
+          - '@doctrine.orm.entity_manager'
+      tags:
+          - { name: form.type }
+  AttuazioneControlloBundle\Form\Istruttoria\ModificaSingolaVoceImputazioneGiustificativoType:
+        class: AttuazioneControlloBundle\Form\Istruttoria\ModificaSingolaVoceImputazioneGiustificativoType
+        arguments:
+          - '@gestore_piano_costo'
+          - '@doctrine.orm.entity_manager'
+        tags:
+          - { name: form.type }
+
+  bonifica_giustificativi_bando_32:
+    class: AttuazioneControlloBundle\Service\Job\BonificaGiustificativiBando32
+    arguments: ["@service_container"]  
+    
+  AttuazioneControllo.pagamento_voter:
+    class: AttuazioneControlloBundle\Security\PagamentoVoter
+    arguments: ['@security.access.decision_manager', '@doctrine']
+    tags:
+        - { name: security.voter }
+    public: false  
+    
+  AttuazioneControllo.giustificativo_voter:
+    class: AttuazioneControlloBundle\Security\GiustificativoVoter
+    arguments: ['@security.access.decision_manager', '@doctrine']
+    tags:
+        - { name: security.voter }
+    public: false  
+    
+  AttuazioneControllo.quietanza_voter:
+    class: AttuazioneControlloBundle\Security\QuietanzaVoter
+    arguments: ['@security.access.decision_manager', '@doctrine']
+    tags:
+        - { name: security.voter }
+    public: false  
+    
+  AttuazioneControllo.vocepianocostogiustificativo_voter:
+    class: AttuazioneControlloBundle\Security\VocePianoCostoGiustificativoVoter
+    arguments: ['@security.access.decision_manager', '@doctrine']
+    tags:
+        - { name: security.voter }
+    public: false
+        
+  AttuazioneControllo.contratto_voter:
+    class: AttuazioneControlloBundle\Security\ContrattoVoter
+    arguments: ['@security.access.decision_manager', '@doctrine']
+    tags:
+        - { name: security.voter }
+    public: false 
+    
+  AttuazioneControllo.integrazione_voter:
+    class: AttuazioneControlloBundle\Security\IntegrazionePagamentoVoter
+    arguments: ['@security.access.decision_manager', '@doctrine']
+    tags:
+        - { name: security.voter }
+    public: false 
+
+  bonifica_contratti_bando_774_32:
+    class: AttuazioneControlloBundle\Service\Job\BonificaContratti774_32
+    arguments: ["@service_container"]    
+    
+  bonifica_importo_ammesso_7_8_32:
+    class: AttuazioneControlloBundle\Service\Job\BonificaImportoAmmesso_7_8_32
+    arguments: ["@service_container"]     
+
+  AttuazioneControllo.richiestachiarimento_voter:
+    class: AttuazioneControlloBundle\Security\RichiestaChiarimentoVoter
+    arguments: ['@security.access.decision_manager', '@doctrine']
+    tags:
+        - { name: security.voter }
+    public: false 
+    
+  AttuazioneControllo.rispostarichiestachiarimento_voter:
+    class: AttuazioneControlloBundle\Security\RispostaRichiestaChiarimentoVoter
+    arguments: ['@security.access.decision_manager', '@doctrine']
+    tags:
+        - { name: security.voter }
+    public: false 
+    
+  AttuazioneControllo.comunicazioneprogetto_voter:
+    class: AttuazioneControlloBundle\Security\ComunicazioneAttuazioneVoter
+    arguments: ['@security.access.decision_manager', '@doctrine']
+    tags:
+      - { name: security.voter }
+    public: false 
+        
+  AttuazioneControllo.rispostacomunicazioneprogetto_voter:
+    class: AttuazioneControlloBundle\Security\RispostaComunicazioneAttuazioneVoter
+    arguments: ['@security.access.decision_manager', '@doctrine']
+    tags:
+      - { name: security.voter }
+    public: false 
+    
+  gestore_comunicazione_attuazione:
+    class: AttuazioneControlloBundle\Service\GestoreComunicazioneAttuazioneService
+    arguments: ["@service_container"]
+
+  AttuazioneControllo.variazionerichiesta_voter:
+    class: AttuazioneControlloBundle\Security\VariazioneRichiestaVoter
+    arguments: ['@security.access.decision_manager', '@doctrine']
+    tags:
+        - { name: security.voter }
+    public: false 
+
+  AttuazioneControllo.comunicazionePagamento_voter:
+    class: AttuazioneControlloBundle\Security\ComunicazionePagamentoVoter
+    arguments: ['@security.access.decision_manager', '@doctrine']
+    tags:
+        - { name: security.voter }
+    public: false  
+
+
+  AttuazioneControlloBundle\Form\VariazioneSingoloReferenteType:
+      class: AttuazioneControlloBundle\Form\VariazioneSingoloReferenteType
+      arguments: 
+        - '%opzioni_referente%'
+      tags:
+        - { name: form.type, alias: referente_completo_type }
+
+  AttuazioneControlloBundle\Form\Istruttoria\DocumentoRispostaIntegrazioneType:
+      class: AttuazioneControlloBundle\Form\Istruttoria\DocumentoRispostaIntegrazioneType
+      arguments:
+        - '@documenti'
+      tags:
+        - { name: form.type, alias: documento_risposta_integrazione_type }
+
+  AttuazioneControlloBundle\Form\Istruttoria\DocumentoRispostaChiarimentiType:
+      class: AttuazioneControlloBundle\Form\Istruttoria\DocumentoRispostaChiarimentiType
+      arguments:
+        - '@documenti'
+      tags:
+        - { name: form.type, alias: documento_risposta_integrazione_type }

@@ -1,0 +1,33 @@
+<ul class="nav nav-tabs">
+	<li role="presentation"{% if menu|default() == "riepilogo" %}class="active"{% endif %}><a href="{{path('riepilogo_istruttoria_pagamento', {'id_pagamento':pagamento.id})}}">Riepilogo</a></li>
+
+	{% if pagamento.isProceduraParticolare == false  %}
+		<li role="presentation"{% if menu|default() == "documenti" %}class="active"{% endif %}><a href="{{path('documenti_istruttoria_pagamenti', {'id_pagamento':pagamento.id})}}">Documenti</a></li>
+		{% endif %}
+
+	{% if pagamento.giustificativi | length > 0%}
+		<li role="presentation"{% if menu|default() == "giustificativi" %}class="active"{% endif %}><a href="{{path('elenco_giustificativi_istruttoria', {'id_pagamento':pagamento.id})}}">Giustificativi</a></li> 
+		{% endif %}
+
+	{% set richiesta = pagamento.attuazionecontrollorichiesta.richiesta %}
+	{% set proponenti_piano_costi = richiesta.proponentiPianoCosto %}
+	{% if proponenti_piano_costi | length > 0 and pagamento.modalitaPagamento.codice != 'ANTICIPO'%}
+		<li {% if menu|default() == "piano_costi" %}class="active"{% endif %}><a href="{{ path('avanzamento_piano_costi_istruttoria', {'id_richiesta':richiesta.id, 'id_proponente':'0', 'id_pagamento':pagamento.id, 'annualita' : '0'}) }}">Piano costi</a></li>
+	{% endif %}
+
+	
+	
+	{% if pagamento.modalitaPagamento.codice != 'ANTICIPO'%}
+		{% for valutazione in pagamento.valutazioniChecklist %}
+			{% set corrente = valutazione_checklist is defined and valutazione_checklist.id == valutazione.id %}
+			<li role="presentation" {% if corrente %}class="active"{% endif %}><a href="{{ path("valuta_checklist_istruttoria_pagamenti", {'id_valutazione_checklist': valutazione.id}) }}">{{ valutazione }}</a></li>
+		{% endfor %}
+
+		<li role="presentation"{% if menu|default() == "esito" %}class="active"{% endif %}><a href="{{path('esito_finale_istruttoria_pagamenti', {'id_pagamento':pagamento.id})}}">Comunicazioni</a></li>
+
+	{% endif %}
+	
+	{% if pagamento.esitoIstruttoria %}
+		<li role="presentation"{% if menu|default() == "mandato" %}class="active"{% endif %}><a href="{{path('mandato_pagamento', {'id_pagamento':pagamento.id})}}">Mandato</a></li>
+	{% endif %}
+</ul>

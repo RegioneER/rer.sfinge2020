@@ -1,0 +1,32 @@
+<li class="">
+    <a href="javascript:;">
+        <span class="fa fa-users"></span>
+        <span class="title">Admin sistema</span>
+        <span class="arrow "></span>
+    </a>
+    <ul class="sub-menu">
+        {% if is_granted('ROLE_SUPER_ADMIN') %}
+            <li id="attivaManutenzione">
+                <a href="{{path("attiva_manutenzione")}}">Attiva manutenzione</a>
+            </li>
+            <li id="disattivaManutenzione">
+                <a href="{{path("disattiva_manutenzione")}}">Disattiva manutenzione</a>
+            </li>
+            <li id="importa-comuni">
+                <a href="{{- path('importa_comuni') -}}">Importa comuni</a>
+            </li>
+            <li id="elencoModalitaPagamentoProcedura">
+                <a href="{{- path('elenco_modalita_pagamento_procedura') -}}">Modalit&agrave; di pagamento</a>
+            </li>
+             <li id="estrazioneSoggetti">
+                <a href="{{- path('estrazione_universo_soggetti') -}}">Estrazione universo soggetti</a>
+            </li>
+             <li id="estrazionePagamenti">
+                <a href="{{- path('esporta_pagamenti_globali') -}}">Estrazione pagamenti</a>
+            </li>
+            <li id="utilities">
+                <a href="{{path("utilities")}}">Utilities</a>
+            </li>
+        {% endif %}
+    </ul>
+</li>

@@ -1,0 +1,20 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+
+	{% if istruttoria is defined %}
+		{% include 'AttuazioneControlloBundle:RelazioneTecnica:Istruttoria/menu.html.twig' with {'pagamento' : pagamento } %}
+	{% else %}
+		{% include 'AttuazioneControlloBundle:RelazioneTecnica:menu.html.twig' with {'pagamento' : pagamento } %}
+	{% endif %}		
+
+	<div class="alert alert-info" style="margin-top: 20px">
+		Riportare in questa sezione eventuali altri contenuti tecnici non descritti nelle sezioni precedenti, incluse eventuali criticità di carattere tecnico-scientifico, gestionale o finanziario, incontrate durante la realizzazione dell’attività 
+	</div>
+	<h4>Altre informazioni</h4>	
+	<div>
+        {{ form_start(form) }}
+        {{ form_end(form) }}
+    </div>
+
+{% endblock %}

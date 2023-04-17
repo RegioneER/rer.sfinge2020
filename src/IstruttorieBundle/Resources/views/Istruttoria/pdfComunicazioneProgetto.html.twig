@@ -1,0 +1,45 @@
+{% extends ':pdf:base.pdf.html.twig' %}
+
+{% block content %}
+    {% set asse_codice = null %}
+    {% if comunicazione.TipoOggetto == 'RICHIESTA' %}
+        {% set asse_codice = comunicazione.richiesta.procedura.asse.codice %}
+        {% set titolo_procedura = comunicazione.richiesta.procedura.titolo %}
+    {% elseif comunicazione.TipoOggetto == 'VARIAZIONE' %}
+        {% set asse_codice = comunicazione.variazione.richiesta.procedura.asse.codice %}
+        {% set titolo_procedura = comunicazione.variazione.richiesta.procedura.titolo %}
+    {% endif %}
+
+    {% block dati_intestazione %}
+        <div class="center">
+            {# Per i bandi non FESR mostro l'intestazione diversa ed il titolo del bando #}
+            {% if comunicazione.richiesta.procedura.isNuovaProgrammazione %}
+                <img src="assets/img/regione/Loghi_CoesioneITA_UE_REP_ER_21_27.jpg" alt="Loghi regione" height="45px">
+            {% elseif asse_codice == 'A0' %}
+                <img src="assets/img/regione/logo_ue-regione-emilia-romagna.jpg" alt="Loghi regione" height="60px">
+                <h2 align="center">{{ titolo_procedura }}</h2>
+            {% elseif is_fsc == true %}
+                <img src="assets/img/regione/logo_fsc.jpg" alt="Loghi regione" height="80px">
+                <h2 align="center">{{ titolo_procedura }}</h2>
+            {% else%}
+                <img src="assets/img/regione/logo_ue-por_fesr_2020.jpg" alt="Loghi regione" height="60px">
+                <h2 align="center">POR-FESR EMILIA ROMAGNA 2014-2020</h2>
+            {% endif %}
+        </div>
+    {% endblock dati_intestazione %}
+
+    <h3 align="center">Comunicazione progetto</h3>
+    <div>
+        {% if comunicazione.TipoOggetto == 'RICHIESTA' %}
+            Comunicazione relativa alla richiesta di finanziamento ricevuta con protocollo n° {{ comunicazione.richiesta.protocollo }}. <br>
+        {% endif %}
+        {% if comunicazione.TipoOggetto == 'VARIAZIONE' %}
+            Comunicazione relativa alla richiesta di finanziamento ricevuta con protocollo n° {{ comunicazione.variazione.richiesta.protocollo }}
+            ed alla relativa richiesta di variazione di progetto con protocollo n° {{comunicazione.variazione.protocollo}}.<br>
+        {% endif %}
+    </div>
+    <br/>
+    {% for documento in documenti%}
+        <p>{{ documento.descrizione|raw }}</p>
+    {% endfor %}
+{% endblock %}

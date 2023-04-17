@@ -1,0 +1,105 @@
+{% extends '::base.html.twig' %}
+
+{% macro sino(value) %}
+   <td  
+   {% if value == 1 %}
+   {% else %}
+        style="background-color: tomato"
+    {% endif %}    
+    > 
+        {{ value ? 'Si' : 'No' }}
+    </td>
+{% endmacro %}
+
+{% import _self as macro %}
+
+{% block body %}
+<div class="table-toolbar" style="overflow:auto;">
+        <button class="btn btn-info pull-left" data-target="#ricerca-contesto-modal" data-toggle="modal">
+                <i class="fas fa-search"></i> Ricerca
+        </button>
+        <form method="POST" action="{{- path('monitoraggio_avvia_creazione_report_validazione_igrue') -}}"name="scarica-excel" >
+            <button class="btn btn-info pull-right" type="submit"/>
+                <i class="fas fa-download"></i> Scarica Excel
+            </button>
+        </form>
+</div>
+    <div class="count">
+        Numero elementi trovati: {{ risultato.getTotalItemCount }} - Filtro attivo: {{ filtro_attivo ? "Si" : "No" }}
+    </div>
+
+    <table id="risultato" class="table table-striped table-hover table-bordered">
+        <thead>
+            <tr>
+                <th>Codice locale progetto</th>
+                {% for codice, valore in elenco_controlli %}
+                    <th>{{ codice }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for riga in risultato.items %}
+                <tr>
+                    <td>{{ riga.richiesta.protocollo }}</td>
+                    {% for codice, valore in elenco_controlli %}
+                        {{ macro.sino(attribute(riga.controlli, 'c' ~ codice)) }}
+                    {% endfor %}                   
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="navigation">
+        {{ knp_pagination_render(risultato) }}
+    </div>
+    {{ modale_ricerca("Progetti",form_ricerca,"monitoraggio_elenco_validazione_progetti_pulisci","ricerca-contesto-modal") }}
+
+
+    {# Modal per conferma download excel #}
+    <div class="modal fade" tabindex="-1" role="dialog" id="conferma-download">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Download excel</h3>
+            </div>
+            <div class="modal-body">
+                <p>Il report sarà inviato via email non appena terminata l&apos;elaborazione</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Annulla</button>
+                <button type="button" class="btn btn-primary" id="ok">Ok</button>
+            </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+{% endblock body %}
+
+{% block  jquery_page_document_ready %}
+<script>
+'use strict';
+function evidenziaCella(){
+    var cella = $(this);
+    if(cella.val().trim() == 'Si' ){
+        cella.css('background-color: Chartreuse')
+    } else{
+        cella.css('background-color: tomato')
+    }
+}
+$(document).ready(function(){
+    $('table#risultato > tbody > tr > td:not(first)').each(evidenziaCella);
+});
+</script>
+
+<script>
+'use strict';
+$(document).ready(function () {
+    $('form[name="scarica-excel"] button').click(function (e) {
+        e.preventDefault();
+        $("#conferma-download").modal("show");
+    });
+    $("#ok").click(function (e) {
+        e.preventDefault();
+        $('form[name="scarica-excel"]').submit();
+    });
+});
+</script>
+{% endblock %}	

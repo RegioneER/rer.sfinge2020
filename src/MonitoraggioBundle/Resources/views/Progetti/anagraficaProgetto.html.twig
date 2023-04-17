@@ -1,0 +1,242 @@
+{% extends '::base.html.twig' %}
+
+
+{% block body %}
+
+    {% include 'MonitoraggioBundle:Progetti:menu.html.twig' with {'page_view' : page_view }%}
+
+    {% set prototypeStrumenti = form.mon_strumenti_attuativi.vars.prototype %}
+    {% set childrensStrumenti = prototypeStrumenti.children %}
+    {% form_theme form.mon_strumenti_attuativi _self %}
+
+    <h5>
+        Codice locale progetto: {{richiesta.protocollo}}
+    </h5>
+<ul id="contenitore_tab" class="nav nav-tabs">
+        <li role="presentation" class="active"><a data-nome="anagrafica" href="#" onclick="visualizza(this);">Anagrafica</a></li>
+        <li role="presentation"><a data-nome="localizzazione" href="#" onclick="visualizza(this);">Localizzazione</a></li>
+        <li role="presentation"><a data-nome="programmi" href="#" onclick="visualizza(this);">Programmi</a></li>
+        <li role="presentation"><a data-nome="strumenti-attuativi" href="#" onclick="visualizza(this);">Strumenti attuativi</a></li>
+    </ul>
+
+
+    <article>
+        <h4>Anagrafica del progetto</h4>
+        {{ form_start(form) }}
+        {{ form_errors(form) }}
+        <section id="anagrafica">       
+            {{ form_row(form.asse) }}
+            {{ form_row(form.numero_atto) }}
+            {{ form_row(form.codice_procedura_attivazione) }}
+            {{ form_row(form.protocollo) }}
+            {{ form_row(form.titolo) }}
+            {{ form_row(form.sintesi) }}
+            {{ form_row(form.tipo_operazione_cup) }}
+            {{ form_row(form.cup) }}
+            {{ form_row(form.tipo_aiuto) }}
+            {{ form_row(form.data_inizio) }}
+            {{ form_row(form.data_fine_prevista) }}
+            {{ form_row(form.data_fine_effettiva) }}
+            {{ form_row(form.tipo_procedura_att_orig) }}
+            {{ form_row(form.mon_prg_pubblico) }}
+        </section>
+        <hr/>
+        <section id="localizzazione">
+            <h4>Localizzazione del progetto</h4>
+            {% if richiesta.monlocalizzazionegeografica|length > 0 %}
+                <table class="table table-striped table-hover table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Localizzazione</th>
+                            <th>Azioni</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for l in richiesta.monlocalizzazionegeografica %}
+                        <tr>
+                            <td>{{ l.localizzazione }} - {{ l.indirizzo }}</td>
+                            <td><div class="dropdown">
+                                <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    Azioni
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                    <li>
+                                        <a href="{{- path('monitoraggio_modifica_localizzazione_geografica', { 'id_localizzazione': l.id}) -}}">
+                                            Modifica
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="danger" href="{{- path('monitoraggio_elimina_localizzazione_geografica', { 'id_localizzazione': l.id}) -}}">
+                                            Elimina
+                                        </a>
+                                    </li>
+                                </ul></div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+            <a href="{{- path('monitoraggio_crea_localizzazione_geografica',{richiesta_id: richiesta.id}) -}}"
+                class="btn btn-primary">
+                <i class="fa fa-plus"></i>&nbsp;Aggiungi
+            </a>
+        </section>
+        <hr/>
+        <section id="programmi">
+            <h4>Gestione programmi</h4>
+
+            {% if richiesta.monprogrammi|length >0 %}
+
+            <table  class="table table-striped table-hover table-bordered" id="lista-elementi-programmi" >
+                <thead>
+                    <tr>
+                        <th>Programma</th>
+                        <th>Azioni</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    {% for programma in richiesta.monprogrammi %}
+                        <tr>
+                            <td>{{ programma.tc4programma }}</td>
+                            {% if app.user is not null and (is_granted('ROLE_MONITORAGGIO_SCRITTURA')) %}
+                                <td>
+                                    <a href="{{- path('dettaglio_programma',{programma_richiesta_id: programma.id }) -}}" class="btn btn-info">Gestisci</a>
+                                </td>
+                            {% else %}
+                                <td>
+                                    <a href="{{- path('dettaglio_programma',{programma_richiesta_id: programma.id }) -}}" class="btn btn-info">Visualizza</a>
+                                </td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            {% endif %}
+
+        </section>
+        <hr/>
+        <section id="strumenti-attuativi">
+            <h4>Gestione strumenti attuativi</h4>
+
+            {% if form.mon_strumenti_attuativi|length >0 %}
+                {% set visualizzazioneTabella = 'visibility:visible' %}
+            {% else%}
+                {% set visualizzazioneTabella = 'visibility:hidden' %}
+                <h5>Nessun elemento trovato</h5></br>
+            {% endif %}
+
+            <table style="{{ visualizzazioneTabella }}" data-prototype="{{ form_row(prototypeStrumenti)|e }}" class="table table-striped table-hover table-bordered" id="lista-elementi-strumenti" data-elements={{ form.mon_strumenti_attuativi|length }}>
+                <thead>
+                    <tr>
+                        <th>{{- childrensStrumenti.tc15_strumento_attuativo.vars.label -}}</th>
+                        {% if app.user is not null and (is_granted('ROLE_MONITORAGGIO_SCRITTURA')) %}
+                            <th>Azioni</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for strumento in form.mon_strumenti_attuativi %}
+                        <tr>
+                            {{- form_row(strumento.tc15_strumento_attuativo) -}}
+                            {% if app.user is not null and (is_granted('ROLE_MONITORAGGIO_SCRITTURA')) %}
+                            <td>
+                                <a class="btn btn-info dropdown-toggle red" data-confirm="Sei sicuro?"
+                                   onclick="eliminaElemento(this);" >
+                                    Cancella&nbsp;<i class="fa fa-trash"></i>
+                                </a>
+                            </td>
+                            {% endif %}
+                        </tr>
+                    {%  endfor %}
+                </tbody>
+            </table>
+
+            {% if app.user is not null and (is_granted('ROLE_MONITORAGGIO_SCRITTURA')) %}
+                <div>
+                    <a onclick="aggiungiElemento(this);" class="btn btn-page-action btn-primary">Aggiungi</a>
+                </div>
+            {% endif %}
+        </section>
+        <hr/>
+        <section>
+            {{ form_rest(form) }}
+        </section>
+
+        {{ form_end(form) }}
+    </article>
+{% endblock %}
+
+
+{% block form_row -%}
+
+    {{- not form.vars.compound ? '<td>' : '' -}}
+    {{- form_widget(form) -}}
+    {{- form_errors(form) -}}
+    {{- not form.vars.compound ? '</td>' : '' -}}
+
+    {%- endblock form_row %}
+
+    {% block form_widget_compound %}
+        {% if form.vars.prototype is not defined %}
+            <tr id="{{- block('widget_container_attributes') -}}">
+                {{- block('form_rows') -}}
+                {% if app.user is not null and (is_granted('ROLE_MONITORAGGIO_SCRITTURA')) %}
+                    <td>
+                        <a class="btn btn-info dropdown-toggle red " onclick="eliminaElemento(this)">
+                            Cancella&nbsp;<i class="fa fa-trash"></i>
+                        </a>
+                    </td>
+                {% endif %}
+            </tr>
+        {% endif %}
+    {% endblock %}
+
+    {% block jquery_page_document_ready %}
+    <script type="text/javascript" src="{{ asset('assets/scripts/backToTop.js') }}"></script>
+        <script type="text/javascript">
+            'use strict';
+            function aggiungiElemento(target) {
+                var tabella = $(target).parent().prev('table');
+                $(tabella).css("visibility", "visible");
+                var numeroElementi = tabella.data('elements');
+                var nuovoElemento =
+                        $(tabella)
+                        .attr('data-prototype')
+                        .replace(/__name__/g, numeroElementi++);
+                tabella.data('elements', numeroElementi);
+
+                tabella.find('tbody')
+                        .append(nuovoElemento);
+
+                $(tabella)
+                        .find('tbody > tr:last-of-type')
+                        .find('.input-date, .datepicker, .date-picker > input')
+                        .datetimepicker({
+                            pickTime: false,
+                            language: 'it',
+                            direction: 'down'
+                        });
+                App.initAjax();
+
+            }
+
+            function eliminaElemento(e) {
+                $(e).parent().parent().remove().trigger('change');
+            }
+
+            function visualizza(tab_selezionato) {
+                var tab = $(tab_selezionato);
+                var selezionato = tab.data('nome');
+                $('#contenitore_tab').children().removeClass("active");
+                tab.parent().addClass("active");
+                $('html, body').animate({
+                    scrollTop: $('#' + selezionato).offset().top - 100
+                }, 1000);
+            }
+           
+        </script>
+    {% endblock %}

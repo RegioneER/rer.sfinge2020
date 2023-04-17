@@ -1,0 +1,19 @@
+{% macro valoreCampi(frammento, alias) %}
+    {% if frammento is not null %}
+        {% for istanzaCampo in frammento.istanzeCampiByAlias(alias) %}
+            {% set codiceTipoCampo = istanzaCampo.campo.tipoCampo.codice %}
+            {% if codiceTipoCampo == 'checkbox' %}
+                {{ istanzaCampo.valoreRaw ? '&check;' : '' }}
+            {% elseif codiceTipoCampo == 'textadvanced' %}
+                {{ istanzaCampo.valoreRaw|raw }}
+            {% elseif codiceTipoCampo == 'numero' %}
+                {{ istanzaCampo.valore|number_format(istanzaCampo.campo.precisione,',', '.') }}
+            {% else %}
+                {{ istanzaCampo.valoreRaw }}
+            {% endif %}
+
+            {# Simbolo separatore #}
+            {{ not loop.first and not loop.last ? ' / ': '' }}
+        {% endfor %}
+    {% endif %}
+{% endmacro valoreCampi %}

@@ -1,0 +1,83 @@
+{% extends '::base.html.twig' %}
+
+{% form_theme form ':Form:form_inline_fields.html.twig' %}
+
+
+{% block intestazione %}
+    {{ parent() }}
+    {{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% block body %}
+
+    <p class="lead">Cercare una persona già presente a sistema o inserirne una nuova</p>
+	<h4>Ricerca Persona</h4>
+    <div>
+        {{ form_start(form) }}
+
+        {{ form_row(form.nome) }}
+        {{ form_row(form.cognome) }}
+        {{ form_row(form.email_principale) }}
+        {{ form_row(form.submit) }}
+
+        {{ form_end(form) }}
+    </div>
+    <h4>Persone trovate</h4>
+	{% if aggiungi_referente %}
+		<a 
+			class="btn btn-primary btn-sm" 
+			href="{{- path("procedura_pa_sezione", {
+				id_richiesta: richiesta.id,
+				nome_sezione:'proponente',
+				parametro1: proponente.id,
+				parametro2:'referente',
+				parametro3:'inserisci_persona',
+			}) -}}" 
+			role="button"
+			style="margin-bottom:2em;">
+				Aggiungi persona <span class="fa fa-plus"></span>
+		</a>
+	{% endif %}
+	
+    <table class="table table-striped table-hover table-bordered">
+        <thead>
+			<tr>
+				<th>Id</th>
+				<th>Nome</th>
+				<th>Cognome</th>
+				<th>Codice fiscale</th>
+				<th>Azioni</th>
+			</tr>
+        </thead>
+        <tbody>
+			{% for persona in persone %}
+				<tr>
+					<td>{{ persona.id }}</td>
+					<td>{{ persona.nome }}</td>
+					<td>{{ persona.cognome }}</td>
+					<td>{{ persona.codicefiscale }}</td>
+					<td>
+						<a class="btn btn-info btn-sm" href="{{- path("procedura_pa_sezione", {
+							id_richiesta: richiesta.id,
+							nome_sezione:'proponente',
+							parametro1: proponente.id,
+							parametro2:'referente',
+							parametro3:'inserisci',
+							parametro4:persona.id
+							}) -}}" role="button">
+									Seleziona <span class="fa fa-arrow-right"></span>
+								</a>
+					</td>
+				</tr>
+			{% endfor %}
+        </tbody>
+    </table>
+    <div class="navigation">
+        {{ knp_pagination_render(persone) }}
+    </div>
+
+    <div class="page-actions">
+		{{ pulsante_indietro(url_indietro) }}
+    </div>
+
+{% endblock %}

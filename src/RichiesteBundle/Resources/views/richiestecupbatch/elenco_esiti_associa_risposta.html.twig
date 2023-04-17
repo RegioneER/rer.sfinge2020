@@ -1,0 +1,43 @@
+{% block elenco_esiti %}
+	
+	{#
+	$esito = array(
+									"id_progetto"		=> $id_progetto,
+									"codifica_locale"	=> $codifica_locale,
+									"codice_cup"			=> $codice_cup,
+									"messaggi_scarto"	=> $messaggi_scarto (nullo che codice_cup è valorizzato)
+									"risultato"			=> risultato elaborazione
+									);
+	#}
+	
+	<a class="btn btn-primary" role="button" data-toggle="collapse" href="#collapseTracciatoCup" aria-expanded="false" aria-controls="collapseExample">
+	Dettaglio Tracciato Esiti CUP
+	</a>
+	<div class="collapse" id="collapseTracciatoCup">
+	<h2>Dettaglio Tracciato Esiti CUP</h2>
+	<table class="table table-striped table-hover table-bordered" id="notizie-elenco">        
+		<thead>
+            <tr>
+                <th>id progetto</th>
+                <th>codifica locale</th>
+                <th>codice cup</th>
+                <th>corrispondenza</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for esito in esiti %}
+			{% if esito.corrispondenza == 1 %} {% set esito_corrispondenza = "Si" %} {% set classe_esito="" %} {% else %}{% set esito_corrispondenza = "No" %} {% set classe_esito="danger" %} {% endif %}
+
+            <tr class="{{classe_esito}}">
+                <td>{{ esito.id_progetto }}</a></td>
+               <td>{{ esito.codifica_locale }}</a></td>
+                <td>{{ esito.codice_cup }}</a></td>
+				<td>{{esito_corrispondenza}}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+	</div>
+	
+    
+{% endblock %}

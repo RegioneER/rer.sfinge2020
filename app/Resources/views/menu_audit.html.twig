@@ -1,0 +1,19 @@
+{% if (is_granted('ROLE_SUPER_ADMIN')) or (is_granted('ROLE_AUDIT')) or (is_granted('ROLE_AUDIT_LETTURA')) %}
+<li class="">
+    <a href="javascript:;">
+        <span class="fa fa-users"></span>
+        <span class="title">Audit</span>
+        <span class="arrow "></span>
+    </a>
+    <ul class="sub-menu">
+        <li id="audit">
+            {% if (is_granted('ROLE_AUDIT_LETTURA')) %}
+                <a href="{{ path("elenco_audit_attuazione", {'id_tipo' : 2}) }}">Audit Operazioni</a>
+            {% else %}
+                <a href="{{ path("organismi_requisiti") }}">Audit</a>
+				<a href="{{ path("elenco_atti_amministrativi_audit") }}">Estrazioni</a>
+            {% endif %}
+        </li>
+    </ul>
+</li>
+{% endif %}

@@ -1,0 +1,15 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+
+<div class="form-body">
+	{% if form is not null %}
+		<div class="form-body">
+			<h4>Carica documento</h4>
+				{{ form(form) }}
+	    </div>
+	{% else %}			
+		<div>Non è possibile caricare altri manuali.</div>
+	{% endif %}			
+</div>
+
+{% endblock %} 

@@ -1,0 +1,32 @@
+<ul class="nav nav-tabs">
+	<li role="presentation"{% if menu|default() == "autore" %}class="active"{% endif %}><a href="{{path('elenco_referenti_relazione_istruttoria', {'id_pagamento':pagamento.id})}}">Referente</a></li>
+	<li role="presentation"{% if menu|default() == "obiettivi" %}class="active"{% endif %}><a href="{{path('elenco_obiettivi_realizzativi_istruttoria', {'id_pagamento':pagamento.id})}}">Obiettivi realizzativi</a></li>  
+	<li role="presentation"{% if menu|default() == "personale" %}class="active"{% endif %}>
+		<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+			Personale<span class="caret"></span>
+		</a>
+		<ul class="dropdown-menu">
+			<li><a href="{{path('elenco_personale_voce1_istruttoria', {'id_pagamento':pagamento.id})}}">Ricercatori (voce di spesa 1)</a></li>
+			<li><a href="{{path('elenco_personale_voce2_istruttoria', {'id_pagamento':pagamento.id})}}">Personale (voce di spesa 2)</a></li>
+			<li><a href="{{path('elenco_personale_voce3_istruttoria', {'id_pagamento':pagamento.id})}}">Personale (voce di spesa 3)</a></li>
+		</ul>
+	</li>
+	<li role="presentation"{% if menu|default() == "collaborazioni_esterne" %}class="active"{% endif %}>
+		<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+			Collaborazioni esterne<span class="caret"></span>
+		</a>
+		<ul class="dropdown-menu">
+			<li><a href="{{path('elenco_collaborazioni_laboratori_istruttoria', {'id_pagamento':pagamento.id})}}">Collaborazioni laboratori</a></li>
+			<li><a href="{{path('elenco_collaborazioni_consulenze_istruttoria', {'id_pagamento':pagamento.id})}}">Consulenze specialistiche</a></li>
+		</ul>
+	</li>
+	<li role="presentation"{% if menu|default() == "elenco_attrezzature" %}class="active"{% endif %}><a href="{{path('elenco_attrezzature_istruttoria', {'id_pagamento':pagamento.id})}}">Attrezzature e strumentazioni</a></li>
+	<li role="presentation"{% if menu|default() == "elenco_prototipi" %}class="active"{% endif %}><a href="{{path('elenco_prototipi_istruttoria', {'id_pagamento':pagamento.id})}}">Prototipi, dimostratori, impianti pilota</a></li>
+	<li role="presentation"{% if menu|default() == "brevetti" %}class="active"{% endif %}><a href="{{path('elenco_brevetti_istruttoria', {'id_pagamento':pagamento.id})}}">Brevetti</a></li>
+	<li role="presentation"{% if menu|default() == "altre_informazioni" %}class="active"{% endif %}><a href="{{path('altre_informazioni_istruttoria', {'id_pagamento':pagamento.id})}}">Altre informazioni</a></li>
+	{% if is_granted('ROLE_ISTRUTTORE_ATC') or is_granted('ROLE_PAGAMENTI_READONLY') %}
+		<li role="presentation"{% if menu|default() == "esito_istruttoria" %}class="active"{% endif %}><a href="{{path('esito_istruttoria_rel_tecnica', {'id_pagamento':pagamento.id})}}">Esito istruttoria</a></li>
+	{% endif %}
+	
+</ul>
+

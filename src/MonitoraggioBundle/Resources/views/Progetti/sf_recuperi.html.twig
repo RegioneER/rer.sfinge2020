@@ -1,0 +1,104 @@
+<h4>
+    Recuperi
+</h4>
+
+{% if rettifiche|length > 0 %}
+
+<table class="table table-striped table-hover table-bordered">
+    <thead>
+        <tr>
+            <th>Codice recupero</th>
+            <th>Tipologia</th>
+            <th>Data recupero</th>
+            <th>Importo recupero</th>
+            <th>Data recupero</th>
+            <th>Importo recupero</th>
+            <th>Livello gerarchico</th>
+            <th>Note</th>
+            <th>Azioni</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for recupero in rettifiche %}
+                {% for recuperoammesso in recupero.pagamentiammessi %}
+                    <tr>
+                        <td>{{ recupero.id }}</td>
+                        <td>{{ recupero.tipologiapagamento }}</td>
+                        <td>{{ recupero.datapagamento|date('d/m/Y') }}</td>
+                        <td>{{ recupero.importo|number_format(2, ',', '.') }}</td>
+                        <td>{{ recuperoammesso.datapagamento|date('d/m/Y') }}</td>
+                        <td>{{ recuperoammesso.importo|number_format(2, ',', '.') }}</td>
+                        <td>{{ recuperoammesso.livellogerarchico }}</td>
+                        <td>{{ recuperoammesso.note }}</td>
+                        <td>
+                            <div class="dropdown">
+                                <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    Azioni
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                    {% if app.user is not null and (is_granted('ROLE_MONITORAGGIO_SCRITTURA')) %}
+                                        <li>
+                                            <a href="{{- path('monitoraggio_modifica_pagamento_ammesso', { 'pagamento_ammesso_id': recuperoammesso.id}) -}}">
+                                                Modifica recupero ammesso
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="{{- path('monitoraggio_aggiungi_pagamento_ammesso', { 'pagamento_id': recupero.id }) -}}">
+                                                Aggiungi recupero ammesso
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a data-confirm="Sei sicuro di voler eliminare il recupero ammesso?" href="{{- path('monitoraggio_elimina_pagamento_ammesso', { 'pagamento_ammesso_id': recuperoammesso.id, 'csrfToken' : csrfToken }) -}}">
+                                                Elimina recupero ammesso
+                                            </a>
+                                        </li>
+                                    {% else %}
+                                        <li>
+                                            <a href="{{- path('monitoraggio_modifica_pagamento_ammesso', { 'pagamento_ammesso_id': recuperoammesso.id}) -}}">
+                                                Visualizza recupero ammesso
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>                    
+                {% else %}
+                    <tr>
+                        <td>{{ recupero.id }}</td>
+                        <td>{{ recupero.tipologiapagamento }}</td>
+                        <td>{{ recupero.datapagamento|date('d/m/Y') }}</td>
+                        <td>{{ recupero.importo|number_format(2, ',', '.') }}</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>
+                            <div class="dropdown">
+                                <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    Azioni
+                                    <span class="caret"></span>
+                                </button>
+
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                    {% if app.user is not null and (is_granted('ROLE_MONITORAGGIO_SCRITTURA')) %}
+                                        <li>
+                                            <a href="{{- path('monitoraggio_aggiungi_pagamento_ammesso', { 'pagamento_id': recupero.id }) -}}">
+                                                Aggiungi recupero ammesso
+                                            </a>
+                                        </li>
+                                    {% endif %}
+
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>   
+                {% endfor %}˙
+        {% endfor %}
+    </tbody>
+</table>
+
+{% else %}
+    <h5>Nessun elemento trovato</h5></br>
+{% endif %}

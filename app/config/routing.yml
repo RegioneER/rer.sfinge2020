@@ -1,0 +1,114 @@
+performer_pay_er:
+    resource: "@PerformerPayERBundle/Resources/config/routing.yml"
+    prefix:   /payer
+
+funzioni_servizio:
+    resource: "@FunzioniServizioBundle/Controller/"
+    type:     annotation
+    prefix:   /funzioni_servizio
+
+richieste_richiesta_cup_batch:
+    resource: "@RichiesteBundle/Controller/RichiestaCupBatchController.php"
+    type:     annotation
+
+protocollazione:
+    resource: "@ProtocollazioneBundle/Resources/config/routing.yml"
+    prefix:   /
+
+cipe_super_admin:
+    resource: "@CipeBundle/Controller/CipeAdminController.php"
+    type:     annotation
+    prefix:   /superadmin/cipe
+
+cipe_utentipa:
+    resource: "@CipeBundle/Controller/CipeUserController.php"
+    type:     annotation
+    prefix:   /utentipa/cipe
+
+richieste:
+    resource: "@RichiesteBundle/Controller/"
+    type:     annotation
+    prefix:   /richieste
+
+messaggi:
+    resource: "@MessaggiBundle/Controller/"
+    type:     annotation
+    prefix:   /messaggi
+
+user:
+    resource: "@UtenteBundle/Controller/"
+    type:     annotation
+    prefix:   /utenti
+    
+fascicolo:
+    resource: "@FascicoloBundle/Controller/"
+    type:     annotation
+    prefix:   /fascicolo
+    
+soggetti:
+    resource: "@SoggettoBundle/Resources/config/routing.yml"
+    prefix:   /
+    
+geo:
+    resource: "@GeoBundle/Controller/"
+    type:     annotation
+    prefix:   /geo
+
+anagrafiche:
+    resource: "@AnagraficheBundle/Resources/config/routing.yml"
+    prefix:   /anagrafica
+
+notizie:
+    resource: "@NotizieBundle/Controller/"
+    type:     annotation
+    prefix:   /notizie
+
+documenti:
+    resource: "@DocumentoBundle/Resources/config/routing.yml"
+    prefix:   /documenti
+
+fos_user:
+    resource: "@FOSUserBundle/Resources/config/routing/all.xml"
+
+sfinge:
+    resource: "@SfingeBundle/Resources/config/routing.yml"
+    prefix:   /
+
+segnalazioni:
+    resource: "@SegnalazioniBundle/Controller/"
+    type:     annotation
+    prefix:   /segnalazioni
+
+istruttorie:
+    resource: "@IstruttorieBundle/Resources/config/routing.yml"
+    prefix:   /istruttorie
+    
+attuazione_controllo:
+    resource: "@AttuazioneControlloBundle/Controller/"
+    type:     annotation
+    prefix:   /attuazione    
+    
+audit:
+    resource: "@AuditBundle/Resources/config/routing.yml"
+    prefix:   /
+
+faq:
+    resource: "@FaqBundle/Controller/"
+    type:     annotation
+    prefix:   /faq
+
+certificazioni:
+    resource: "@CertificazioniBundle/Controller/"
+    type:     annotation
+    prefix:   /certificazioni 
+
+monitoraggio:
+    resource: "@MonitoraggioBundle/Controller/"
+    type:     annotation
+    prefix:   /monitoraggio
+
+privacy:
+    path: /privacy
+    defaults:
+        _controller: FrameworkBundle:Template:template
+        template:    privacy.html.twig

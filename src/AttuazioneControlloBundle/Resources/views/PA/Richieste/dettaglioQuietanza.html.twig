@@ -1,0 +1,34 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+	{% include 'AttuazioneControlloBundle:PA/Richieste:menu.html.twig' with {'attuazione_controllo' : quietanza.giustificativoPagamento.pagamento.attuazioneControlloRichiesta }%}	
+	
+	<h4>Dati quietanza</h4>
+	<table class="table table-striped table-hover">
+		<tr>
+			<td style="width: 50%;">Tipologia quietanza</td>
+			<td><strong>{{ quietanza.tipologiaQuietanza }}</strong></td>
+		</tr>	
+		<tr>
+			<td>Numero</td>
+			<td><strong>{{ quietanza.numero }}</strong></td>
+		</tr>	
+		<tr>
+			<td>Importo</td>
+			<td><strong>&euro; {{ quietanza.importo|number_format(2, ",", ".") }}</strong></td>
+		</tr>	
+		<tr>
+			<td>Data quietanza</td>
+			<td><strong>{{ quietanza.dataQuietanza|date('d/m/Y') }}</strong></td>
+		</tr>	
+		<tr>
+			<td>Data valuta</td>
+			<td><strong>{{ quietanza.dataValuta|date('d/m/Y') }}</strong></td>
+		</tr>	
+		<tr>
+			<td>Documento</td>
+			<td><strong>{{ scarica_file(quietanza.documentoQuietanza) }}</strong></td>
+		</tr>			
+	</table>	
+			
+{% endblock %}

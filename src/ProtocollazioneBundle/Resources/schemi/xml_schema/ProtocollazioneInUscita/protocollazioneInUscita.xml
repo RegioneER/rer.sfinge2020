@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+
+
+<Segnatura xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<Intestazione>
+    <Oggetto></Oggetto>
+    <Flusso>
+        <TipoRichiesta></TipoRichiesta>
+        <Firma></Firma>
+        <ForzaRegistrazione></ForzaRegistrazione>
+        <Firmatario></Firmatario>
+    </Flusso>
+
+    <Mittenti>
+        <Mittente>
+            <Amministrazione>
+                <Denominazione></Denominazione>
+                <CodiceAmministrazione></CodiceAmministrazione>
+                <UnitaOrganizzativa>
+                    <Denominazione></Denominazione>
+                    <Identificativo></Identificativo>     
+                </UnitaOrganizzativa>
+            </Amministrazione>
+            <AOO>
+                <Denominazione></Denominazione>
+                <!--AOO_EMR – verificare se AOO_AL -->
+                <CodiceAOO></CodiceAOO>
+                <IndirizzoTelematico />
+            </AOO>      
+        </Mittente>
+    </Mittenti>
+
+    <Destinatari>
+        <Destinatario>
+            <PersonaGiuridica>
+                <Denominazione></Denominazione>
+                <Metadati></Metadati>
+            </PersonaGiuridica>
+        </Destinatario>
+    </Destinatari>
+
+    <FascicoloPrimario>
+        <CodiceAmministrazione></CodiceAmministrazione>
+        <CodiceAOO></CodiceAOO>
+        <Classifica></Classifica>
+        <Anno></Anno>
+        <Progressivo></Progressivo>
+    </FascicoloPrimario>
+</Intestazione>
+</Segnatura>

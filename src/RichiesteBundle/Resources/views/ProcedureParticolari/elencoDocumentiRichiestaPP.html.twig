@@ -1,0 +1,71 @@
+{% extends '::base.html.twig' %}
+
+{% block intestazione %}
+	{{ parent() }}
+	{{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% block body %}
+
+	{{ mostra_validazione('documenti_richiesta') }}
+
+	{% if form is not null %}
+		<div class="form-body">
+			<h4>Carica documento</h4>
+			{{ form(form) }}
+		</div>
+	{% endif %}			
+
+	<h4>Elenco documenti caricati</h4>
+	{% if documenti is not empty %}
+		<div class="form-body">	
+			{% for documento in documenti %}
+				{% if documento.documentoFile.tipologiadocumento.codice != 'ALL_ING_FIN_CTR_ADG' %}
+					{% if not is_richiesta_disabilitata and (is_granted('ROLE_GESTIONE_INGEGNERIA_FINANZIARIA') or  is_granted('ROLE_GESTIONE_ASSISTENZA_TECNICA'))%}
+						{% if richiesta.isAssistenzaTecnica == true %}
+							{{ mostra_file(documento.documentoFile, path('elimina_documento_richiesta_at', {'id_documento_richiesta': documento.id,'id_richiesta': richiesta.id, '_token': csrfToken, mostra_elimina: true}) ) }}
+						{% elseif richiesta.isIngegneriaFinanziaria == true %}
+							{{ mostra_file(documento.documentoFile, path('elimina_documento_richiesta_ing_fin', {'id_documento_richiesta': documento.id,'id_richiesta': richiesta.id, '_token': csrfToken, mostra_elimina: true}) ) }}
+						{% elseif richiesta.isAcquisizioni == true %}
+							{{ mostra_file(documento.documentoFile, path('elimina_documento_richiesta_acquisizioni', {'id_documento_richiesta': documento.id,'id_richiesta': richiesta.id, '_token': csrfToken, mostra_elimina: true}) ) }}
+						{% endif %}		
+					{% else %}			
+						{{ mostra_file(documento.documentoFile, null )}}
+					{% endif %}	
+				{% endif %}	
+				<br/>
+			{% endfor %}
+		</div>
+	{% else %}
+		<h6>Nessun documento caricato</h6>
+	{% endif %}
+	{% if richiesta.isIngegneriaFinanziaria == true %}
+		{% set ctr_presente = false %}
+		<h4>Elenco documenti controllo ADG</h4>
+		<div class="form-body">	
+			{% for documento in documenti %}
+				{% if documento.documentoFile.tipologiadocumento.codice == 'ALL_ING_FIN_CTR_ADG' %}
+					{% set ctr_presente = true %}
+					{% if not is_richiesta_disabilitata and (is_granted('ROLE_GESTIONE_INGEGNERIA_FINANZIARIA') or  is_granted('ROLE_GESTIONE_ASSISTENZA_TECNICA'))%}
+						{{ mostra_file(documento.documentoFile, path('elimina_documento_richiesta_ing_fin', {'id_documento_richiesta': documento.id,'id_richiesta': richiesta.id, '_token': csrfToken, mostra_elimina: true}) ) }}	
+					{% else %}			
+						{{ mostra_file(documento.documentoFile, null )}}
+					{% endif %}
+					<br/>
+				{% endif %}
+			{% endfor %}
+			{% if ctr_presente == false %}
+				<h6>Nessun documento caricato</h6>
+			{% endif %}
+		</div>
+	{% endif %}
+	<div class="page-actions">
+		{% if richiesta.isAssistenzaTecnica == true %}
+			{{ pulsante_indietro(path("dettaglio_richiesta_at",{"id_richiesta":richiesta.id})) }}
+		{% elseif richiesta.isIngegneriaFinanziaria == true %}
+			{{ pulsante_indietro(path("dettaglio_richiesta_ing_fin",{"id_richiesta":richiesta.id})) }}
+		{% elseif richiesta.isAcquisizioni == true %}
+			{{ pulsante_indietro(path("dettaglio_richiesta_acquisizioni",{"id_richiesta":richiesta.id})) }}
+		{% endif %}		
+	</div>
+{% endblock %}

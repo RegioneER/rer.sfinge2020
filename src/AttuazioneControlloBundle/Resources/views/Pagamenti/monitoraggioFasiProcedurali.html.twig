@@ -1,0 +1,51 @@
+{% extends '::base_ente.html.twig' %}
+
+{% form_theme form.mon_iter_progetti _self %}
+
+{% block body %}
+    <div class="form-body">
+        <h4>Fasi procedurali</h4>
+
+        {{- form_errors(form) -}}
+        {{ form_start(form) }}
+        {% if form.mon_iter_progetti|length > 0 %}
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Fase procedurale</th>
+                        <th>Data inizio prevista</th>
+                        <th>Data inizio effettiva</th>
+                        <th>Data fine prevista</th>
+                        <th>Data fine effettiva</th>
+                    </tr>
+                </thead>
+                <tbody>            
+                    {% for element in form.mon_iter_progetti %}
+                        {{ form_widget(element) }}
+                    {% endfor %}
+                </tbody>
+            </table>
+            {{ form_rest(form) }}
+            {{form_end(form) }}
+        {% else %}
+            <h3>Non sono state definite fasi procedurali</h3>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block form_row -%}
+
+    {{- not form.vars.compound ? '<td>' : '' -}}
+    {{- form_widget(form) -}}
+    {{- form_errors(form) -}}
+    {{- not form.vars.compound ? '</td>' : '' -}}
+{% endblock form_row %}
+
+{% block form_widget_compound %}
+    {% if form.vars.prototype is not defined %}
+        <tr id="{{- block('widget_container_attributes') -}}">
+            {{- block('form_rows') -}}
+            {{- form_errors(form) -}}
+        </tr>
+    {% endif %}
+{% endblock %}

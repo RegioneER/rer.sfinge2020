@@ -1,0 +1,78 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	{% include 'CertificazioniBundle:Certificazioni:menuDecertificazioni.html.twig' %}	
+	<div class="table-toolbar">
+		<a href="#" data-target="#ricerca-istruttoria-modal" data-toggle="modal" class="btn btn-info"><span class="fa fa-search"></span> Ricerca</a>
+    </div>
+	<div class="count">
+		Numero elementi trovati: {{ risultati.getTotalItemCount }} - Filtro attivo: {{ filtro_attivo ? "Si" : "No" }}
+	</div>
+
+	<h4>Elenco decertificazioni</h4>
+
+	<table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+		<thead>
+			<tr>
+				<th>Beneficiario</th>
+				<th>Progetto</th>
+				<th>Importo certificato</th>					
+				<th>Importo decertificato</th>
+				<th>Nota decertificazione</th>
+				<th>Certificazione</th>
+				<th>Ritiro</th>
+				<th>Recupero</th>
+				<th>Irregolarità</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for certPag in risultati %}
+				<tr>
+					<td>{{certPag.pagamento.soggetto.denominazione}}</td>
+					<td>{{certPag.pagamento.richiesta.titolo}}</td>
+					<td>{{certPag.pagamento.importocertificato|number_format(2,',','.')}}</td>
+					<td>{{certPag.importo|number_format(2,',','.')}}</td>
+					<td>{{certPag.notadecertificazione}}</td>
+					<td>{{certPag.certificazione.annocontabile }}.{{ certPag.certificazione.numero }}</td>
+					<td>{{certPag.ritiro is not null ? (certPag.ritiro == true ? 'Si' : 'No') : 'No'}}</td>
+					<td>{{certPag.recupero is not null ? (certPag.recupero == true ? 'Si' : 'No') : 'No'}}</td>
+					<td>{{certPag.irregolarita is not null ? (certPag.irregolarita == true ? 'Si' : 'No') : 'No'}}</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+	<div class="navigation">
+		{{ knp_pagination_render(risultati) }}
+	</div>	
+
+	<div id="ricerca-istruttoria-modal" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3 id="ricerca-istruttoria-modal-titolo">Ricerca Pagamenti</h3>
+				</div>
+				<div class="modal-body">
+					{{ form(formRicerca) }}
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Chiudi</button>
+					<a class="btn btn-default" href="{{ path("elenco_decertificazione_pagamenti_pulisci") }}">Annulla Ricerca</a>
+					<a class="btn btn-primary" href="#" id="ricercaOk">Ricerca</a>
+				</div>
+			</div>
+		</div>
+	</div>		
+{% endblock %}
+
+{%block  jquery_page_document_ready %}
+<script>
+	jQuery(document).ready(function() {
+		$("#ricercaOk").click(function(e){
+			e.preventDefault();
+			$(this).parents(".modal-content").find("form").submit();
+		})
+	});
+</script>
+{% endblock %}

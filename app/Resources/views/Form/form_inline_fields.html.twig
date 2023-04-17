@@ -1,0 +1,66 @@
+{% extends 'bootstrap_3_layout.html.twig' %}
+
+
+{% block form_label_class -%}
+display-block
+{%- endblock form_label_class %}
+{% block form_group_class -%}{%- endblock form_group_class %}
+
+
+
+{% block form_start -%}
+    {% set attr = attr|merge({class: (attr.class|default('') ~ 'form-inline well clearfix')|trim}) %}
+    {{- parent() -}}
+{%- endblock form_start %}
+
+{%- block form_end -%}
+    {%- if not render_rest is defined or render_rest -%}
+        {{ form_rest(form) }}
+    {%- endif -%}
+    </form>
+{%- endblock form_end -%}
+
+
+{% block form_row -%}
+    <div class="form-group{% if (not compound or force_error|default(false)) and not valid %} has-error{% endif %}">
+        {{- form_label(form) -}}
+        {{- form_widget(form) -}}
+        {{- form_errors(form) -}}
+    </div>
+{%- endblock form_row %}
+
+
+
+
+
+{% block submit_widget %}
+    {% spaceless %}
+        {% set type = type|default('submit') %}
+        {% set attr = attr|merge({'class': 'btn btn-primary'}) %}
+
+        {{ block('button_widget') }}
+    {% endspaceless %}
+{% endblock submit_widget %}
+
+
+{% block date_widget %}
+    {% spaceless %}
+        {% if widget == 'single_text' %}
+            {% set type = type|default('text') %}
+            <div class="input-group input-medium date date-picker" data-date-format="dd/mm/yyyy">
+                <input class="form-control" type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+                <span class="input-group-btn">
+                    <button class="btn default" type="button"><span class="fa fa-calendar"></span></button>
+                </span>
+            </div>
+        {% else %}
+            <div {{ block('widget_container_attributes') }}>
+                {{ date_pattern|replace({
+                    '{{ year }}':  form_widget(form.year),
+                    '{{ month }}': form_widget(form.month),
+                    '{{ day }}':   form_widget(form.day),
+                })|raw }}
+            </div>
+        {% endif %}
+    {% endspaceless %}
+{% endblock date_widget %}

@@ -1,0 +1,42 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	
+{% include 'IstruttorieBundle:Istruttoria:menu.html.twig' with {'istruttoria' : istruttoria } %}
+
+<h4>Dati Cup</h4>
+
+{{ form_start(form) }}
+{{ form_row(form.cup_natura) }}
+{{ form_row(form.cup_tipologia) }}
+{{ form_row(form.cup_settore) }}
+{{ form_row(form.cup_sottosettore) }}
+{{ form_row(form.cup_categoria) }}
+{% if disabled == false and form.cup_tipi_copertura_finanziaria is defined %}
+	{{ form_row(form.cup_tipi_copertura_finanziaria) }}
+{% else %}
+	<label class="col-sm-3 col-md-3 col-lg-4 control-label required" for="dati_cup_cup_tipi_copertura_finanziaria">Tipi copertura finanziaria</label>
+	<div class="col-sm-9 col-md-6 col-lg-5" title="TIPOLOGIE COPERTURA">
+		<span class="select2 select2-container select2-container--default select2-container--disabled select2-container--focus" dir="ltr" style="width: 380px;">
+			<span class="selection">
+				<span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" title="TIPOLOGIE COPERTURA" tabindex="-1" aria-labelledby="select2-dati_cup_cup_tipi_copertura_finanziaria-container">
+					<span class="select2-selection__rendered" id="select2-dati_cup_cup_tipi_copertura_finanziaria_read-container" title="TIPOLOGIE COPERTURA">{{istruttoria.CupTipiCoperturaFinanziaria|join(', ')}} </span>
+				</span>
+			</span>
+			<span class="dropdown-wrapper" aria-hidden="true">
+			</span>	
+		</span>
+	</div>
+	<br/>
+{% endif %}
+
+<h4>Codice CUP</h4>
+{{ form_row(form.codice_cup) }}
+
+{{ form_end(form) }}
+
+<script type="text/javascript">
+	{% include('IstruttorieBundle:Istruttoria:datiCup.js.twig') %}
+</script>
+
+{% endblock %}

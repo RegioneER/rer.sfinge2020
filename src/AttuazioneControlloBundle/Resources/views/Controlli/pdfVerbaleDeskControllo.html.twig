@@ -1,0 +1,110 @@
+{% import '@Richieste/Pdf/macro/macro_richiesta.html.twig' as macro_richiesta %}
+{% extends ':pdf:base_controlli.pdf.html.twig' %}
+
+{% block content %}
+
+    {% block intestazione %}
+    {% endblock intestazione %}
+
+	{% block corpo %}
+        <h4 class="center">Direzione Generale Economia della conoscenza, del lavoro e dell'impresa</h4>
+		<h4 class="bold center">POR FESR 2014-2020</h4>
+        <h4 class="bold center">CHECKLIST DEI CONTROLLI IN LOCO - FASE DESK</h4>
+		
+		<table class="text-large">
+			<tr>
+				<td>
+					Procedura di attivazione:
+				</td> 
+				<td>
+					<b>
+						{{ procedura.titolo }}
+					</b>
+				</td>
+			</tr>
+			{% if richiesta.flagPor %}
+			<tr>
+				<td>Azione:</td>
+				<td>
+					{% for azione in procedura.azioni %}
+						<b>
+							Azione {{ azione.codice }} {{ azione.descrizione }}
+						</b>
+					{% endfor %}
+				</td>
+			</tr>
+			{% endif %}
+			<tr><td>Beneficiario:</td> <td><b>{{ soggetto }}</b></td></tr>
+			<tr><td>Titolo del progetto:</td> <td><b>{{ richiesta.titolo }}</b></td></tr>
+			<tr><td>Numero di protocollo:</td> <td><b>{{ richiesta.protocollo }}</b></td></tr>
+			<tr><td>Codice CUP:</td> <td><b>{{ richiesta.istruttoria.codicecup }}</b></td></tr>
+			<tr><td>Importo delle spese ammesse dalla/e checklist-list relative alle verifiche sull 100% della spesa rendicontata:</td> <td><b>{{ richiesta.importorendicontatoammesso|number_format(2,',', '.') }}</b></td></tr>
+		</table>
+		<br>
+		<p align="justify">
+			Il controllo fase desk è svolto: <b>{{controllo.controllofasedesk == 'ACCONTO_SAL' ? 'su un acconto/stato avanzamento' : 'a seguito della presentazione della rendicontazione finale'}}</b><br/>
+		</p>
+		<br/>
+		{% if checklist_desk|length > 0 %}
+        <div style="page-break-after: always"></div>
+        <div>
+            {% for denominazioneSezioneChecklist, valori in checklist_desk %}
+
+                {% set arrayDenominazioneSezioneChecklist = denominazioneSezioneChecklist|split(' ') %}
+                {% if 'PUNTEGGIO' in arrayDenominazioneSezioneChecklist or 'VALUTAZIONE' in arrayDenominazioneSezioneChecklist %}
+                    {% set label = 'Punteggio' %}
+                {% else %}
+                    {% set label = 'Valore' %}
+                {% endif %}
+
+                <table style="width: 100%;">
+                    <tr>
+						<td style="width: 21%; text-align: center;"><strong>{{ denominazioneSezioneChecklist }}</strong></td>
+                        <td style="width: 10%; text-align: center;"><strong>Valore</strong></td>
+						<td style="width: 23%; text-align: center;"><strong>Documento</strong></td>
+						<td style="width: 23%; text-align: center;"><strong>Collocazione</strong></td>
+                        <td style="width: 23%; text-align: center;"><strong>Note</strong></td>
+                    </tr>
+                    {% for denominazione, valore in valori %}
+                        <tr>
+                            <td>{{ denominazione }}</td>
+                            <td>{{ valore['valore'] }}</td>
+							<td>{{ valore['note_doc'] }}</td>
+							<td>{{ valore['note_coll'] }}</td>
+                            <td>{{ valore['note'] }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+                <br/>
+
+            {% endfor %}
+        </div>
+        <br/>
+        <br/>
+       
+		<h3>Eventuali osservazioni:</h3>
+		{{ controllo.osservazionifasedesk|raw }}
+		 <br/>
+        <br/>
+		<p class="text-medium" align="justify">
+			Verifica svolta da: {{ validatore }}<br/>
+		</p>
+		<p class="text-medium" align="justify">
+			Firma: ................................................<br/>
+		</p>
+		<p class="text-medium" align="justify">
+			Data: .................................................<br/>
+		</p>
+		<br/>
+
+    {% endif %}
+	
+	
+	{% endblock corpo %}
+	
+{% endblock content%}
+
+{% block style_extra %}
+    table{font-size: 12px}
+{% endblock style_extra %}
+

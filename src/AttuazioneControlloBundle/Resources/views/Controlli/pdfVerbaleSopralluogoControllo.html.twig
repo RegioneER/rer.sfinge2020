@@ -1,0 +1,149 @@
+{% import '@Richieste/Pdf/macro/macro_richiesta.html.twig' as macro_richiesta %}
+{% extends ':pdf:base_controlli.pdf.html.twig' %}
+
+{% block content %}
+
+    {% block intestazione %}
+    {% endblock intestazione %}
+
+	{% block corpo %}
+        <h4 class="center">Direzione Generale Economia della conoscenza, del lavoro e dell'impresa</h4>
+		<h4 class="bold center">POR FESR 2014-2020</h4>
+        <h4 class="bold center">CHECKLIST DEI CONTROLLI IN LOCO - FASE SOPRALLUOGO</h4>
+    
+		<table class="text-large">
+			<tr><td>Procedura di attivazione:</td> <td><b>{{ procedura.titolo }}</b></td></tr>
+			{% if richiesta.flagPor %}
+				<tr>
+					<td>Azione:</td>
+					<td>
+						{% for azione in procedura.azioni %}
+							<b>Azione {{ azione.codice }} {{ azione.descrizione }}</b>
+						{% endfor %}
+					</td>
+				</tr>
+			{% endif %}
+			<tr><td>Beneficiario:</td> <td><b>{{ soggetto }}</b></td></tr>
+			<tr><td>Titolo del progetto:</td> <td><b>{{ richiesta.titolo }}</b></td></tr>
+			<tr><td>Numero di protocollo:</td> <td><b>{{ richiesta.protocollo }}</b></td></tr>
+			<tr><td>Codice CUP:</td> <td><b>{{ richiesta.istruttoria.codicecup }}</b></td></tr>
+			<tr><td>Importo delle spese ammesse dalla/e checklist-list relative alle verifiche sull 100% della spesa rendicontata:</td> <td><b>{{ richiesta.importorendicontatoammesso|number_format(2,',', '.') }}</b></td></tr>
+		</table>
+		<br>
+		<p class="text-medium" align="justify">
+			Sede del sopralluogo: <b>{{controllo.tiposedefasespr == 'LEGALE' ? 'Sede legale' : 'Unità locale'}}</b><br/>
+		</p>
+		{% if controllo.tiposedefasespr == 'LEGALE' %}
+			{% set indirizzo = soggetto.via %}
+			{% set civico = soggetto.civico %}
+			{% set cap = soggetto.cap %}
+			{% set comune = soggetto.comune %}
+			{% set provincia = soggetto.comune.provincia %}
+		{% elseif controllo.tiposedefasespr != 'LEGALE' and richiesta.mandatario.sedi|length > 0 %}
+			{% set indirizzo = richiesta.mandatario.sedi[0].sede.indirizzo.via %}
+			{% set civico = richiesta.mandatario.sedi[0].sede.indirizzo.numerocivico  %}
+			{% set cap = richiesta.mandatario.sedi[0].sede.indirizzo.cap  %}
+			{% set comune = richiesta.mandatario.sedi[0].sede.indirizzo.comune  %}
+			{% set provincia = richiesta.mandatario.sedi[0].sede.indirizzo.comune.provincia  %}
+		{% elseif controllo.indirizzo is not null %}
+			{% set indirizzo = controllo.indirizzo.via %}
+			{% set civico = controllo.indirizzo.numerocivico  %}
+			{% set cap = controllo.indirizzo.cap  %}
+			{% set comune = controllo.indirizzo.comune  %}
+			{% set provincia = controllo.indirizzo.comune.provincia  %}
+		{% else %}
+			{% set indirizzo = '' %}
+			{% set civico = '' %}
+			{% set cap = '' %}
+			{% set comune = '' %}
+			{% set provincia = '' %}
+		{% endif %}
+		{#{ dump(richiesta.mandatario.sedi) }#}
+		<p class="text-medium" align="justify">
+			Via: {{ indirizzo }} N. civico: {{ civico }}<br/>
+			CAP: {{ cap }} Comune: {{ comune }} Prov: {{ provincia }}<br/>
+		</p>
+		<h3>Documentazione relativa al beneficiario:</h3>
+		<p class="text-medium" align="justify"> Acquisita/visionata durante il sopralluogo<br/>{{ controllo.acquisitafasespr|raw }}</p>
+		<br/>
+		<br/>
+		<p class="text-medium" align="justify"> Richiesta perchè non disponibile in fase di sopralluogo<br/>{{ controllo.richiestafasespr|raw }}</p>
+		<br/>
+		<br/>
+		<p class="text-medium" align="justify"> Conclusioni del sopralluogo<br/>{{ controllo.conclusionifasespr|raw }}</p>
+		<br/>
+		<br/>
+		<p class="text-medium" align="justify"> Eventuali osservazioni del beneficiario<br/>{{ controllo.osservazionibenfasespr|raw }}</p>
+		<br/>
+		<br/>
+		
+		<h3>Alla luce delle verifiche effettuate:</h3>
+		<p class="text-medium" align="justify"> Le spese ammesse sono pari a &euro;{{ controllo.speseammesse|number_format(2,',', '.') }}</p>
+		<br/>
+		<br/>
+		<p class="text-medium" align="justify"> Le spese sulle quali si richiede una rivalutazione al servizio competente sono pari a &euro;{{ controllo.speserivalutazione|number_format(2,',', '.') }}</p>
+		<br/>
+		<br/>
+		<p class="text-medium" align="justify"> Le spese ritenute non ammissibili sono pari a &euro;{{ controllo.spesenonammissibili|number_format(2,',', '.') }}</p>
+		<br/>
+		<br/>
+		<h3>Controllo svolto da:</h3>
+		<p class="text-medium" align="justify">Nome Cognome....................................................in qualità di.............................................firma.............................................</p>
+		<p class="text-medium" align="justify">Nome Cognome....................................................in qualità di.............................................firma.............................................</p>
+		<br/>
+		<h3>Personale del beneficiario presente al controllo in loco:</h3>
+		<p class="text-medium" align="justify">Nome Cognome....................................................in qualità di.............................................firma.............................................</p>
+		<p class="text-medium" align="justify">Nome Cognome....................................................in qualità di.............................................firma.............................................</p>
+		</p>
+		<br/>
+		<p class="text-medium" align="justify">Data controllo: {{ controllo.datacontrollo|date('d-m-Y') }}</p>
+		In allegato
+		<p class="text-medium" align="justify">
+			<strong>Elenco dei documenti di spesa verificati in loco</strong><br/>
+			<strong>Check-list che costituisce parte integrante del presente Verbale di sopralluogo</strong>
+		</p>
+		{% if checklist_spr|length > 0 %}
+        <div style="page-break-after: always"></div>
+        <div>
+            {% for denominazioneSezioneChecklist, valori in checklist_spr %}
+
+                {% set arrayDenominazioneSezioneChecklist = denominazioneSezioneChecklist|split(' ') %}
+                {% if 'PUNTEGGIO' in arrayDenominazioneSezioneChecklist or 'VALUTAZIONE' in arrayDenominazioneSezioneChecklist %}
+                    {% set label = 'Punteggio' %}
+                {% else %}
+                    {% set label = 'Valore' %}
+                {% endif %}
+
+                <table style="width: 100%;">
+                    <tr>
+						<td style="width: 20%; text-align: center;"><strong>{{ denominazioneSezioneChecklist }}</strong></td>
+                        <td style="width: 10%; text-align: center;"><strong>Valore</strong></td>
+                        <td style="width: 35%; text-align: center;"><strong>Collocazione C/O Beneficiario</strong></td>
+						<td style="width: 35%; text-align: center;"><strong>Note</strong></td>
+                    </tr>
+                    {% for denominazione, valore in valori %}
+                        <tr>
+                            <td>{{ denominazione }}</td>
+                            <td>{{ valore['valore'] }}</td>
+							<td>{{ valore['note_coll_ben'] }}</td>
+                            <td>{{ valore['note'] }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+                <br/>
+
+            {% endfor %}
+        </div>
+        <br/>      
+
+    {% endif %}
+	
+	
+	{% endblock corpo %}
+	
+{% endblock content%}
+
+{% block style_extra %}
+    table{font-size: 12px}
+{% endblock style_extra %}
+

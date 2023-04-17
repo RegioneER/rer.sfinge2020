@@ -1,0 +1,17 @@
+<ul class="nav nav-tabs">
+	<li role="presentation"{% if menu|default() == "riepilogo" %}class="active"{% endif %}><a href="{{path('riepilogo_controllo', {'id_controllo':controllo.id})}}">Riepilogo</a></li>
+	{% for valutazione in controllo.valutazionichecklistordinate %}
+		{% set corrente = valutazione_checklist is defined and valutazione_checklist.id == valutazione.id %}
+		<li role="presentation" {% if corrente %}class="active"{% endif %}><a href="{{ path("valuta_checklist_controlli", {'id_valutazione_checklist': valutazione.id}) }}">{{ valutazione }}</a></li>
+		{% if valutazione.checklist.nome == 'Fase Sopralluogo' %}
+			<li role="presentation"{% if menu|default() == "verbalesopralluogo" %}class="active"{% endif %}><a href="{{path('verbale_sopralluogo_form', {'id_controllo':controllo.id})}}">Verbale sopralluogo</a></li>
+		{% elseif valutazione.checklist.nome == 'Fase Desk'%}
+			<li role="presentation"{% if menu|default() == "verbaledesk" %}class="active"{% endif %}><a href="{{path('verbale_desk_form', {'id_controllo':controllo.id})}}">Verbale desk</a></li>
+		{% endif %}
+	{% endfor %}
+	{# LA fase sopralluogo ora sarà un allegato quindi la checklist non va inserita e sarà gestito come form classico #}
+	{# OGGI 18/11/2019 rimodifichiamo per la terza, credo, volta la chk del sopralluogo e la riabilitiamo e mi tocca trovare un modo per nasconderla per le nuove gestioni#}
+	<li role="presentation"{% if menu|default() == "sopralluogo" %}class="active"{% endif %}><a href="{{path('valuta_sopralluogo_form', {'id_controllo':controllo.id})}}">Documenti sopralluogo</a></li>
+	<li role="presentation"{% if menu|default() == "documenti" %}class="active"{% endif %}><a href="{{path('documenti_controlli', {'id_controllo':controllo.id})}}">Documenti</a></li>
+	<li role="presentation"{% if menu|default() == "esito" %}class="active"{% endif %}><a href="{{path('esito_finale_controlli', {'id_controllo':controllo.id})}}">Esito finale</a></li>
+</ul>

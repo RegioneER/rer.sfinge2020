@@ -1,0 +1,101 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+    {% set trans_day_hash = {
+        "Monday": "Lunedì",
+        "Tuesday": "Martedì",
+        "Wednesday": "Mercoledì",
+        "Thursday": "Giovedì",
+        "Friday": "Venerdì",
+        "Saturday": "Sabato",
+        "Sunday": "Domenica"
+    }
+    %}
+
+    <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Numero atto</th>
+                <th>Asse</th>
+                <th>Titolo</th>
+                <th>Fondo</th>
+                <th>Modalità invio <i class="fa fa-info-circle" aria-hidden="true" title="P: Presentazione&#013;S: Step successivi&#013;R: Rendicontazione&#013;S: Modalità Smart&#013;FD: Modalità con firma digitale"></i></th>
+                <th>Data apertura</th>
+                <th>Click-day</th>
+                <th>Data chiusura</th>
+                <th>Num. max richieste presentabili</th>
+                <th>Giorni alla scadenza</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for procedura in risultato %}
+                {% set difference = date(procedura.dataOraFinePresentazione|date('Y/m/d')).diff(date('now'|date('Y/m/d'))) %}
+                {% set leftDays = difference.days %}
+
+                {% set giornoDellaSettimanaApertura = procedura.dataOraInizioPresentazione|date('l') %}
+                {% set giornoDellaSettimanaApertura = trans_day_hash[giornoDellaSettimanaApertura] %}
+
+                {% set giornoDellaSettimanaClickday = procedura.dataClickDay|date('l') %}
+                {% set giornoDellaSettimanaClickday = trans_day_hash[giornoDellaSettimanaClickday] %}
+
+                {% set giornoDellaSettimanaChiusura = procedura.dataOraFinePresentazione|date('l') %}
+                {% set giornoDellaSettimanaChiusura = trans_day_hash[giornoDellaSettimanaChiusura] %}
+
+                <tr>
+                    <td>{{ procedura.id }}</td>
+                    <td>{{ procedura.atto.numero }}</td>
+                    <td>{{ procedura.asse.codice }}: {{ procedura.asse.descrizione }}</td>
+                    <td>{{ procedura.titolo }}</td>
+                    <td>{{ procedura.fondo ?: '-' }}</td>
+                    <td>
+                        <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+                            <tr>
+                                <td>
+                                    <span title="Presentazione">P</span>
+                                </td>
+                                <td>
+                                    {{ procedura.richiestaFirmaDigitale ? '<span title="Modalità con firma digitale">FD</span>' : '<span title="Modalità smart">S</span>' }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span title="Step successivi">S</span>
+                                </td>
+                                <td>
+                                    {{ procedura.richiestaFirmaDigitaleStepSuccessivi ? '<span title="Modalità con firma digitale">FD</span>' : '<span title="Modalità smart">S</span>' }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span title="Rendicontazione">R</span>
+                                </td>
+                                <td>
+                                    <span title="Modalità con firma digitale">FD</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td>{{ giornoDellaSettimanaApertura }} {{ procedura.dataOraInizioPresentazione|date('d/m/Y H:i:s') }}</td>
+                    <td>
+                        {% if procedura.dataClickDay %}
+                            {{ giornoDellaSettimanaClickday }} {{ procedura.dataClickDay|date('d/m/Y H:i:s') }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>{{ giornoDellaSettimanaChiusura }} {{ procedura.dataOraFinePresentazione|date('d/m/Y H:i:s') }}</td>
+                    <td style="text-align: right;">
+                        {% if procedura.dataClickDay %}
+                         {{ procedura.numeroMassimoRichiesteProcedura }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td style="text-align: right;">{{ leftDays }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {{ pulsante_indietro(path("utilities")) }}
+{% endblock body %}

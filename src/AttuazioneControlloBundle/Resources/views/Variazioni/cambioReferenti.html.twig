@@ -1,0 +1,62 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+    <div class="alert alert-info" role="alert">
+        Se la persona cercata non &egrave; presente in elenco, &egrave;
+        possibile inserirla cliccando su "Aggiungi persona" 
+    </div>
+    <a href="{{- path('inserisci_referente_variazione',{
+                id_variazione: variazione.id,
+                id_referente: referente.id
+            }) -}}" 
+        class="btn btn-primary"
+    >
+        <i class="fas fa-plus"></i>&nbsp;Aggiungi persona
+    </a>
+    {{ form(form) }}
+{% endblock body %}
+
+{% block jquery_page_document_ready %}
+<script type="text/javascript">
+    'use strict';
+    var personaId = '#{{- form.persona.vars.id -}}'
+    $(document).ready(function(){
+        $(personaId).select2({
+            placeholder: 'Inserisci cognome nome oppure codice fiscale',
+            language: "it",
+            minimumInputLength: 3,
+            ajax: {
+                url: '{{- path('persona_cerca_rest') -}}',
+                dataType: 'json',
+                delay: 500, //ms
+                cache: true,
+                data: function (params) {
+                    var query = {
+                        query: params.term
+                    };
+
+                    return query;
+                },
+                processResults: function (data) {
+                    var normalizedResult = data.map(function(e){
+                        return {
+                            id: e.id,
+                            text: e.nome + ' ' + e.cognome + ' - ' + e.codice_fiscale
+                        }
+                    });
+                    return {
+                        results: normalizedResult
+                    };
+                }
+            }
+        }).on('select2:open', function(){
+             $('input[type=search]').popover({
+                'title': 'Digitare nome e cognome oppure codice fiscale',
+                'trigger': 'hover',
+                'placement': 'auto'
+            });
+        });
+    });
+    
+</script>
+{% endblock %}

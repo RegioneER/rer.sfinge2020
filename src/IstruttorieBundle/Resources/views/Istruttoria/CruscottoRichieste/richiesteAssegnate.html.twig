@@ -1,0 +1,49 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+        <thead>
+            <tr>
+				<th>Asse e procedura</th>
+				<th>Soggetto</th>
+				<th>Protocollo richiesta</th>
+				<th>Data invio</th>				
+				<th>Data verbalizzazione</th>				
+				<th>GG</th>
+				<th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+			{% for richiesta in risultati %}
+				<tr>
+                    <td>{{ richiesta.asse_procedura }} / {{ richiesta.titolo_procedura }}</td>
+					<td>{{ richiesta.denominazione|upper }}</td>
+					<td>{{ richiesta.protocollo }}</td>
+					<td>{{ richiesta.data_invio | date("d/m/Y") }}</td>
+					<td>{{ richiesta.data_verbalizzazione ? richiesta.data_verbalizzazione | date("d/m/Y") }}</td>
+					<td>{{ richiesta.giorni_istruttoria }}</td>	
+					<td>
+						<div class="dropdown">
+							<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								Azioni
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+								<li><a href="{{ path("gestisci_istruttoria", {'id_richiesta':richiesta.id}) }}">Gestisci</a></li>
+							</ul>
+						</div>
+					</td>
+				</tr>
+			{% else %}
+				<tr>
+					<td colspan="7" style="padding: 20px 0; text-align: center">Nessuna richiesta assegnata</td>
+				</tr>
+			{% endfor %}
+        </tbody>
+    </table>
+
+	{# display navigation #}
+	<div class="navigation">
+		{{ knp_pagination_render(risultati) }}
+	</div>
+{% endblock %}

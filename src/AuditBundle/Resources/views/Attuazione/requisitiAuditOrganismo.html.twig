@@ -1,0 +1,46 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	{% include 'AuditBundle:Audit:menu.html.twig' %}
+
+	<table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+		<thead>
+			<tr>
+				<th></th>
+				<th>Nome</th>
+				<th>Azioni</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for audit_requisito in audit_organismo.auditRequisiti %}
+				{% set requisito = audit_requisito.requisito %}
+				<tr>
+					<td>{{ requisito.codice }}</td>
+					<td>{{ requisito.denominazione }}</td>
+
+					<td style="text-align: center;">
+						<div class="dropdown">
+							<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								Azioni
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+								<li>
+									<a href="{{ path("conformita_audit_requisito_attuazione", {'id_audit_requisito': audit_requisito.id}) }}" role="button">
+										Valutazione
+									</a>
+								</li>
+								<li>
+									<a href="{{ path("campioni_audit_requisito_attuazione", {'id_audit_requisito': audit_requisito.id}) }}">
+										Elenco operazioni
+									</a>
+								</li>
+							</ul> 
+						</div>
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends '::base.html.twig' %}
+
+{% block intestazione %}
+	{{ parent() }}
+	{{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% block body %}
+
+	<p class="lead">Selezionare il bando, tra quelli aperti, su cui presentare la richiesta</p>
+	{{ form(form) }}
+{% endblock %}

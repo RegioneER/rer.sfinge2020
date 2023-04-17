@@ -1,0 +1,414 @@
+{% extends ':pdf:base.pdf.html.twig' %}
+
+{% import '@Richieste/Pdf/macro/macro_richiesta.html.twig' as macro_richiesta %}
+
+{% block content %}
+
+    {% block dati_intestazione %}
+        <div class="center">
+            <img src="assets/img/regione/logo_ue-por_fesr_2020.jpg" alt="Loghi regione" height="60px">
+
+            <h2 align="center">POR-FESR EMILIA ROMAGNA 2014-2020</h2>
+        </div>
+    {% endblock dati_intestazione %}
+
+    {% block dati_bando %}
+        <h3 align="center">{{ procedura.asse.titolo }} - {{ procedura.asse.descrizione }}</h3>
+        {% for azione in procedura.azioni %}
+            <p class="text-medium italic" align="center">Azione {{ azione.codice }} {{ azione.descrizione }}</p>
+        {% endfor %}
+
+        <h3 class="bold" align="center">Bando per</h3>
+        <h3 class="bold" align="center">{{ procedura.titolo }}</h3>
+
+        <br>
+        <h3 class="bold" align="center">DICHIARAZIONE SOSTITUTIVA DI ATTO DI NOTORIETA’</h3>
+        <h3 class="bold" align="center">(Ai sensi degli articoli 46 e 47 del D.P.R. n. 445/2000)</h3>
+        <h3 class="bold" align="center">INVIO RENDICONTAZIONE FINANZIARIA E TECNICA E RICHIESTA LIQUIDAZIONE DEL
+            CONTRIBUTO CONCESSO</h3>
+        <br>
+
+        <h3 class="bold">Causale della richiesta: {{ pagamento.modalitaPagamento }}</h3>
+
+        <p class="text-small" align="right">
+            Spett.le Regione Emilia-Romagna<br>
+                        Direzione Generale Conoscenza, Ricerca, Lavoro, Imprese <br><br>
+                         Area Liquidazione dei Programmi per lo Sviluppo <br> Economico e Supporto alla Autorità di Gestione FESR
+                         <br><br>
+                        Viale Aldo Moro 44 <br><br>
+                        40127 – Bologna <br>
+        </p>
+
+
+    {% endblock dati_bando %}
+
+    {% block dati_soggetto %}
+        <div style="page-break-after: always"></div>
+        <p class="text-small">
+            Il/La sottoscritto/a <b>{{ pagamento.firmatario.nome }} {{ pagamento.firmatario.cognome }}</b>
+            nato/a {% if pagamento.firmatario.comune is not null %}a
+            <b>{{ pagamento.firmatario.comune }}</b> {% else %}in
+            <b>{{ pagamento.firmatario.statoNascita }}</b> {% endif %}in data
+            <b>{{ pagamento.firmatario.dataNascita | date("d/m/Y") }}</b><br/>
+            residente in <b>{{ pagamento.firmatario.luogoResidenza.via }}</b> n°
+            <b>{{ pagamento.firmatario.luogoResidenza.numeroCivico }}</b>{% if pagamento.firmatario.luogoResidenza.localita is not null %} Località
+            <b>{{ pagamento.firmatario.luogoResidenza.localita }}</b>{% endif %}
+            c.a.p. <b>{{ pagamento.firmatario.luogoResidenza.cap }}</b>
+            {% if pagamento.firmatario.luogoResidenza.comune is not null %} Comune
+                <b>{{ pagamento.firmatario.luogoResidenza.comune.denominazione }}</b>
+                Prov. <b>{{ pagamento.firmatario.luogoResidenza.provincia.siglaAutomobilistica }}</b>
+            {% else %}
+                Stato <b>{{ pagamento.firmatario.luogoResidenza.stato.denominazione }}</b>
+                {% if pagamento.firmatario.luogoResidenza.comuneEstero is not null %} Comune (estero)
+                    <b>{{ pagamento.firmatario.luogoResidenza.comuneEstero }}</b>{% endif %}
+                {% if pagamento.firmatario.luogoResidenza.provinciaEstera is not null %} Prov. (estera)
+                    <b>{{ pagamento.firmatario.luogoResidenza.provinciaEstera }}</b>{% endif %}
+            {% endif %}
+            <br/>
+            Codice fiscale <b>{{ pagamento.firmatario.codiceFiscale }}</b><br/>
+        </p>
+        <p class="text-small">
+            In qualità di legale rappresentante/delegato del soggetto
+        </p>
+        <p class="text-small">
+            Denominazione/Ragione sociale <b>{{ capofila.denominazione }}</b><br/>
+            Indirizzo sede legale - <b>{{ capofila.via }} {{ capofila.civico }} {{ capofila.localita }}</b> c.a.p.
+            <b> {{ capofila.cap }}</b>
+            {% if capofila.comune is not null %}
+                Comune <b>{{ capofila.comune.denominazione }}</b> Prov
+                <b>{{ capofila.provincia.siglaAutomobilistica }}</b><br/>
+            {% endif %}
+            {% if capofila.comuneEstero is not null %}
+                Città (estera) <b>{{ capofila.comuneEstero }}</b>
+                {% if capofila.provinciaEstera is not null %}Provincia / Regione (estera)
+                    <b>{{ capofila.provinciaEstera }}</b>{% endif %} , Stato <b>{{ capofila.stato }}</b><br/>
+            {% endif %}
+            Codice fiscale <b>{{ capofila.codiceFiscale }}</b>
+            Forma giuridica <b>{{ capofila.formaGiuridica.descrizione }}</b><br/>
+            {% if capofila.partitaIva is not null %} Partita IVA <b>{{ capofila.partitaIva }}</b> {% endif %}
+            {% if capofila.tel is not null %} Telefono <b>{{ capofila.tel }} </b> <br>{% endif %}
+            {% if capofila.fax is not null %} Fax <b>{{ capofila.fax }}</b> <br> {% endif %}
+            {% if capofila.email is not null %} Email Ordinaria <b>{{ capofila.email }}</b> <br> {% endif %}
+            {% if capofila.emailPec is not null %} E-Mail PEC <b>{{ capofila.emailPec }}</b> <br> {% endif %}
+
+
+        </p>
+    {% endblock dati_soggetto %}
+
+    {% block riferimento_richiesta %}
+        <p class="text-medium">in relazione alla domanda di contributo assunta a vs PG {{ richiesta.protocollo }}
+            presentata ai sensi del Bando approvato con Delibera di Giunta {{ richiesta.procedura.atto.numero }}
+            ed eventuali successive modifiche ed integrazioni, per un contributo complessivo ammesso di complessivi
+            euro {{ richiesta.istruttoria.contributoAmmesso }}
+            a fronte di un investimento ammesso pari a complessivi euro {{ richiesta.istruttoria.costoAmmesso }},
+            {% if richiesta.attuazioneControllo.cup is not null %} (codice CUP {{ richiesta.attuazioneControllo.cup }} ), {% endif %}
+            come da graduatoria approvata con Delibera di Giunta {{ richiesta.istruttoria.attoConcessioneAtc.numero }}
+        </p>
+    {% endblock riferimento_richiesta %}
+	
+	 {% block dichiara %}
+        <p class="text-medium" align="center"><b>DICHIARA</b><p>
+
+        <p>
+            - che i soggetti delegati a effettuare operazioni sul conto corrente indicato sono:
+        </p>
+
+        {% set i = 1 %}
+        {% for operatore in pagamento.operatoriCc %}
+
+            {{ i }})
+            <table width="100%" class="text-small">
+                <tr>
+                    <td width="40%">COGNOME:</td>
+                    <td width="60%">
+                        <b>{{ operatore.persona.cognome }}  </b>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="40%">NOME:</td>
+                    <td width="60%">
+                        <b>{{ operatore.persona.nome }}  </b>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="40%">NATO/A A:</td>
+                    <td width="60%">
+                        <b>{{ operatore.persona.comune }}  </b> - PROV:
+                        <b>{{ operatore.persona.comune.provincia }}  </b>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="40%">IL:</td>
+                    <td width="60%">
+                        <b>{{ operatore.persona.dataNascita  | date("d/m/Y") }}<br></b>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="40%">CODICE FISCALE:</td>
+                    <td width="60%">
+                        <b>{{ operatore.persona.codiceFiscale }}  </b>
+                    </td>
+                </tr>
+                <p class="text-medium">In qualità di ... della Ditta/Società di cui sopra.</p>
+
+            </table>
+
+            <br>
+            {% set i = i + 1 %}
+        {% endfor %}
+
+        {% set primaSede = 1 %}
+
+        {% for proponente in richiesta.proponenti %}
+
+            {#se c'è almeno una sede istanziata dentro al proponente significa che la sede operativa è diversa da quella legale#}
+            {% if proponente.mandatario == 1 and proponente.sedi|length>0 %}
+
+                {% if primaSede == 1 %}
+
+                    <p> che la/e sede/i dove si e' realizzato l'intervento (come da certificato CCIAA)</p>
+                    {% set primaSede = 0 %}
+
+                {% endif %}
+
+                {% set i = 1 %}
+
+                {% for sede in proponente.sedi %}
+
+                    {{ i }})
+                    <table width="100%" class="text-small">
+                        <tr>
+                            <td width="40%"> VIA:</td>
+                            <td width="60%">
+                                <b>{{ sede.sede.indirizzo.via }}, {{ sede.sede.indirizzo.numeroCivico }}  </b>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="40%">CAP:</td>
+                            <td width="60%">
+                                <b>{{ sede.sede.indirizzo.cap }}  </b>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="40%">COMUNE:</td>
+                            <td width="60%">
+                                <b>{{ sede.sede.indirizzo.comune }} </b>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="40%">TELEFONO:</td>
+                            <td width="60%">
+                                <b>{{ sede.sede.soggetto.tel }}</b>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="40%">FAX:</td>
+                            <td width="60%">
+                                {% if sede.sede.soggetto.fax is not null %}
+                                    <b>{{ sede.sede.soggetto.fax }} </b>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="40%">EMAIL PEC:</td>
+                            <td width="60%">
+                                <b>{{ sede.sede.soggetto.emailPec }}</b>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="40%">EMAIL ORDINARIA:</td>
+                            <td width="60%">
+                                <b>{{ sede.sede.soggetto.email }}</b>
+                            </td>
+                        </tr>
+                    </table>
+                    <br>
+                    {% set i = i + 1 %}
+
+                {% endfor %}
+
+            {% endif %}
+
+        {% endfor %}
+
+        <p class="text-medium" align="center"><b>DICHIARA INOLTRE</b><p>
+
+        <p>
+            - che l’impresa mantiene i requisiti soggettivi e rispetta le condizioni previste dal bando per
+            l’ammissibilità al contributo;
+        </p>
+        <p>
+            - di non avere mai ricevuto o di avere rimborsato o depositato in un conto bloccato di contabilità speciale
+            gli aiuti dichiarati incompatibili dalla Commissione Europea ("clausola Deggendorf");
+
+        </p>
+        <p>
+            - che le spese sostenute riguardano effettivamente ed unicamente gli investimenti previsti dall'intervento
+            ammesso a contributo;
+        </p>
+        <p>
+            - che i titoli di spesa relativi alle spese sostenute sono fiscalmente regolari ed integralmente pagati
+            entro i termini stabiliti dal bando e non sono stati utilizzati per l'ottenimento di altri contributi
+            comunitari, nazionali, regionali;
+        </p>
+        <p>
+            - di essere informato – ai sensi e per gli effetti di cui all’art. 10 della Legge 196/2003 e successive
+            modificazioni ed integrazioni – che i dati personali raccolti saranno trattati, anche con strumenti
+            informatici, esclusivamente nell’ambito del procedimento per il quale la presente dichiarazione viene resa.
+        </p>
+
+        <p class="text-medium" align="center"><b>SI IMPEGNA A</b><p>
+        <p>
+            - consentire gli opportuni controlli e ispezioni ai funzionari della Regione e della Commissione Europea
+            come previsto dal Bando;
+        </p>
+        <p>
+            - fornire, nel rispetto delle vigenti norme di legge, ogni informazione ritenuta necessaria dalla Regione
+            per il corretto ed efficace svolgimento dell'attività di monitoraggio e valutazione;
+        </p>
+        <p>
+            - restituire i contributi erogati in caso di inadempienza rispetto agli impegni assunti, maggiorati degli
+            interessi legali maturati;
+        </p>
+        <p>
+            - mantenere la proprietà dei beni e degli investimenti produttivi oggetto dell’intervento finanziato dal
+            progetto, e la destinazione d’uso degli stessi nelle modalità previste dal bando, per anni 5 dal ricevimento
+            del pagamento finale del contributo (saldo) ai sensi dell’art. 71 del Regolamento (UE) 1303/2013 del 17
+            dicembre 2013 (Stabilità delle operazioni);
+        </p>
+        <p>
+            - conservare i documenti contabili e fiscali presso la propria sede legale o quella del procuratore per i 10
+            anni che seguono l'erogazione a saldo da parte della Regione.
+        </p>
+    {% endblock dichiara %}
+
+    {% block chiede %}
+
+        <p class="text-medium" align="center"><b>CHIEDE</b><p>
+
+        {% if pagamento.modalitaPagamento.codice == 'SAL' %}
+            <p class="text-medium">
+                L'erogazione della quota del contributo al seguente stato di avanzamento (SAL) pari a
+                di &euro; {{ pagamento.importoRichiesto|number_format(2,',', '.') }} a fronte di una spesa rendicontata
+                di &euro; {{importo_rendicontato|number_format(2,',', '.')}}
+            </p>
+        {% endif %}
+
+        {% if pagamento.modalitaPagamento.codice == 'SALDO_FINALE' %}
+            <p class="text-medium">
+                L'erogazione del saldo finale del contributo pari a
+                di &euro; {{ pagamento.importoRichiesto|number_format(2,',', '.') }} a fronte di conclusione formale del
+                progetto con una spesa complessiva rendicontata di &euro; {{importo_rendicontato|number_format(2,',', '.')}}
+            </p>
+        {% endif %}
+
+        {% if pagamento.modalitaPagamento.codice == 'UNICA_SOLUZIONE' %}
+            <p class="text-medium">
+                La liquidazione del contributo pari a
+                di &euro; {{ pagamento.importoRichiesto|number_format(2,',', '.') }} a fronte di una spesa rendicontata
+                di &euro; {{importo_rendicontato|number_format(2,',', '.')}}
+            </p>
+        {% endif %}
+
+        <p class="text-medium" align="center">
+            <b>Ai sensi dell’art. 3 della L. 136/2010 modificata dall’art. 7 comma 1 lettera a) della Legge di
+                conversione n. 217/2010 del D.L. n. 187/2010 (c.d. Tracciabilità dei Flussi Finanziari)</b>
+        </p>
+        <p class="text-medium">
+            da versare, a cura della Regione Emilia-Romagna, mediante accreditamento sul conto corrente bancario
+            intestato all’impresa e dedicato al progetto, anche in via non esclusiva.
+        </p>
+        <p class="text-medium">
+            Intestato a {{ pagamento.intestatario }}.
+        </p>
+        <table width="100%" class="text-medium">
+            <tr>
+                <td colspan="15">ISTITUTO DI CREDITO<br>{{ pagamento.banca }}</td>
+                <td colspan="12">AGENZIA<br>{{ pagamento.agenzia }}</td>
+            </tr>
+            <tr>
+                <td colspan="2">PAESE</td>
+                <td colspan="2">CIN<br>EUR</td>
+                <td colspan="1">CI<br>N</td>
+                <td colspan="5">ABI</td>
+                <td colspan="5">CAB</td>
+                <td colspan="12">CONTO CORRENTE</td>
+            </tr>
+            <tr>
+                {% for i in 0..26 %}
+                    <td colspan="1">{{ pagamento.iban[i:1] }}</td>
+                {% endfor %}
+            </tr>
+        </table>
+        <br>
+
+        <p class="text-medium"> A tal fine, consapevole delle conseguenze, anche penali previste dall’art 76 del D.P.R.
+            n. 445/2000 per chi presenta dichiarazioni false o mendaci </p>
+    {% endblock chiede %}
+
+   {% block info_aggiuntive %}	
+	{% endblock info_aggiuntive %}
+
+    {% block documenti %}
+
+        <p class="text-medium" align="center"><b>ALLEGA</b><p>
+        <p>
+            tramite caricamento sull'applicativo Sfinge 2020,
+        </p>
+
+        <p>
+            - Relazione tecnica relativa allo Stato di Avanzamento Lavori/Finale, comprensiva di rendicontazione
+            finanziaria con un Quadro riassuntivo delle Spese;
+        </p>
+        <p>
+            - Fatture o documentazione di equivalente valore probatorio e relative quietanze di pagamento;
+        </p>
+        <p>
+            - Eventuale ulteriore documentazione specifica prevista dal bando.
+        </p>
+		tramite caricamento sull'applicativo Sfinge 2020,
+
+Fatture o documentazione di equivalente valore probatorio e relative quietanze di pagamento;
+Documentazione amministrativa riguardante l'espletamento delle procedure di affidamento lavori, beni e servizi;
+Eventuale ulteriore documentazione specifica prevista dal bando.
+
+    {% endblock documenti %}
+
+    {% block referenti %}
+
+        {% set primoReferente = 1 %}
+
+        {# mostro i referenti #}
+        {% for proponente in richiesta.proponenti %}
+
+            {% for referente in proponente.referenti %}
+
+                {% if primoReferente == 1 %}
+                    <p>
+                        <b>Referenti Operativi: </b><br>
+                    </p>
+                    {% set primoReferente = 0 %}
+
+                {% endif %}
+
+                {{ macro_richiesta.dati_referente(referente,1) }} <br/>
+
+            {% endfor %}
+
+        {% endfor %}
+
+    {% endblock referenti %}
+
+	
+	
+    <p>
+        Data: {{ "now"|date("d/m/Y") }}
+    </p>
+
+	{% block firma %}	
+	{% endblock firma %}
+	
+	{% block content_rl %}
+	{% endblock content_rl %}
+	
+{% endblock content %}

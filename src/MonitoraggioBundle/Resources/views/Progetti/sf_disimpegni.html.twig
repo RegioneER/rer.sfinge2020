@@ -1,0 +1,135 @@
+<h4>
+    Disimpegni
+</h4>
+
+{% if disimpegni_ammessi|length > 0 %}
+
+<table class="table table-striped table-hover table-bordered">
+    <thead>
+        <tr>
+            <th>Codice</th>
+            <th>Tipologia</th>
+            <th>Data</th>
+            <th>Importo</th>
+            <th>Causale</th>
+            <th>Data dis. ammesso</th>
+            <th>Importo dis. ammesso</th>
+            <th>Cod. livello gerarchico</th>
+            <th>Note</th>
+            <th>Azioni</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for risultato in disimpegni_ammessi %}
+            {% if risultato.monimpegniammessi|length > 0%}
+                {% for risultato2 in risultato.monimpegniammessi %}
+                    <tr>
+                        <td>{{ risultato.id }}</td>
+                        <td>{{ risultato.tipologiaimpegno }}</td>
+                        <td>{{ risultato.dataimpegno|date('d/m/Y') }}</td>
+                        <td>{{ risultato.importoimpegno|number_format(2, ',', '.') }}</td>
+                        <td>{{ risultato.tc38causaledisimpegno }}</td>
+                        <td>{{ risultato2.dataimpamm|date('d/m/Y') }}</td>
+                        <td>{{ risultato2.importoimpamm|number_format(2, ',', '.') }}</td>
+                        <td>{{ risultato2.richiestalivellogerarchico.tc36livellogerarchico.codlivgerarchico }}</td>
+                        <td>{{ risultato.noteimpegno }}</td>
+                        <td><div class="dropdown">
+                                <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    Azioni
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+
+                                {% if app.user is not null and (is_granted('ROLE_MONITORAGGIO_SCRITTURA')) %}
+
+                                    <li>
+                                        <a href="{{- path('modifica_richiesta_impegni', { 'richiestaimpegni_id': risultato.id}) -}}">
+                                            Modifica richiesta disimpegno
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{- path('aggiungi_impegni_ammessi', { 'richiestaimpegni_id': risultato.id }) -}}">
+                                            Aggiungi disimpegno ammesso
+                                        </a>
+                                    </li> 
+                                    <li>
+                                        <a href="{{- path('modifica_impegni_ammessi', {  'impegniammessi_id': risultato2.id }) -}}">
+                                            Modifica disimpegno ammesso
+                                        </a>
+                                    </li>                            
+                                    <li>
+                                        <a data-confirm="Sei sicuro di voler eliminare il disimpegno ammesso?" href="{{- path('elimina_richiesta_impegni', { 'richiestaimpegni_id': risultato.id, 'impegniammessi_id': risultato2.id, 'csrfToken' : csrfToken }) -}}">
+                                            Elimina disimpegno ammesso
+                                        </a>
+                                    </li>
+
+                                {% else %}
+
+                                    <li>
+                                        <a href="{{- path('modifica_richiesta_impegni', { 'richiestaimpegni_id': risultato.id}) -}}">
+                                            Visualizza richiesta disimpegno
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{- path('modifica_impegni_ammessi', {  'impegniammessi_id': risultato2.id }) -}}">
+                                            Visualizza disimpegno ammesso
+                                        </a>
+                                    </li>
+
+                                {% endif %}
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td>{{ risultato.id }}</td>
+                    <td>{{ risultato.tipologiaimpegno }}</td>
+                    <td>{{ risultato.dataimpegno|date('d/m/Y') }}</td>
+                    <td>{{ risultato.importoimpegno|number_format(2, ',', '.') }}</td>
+                    <td>{{ risultato.tc38causaledisimpegno }}</td>
+                    <td> - </td>
+                    <td> - </td>
+                    <td> - </td>
+                    <td>{{ risultato.noteimpegno }}</td>
+                    <td><div class="dropdown">
+                            <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                Azioni
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                <li>
+                                    <a href="{{- path('modifica_richiesta_impegni', { 'richiestaimpegni_id': risultato.id }) -}}">
+                                        Modifica richiesta disimpegno
+                                    </a>
+                                </li>
+                                <li>
+                                    <a data-confirm="Sei sicuro di voler eliminare il disimpegno?" href="{{- path('elimina_richiesta_impegni', { 'richiestaimpegni_id': risultato.id, 'impegniammessi_id': null, 'csrfToken' : csrfToken }) -}}">
+                                        Elimina richiesta disimpegno
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{- path('aggiungi_impegni_ammessi', { 'richiestaimpegni_id': risultato.id }) -}}">
+                                        Aggiungi disimpegno ammesso
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            {%endif%}
+        {% endfor %}
+    </tbody>
+</table>
+
+{% else %}
+    <h5>Nessun elemento trovato</h5></br>
+{% endif %}
+
+{% if app.user is not null and (is_granted('ROLE_MONITORAGGIO_SCRITTURA')) %}
+    <div>
+        <a style="margin-top: 10px; margin-bottom: 10px;" class="btn btn-page-action btn-primary" href="{{path('inserisci_richiesta_impegni',{'richiesta_id':richiesta.id,'tipo_impegno':'D'})}}">Aggiungi</a>
+    </div>
+    <br/>
+{% endif %}

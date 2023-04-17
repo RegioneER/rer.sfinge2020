@@ -1,0 +1,70 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+    <div class="table-toolbar">
+        <a class="btn btn-primary" href="{{ path('aggiungi_proroga', {'id_richiesta' : richiesta.id }) }}">
+            <span class="fa fa-plus"></span> Aggiungi proroga
+        </a>
+    </div>
+    {% if proroghe | length > 0 %}	
+        <table class="table table-striped table-hover table-bordered" id="proroghe-elenco">
+            <thead>
+                <tr>
+                    <th style="width:20%;">Data invio proroga</th>
+                    <th style="width:20%;">Stato</th>
+                    <th style="width:20%;">Tipo proroga</th>
+                    <th style="width:40%;">Motivazioni</th>
+                    <th style="width:20%;">Azioni</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for proroga in proroghe %}
+                    <tr>
+                        <td>{{ proroga.dataInvio | date('d/m/Y') }}</td>
+                        <td>
+                            {% if proroga.stato.codice != 'PROROGA_PROTOCOLLATA' %}
+                                {{ proroga.stato }}
+                            {% elseif proroga.stato.codice == 'PROROGA_PROTOCOLLATA' %}
+                                {% if proroga.gestita == false %} 
+                                    {{ proroga.stato }}
+                                {% else %}
+                                    {{ proroga.approvata is not null ? (proroga.isApprovata ? 'Proroga approvata' : 'Proroga respinta') : 'Proroga in istruttoria' }}
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                        {% if proroga.tipoproroga is null  %}
+                            <td>-</td>
+                        {% elseif proroga.tipoproroga == 'PROROGA_AVVIO' %}
+                            <td>Proroga avvio progetto</td>
+                        {% elseif proroga.tipoproroga == 'PROROGA_FINE' %}
+                            <td>Proroga termine progetto</td>
+                        {% else %}
+                            <td>-</td>
+                        {% endif %}
+                        <td>{{ proroga.motivazioni|slice(0, 50) }}....</td>
+                        <td>
+                            {% set vociMenu = voci_menu_proroga(proroga.id) %}
+                            {% if vociMenu | length > 0 %}
+                                <div class="dropdown">
+                                    <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                        Azioni
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+
+                                        {% for voceMenu in vociMenu %}
+                                            {% if voceMenu.label != 'Valida' and voceMenu.label != 'Invalida'
+	                                        and voceMenu.label != 'Carica domanda firmata' and voceMenu.label !='Invia domanda' %}
+                                            <li><a href="{{ voceMenu.path }}" {{ voceMenu.attr is defined ? (voceMenu.attr |raw) : "" }}>{{ voceMenu.label }}</a></li>
+                                            {% endif%}
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}

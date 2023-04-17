@@ -1,0 +1,90 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+	
+	{# lo schifo sullo schifo..va chiappaci u patri #}
+	{% if pagamento.modalitaPagamento.isAnticipo %}
+		{# do nothing #}
+	{% else %}
+		{% if no_tab is not defined or not no_tab %}	
+			{% if istruttoria773 is not defined and istruttoria774 is not defined %}
+				{% include 'AttuazioneControlloBundle:Istruttoria/Pagamenti:menu.html.twig' with {'pagamento' : pagamento } %}	
+			{% elseif  istruttoria773 is defined and istruttoria773 %}	
+				{% include 'AttuazioneControlloBundle:Istruttoria/Pagamenti/bando_7:menuEventi.html.twig' with {'pagamento' : pagamento } %}
+			{% elseif  istruttoria774 is defined and istruttoria774 and not pagamento.modalitaPagamento.isAnticipo %}	
+				{% include 'AttuazioneControlloBundle:Istruttoria/Pagamenti/bando_8:menuEventi.html.twig' with {'pagamento' : pagamento } %}
+			{% else %}
+				{% include 'AttuazioneControlloBundle:Istruttoria/Pagamenti:menu.html.twig' with {'pagamento' : pagamento } %}	
+			{% endif %}
+		{% endif %}
+	{% endif %}
+
+
+
+<h4>Dati mandato</h4>
+
+{{ form_start(form) }}
+
+<div id="conferma_operazione_invio" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&#x2613;</button>
+				<h3 id="dataConfirmLabel">Conferma necessaria</h3>
+			</div>
+			<div class="modal-body">
+				<span class="fa fa-warning"></span> Attenzione! Salvando il mandato non sarà più possibile procedere con la fase istruttoria. Continuare?
+			</div>
+			<div class="modal-footer">
+				<a class="btn" data-dismiss="modal" aria-hidden="true" href="">No</a>
+				<button type="submit" name="mandato_pagamento[pulsanti][pulsante_submit]" class="btn btn-primary">Si</button>					
+			</div>
+		</div>
+	</div>
+</div>
+
+{{ form_row(form.numero_mandato) }}
+{{ form_row(form.data_mandato) }}
+{{ form_row(form.importo_pagato) }}
+{{ form_row(form.quota_fesr) }}
+{{ form_row(form.quota_stato) }}
+{{ form_row(form.quota_regione) }}
+{{ form_row(form.note) }}
+{{ form_row(form.atto_liquidazione) }}
+
+{% if pagamento.mandatopagamento is defined %}
+	{% if pagamento.mandatopagamento.attoliquidazione.documento is defined%}
+		{{ mostra_file_table(pagamento.mandatopagamento.attoliquidazione.documento) }}
+	{% endif %}
+{% endif %}
+
+{{ form_row(form.pulsanti) }}
+
+{{ form_end(form) }}
+
+<script type="text/javascript">
+
+		jQuery(document).ready(function () {
+			$("#mandato_pagamento_pulsanti_pulsante_submit").click(function (e) {
+				e.preventDefault();
+				$("#conferma_operazione_invio").modal("show");
+			});
+		});
+	
+	$( "#mandato_pagamento_importo_pagato" ).on( "change", function() {
+		
+		var importo_pagamento = $( "#mandato_pagamento_importo_pagato" ).val().replace(",", "."); 
+		
+		//var importo_pagamento = $( "#mandato_pagamento_importo_pagato" ).val();
+		var importo_fesr = parseFloat(importo_pagamento * 0.50);
+		var importo_stato = parseFloat(importo_pagamento * 0.35);
+		var importo_regione = parseFloat(importo_pagamento * 0.15);
+		
+
+		$('#mandato_pagamento_quota_fesr').val(importo_fesr.formatMoney());
+		$('#mandato_pagamento_quota_stato').val(importo_stato.formatMoney());
+		$('#mandato_pagamento_quota_regione').val(importo_regione.formatMoney());
+	});
+</script>
+
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends '::base.html.twig' %}
+
+
+{% block intestazione %}
+    {{ parent() }}
+    {{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% block body %}
+
+    <h4>Sedi collegate al soggetto</h4>
+ 
+	 <div class="table-toolbar">
+		{% if soggetto.tipo == 'AZIENDA' %}
+			{% if isAccessibile('azienda_aggiungi_sede_operativa_rich', { 'id_richiesta': id_richiesta, 'id_proponente': id_proponente }) %}
+				<div class="btn-group">
+					<a href="{{ path('azienda_aggiungi_sede_operativa_rich', { 'id_richiesta': id_richiesta, 'id_proponente': id_proponente})}} "><button id="sample_editable_1_new" class="btn btn-primary"><span class="fa fa-plus"></span> Aggiungi sede</button>
+					</a>
+				</div>
+			{% endif %}
+		{% elseif soggetto.tipo == 'SOGGETTO' %}
+			{% if isAccessibile('soggetto_aggiungi_sede_operativa_rich', { 'id_richiesta': id_richiesta, 'id_proponente': id_proponente }) %}
+				<div class="btn-group">
+					<a href="{{ path('soggetto_aggiungi_sede_operativa_rich', { 'id_richiesta': id_richiesta, 'id_proponente': id_proponente})}} "><button id="sample_editable_1_new" class="btn btn-primary"><span class="fa fa-plus"></span> Aggiungi sede</button>
+					</a>
+				</div>
+			{% endif %}
+		{% else  %}
+			{% if isAccessibile('comune_aggiungi_sede_operativa_rich', { 'id_richiesta': id_richiesta, 'id_proponente': id_proponente }) %}
+				<div class="btn-group">
+					<a href="{{ path('comune_aggiungi_sede_operativa_rich', { 'id_richiesta': id_richiesta, 'id_proponente': id_proponente})}} "><button id="sample_editable_1_new" class="btn btn-primary"><span class="fa fa-plus"></span> Aggiungi sede</button>
+					</a>
+				</div>
+			{% endif %}
+		{% endif %}
+    </div>
+	
+    <br>
+    <table class="table table-striped table-hover table-bordered">
+        <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Indirizzo</th>
+            <th>Città</th>
+            <th>Azioni</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for sede in sedi %}
+			{% set sedeEstero = false %}
+
+			{% if  sede.indirizzo is not null and  sede.indirizzo.stato.codicecompleto != '11101' %}
+				{%  set sedeEstero = true %}
+			{% endif %}
+            <tr>
+                <td>{{ sede.denominazione }}</td>
+                <td>{{ sede.indirizzo.via }} {{ sede.indirizzo.numeroCivico }}</td>
+				{% if sedeEstero == true %}
+                    <td>{{ sede.indirizzo.comuneEstero }} ({{ sede.indirizzo.provinciaEstera }})</td>
+				{% else %}
+					<td>{{ sede.indirizzo.comune.denominazione }} ({{ sede.indirizzo.comune.provincia.siglaAutomobilistica }})</td>
+				{% endif %}
+                <td>
+                    <a class="btn btn-info btn-sm" href="{{ path("inserisci_sede_operativa", {'id_richiesta': id_richiesta,'id_proponente': id_proponente, 'id_sede':sede.id}) }}" role="button">
+                        Seleziona <span class="fa fa-arrow-right"></span>
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {# display navigation #}
+    <div class="navigation">
+    </div>
+
+    <div class="page-actions">
+        {{ pulsante_indietro(path("elenco_proponenti",{"id_richiesta":id_richiesta})) }}
+    </div>
+
+{% endblock %}

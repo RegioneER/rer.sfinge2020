@@ -1,0 +1,33 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+
+<div class="form-body">
+	{{ form_start(form) }}
+	<div>
+		<h4>Dati atto</h4>
+		{{ form_row(form.numero) }}
+		{{ form_row(form.data) }}
+		{{ form_row(form.descrizione) }}
+		
+		{{ form_row(form.asse) }}
+		{% if atto.documento is not null and path is defined and path is not null %}
+			{#{form_row(form.documento.tipologia_documento) }#}
+			{% include 'AttuazioneControlloBundle::_file.html.twig' with {
+				label: "Atto liquidazione",
+				nome_file: atto.documento.nomeOriginale,
+				url_scarica: path("scarica", {"path_codificato":path}),
+				url_elimina: mode is defined ? null : path('elimina_documento_atto_liquidazione', {'id_atto': atto.id, '_token': csrfToken }) } %}
+		{% else %}
+			{{ form_row(form.documento) }}		
+		{% endif %}		
+	</div>
+	
+	<br/>
+	{{ form_row(form.pulsanti) }}
+	{{ form_row(form._token) }}
+</div>
+
+	{% endblock %}
+	{%block  jquery_page_document_ready %}   
+
+	{% endblock %}

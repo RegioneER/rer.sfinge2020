@@ -1,0 +1,59 @@
+{% extends '::base.html.twig' %}
+
+
+{% block body %}
+{{form(form)}}
+<script>
+	'use strict';
+
+	function setSelectAjax(select, result) {
+		var selectedValue = $('select').val();
+		$.getJSON("{{- path('geo_json_provincie_regione') -}}", function (data) {
+			var items = [];
+			$.each(data, function (key, val) {
+				items.push("<option></option");
+			});
+
+		});
+	}
+
+	function eliminaElemento(e) {
+		$(e).parent().parent().remove().trigger('change');
+	}
+
+	$(document).ready(function () {
+		$('#{{- form.children['localizzazione'].children['provincia'].vars.id -}}').change(function (event) {
+			console.log(event);
+			var labelRegione = $(event.target).find(':selected').parent().attr('label');
+			var selectRegione = $('#{{- form.children['localizzazione'].children['regione'].vars.id -}}');
+			selectRegione.find('option').remove();
+			$('<option></option>').text(labelRegione).appendTo(selectRegione);
+			App.initAjax();
+			
+			var selectComune = $('#{{- form.children['localizzazione'].children['comune'].vars.id -}}');
+			selectComune.prop('disabled', true).select2();
+			$.ajax({
+				url: "{{- path('api_monitoraggio_tc',{tabella: 'TC16LocalizzazioneGeografica'}) -}}",
+				type: 'GET',
+				dataType: 'json',
+				data: {
+					keys: $(event.target).val()
+				},
+				success: function (data) {
+					selectComune.prop('disabled', true);
+					selectComune.find('option').remove();
+					$.each(data, function (idx, value) {
+						$('<option></option>').text(value.value).val(value.id).appendTo(selectComune);
+					});
+					selectComune
+							.prop('disabled', false)
+							.select2()
+							.trigger('change');
+					App.initAjax();
+				}
+			});
+		});
+	});
+	
+</script>
+{% endblock body %}

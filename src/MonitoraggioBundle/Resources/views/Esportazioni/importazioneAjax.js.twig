@@ -1,0 +1,113 @@
+'use strict';
+// Get the template HTML and remove it from the doumenthe template HTML and remove it from the doument
+var previewNode = document.querySelector("#template");
+previewNode.id = "";
+var previewTemplate = previewNode.parentNode.innerHTML;
+previewNode.parentNode.removeChild(previewNode);
+
+/*global Dropzone*/
+var myDropzone = new Dropzone($('#dropzone').get(0), { // Make the whole body a dropzone
+  url: "{{- path('monitoraggio_importazione_rest_igrue') -}}", // Set the url
+  // thumbnailWidth: 80,
+  // thumbnailHeight: 80,
+  parallelUploads: 1,
+  previewTemplate: previewTemplate,
+  autoQueue: false, // Make sure the files aren't queued until manually added
+  previewsContainer: "#previews", // Define the container to display the previews
+  acceptedFiles: 'application/zip',
+  timeout: Infinity
+});
+
+myDropzone.on("addedfile", function (file) {
+  // Hookup the start button
+  //file.previewElement.querySelector(".start").onclick = function() { myDropzone.enqueueFile(file); };
+});
+
+// Update the total progress bar
+// myDropzone.on("totaluploadprogress", function (progress) {
+//   document.querySelector("#total-progress .progress-bar").style.width = progress + "%";
+// });
+
+myDropzone.on("sending", function (file) {
+  // Show the total progress bar when upload starts
+  // And disable the start button
+  //file.previewElement.querySelector(".start").setAttribute("disabled", "disabled");
+});
+
+myDropzone.on('error', function (file, message, xhr) {
+  if( xhr ){
+
+    $(file.previewElement)
+    .find('.progress-bar')
+    .removeClass('progress-bar-success')
+    .addClass('progress-bar-danger');
+  }
+});
+
+myDropzone.on('success', function (file, message ) {
+  $(file.previewElement)
+  .find('.progress-bar')
+  .removeClass('progress-bar-success')
+  .addClass('progress-bar-info');
+});
+
+myDropzone.on('complete', function (file) {
+  $(file.previewElement)
+    .find('.progress')
+    .removeClass('active');
+});
+myDropzone.on('addedfile', onElencoCambiato );
+myDropzone.on('removedfile', onElencoCambiato );
+
+// Hide the total progress bar when nothing's uploading anymore
+myDropzone.on("queuecomplete", function (progress) {
+  //document.querySelector("#total-progress").style.opacity = "0";
+  $('button#nuovo-upload').show();
+  $('button#avvia-tutti-uploads').hide();
+});
+
+
+
+$('#avvia-tutti-uploads').click(function (event) {
+  $(event.target).hide();//attr('disabled', true);  
+  var dropzone = $('div#dropzone')
+    .css('border-style', 'none')
+    .animate({
+      height: 0
+    })
+    .children().hide();
+    //Elimino tutti i pulsanti cancella
+    $('div#previews button').remove();
+  myDropzone.enqueueFiles(myDropzone.getFilesWithStatus(Dropzone.ADDED));
+});
+
+function nuovaImportazione() {
+  myDropzone.removeAllFiles(true);
+  //Elimino forzatamente tutti i files in coda.
+  myDropzone.files.forEach( function(file){
+    myDropzone.removeFile(file);
+  });
+  //elimina forzatamente gli elementi che ancora compaiono (bug di libreria?)
+  $('div#previews > div.file-row').remove();
+
+  // myDropzone.init();
+  $('#avvia-tutti-uploads').show();
+  $('button#nuovo-upload').hide();
+  var dropzone = $('div#dropzone')
+    .css('border-style', 'dashed')
+    .animate({
+      height:200
+    })
+    .children().show();
+}
+
+function onElencoCambiato(file){
+  $('#avvia-tutti-uploads').attr('disabled', myDropzone.files.length < 1);
+}
+
+$(document).ready(function () {
+  $('div#form-noscript').hide();
+  $('div#form-ajax').show();
+  onElencoCambiato();
+});
+

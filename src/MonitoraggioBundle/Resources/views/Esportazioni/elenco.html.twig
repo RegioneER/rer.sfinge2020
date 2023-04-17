@@ -1,0 +1,123 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <div class="table-toolbar">
+        <div>
+            <button class="btn btn-info" data-target="#ricerca-contesto-modal" data-toggle="modal">
+                <span class="fa fa-search"></span> Ricerca
+            </button>
+        </div>
+    </div>
+    <div class="count">
+        Numero elementi trovati: {{ risultato.risultato.getTotalItemCount }} - Filtro attivo: {{ risultato.filtro_attivo ? "Si" : "No" }}
+    </div>
+    {% if risultato.risultato|length > 0 %}
+        <table class="table table-striped table-hover table-bordered" id="progetti-elenco">
+            <thead>
+                <tr>
+                    <th>N° invio</th>
+                    <th>del</th>
+                    <th>Stato</th>
+                    <th>Inviato ad IGRUE il</th>
+                    <th>Totale record inviati</th>
+                    <th>Record accettati</th>
+                    <th>Record scartati</th>
+                    <th>Azioni</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for esportazione in risultato.risultato %}
+                {% set fase = esportazione.lastfase %}
+                {% set inCorso = fase.datafine is null %}
+                    <tr {{ inCorso ? 'data-incorso' : '' }}>
+                        <td>{{ esportazione.id }}</td>
+                        <td>{{ esportazione.datacreazione is null ? "-" : esportazione.datainizio|date("d/m/Y") }}</td>
+                        <td>{{- fase == false ? "-" : fase.descrizionefase -}}{{- fase.datafine is null ? ' in corso' : '' -}}</td>
+                        <td>{{ esportazione.faseInviato == false ? '-' : esportazione.faseInviato.datafine|date("d/m/Y") }}</td>
+                        {% set inviati = (fase != false and fase.fase !=  constant('MonitoraggioBundle\\Entity\\MonitoraggioEsportazioneLogFase::STATO_SCARICO')) ? (esportazione.inviatiAdIgrue is null ? 0 : esportazione.inviatiAdIgrue) : 0 %}
+                        {% set scartati = esportazione.scartatiDaIgrue is null ? 0 : esportazione.scartatiDaIgrue %}
+                        <td>{{ inviati is null ? "-" : inviati }} </td> 
+                        <td>{{ (inviati - scartati) == 0 ? "-" : (inviati - scartati) }}</td>
+                        <td>{{ scartati is null ? "-" : scartati }}</td>
+                        <td>
+                            <div class="dropdown">
+                                <button {{ inCorso ? 'disabled':'' }} class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    Azioni
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                    {% if fase == true and fase.fase not in [constant('MonitoraggioBundle\\Entity\\MonitoraggioEsportazioneLogFase::STATO_IMPORTATO_ERRORI'), constant('MonitoraggioBundle\\Entity\\MonitoraggioEsportazioneLogFase::STATO_IMPORTATO')] %}
+                                        <li>
+                                            <a href="{{- path('monitoraggio_esportazione_gestione_procedura_configurazione',{esportazione_id:esportazione.id}) -}}">Gestisci configurazione</a>
+                                        </li>
+                                    {% endif %}
+                                    {% if fase == true and fase.fase == constant('MonitoraggioBundle\\Entity\\MonitoraggioEsportazioneLogFase::STATO_SCARICO')  %}
+                                        <li>
+                                            <a href="{{- path('monitoraggio_esportazione_scarico',{esportazione_id: esportazione.id, token:csrfToken}) -}}">Aggiorna esportazione</a>
+                                        </li>
+                                    {% endif %}
+                                    {% if fase == true and fase.fase in [ constant('MonitoraggioBundle\\Entity\\MonitoraggioEsportazioneLogFase::STATO_INVIATO') , constant('MonitoraggioBundle\\Entity\\MonitoraggioEsportazioneLogFase::STATO_IMPORTATO')] %}
+                                        <li>
+                                            <a href="{{- path('monitoraggio_download_file_igrue',{esportazione_id: esportazione.id}) -}}">Scarica file IGRUE</a>
+                                        </li>
+                                        <li>
+                                            <a href="{{- path('monitoraggio_ritorno_da_igrue',{ esportazione_id: esportazione.id }) -}}">Ritorno da IGRUE</a>
+                                        </li>
+                                    {% endif %}                                    
+                                    {% if fase == true and fase.fase == constant('MonitoraggioBundle\\Entity\\MonitoraggioEsportazioneLogFase::STATO_IMPORTATO_ERRORI') %}
+                                        <li>
+                                            <a href="{{- path('monitoraggio_esportazione_visualizza_errori_configurazione',{esportazione_id:esportazione.id}) -}}">Visualizza errori</a>
+                                        </li>
+                                        <li>
+                                            <a data-confirm="Sei sicuro di volere procedere alla cancellazione?" href="{{- path('cancella_importazione',{esportazione_id: esportazione.id}) -}}">Elimina importazione</a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <h2>Nessuna esportazione trovata</h2>
+    {% endif %}
+    {{ form_start(form) }}
+    {{ form_rest(form) }}
+    <a class="btn btn-primary pull-right btn-page-action" href="{{- path('monitoraggio_importazione_igrue') -}}"
+       style="margin-right:1.5em;">
+        {% trans %}sfinge.monitoraggio.importa{% endtrans %}
+    </a>
+    {{ form_end(form) }}
+    {# display navigation #}
+    <div class="navigation">
+        {{ knp_pagination_render(risultato.risultato) }}
+    </div>
+
+    {{ modale_ricerca("Ricerca esportazioni",risultato.form_ricerca,"elenco_pulisci_monitoraggio_esportazione","ricerca-contesto-modal") }}
+{% endblock %}
+{% block jquery_page_document_ready %}
+    <script type="text/javascript">
+       
+        function verificaAggiornamento(){
+            $.getJSON( "{{- path('monitoraggio_verifica_stato_esportazione')-}}", function( data ) {
+                var valoreAttuale = data.response
+                if( valoreAttuale == null ){
+                    window.location.href = window.location.href;
+                    return;
+                }
+                var valorePrecedente = $('table#progetti-elenco > tbody > tr[data-incorso] > td:nth-child(3)').text()
+                if ( valorePrecedente.substring(0,valoreAttuale.length) != valoreAttuale ){
+                    window.location.href = window.location.href;
+                }
+            } );
+        }
+
+        $(document).ready( function(){
+            if( $('table#progetti-elenco > tbody > tr[data-incorso]').length > 0 ){
+                setInterval(verificaAggiornamento, 30000);
+            }
+        });
+    </script>
+{% endblock %}
+

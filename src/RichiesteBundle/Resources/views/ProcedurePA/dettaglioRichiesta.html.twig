@@ -1,0 +1,74 @@
+{% extends '::base.html.twig' %}
+
+{% block begin_page_level_plugin_style %}
+	<link href="{{ asset('assets/css/wizard.css') }}" rel="stylesheet" type="text/css"/>
+{% endblock %}
+
+{% block body %}
+
+
+	<ul class="nav nav-pills nav-wizard two-steps">
+		{% for avanzamento, attivo in riepilogo.barraAvanzamento %}
+			<li {% if attivo  %}class="active"{% endif %}>{% if not loop.first %}<div class="nav-wedge"></div>{% endif %}<span>{{avanzamento}}</span>{% if not loop.last %}<div class="nav-arrow"></div>{% endif %}</li>
+				{% endfor %}
+    </ul>
+	<br>
+
+	<h6>Dati richiesta</h6>
+	<div class="row">
+		<div class="col-md-12">
+			<table class="table table-striped table-hover table-bordered">
+				<tr>
+					<td>Numero richiesta</td><td>{{ richiesta.id }}</td>
+				</tr>
+				<tr>
+					<td>Numero protocollo</td><td>{{ richiesta.protocollo }}</td>
+				</tr>
+				<tr>
+					<td>Titolo progetto</td><td>{{ richiesta.titolo is not null ?richiesta.titolo : "-" }}</td>
+				</tr>
+				<tr>
+					<td>Stato</td><td>{{ richiesta.stato.descrizione }}</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<h6>Sezioni</h6>
+	<ul class="list-group list-checked">
+		{% for sezione in riepilogo.sezioni %}
+			{% set esito = {
+				esito: sezione.valido,
+				messaggiSezione: sezione.messaggi
+			} %}
+			{% if sezione.titolo != false %}
+				{% include 'RichiesteBundle:Richieste:mostraValidazioneInLine.html.twig' with {esito:esito, path:sezione.url, label:sezione.titolo} %}
+			{% endif %}
+	{% endfor %}
+	</ul>
+
+	<div class="page-actions">
+		{% set pathAttuale = path(app.request.attributes.get('_route'),app.request.attributes.get('_route_params')) %}
+		{% for azione in riepilogo.azioni %}
+			{# schippo la voce attuale della pagina attuale #}
+			{% if azione.nomeAzione != 'visualizza' and azione.visibile %}
+				<a 
+					href="{{ azione.url }}" 
+					{% for attr, attrValue in azione.attr %}
+						{{ attr }}="{{- attr.Value is same as(true) ? attr : attrValue  -}}"
+					{% endfor %}
+					class="btn btn-info">
+						{{ azione.titolo }}
+				</a>
+			{% endif %}
+		{% endfor %}
+	</div>
+{% endblock %}
+
+{% block jquery_page_document_ready %}
+	<script type="text/javascript" language="javascript">
+		$(document).ready(function () {
+			$('[data-toggle="popover"]').popover();
+		});
+	</script>
+
+{% endblock %}

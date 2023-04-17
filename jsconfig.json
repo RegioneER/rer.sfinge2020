@@ -1,0 +1,16 @@
+{
+ "typeAcquisition": {
+     "include": [
+         "jquery",
+        //  "web/assets/**/*.js",
+         "web/js/*.js",
+         "bootstrap",
+         "bootstrap-datetime-picker",
+         "ckeditor",
+         "jquery-slimscroll",
+         "jquery.cookie",
+         "moment",
+         "select2"
+     ]
+   }
+}

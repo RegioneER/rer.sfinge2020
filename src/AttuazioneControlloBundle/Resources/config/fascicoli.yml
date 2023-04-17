@@ -1,0 +1,17 @@
+services:
+  fascicolo.istanza.principi_rsi_20190220:
+    class:  AttuazioneControlloBundle\Fascicoli\PrincipiRsi20190220
+    arguments: ['@service_container']
+    
+  fascicolo.istanza.principi_rsi_20191204:
+    class:  AttuazioneControlloBundle\Fascicoli\PrincipiRsi20191204
+    arguments: ['@service_container']
+
+  fascicolo.istanza.principi_rsi_imprese_manifatturiere:
+    class: AttuazioneControlloBundle\Fascicoli\PrincipiRsiImpreseManifatturiere
+    arguments: [ '@service_container' ]
+
+  fascicolo.istanza.principi_rsi_imprese_di_servizi:
+    class: AttuazioneControlloBundle\Fascicoli\PrincipiRsiImpreseDiServizi
+    arguments: [ '@service_container' ]
+

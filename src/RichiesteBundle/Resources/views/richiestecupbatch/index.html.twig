@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>RichiestaCupBatch list</h1>
+
+	<table class="table table-striped table-hover table-bordered" id="notizie-elenco">        
+		<thead>
+            <tr>
+                <th>Id</th>
+                <th>Data_creazione</th>
+                <th>Data_risposta</th>
+				<th>Data Scarto</th>
+                <th>File richiesta Cup batch</th>
+				<th>File Risposta Cup batch</th>
+				<th>File Scarto Cup Batch</th> 
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for richiestaCupBatch in richiestaCupBatches %}
+            <tr>
+                <td><a href="{{ path('richiestacupbatch_show', { 'id': richiestaCupBatch.id }) }}">{{ richiestaCupBatch.id }}</a></td>
+                <td>{% if richiestaCupBatch.getDataCreazione %}{{ richiestaCupBatch.getDataCreazione|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>{% if richiestaCupBatch.dataRisposta %}{{ richiestaCupBatch.dataRisposta|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>{% if richiestaCupBatch.dataScarto %}{{ richiestaCupBatch.dataScarto|date('Y-m-d H:i:s') }}{% endif %}</td>
+				<td>{% if richiestaCupBatch.cupBatchDocumentoRichiesta %}{{ scarica_file(richiestaCupBatch.cupBatchDocumentoRichiesta) }} {% endif %}
+				<td>{% if richiestaCupBatch.cupBatchDocumentoRisposta %}{{ scarica_file(richiestaCupBatch.cupBatchDocumentoRisposta) }} {% endif %}
+				<td>{% if richiestaCupBatch.cupBatchDocumentoScarto %}{{ scarica_file(richiestaCupBatch.cupBatchDocumentoScarto) }} {% endif %}
+
+               <td>
+						<div class="dropdown">
+							<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								Azioni
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+								{# TODO: fare action e viste per visualizzare la richiesta e per visualizzare tutti i documenti della richiesta.#}
+								<li><a href="{{ path('richiestacupbatch_show', { 'id': richiestaCupBatch.id }) }}">Dettagli</a>
+									{% if not richiestaCupBatch.cupBatchDocumentoRisposta %}<li><a href="{{ path('richiestacupbatch_associa_risposta', { 'id': richiestaCupBatch.id }) }}">Associa Risposta</a> </li>{% endif %}
+									<li><a href="{{ path('richiestacupbatch_associa_scarto', { 'id': richiestaCupBatch.id }) }}">Associa Scarto</a> </li>
+
+							</ul>
+						</div>
+					</td>
+				
+
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    
+{% endblock %}

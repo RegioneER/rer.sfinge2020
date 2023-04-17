@@ -1,0 +1,23 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+<table class="table table-striped table-hover table-bordered">
+    <thead>
+        <tr>
+            <th>Struttura</th>
+            <th>Errore</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for errore in errori %}
+            <tr>
+                <td>{{ errore.struttura is null ? '-' : errore.struttura }}</td>
+                <td><span {{ errore.igrueError ? 'style="font-weight:bold;"' : '' }}>{{ errore.errore_label }}</span></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<div class="pull-right">
+    <a href="{{indietro}}" class="btn btn-default btn-page-action btn-form-back pull-left">Indietro</a>
+</div>
+{% endblock %}

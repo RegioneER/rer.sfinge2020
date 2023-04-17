@@ -1,0 +1,25 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+
+    <div style="font-size: 15px" class="alert alert-info">
+        Nel menu a tendina saranno disponibili le modalità di pagamento aperte nel momento di creazione della rendicontazione 
+        e associate allo specifico bando (vedere il manuale di rendicontazione per i dettagli); si prega quindi di fare 
+        attenzione alla modalità di pagamento da selezionare, in particolare, si ricorda che il “SALDO FINALE”, 
+        se presente come opzione, potrà essere richiesto solo se risultasse già inviato un precedente "SAL".
+    </div>
+    {{ form_start(form) }}
+    {% if richiesta.isProceduraParticolare == false %}
+        <h4>
+            {% if richiesta.procedura.rendicontazioneProceduraConfig.richiestaFirmaDigitale %}
+                Firmatario richiesta pagamento
+            {% else %}
+                Persona che invierà il pagamento
+            {% endif %}
+        </h4>
+        {{ form_row(form.firmatario) }}
+    {% endif %}
+    <h4>Modalità pagamento</h4>
+    {{ form_row(form.modalita_pagamento) }}
+    {{ form_end(form) }}
+{% endblock %}

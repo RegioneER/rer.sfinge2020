@@ -1,0 +1,128 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+
+	<h4>Avanzamento piano costi <strong>({{ proponente is null ? 'totale' : proponente }})</strong></h4>
+	
+	{% if rendicontazioneProceduraConfig.rendicontazioneMultiProponente %}	
+		{% if form is defined %}
+			<div style="margin-bottom: 40px">
+				{{ form_start(form) }}
+					{{ form_row(form.proponente) }}
+					{#{ form_row(form.submit) }#}
+				{{ form_end(form) }}
+			</div>		
+		{% endif %}
+		
+	{% endif %}
+	
+	<div>
+		<table class="table table-striped table-bordered" >
+			<thead>
+
+				<tr>
+					<th style="width: 30%">Voce piano costo</th>
+					<th style="text-align: center; min-width: 95px;">Importo approvato (&euro;)</th>
+					{% for pagamentoFor in pagamenti %}
+						{% if pagamentoFor.id <= pagamento.id %}
+							<th style="text-align: center; min-width: 95px;">
+								Importo rendicontato (&euro;)<br>{{ pagamentoFor.modalitaPagamento.descrizioneBreve}}
+							</th>
+						{% endif %}
+						{% if pagamentoFor.id < pagamento.id %}
+							<th style="text-align: center; min-width: 95px;">
+								Importo rendicontato Ammesso (&euro;)<br>{{ pagamentoFor.modalitaPagamento.descrizioneBreve}}
+							</th>
+						{% endif %}
+					{% endfor %}
+				</tr>
+			</thead>
+
+			<tbody>
+
+				{% set colspan =  2*pagamenti|length %}
+
+				{# avanzamento[sezioneId][ordinamentoVoce] #}
+				
+				{# stampo le varie voci dell'avanzamento #}	
+				{% for sezione in avanzamento %}
+					
+					{% set titoloSezione = (sezione|first).sezione %}
+					
+					<tr style="font-weight: bold;">
+						<td>{{ titoloSezione }}</td>
+						<td colspan="{{ colspan }}"></td>
+					</tr>
+					
+
+					{% for voce in sezione %}
+						
+						<tr {% if voce.codice == 'TOT' %}style="font-weight: bold;"{% endif %}>
+
+							<td>
+								{{ voce.titolo }}
+							</td>
+
+							<td style="text-align: center;">
+								{{ voce.importoApprovato|number_format(2,',', '.') }}
+							</td>
+
+							{% for rendicontatoPagamento in voce.rendicontatoPagamenti %}
+								{% if rendicontatoPagamento.pagamento.id <= pagamento.id %}
+									<td style="text-align: center;">
+										{{ rendicontatoPagamento.importoRendicontato|number_format(2,',', '.') }}
+									</td>
+								{% endif %}
+								{% if rendicontatoPagamento.pagamento.id < pagamento.id %}
+									<td style="text-align: center;">
+										{{ rendicontatoPagamento.importoRendicontatoAmmesso|number_format(2,',', '.') }}
+									</td>
+								{% endif %}
+							{% endfor %}
+
+						</tr>	
+
+					{% endfor %}
+					
+					{# riga di separazione tra una sezione e l'altra #}
+					{% if not loop.last %}
+						<tr>
+							<td colspan="{{ colspan + 1 }}" style="height: 40px"></td>
+						</tr>
+					{% endif %}
+					
+				{% endfor %}
+
+			</tbody>
+		</table>
+	</div>		
+				
+	<h4>Riepilogo</h4>
+	<div>
+		<table class="table table-striped table-bordered" >
+			<thead>
+				<tr>
+					<th>Investimento totale ammesso</th>
+					<th>Contributo totale concesso</th>
+					<th>Importo totale rendicontato</th>
+				</tr>				
+			</thead>
+			<tbody>
+				<tr>
+					{# ho notato che in alcuni casi i dati di investimento totale ammesso  e contributo totale concesso mancano
+						questo è dovuto al fatto che c'è una variazione, ma non l'hanno approvata o è errata
+						in questo caso metto un trattino 
+					#}
+					<td>{{ investimentoTotaleAmmesso is null ? '-' : investimentoTotaleAmmesso|number_format(2,',', '.') }}</td>
+					<td>{{ contributoTotaleConcesso is null ? '-' : contributoTotaleConcesso|number_format(2,',', '.') }}</td>
+					<td>{{ importoTotaleRichiesto|number_format(2,',', '.') }}</td>
+				</tr>			
+			</tbody>
+		</table>
+	</div>		
+					
+	<div>
+		{{ pulsante_indietro(path("dettaglio_pagamento",{"id_pagamento" : pagamento.id})) }}
+	</div>
+		
+{% endblock %}

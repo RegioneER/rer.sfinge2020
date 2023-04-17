@@ -1,0 +1,66 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	<div class="table-toolbar">
+        <a href="{{ path('crea_utente') }}" id="sample_editable_1_new" class="btn btn-primary"><span class="fa fa-plus"></span> Aggiungi utente</a> 
+		<a href="#" id="btn_ricerca_utenti" class="btn btn-info" data-target="#ricerca-utenti-modal" data-toggle="modal"><span class="fa fa-search"></span> Ricerca</a>
+    </div>
+	<div class="count">
+		Numero elementi trovati: {{ utenti.getTotalItemCount }} - Filtro attivo: {{ filtro_attivo ? "Si" : "No" }}
+	</div>
+    <table class="table table-striped table-hover table-bordered" id="notizie-elenco">
+        <thead>
+            <tr>
+				<th>{{ knp_pagination_sortable(utenti, 'Id', 'u.id') }}</th>
+                <th>Username</th>
+                <th>Email</th>
+				<th>Ruolo</th>
+				<th>Permessi opzionali</th>
+				<th>Data creazione</th>
+				<th>Persona</th>
+				<th>Attivo</th>
+				<th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+			{% for utente in utenti %}
+				<tr>
+					<td><a href="{{ path('visualizza_utente', { 'id_utente': utente.id }) }}">{{ utente.id }}</a></td>
+					<td>{{ utente.username }}</td>
+					<td>{{ utente.email }}</td>
+					<td>{{ utente.ruoli|join(', ') }}</td>
+					<td>{{ utente.permessifunzionalita|join(', ') }}</td>
+					<td>{{ utente.creatoil|date("d/m/Y") }}</td>
+					{% if utente.esistePersona %}
+						<td>{{ utente.persona }}</td>
+					{% else %}
+						<td style="font-style: italic;">- Nessuna persona associata -</td>
+					{% endif %}
+					<td>{{ utente.enabled ? "Si" : "No" }}</td>
+					<td>
+						<a class="btn btn-primary" href="{{ path('visualizza_utente', { 'id_utente': utente.id }) }}">Vedi</a>
+						{%  if is_granted('ROLE_SUPER_ADMIN') or  is_granted('ROLE_ADMIN_PA')%}
+							<a class="btn btn-primary" href="{{ path('modifica_utente', { 'id_utente': utente.id }) }}">Modifica</a>
+						{% endif %}
+						{% if utente.enabled  %}
+							<a href="{{ path('cancella_utente', { 'id_utente': utente.id, '_token': csrfToken }) }}" class="btn btn-sm red" data-confirm="Confermi la disattivazione?" 
+							   data-target="#dataConfirmModal" data-toggle="modal">Disattiva <span class="fa fa-trash-o"></span></a>
+							{% else %}
+							<a href="{{ path('riattiva_utente', { 'id_utente': utente.id, '_token': csrfToken }) }}" class="btn btn-sm blue" data-confirm="Confermi l'attivazione?" 
+							   data-target="#dataConfirmModal" data-toggle="modal">Riattiva<span class="fa fa-tachometer"></span></a>
+							{% endif %}
+					</td>
+				</tr>
+			{% endfor %}
+        </tbody>
+    </table>
+		
+    <div class="navigation">
+        {{ knp_pagination_render(utenti) }}
+    </div>
+
+    {{ modale_ricerca("Utenti",formRicercaUtenti,"elenco_utenti_pulisci","ricerca-utenti-modal") }}
+
+
+{% endblock %}
+

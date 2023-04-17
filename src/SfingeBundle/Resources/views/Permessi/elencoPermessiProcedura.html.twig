@@ -1,0 +1,80 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    
+    <div class="table-toolbar">
+        <div class="btn-group">
+            <a href="{{ path('permessi_procedura') }}" id="sample_editable_1_new" class="btn btn-primary"><span class="fa fa-plus"></span> Aggiungi Permesso</a> 
+            <a href="#"><button id="btn_ricerca_permesso" data-target="#ricerca-permesso-modal" data-toggle="modal" class="btn btn-info"><span class="fa fa-search"></span> Ricerca</button></a>
+        </div>
+    </div>
+    <div class="count">
+        Numero elementi trovati: {{ permessi.getTotalItemCount }} - Filtro attivo: {{ filtro_attivo ? "Si" : "No" }}
+    </div>
+    <table class="table table-striped table-hover table-bordered" id="permessi-elenco">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Cognome</th>
+                <th>Procedura</th>
+                <th>Tipologia</th>
+                <th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for permesso in permessi %}
+                <tr>
+                    <td>{{ permesso.utente.persona.nome }}</td>
+                    <td>{{ permesso.utente.persona.cognome }}</td>
+                    <td>{{ permesso.procedura.titolo }}</td>
+                    <td>
+                        {% if permesso.soloLettura == 1 %}
+                            <span>Solo Lettura</span>
+                        {% else %}
+                            <span>Lettura|Scrittura</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a class="btn btn-primary" href="{{ path('modifica_permesso_procedura', { 'id_permesso': permesso.id }) }}">Modifica</a>
+                        <a href="{{ path('cancella_permessi_procedura', { 'id_permesso': permesso.id, '_token': csrfToken }) }}" class="btn btn-sm red" data-confirm="Confermi la disattivazione?" data-target="#dataConfirmModal" data-toggle="modal">Disattiva <span class="fa fa-trash-o"></span></a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {# display navigation #}
+    <div class="navigation">
+        {{ knp_pagination_render(permessi) }}
+    </div>
+
+    <div id="ricerca-permesso-modal" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                    <h3 id="ricerca-permesso-modal-titolo">Ricerca Permesso</h3>
+                </div>
+                <div class="modal-body">
+                    {{ form(formRicercaPermessiProcedura) }}
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Chiudi</button>
+                    <a class="btn btn-default" href="{{ path("elenco_permessi_procedura_pulisci") }}">Annulla Ricerca</a>
+                    <a class="btn btn-primary" href="#" id="ricercaOk">Ricerca</a>
+				</div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{%block  jquery_page_document_ready %}
+<script>
+    jQuery(document).ready(function() {
+        $("#ricercaOk").click(function(e){
+            e.preventDefault();
+            $(this).parents(".modal-content").find("form").submit();
+        })
+    });
+</script>
+{% endblock %}

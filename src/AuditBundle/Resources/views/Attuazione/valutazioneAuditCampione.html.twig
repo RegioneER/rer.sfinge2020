@@ -1,0 +1,24 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	{% if campione.documentiCampioneRequisito is not empty %}
+		<h4>Elenco documenti caricati</h4>
+		<div class="form-body">	
+			{% for documento in campione.documentiCampioneRequisito %}
+				{{ mostra_file(documento.documentoFile, path('elimina_documento_campione_requisito', {'id_documento_campione': documento.id, '_token': csrfToken }) ) }}		
+				<br/>
+			{% endfor %}
+		</div>
+	{% endif %}
+	
+	<div class="form-body">
+		<h4>Carica documento</h4>
+			{{ form(form_doc) }}
+	</div>		
+	
+	<h4>Valutazione</h4>
+
+	{{ form(form) }}
+
+
+{% endblock %}

@@ -1,0 +1,156 @@
+{
+    "importo_richiesto": 20000,
+    "data_inizio_rendicontazione": "2020-06-21",
+    "data_fine_rendicontazione": "2020-06-21",
+    "importo_rendicontato": 20000,
+    "data_convenzione": "2020-06-21",
+    "contratti": [
+        {
+            "tipo_contratto": "CON",
+            "tipologia_fornitore": "PG",
+            "data_inizio": "2020-06-21",
+            "data_contratto": "2020-06-18",
+            "descrizione": "testo ",
+            "fornitore": "testo ",
+            "numero": "testo ",
+            "beneficiario_contratto": "testo ",
+            "stazione_appaltante": "ST1 ",
+            "piattaforma_committenza": "SI",
+            "importo_contratto_complessivo": 20000,
+            "importo_contratto_complessivo_ivato": 20000,
+            "provvedimento_avvio_procedimento": "Bando",
+            "tipologia_atto_aggiudicazione" : "Altro",
+            "num_atto_aggiudicazione" : "20",
+            "data_atto_aggiudicazione": "2020-06-18",
+            "giustificativi": [
+                {
+                    "documento_giustificativo": "fattura.pdf",
+                    "denominazione_fornitore": "Fornitore spa",
+                    "codice_fiscale_fornitore": "12345678901",
+                    "descrizione_giustificativo": "campo di testo ",
+                    "numero_giustificativo": "numero fattura/nota spesa",
+                    "data_giustificativo": "2020-06-21",
+                    "importo_giustificativo": 10000,
+                    "data_consegna": "2020-06-25",
+                    "luogo_consegna": "ufficio DG piano 19",
+                    "nota_beneficiario": "eventuali descrizioni con n°unità o altro",
+                    "tipologia_giustificativo": "TIPOLOGIA_STANDARD_FATTURA_ELETTRONICA",
+                    "imputazioni": [
+                        {
+                            "voce_spesa": "A",
+                            "importo": 10000
+                        }
+                    ],
+                    "quietanze": [
+                        {
+                            "numero": "stringa",
+                            "documento": "quietanza.pdf",
+                            "tipologia": "MANDATO_PAGAMENTO",
+                            "data_quietanza": "2020-06-21",
+                            "importo": 10000,
+                            "data_avvenuta_esecuzione": "2020-06-22",
+                            "importo_mandato": 10000
+                        },
+                        {
+                            "numero": "stringa",
+                            "documento": "quietanza2.pdf",
+                            "tipologia": "MANDATO_PAGAMENTO",
+                            "data_quietanza": "2020-06-21",
+                            "importo": 20000,
+                            "data_avvenuta_esecuzione": "2020-06-22",
+                            "importo_mandato": 20000
+                        }
+                    ],
+                    "documenti_aggiuntivi": [
+                        {
+                            "nome_file": "fattura2.pdf",
+                            "tipologia": "dg2_bando140"
+                        }
+                    ]
+                },
+                {
+                    "documento_giustificativo": "fattura3.pdf",
+                    "denominazione_fornitore": "Fornitore spa",
+                    "codice_fiscale_fornitore": "12345678901",
+                    "descrizione_giustificativo": "campo di testo ",
+                    "numero_giustificativo": "numero fattura/nota spesa",
+                    "data_giustificativo": "2020-06-21",
+                    "data_consegna": "2020-06-25",
+                    "luogo_consegna": "ufficio DG piano 19",
+                    "importo_giustificativo": 10000,
+                    "nota_beneficiario": "eventuali descrizioni con n°unità o altro",
+                    "tipologia_giustificativo": "TIPOLOGIA_STANDARD_FATTURA_ELETTRONICA",
+                    "imputazioni": [
+                        {
+                            "voce_spesa": "B",
+                            "importo": 10000
+                        }
+                    ],
+                    "quietanze": [
+                        {
+                            "numero": "stringa",
+                            "documento": "quietanza.pdf",
+                            "tipologia": "MANDATO_PAGAMENTO",
+                            "data_quietanza": "2020-06-21",
+                            "importo": 10000,
+                            "data_avvenuta_esecuzione": "2020-06-22",
+                            "importo_mandato": 10000
+                        },
+                        {
+                            "numero": "stringa",
+                            "documento": "quietanza2.pdf",
+                            "tipologia": "MANDATO_PAGAMENTO",
+                            "data_quietanza": "2020-06-21",
+                            "importo": 20000,
+                            "data_avvenuta_esecuzione": "2020-06-22",
+                            "importo_mandato": 10000
+                        }
+                    ],
+                    "documenti_aggiuntivi": [
+                        {
+                            "nome_file": "fattura4.pdf",
+                            "tipologia": "dg3_bando140"
+                        }
+                    ]
+                }
+            ],
+            "documenti": [
+                {
+                    "nome_file": "contratto.pdf",
+                    "sotto_cartella": "cig",
+                    "tipologia": "dc10_bando140",
+                    "nota": "nota documento contratto"
+                },
+                {
+                    "nome_file": "contratto2.pdf",
+                    "sotto_cartella": "cig",
+                    "tipologia": "dc1_bando140",
+                    "nota": "nota documento contratto"
+                }
+            ]
+        }
+    ],
+    "documenti": [
+        {
+            "nome_file": "pagamento.pdf",
+            "tipologia": "dp1_bando140"
+        },
+        {
+            "nome_file": "pagamento2.pdf",
+            "tipologia": "dp2_bando140"
+        }
+    ],
+    "procedure_aggiudicazione": [
+        {
+            "cig": "1234567890"
+        }, {
+            "motivo_assenza_cig": "01",
+            "tipo": "20",   
+            "importo_procedura": 1000,
+            "data_pubblicazione": "2020-04-05",
+            "importo_aggiudicato": 1000,
+            "data_aggiudicazione": "2020-04-05",
+            "descrizione": "Descrizione procedura"
+        }
+    ]
+}

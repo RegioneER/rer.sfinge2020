@@ -1,0 +1,49 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+
+{{ form_start(form) }}
+
+	<h4>Dati Anagrafici</h4>
+
+	{{ form_row(form.codice_fiscale) }}
+	{{ form_row(form.partita_iva) }}
+        {% do form.senza_piva.setRendered %}
+	{{ form_row(form.forma_giuridica) }}
+	{#{ form_row(form.sito_web) }#}
+	{{ form_row(form.comune_unione_comune) }}
+    {{ form_row(form.codice_ateco) }}
+    {{ form_row(form.codice_ateco_secondario) }}
+
+    {#<h4>Dati INPS e INAIL</h4>
+    {{ form_row(form.iscritta_inps) }}
+    {{ form_row(form.matricola_inps) }}
+    {{ form_row(form.impresa_iscritta_inps) }}
+    {{ form_row(form.motivazioni_non_iscrizione_inps) }}
+    {{ form_row(form.impresa_iscritta_inail) }}
+    {{ form_row(form.impresa_iscritta_inail_di) }}
+    {{ form_row(form.numero_codice_ditta_impresa_assicurata) }}
+    {{ form_row(form.motivazioni_non_iscrizione_inail) }}
+    {{ form_row(form.ccnl) }#}
+
+	<h4>Dati Sede</h4>
+
+	{{ form_row(form.via) }}
+	{{ form_row(form.civico) }}  
+	{{ form_row(form.provincia) }}        
+	{{ form_row(form.comune) }}
+	{{ form_row(form.cap) }}
+	{{ form_row(form.localita) }}
+	{{ form_row(form.tel) }}
+	{{ form_row(form.fax) }}
+	{{ form_row(form.email) }}
+	{{ form_row(form.email_pec) }}
+	
+	{% do form.laboratorio_ricerca.setRendered %}
+
+{{ form_end(form) }}
+
+{% endblock %}
+{%block  jquery_page_document_ready %}
+	{% set vars = {'indirizzo': 'comune_unione', 'form' : form }%}
+	{% include "BaseBundle:Base:province_comuni_js_no_estero.html.twig" with vars %}
+{% endblock %}

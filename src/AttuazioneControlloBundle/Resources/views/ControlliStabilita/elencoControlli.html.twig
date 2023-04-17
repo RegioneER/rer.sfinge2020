@@ -1,0 +1,128 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    {% include 'AttuazioneControlloBundle:ControlliStabilita:menu_principale.html.twig' %}
+    <br/>
+    <div class="table-toolbar">
+        <a href="#" data-target="#ricerca-istruttoria-modal" data-toggle="modal" class="btn btn-info"><span class="fa fa-search"></span> Ricerca</a>
+    </div>
+
+    <div class="count">
+        Numero elementi trovati: {{ risultati.getTotalItemCount }} - Filtro attivo: {{ filtro_attivo ? "Si" : "No" }}
+    </div>
+    <div class="alert alert-warning" role="alert">
+        In caso di sede operativa non indicata o non reperibile viene riportata la sede legale in <span style="color: red">rosso</span>
+    </div>
+
+    <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+        <thead>
+            <tr>
+                <th>Bando</th>
+                <th>Soggetto</th>
+                <th>Sede</th>
+                <th>PMI</th>
+                <th>Protocollo richiesta</th>
+                <th>Contatore</th>
+                <th>Referenti</th>
+                <th>Campionata ada</th>
+                <th>Esito</th>
+                <th>Data validazione</th>
+                <th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for controllo in risultati %}
+                {% set ultimoPagamento = controllo.controlloObj.richiesta.attuazionecontrollo.pagamenti|last %}
+                <tr>
+                    <td>{{ controllo.atto_num }}</td>
+                    <td>{{ controllo.denominazione }}</td>
+                    {% if controllo.sede_intervento is not null %}
+                        <td>{{ controllo.sede_intervento }}</td>
+                    {% else %}
+                        <td style="color: red">{{ controllo.sede_legale  }}</td>
+                    {% endif %}	
+                    <td>{{ controllo.pmi != '-' ? (controllo.pmi == 'GRANDE' ? 'No':'Si'):'-' }}</td>
+                    <td>{{ controllo.protocollo }}</td>
+                    {% if ultimoPagamento != false and ultimoPagamento.isUltimoPagamento %}
+                        <td {% if ultimoPagamento.giornicontatore < 0  %} style="color: red" {% endif %}>
+                            {{ ultimoPagamento.giornicontatore }}
+                        </td>
+                    {% else %}
+                        <td>-</td>
+                    {% endif %}
+                    <td>
+                        {% if controllo.controlloObj.richiesta.mandatario.referenti|length > 0 %}
+                            {{ controllo.controlloObj.richiesta.mandatario.ReferentiMail|join(', ') }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if controllo.controlloObj.richiesta.AuditCampioniOperazioni|length > 0 %}
+                            Si
+                        {% else %}
+                            No
+                        {% endif %}
+                    </td>
+                    <td>{{ controllo.esito_ctrl is not null ? controllo.esito_ctrl : '-' }}</td>	
+                    <td>{{ controllo.data_validazione is not null ? controllo.data_validazione|date('d-m-Y') : '-'  }}</td>	
+                    <td>
+                        <div class="dropdown">
+                            <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                Azioni
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                <li><a href="{{ path("riepilogo_controllo_stabilita", {'id_controllo':controllo.id}) }}">Gestisci</a></li>
+                                    {% if controllo.controlloObj.richiesta.AuditCampioniOperazioni|length > 0 %}
+                                        {% for audit in controllo.controlloObj.richiesta.AuditCampioniOperazioni %}
+                                        <li><a href="{{ path("genera_pdf_report_operazione_attuazione", {'id_audit_campione_operazione': audit.id}) }}">Report campione id {{ audit.id }}</a></li>
+                                        <li><a href="{{ path("genera_pdf_report_operazione_attuazione_html", {'id_audit_campione_operazione': audit.id}) }}">Report HTML campione id {{ audit.id }}</a></li>
+                                        {% endfor %}
+                                    {% endif %}
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="navigation">
+        {{ knp_pagination_render(risultati) }}
+    </div>
+
+    <div id="ricerca-istruttoria-modal" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h3 id="ricerca-istruttoria-modal-titolo">Ricerca Controlli</h3>
+                </div>
+                <div class="modal-body">
+                    {{ form(formRicerca) }}
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Chiudi</button>
+                    <a class="btn btn-default" href="{{ path("elenco_controlli_stabilita_pulisci") }}">Annulla Ricerca</a>
+                    <a class="btn btn-primary" href="#" id="ricercaOk">Ricerca</a>
+                </div>
+            </div>
+        </div>
+    </div>	
+
+{% endblock %}
+
+{% block  jquery_page_document_ready %}
+<script>
+	jQuery(document).ready(function() {
+		$("#ricercaOk").click(function(e){
+			e.preventDefault();
+			$(this).parents(".modal-content").find("form").submit();
+		});
+	});
+</script>
+{% endblock %}
+
+{% block submit_widget %}
+{% endblock submit_widget %}

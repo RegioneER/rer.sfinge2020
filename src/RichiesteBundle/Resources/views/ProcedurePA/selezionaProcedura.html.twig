@@ -1,0 +1,26 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+
+{{ form(form) }}
+{% endblock %}
+
+{% block jquery_page_document_ready %}
+<script type="text/javascript">
+    'use strict';
+    $(document).ready(function(){
+       $('#{{- form.soggetto.vars.id -}}').select2({
+            ajax: {
+                delay: 250,
+                url: '{{- path('procedura_pa_search_azienda')  -}}',
+                dataType: 'json',
+                minimumInputLength: 3,
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

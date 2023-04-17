@@ -1,0 +1,8 @@
+{% if (is_granted('ROLE_VERIFICHE_ESTERNE')) %}
+    <li class="">
+        <a href="{{ path('funzioni_servizio_index') }}">
+            <span class="fa fa-folder"></span>
+            <span class="title">Verifiche esterne</span>
+        </a>
+    </li>
+{% endif %}

@@ -1,0 +1,1 @@
+UPDATE documenti SET path = replace(path, '/var/www/', '/mnt/fesr/') 

@@ -1,0 +1,32 @@
+{% set sottoPagine = servizio.sottoPagineFrammento(istanza_frammento) %}
+{% if sottoPagine | length > 0%}	
+	<ul class="list-group list-checked">
+		
+	{% for pagina in sottoPagine %}
+		{% set sotto_pagine = istanza_frammento.istanzeSottoPagineByAlias(pagina.alias, true) %}
+		{% if sotto_pagine|length == 0 %}
+			{% set complete = false %}
+			{% set messaggio_errore = "Dati non completi" %}
+		{% else %}	
+			{% set validazione = servizio.validaIstanzaPagina(sotto_pagine|first) %}
+			{% set complete = validazione.esito %}
+			{% set messaggio_errore = complete ? "" : validazione.messaggiSezione|join('<br>') %}
+		{% endif %}
+		<li class="list-group-item {{ complete ? "complete" : "" }}">
+			<a href="{{ path(servizio.routeIstanzaPagina, {'id_istanza_frammento' : istanza_frammento.id, 'id_pagina' : pagina.id }) }}">{{ pagina.titolo }}</a>
+			{% if not complete %}
+				<span class="help"
+					  data-container="body"
+					  data-toggle="popover"
+					  data-trigger="hover"
+					  data-placement="bottom"
+					  data-title="Errori di compilazione"
+					  data-html="true"
+					  data-content="{{ messaggio_errore }}">
+					istruzioni</span>
+			{% endif %}
+		</li>	
+	{% endfor %}	
+
+	</ul>
+{% endif %}

@@ -1,0 +1,56 @@
+publiccodeYmlVersion: "0.2"
+
+name: Sfinge2020
+url: "https://example.com/italia/medusa.git"
+softwareVersion: "1.0"
+releaseDate: "2023-02-10"
+platforms:
+  - web
+
+categories:
+  - financial-reporting
+  - business-intelligence
+  - business-process-management
+  - data-collection
+  - data-visualization
+
+developmentStatus: stable
+
+softwareType: "standalone/web"
+
+description:
+  it:
+    localisedName: Sfinge2020
+    genericName: Web Application
+    shortDescription: >
+          Sistema di e-Cohesion
+
+    longDescription: >
+          Sistema di e-Cohesion utilizzato per lo scambio di 
+          informazioni tra le autorità dei 
+          Fondi Sie - Fondi strutturali e di investimento 
+          europei - e i beneficiari del Programma operativo 
+          regionale cofinanziato dal Fesr in Emilia-Romagna. 
+    features:
+       - Gestione bandi e avvisi
+       - Presentazione domande di finanziamento
+       - Istruttoria domande di finanziamento
+       - Gestione domande di finanziamento
+       - Rendicontazione domande di finanziamento
+
+legal:
+  license: AGPL-3.0-or-later
+
+maintenance:
+  type: "contract"
+  contractors:
+    - RTI Performer s.r.l. & Schema31 s.p.a.
+    - Coesione s.r.l.
+
+  contacts:
+    - name: Giuseppe Di Bona
+
+localisation:
+  localisationReady: yes
+  availableLanguages:
+    - it

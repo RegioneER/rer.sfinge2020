@@ -1,0 +1,40 @@
+{% block elenco_scarti %}
+
+<a class="btn btn-primary" role="button" data-toggle="collapse" href="#collapseTracciatoScarti" aria-expanded="false" aria-controls="collapseExample">
+	Dettaglio Tracciato Scarti
+	</a>
+	<div class="collapse" id="collapseTracciatoScarti">
+<h2>Dettaglio Tracciato Scarti</h2>
+	<table class="table table-striped table-hover table-bordered" id="notizie-elenco">        
+		<thead>
+            <tr>
+                <th>id progetto</th>
+                <th>codifica locale</th>
+                <th>scarto</th>
+				<th>corrispondenza</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for esito in scarti %}
+			
+			{% if esito.corrispondenza == 1 %} {% set esito_corrispondenza = "Si" %} {% set classe_esito="" %} {% else %}{% set esito_corrispondenza = "No" %} {% set classe_esito="danger" %} {% endif %}
+			
+            <tr class="{{classe_esito}}">
+                <td>{{ esito.id_progetto }}</a></td>
+               <td>{{ esito.codifica_locale }}</a></td>
+                <td>{% if esito.messaggi_scarto %}
+					<ul>
+						{% for messaggio_scarto in esito.messaggi_scarto %}
+							<li>{{ messaggio_scarto }}</li>
+						{% endfor %}
+					</ul>
+				{% else %}-{% endif %}
+				</td>
+				<td>{{esito_corrispondenza}}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+	</div>
+		
+{% endblock %}

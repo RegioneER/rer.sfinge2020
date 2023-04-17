@@ -1,0 +1,34 @@
+<h4>
+    Spese Certificate
+</h4>
+
+{% if certificazioni|length > 0 %}
+
+<table class="table table-striped table-hover table-bordered">
+    <thead>
+        <tr>
+            <th>Data domanda</th>
+            <th>Domanda pagamento</th>
+            <th>Tipologia importo</th>
+            <th>Livello gerarchico</th>
+            <th>Importo spesa totale</th>
+            <th>Importo spesa pubblica</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for certificazione in certificazioni %}
+            <tr>
+                <td>{{ certificazione.dataDomanda|date('d/m/Y') }}</td>
+                <td>{{ certificazione.idDomandaPagamento }}</td>
+                <td>{{ certificazione.tipologiaImporto }}</td>
+                <td>{{ certificazione.livelloGerarchico }}</td>
+                <td>{{ certificazione.importoSpesaPubblica|number_format(2, ',', '.') }}</td>
+                <td>{{ certificazione.importoTotale|number_format(2, ',', '.') }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% else %}
+    <h5>Nessun elemento trovato</h5></br>
+{% endif %}

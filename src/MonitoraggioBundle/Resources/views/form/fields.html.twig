@@ -1,0 +1,46 @@
+
+{% block tc_ajax %}
+    {{ form(form) }}
+    <script type="text/javascript">
+        'use strict';
+
+        function settaValoriComuni(ricerca) {
+            var tabella = ricerca.attr('data-ajax-class');
+            var query = ricerca.val();
+            var comuni = $('select[id$="_comune"]');
+            $.getJSON({
+                'url':"../api/tc/" + tabella,
+                'data':query
+            })
+                    .done(function (data) {
+                        comuni
+                                .find('option')
+                                .remove()
+                                .end()
+                                .trigger('change');
+
+                        $.each(data, function (k, v) {
+
+                            comuni.append($('<option>', {
+                                value: v.id,
+                                text: v.descrizione_comune
+                            }));
+                        });
+                    });
+        }
+
+        function initChoiceComuni() {
+            var province = $('select[data-ajax-key]');
+            settaValoriComuni(province;
+            province.change(function (event) {
+               
+                settaValoriComuni(province.val());
+            });
+
+        }
+
+        $(document).ready(function () {
+            initChoiceComuni();
+        });
+    </script>
+{% endblock %}

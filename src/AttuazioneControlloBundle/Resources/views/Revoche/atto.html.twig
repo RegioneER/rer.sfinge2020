@@ -1,0 +1,33 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+
+	<div class="form-body">
+		{{ form_start(form) }}
+		<div>
+			<h4>Dati atto</h4>
+			{{ form_row(form.numero) }}
+			{{ form_row(form.data) }}
+			{{ form_row(form.descrizione) }}
+			{{ form_row(form.tipo_origine_revoca) }}
+			{{ form_row(form.tipo_motivazione) }}	
+			{{ form_row(form.tipo) }}	
+			{{ form_row(form.documento.file, {label: "Atto di revoca"}) }}
+			{% if lettura == true %}
+				{% if vecchioDocumento is defined %}
+					{{ mostra_file_table(vecchioDocumento ) }}
+				{% else %}
+					{{ mostra_file_table(atto.documento ) }}
+				{% endif %}
+			{% endif %}
+		</div>
+
+		<br/>
+		{{ form_row(form.pulsanti) }}
+		{{ form_row(form._token) }}
+		{{ form_end(form) }}
+	</div>
+
+{% endblock %}
+{%block  jquery_page_document_ready %}   
+
+{% endblock %}

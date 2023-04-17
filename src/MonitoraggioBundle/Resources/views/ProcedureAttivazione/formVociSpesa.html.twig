@@ -1,0 +1,42 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <h4>{{ procedura }}</h4>
+    {% form_theme form.children.piani_costo _self %}
+
+    {{ form_start(form) }}
+
+    <table class="table table-striped table-hover table-bordered">
+        <thead>
+            <tr>
+                <th>Voce piano costo</th>
+                <th>Voce spesa</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for f in form.children.piani_costo %}
+            <tr>
+                <td>
+                    {{ f.vars.value.titolo }}
+                </td>
+                {{ form_row(f) }}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+    {{ form_rest(form) }}
+    {{ form_end(form) }}
+
+{% endblock body %}
+
+
+{% block form_row -%}
+
+        {{ not form.vars.compound ? '<td>' : '' }}
+            {{- form_errors(form) -}}
+            {{- form_widget(form) -}}
+        {{ not form.vars.compound ? '</td>' : '' }}
+    
+{% endblock form_row %}

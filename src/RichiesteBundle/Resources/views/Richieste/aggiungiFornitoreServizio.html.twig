@@ -1,0 +1,21 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+
+    <p class="lead">Inserire servizio per il fornitore </p>
+
+
+    {{ form_start(form) }}
+
+        <h4>Crea Servizio</h4>
+        
+        {{ form_row(form.tipologia_servizio) }}
+        {{ form_row(form.responsabile) }}
+        {{ form_row(form.giornate_uomo) }}
+        {{ form_row(form.descrizione) }}
+        {{ form_row(form.costo) }}
+
+    {{ form_end(form) }}
+	
+{% endblock %}
+

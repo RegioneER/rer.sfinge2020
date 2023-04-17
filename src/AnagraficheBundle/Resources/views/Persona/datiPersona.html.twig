@@ -1,0 +1,62 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+
+	{{ form_start(form) }}
+
+		<h4>Dati personali</h4>
+
+		{{ form_row(form.nome) }}
+		{{ form_row(form.cognome) }}
+		{{ form_row(form.sesso) }}
+		{{ form_row(form.nazionalita) }}
+		{{ form_row(form.data_nascita) }}
+		{% if not(persona.comune and persona.comune.cedutoLegge1989) %}
+			{{ form_row(form.stato_nascita) }}
+		{% endif %}
+		{# if (persona.comune and not persona.comune.cedutoLegge1989) #}
+		{{ form_row(form.provincia) }}
+		{# endif #}
+		{{ form_row(form.comune) }}
+		{{ form_row(form.codice_fiscale) }}
+
+
+		<h4>Indirizzo residenza</h4>
+
+		{{ form_row(form.luogo_residenza.via) }}
+		{{ form_row(form.luogo_residenza.numero_civico) }}
+		{{ form_row(form.luogo_residenza.stato) }}
+		{{ form_row(form.luogo_residenza.provincia, {'_id': 'luogo_residenza_provincia_row'}) }}
+		{{ form_row(form.luogo_residenza.comune, {'_id': 'luogo_residenza_comune_row'}) }}
+
+		{{ form_row(form.luogo_residenza.provinciaEstera, {'_id': 'luogo_residenza_provincia_estera_row'}) }}
+		{{ form_row(form.luogo_residenza.comuneEstero, {'_id': 'luogo_residenza_comune_estero_row'}) }}
+
+		{{ form_row(form.luogo_residenza.cap) }}
+		{{ form_row(form.luogo_residenza.localita) }}
+
+
+		<h4>Recapito principale</h4>
+
+		{{ form_row(form.telefono_principale) }}
+		{{ form_row(form.fax_principale) }}
+		{{ form_row(form.email_principale) }}
+
+
+		<h4>Recapito alternativo</h4>
+
+		{{ form_row(form.telefono_secondario) }}
+		{{ form_row(form.fax_secondario) }}
+		{{ form_row(form.email_secondario) }}
+
+
+	{% do form.luogo_residenza.setRendered %}
+	{{ form_end(form) }}
+
+
+{% endblock %}
+{%block  jquery_page_document_ready %}
+	{% set vars = {'indirizzo': 'persona_luogo_residenza', 'form' : form.luogo_residenza }%}
+	{% include "BaseBundle:Base:province_comuni_js.html.twig" with vars %}
+	{% set vars2 = {'indirizzo': '', 'form' : form, 'stato_name' : 'stato_nascita' }%}
+	{% include "BaseBundle:Base:persona_province_comuni_js.html.twig" with vars2 %}	
+{% endblock %}

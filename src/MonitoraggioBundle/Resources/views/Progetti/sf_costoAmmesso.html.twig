@@ -1,0 +1,48 @@
+<section style="margin-bottom:2em;">
+<h4>
+    Costo ammesso
+</h4>
+
+{{ form_start(formCostoAmmesso) }}
+{{ form_errors(formCostoAmmesso) }}
+{% form_theme formCostoAmmesso '@Monitoraggio/tableFormTheme.html.twig' %}
+
+{% set visualizzazioneTabella = 0 %}
+
+    {% if formCostoAmmesso.mon_programmi|length >0 %}
+        {% for programma in formCostoAmmesso.mon_programmi %}
+            {% if programma.mon_livelli_gerarchici|length > 0 %}
+
+                {% set visualizzazioneTabella = 1 %}
+
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+
+    {% if visualizzazioneTabella %}
+
+<table class="table table-striped table-hover table-bordered">
+    <thead>
+        <tr>
+            <th>Livello gerarchico</th>
+            <th width="20%" >Importo ammesso</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for programma in formCostoAmmesso.mon_programmi %}
+            {% for livello in programma.mon_livelli_gerarchici %}
+                    {{ form_row(livello) }}
+            {% endfor %}
+        {% endfor %}
+    </tbody>
+</table>
+
+    {% else%}
+        <h5>Nessun elemento trovato</h5></br>
+    {% endif %}
+
+
+    {{ form_rest(formCostoAmmesso) }}
+{{ form_end(formCostoAmmesso) }}
+</section>

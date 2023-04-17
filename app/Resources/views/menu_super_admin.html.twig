@@ -1,0 +1,144 @@
+{% include 'menu_amministrazione_sistema.html.twig' %}
+{% include 'menu_accreditamento.html.twig' %}
+{% include 'menu_atti_amministrativi.html.twig' %}
+{% include 'menu_assistenza_tecnica.html.twig' %}
+{% include 'menu_ingegneria_finanziaria.html.twig' %}
+{% include 'menu_acquisizioni.html.twig' %}
+{% include 'menu_procedure_pa.html.twig' %}
+{% include 'menu_richieste_pa.html.twig' %}
+{% include 'menu_certificazioni.html.twig' %}
+{% include 'menu_persone_pa.html.twig' %}
+{% include 'menu_organismo_intermedio.html.twig' %}
+
+<li class="">
+    <a href="javascript:;">
+        <span class="fa fa-file-alt"></span>
+        <span class="title">Documenti</span>
+        <span class="arrow "></span>
+    </a>
+    <ul class="sub-menu">
+        <li id="elenco_documenti">
+            <a href="{{ path("elenco_documenti") }}">Gestione documenti</a>
+        </li>
+    </ul>
+</li>
+
+<li class="">
+	<a href="javascript:;">
+		<span class="fa fa-sitemap"></span>
+		<span class="title">Pagine</span>
+		<span class="arrow "></span>
+	</a>
+	<ul class="sub-menu">
+		<li id="visualizza_fascicoli">
+			<a href="{{path("visualizza_fascicoli")}}">Elenco Pagine</a>
+		</li>		
+		<li id="crea_fascicolo">
+			<a href="{{ path("crea_fascicolo") }}">Crea Pagina</a>
+		</li>
+		<li id="elenco_istanze">
+			<a href="{{ path("visualizza_istanze_fascicolo") }}">Elenco Istanze</a>
+		</li>
+		<li id="elenco_istanze_per_bando">
+			<a href="{{ path("visualizza_elenco_procedure") }}">Elenco Istanze Per Procedura</a>
+		</li>
+	</ul>
+</li>
+
+<li class="">
+	<a href="{{path("tipologia")}}">
+		<span class="fa fa-database"></span>
+		<span class="title">Protocollazione</span>
+	</a>
+</li>
+
+<li class="">
+    <a href="javascript:;">
+        <span class="fa fa-newspaper-o"></span>
+        <span class="title">Notizie</span>
+        <span class="arrow "></span>
+    </a>
+    <ul class="sub-menu">
+        <li id="notizie_elenco">
+            <a href="{{ path("lista_notizie") }}">Elenco</a>
+        </li>
+        <li id="notizie_crea">
+            <a href="{{ path("crea_notizia") }}">Crea</a>
+        </li>
+    </ul>
+</li>
+
+<li class="">
+    <a href="javascript:;">
+        <span class="fa fa-newspaper"></span>
+        <span class="title">Gestione CUP</span>
+        <span class="arrow "></span>
+    </a>
+    <ul class="sub-menu">
+        <li id="elencoGeneraCup">
+            <a href="{{ path("elenco_richieste_cipe") }}">Genera File Batch</a>
+       </li>
+	   <li>
+		   <a href="{{ path("richiestacupbatch_index") }}">Richieste Batch</a>
+	   </li>
+		<li id="elencoClassificazioni">
+			<a href="#">Elenco Classificazioni</a>
+			<ul class="sub-menu">
+				<li id="elencoCupStati">
+					<a href="{{ path("cipe_admin_classificazione_cup_stato_elenco") }}">Classificazione Cup Stati</a>
+				</li>
+				<li id="elencoCupStrumentiProgrammazione">
+					<a href="{{ path("cipe_admin_classificazione_cup_strumento_programmazione_elenco") }}">Classificazione Cup Strumenti Programmazione</a>
+				</li>
+				<li id="elencoCupTipiCoperturaFinanziaria">
+					<a href="{{ path("cipe_admin_classificazione_cup_tipo_copertura_finanziaria_elenco") }}">Classificazione Tipi Copertura Finanziaria</a>
+				</li>
+				<li id="elencoCupTipiIndirizzo">
+					<a href="{{ path("cipe_admin_classificazione_cup_tipo_indirizzo_elenco") }}">Classificazione Cup Tipi Indirizzo</a>
+				</li>
+				<li id="elencoCupNatura">
+					<a href="{{ path("cipe_admin_classificazione_cup_natura_elenco") }}">Classificazione Cup Nature</a>
+				</li>
+				<li id="elencoCupTipologia">
+					<a href="{{ path("cipe_admin_classificazione_cup_tipologia_elenco") }}">Classificazione Cup Tipologie</a>
+				</li>
+				<li id="elencoCupSettore">
+					<a href="{{ path("cipe_admin_classificazione_cup_settore_elenco") }}">Classificazione Cup Settori</a>
+				</li>
+				<li id="elencoCupSottosettore">
+					<a href="{{ path("cipe_admin_classificazione_cup_sottosettore_elenco") }}">Classificazione Cup Sottosettori</a>
+				</li>
+				<li id="elencoCupCategoria">
+					<a href="{{ path("cipe_admin_classificazione_cup_categoria_elenco") }}">Classificazione Cup Categorie</a>
+				</li>
+			</ul>
+		</li>
+		<li id="coda-cup">
+			<a href="{{- path('coda_cup') -}}">
+				Carica coda CUP
+			</a>
+		</li>
+    </ul>
+</li>
+
+<li class="">
+    <a href="javascript:;">
+        <span class="fa fa-lock"></span>
+        <span class="title">Permessi</span>
+        <span class="arrow "></span>
+    </a>
+    <ul class="sub-menu">
+        <li id="permessi_asse">
+            <a href="{{ path("permessi_asse") }}">Associa Asse</a>
+        </li>
+        <li id="permessi_procedura">
+            <a href="{{ path("permessi_procedura") }}">Associa Procedura</a>
+        </li>
+        <li id="elenco_permessi_asse">
+            <a href="{{ path("elenco_permessi_asse") }}">Elenco Permessi Assi</a>
+        </li>
+        <li id="elenco_permessi_procedure">
+            <a href="{{ path("elenco_permessi_procedure") }}">Elenco Permessi Procedure</a>
+        </li>
+    </ul>
+</li>

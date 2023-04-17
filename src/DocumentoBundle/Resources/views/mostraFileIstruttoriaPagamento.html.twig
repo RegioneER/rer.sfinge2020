@@ -1,0 +1,23 @@
+{# rendicontazione standard #}
+
+{% set documentoFile = documentoIstruttoriaPagamento.documentoFile %}
+
+<td>{{ documentoFile.tipologiaDocumento.descrizione }}</td> 
+<td>{{ documentoFile.nomeoriginale }}</td>
+<td>{{ documentoIstruttoriaPagamento.datarichiesto is not null ? documentoIstruttoriaPagamento.datarichiesto|date("d/m/Y") : '-' }}</td>
+<td>{{ documentoIstruttoriaPagamento.dataricevuto  is not null ? documentoIstruttoriaPagamento.dataricevuto|date("d/m/Y")  : '-' }}</td>
+<td>{{ documentoIstruttoriaPagamento.datascadenza  is not null ? documentoIstruttoriaPagamento.datascadenza|date("d/m/Y")  : '-' }}</td>                    
+<td style="text-align: center">
+	{% if documentoFile.isP7m %}
+		<a style="display:block; margin-bottom: 10px" class="btn btn-sm btn-primary" title="Scarica" href="{{ path("scarica", {"path_codificato":path}) }}" target="_blank">Scarica(p7m)</a>
+		<a style="display:block; margin-bottom: 10px" class="btn btn-sm btn-primary" title="Scarica" href="{{ path("scarica_originale", {"path_codificato":path}) }}" target="_blank">Scarica originale</a>
+	{% else %}
+		<a style="display:block; margin-bottom: 10px" class="btn btn-sm btn-primary" title="Scarica" href="{{ path("scarica", {"path_codificato":path}) }}" target="_blank">Scarica</a>
+	{% endif %}
+        {% if not is_granted("ROLE_OPERATORE_COGEA") %}
+            <a style="display:block; margin-bottom: 10px" class="btn btn-sm btn-info" title="Modifica Documento" href="{{ pathModifica }}">Modifica</a>
+            {% if not pathElimina is null %}
+                    <a style="display:block" class="btn btn-sm btn-danger" title="Elimina Documento" href="{{ pathElimina }}" data-confirm="Eliminare il documento selezionato?">Elimina</a>
+            {% endif %}
+        {% endif %}
+</td>                 

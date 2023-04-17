@@ -1,0 +1,22 @@
+{# Solo per fase iniziale della rendicontazione #}
+{% set richiesta = pagamento.richiesta %}
+{% set codiceNaturaCup = pagamento.attuazionecontrollorichiesta.richiesta.monTipoOperazione.codiceNaturaCup %}
+
+{% if richiesta is indicatoriManuali %}
+	{{ mostra_validazione_in_line_attuazione('monitoraggio_indicatori', path('gestione_monitoraggio_indicatori', {'id_pagamento':pagamento.id}), "Indicatori di output", pagamento) }}
+{% endif %}
+
+{% if hasIterProgettoVisibili(richiesta) %}
+	{{ mostra_validazione_in_line_attuazione('monitoraggio_fasi_procedurali', path('gestione_monitoraggio_fasi_procedurali', {'id_pagamento':pagamento.id}), "Fasi procedurali", pagamento) }}
+{% endif %}
+
+{% if richiesta is impegniVisibili and richiesta.procedura.id not in [71, 81, 120, 126, 131, 137, 162, 166, 170] %}
+	{{ mostra_validazione_in_line_attuazione('monitoraggio_impegni', path('gestione_monitoraggio_impegni', {'id_pagamento':pagamento.id}), "Impegni e disimpegni", pagamento) }}
+{% endif %}
+{% if codiceNaturaCup in [
+	constant('CipeBundle\\\Entity\\Classificazioni\\CupNatura::REALIZZAZIONE_LAVORI_PUBBLICI'),
+	constant('CipeBundle\\\Entity\\Classificazioni\\CupNatura::CONCESSIONE_AIUTI_SOGGETTI_DIVERSI_UNITA_PRODUTTIVE'),
+	constant('CipeBundle\\\Entity\\Classificazioni\\CupNatura::REALIZZAZIONE_BENI_SERVIZI')
+	] and richiesta.procedura.id not in [71, 81, 126, 65, 120, 131, 137, 162, 166, 170] %}
+	{{ mostra_validazione_in_line_attuazione('monitoraggio_procedura_aggiudicazione', path('gestione_monitoraggio_procedura_aggiudicazione', {'id_pagamento':pagamento.id}), "Procedura di aggiudicazione", pagamento) }}
+{% endif %}

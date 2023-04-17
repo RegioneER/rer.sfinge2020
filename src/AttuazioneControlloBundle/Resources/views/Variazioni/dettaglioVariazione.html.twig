@@ -1,0 +1,63 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block begin_page_level_plugin_style %}
+    <link href="{{ asset('assets/css/wizard.css') }}" rel="stylesheet" type="text/css"/>
+{% endblock %}
+
+{% block body %}
+    <ul class="nav nav-pills nav-wizard {{ avanzamenti|length == 4 ? "four-steps" : "three-steps" }}">
+        {% for avanzamento, attivo in avanzamenti %}
+            <li class="{{- attivo ? 'active' : '' -}}">
+                {% if not loop.first %}
+                    <div class="nav-wedge"></div>
+                {% endif %}
+                <span>{{ avanzamento }}</span>
+                {% if not loop.last %}
+                    <div class="nav-arrow"></div>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+    {% block validazione_domanda %}
+    {% endblock validazione_domanda %}
+    <h6>Sezioni</h6>
+    <ul class="list-group list-checked">
+        {{ mostra_validazione_in_line_variazione(
+                                                'dati_generali_variazione', 
+                                                path('dati_generali_variazione', {id_variazione:variazione.id}), 
+                                                "Dati generali", 
+                                                variazione) 
+        }}
+
+        {% block elementi_domanda %}{% endblock elementi_domanda %}
+
+
+        {{ mostra_validazione_in_line_variazione(
+            'documenti_variazione', 
+            path('documenti_variazione', {'id_variazione':variazione.id}), 
+            "Documenti", 
+            variazione) 
+        }}
+    </ul>
+
+    {% set vociMenu = voci_menu_variazione(variazione) %}
+
+    <div class="page-actions">
+        {% for voceMenu in vociMenu %}
+            {# schippo la voce attuale della pagina attuale #}
+            {% set pathAttuale = path(app.request.attributes.get('_route'),app.request.attributes.get('_route_params')) %}
+            {% if voceMenu.path != pathAttuale %}
+                <a href="{{ voceMenu.path }}" {{ voceMenu.attr is defined ? (voceMenu.attr |raw) : "" }} class="btn btn-info">
+                    {{ voceMenu.label }}
+                </a>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function () {
+            $('[data-toggle="popover"]').popover();
+        });
+    </script>
+
+{% endblock %}

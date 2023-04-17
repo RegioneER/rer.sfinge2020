@@ -1,0 +1,89 @@
+{% extends '::base.html.twig' %}
+
+{% block begin_page_level_plugin_style %}
+    <link href="{{ asset('assets/css/wizard.css') }}" rel="stylesheet" type="text/css"/>
+{% endblock %}
+    
+{% block intestazione %}
+    {{ parent() }}
+    {{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% set richiesta = comunicazione_pagamento.pagamento.richiesta %}
+
+{% block body %}
+    
+    <ul class="nav nav-pills nav-wizard">
+        {% for avanzamento, attivo in avanzamenti %}
+            <li {% if attivo  %}class="active"{% endif %}>{% if not loop.first %}<div class="nav-wedge"></div>{% endif %}<span>{{avanzamento}}</span>{% if not loop.last %}<div class="nav-arrow"></div>{% endif %}</li>
+        {% endfor %}
+    </ul>
+    <br>
+    
+    <h6>Dati comunicazione pagamento</h6>
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-striped table-hover table-bordered">
+                <tr>
+                    <td>Tipologia di comunicazione</td>
+                    <td>{{ comunicazione_pagamento.tipologiaComunicazione.descrizione }}</td>
+                </tr>
+                <tr>
+                    <td>Numero protocollo richiesta finanziamento</td>
+                    <td>{{ richiesta.protocollo }}</td>
+                </tr>
+                <tr>
+                    {% set data_consegna_pec = '-' %}
+                    {% set richieste_protocollo = comunicazione_pagamento.richiesteprotocollo %}
+                    {% if  richieste_protocollo|length != 0 %}
+                        {% set richiesta_protocollo = richieste_protocollo|last %}
+                        {% set emails_protocollo    = richiesta_protocollo.EmailProtocollo %}
+                        {% if  emails_protocollo|length != 0 %}
+                            {% set email_protocollo = emails_protocollo|last %}
+                            {% set data_consegna_pec = email_protocollo.dataconsegna %}
+                        {% endif %}
+                    {% endif %}
+                    <td>Data comunicazione pagamento</td>
+                    <td>{{ data_consegna_pec }}</td>
+                </tr>
+                <tr>
+                    <td>Numero protocollo comunicazione pagamento</td>
+                    <td>{{ comunicazione_pagamento.protocolloComunicazione }}</td>
+                </tr>
+                <tr>
+                    <td>Nota</td>
+                    <td>{{ comunicazione_pagamento.testo|replace({'\r\n' : '<br>', '\n' : '<br>'})|raw }}</td>
+                </tr>
+                <tr>
+                    <td>Testo email</td>
+                    <td>{{ comunicazione_pagamento.testoEmail|replace({'\r\n' : '<br>', '\n' : '<br>'})|raw }}</td>
+                </tr>
+                
+            </table>
+        </div>
+    </div>
+    
+    <h6>Sezioni risposta comunicazione pagamento</h6>
+    
+    <ul class="list-group list-checked">
+        {{ mostra_validazione_risposta_integrazione(comunicazione_pagamento.risposta, 'nota_risposta', path('nota_risposta_comunicazione_pagamento', {'id':comunicazione_pagamento.id}), "Nota risposta") }}
+        {{ mostra_validazione_risposta_integrazione(comunicazione_pagamento.risposta, 'documenti_comunicazione_pagamento', path('risposta_comunicazione_pagamento_elenco_documenti', {'id':comunicazione_pagamento.id }), "Documenti da allegare alla risposta") }}
+    </ul>
+
+    <div class="page-actions">
+        {% for voceMenu in azioni_ammesse %}
+            {# Skippo la voce attuale della pagina attuale #}
+            {% set pathAttuale = path(app.request.attributes.get('_route'),app.request.attributes.get('_route_params')) %}
+            {% if voceMenu.path != pathAttuale %}
+                <a href="{{ voceMenu.path }}" {{ voceMenu.attr is defined ? (voceMenu.attr |raw) : "" }} class="btn btn-info">{{ voceMenu.label }}</a>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <script type="text/javascript" language="javascript">
+        $(document).ready(function () {
+            $('[data-toggle="popover"]').popover();
+        });
+    </script>
+
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends ':pdf:base.pdf.html.twig' %}
+
+{% block content %}
+
+    {% block dati_intestazione %}
+        <div class="center">
+            {% if comunicazione.istruttoria.richiesta.procedura.isNuovaProgrammazione %}
+                <img src="assets/img/regione/Loghi_CoesioneITA_UE_REP_ER_21_27.jpg" alt="Loghi regione" height="45px">
+            {% elseif comunicazione.istruttoria.richiesta.procedura.asse.codice == 'A0' %}
+                <img src="assets/img/regione/logo_ue-regione-emilia-romagna.jpg" alt="Loghi regione" height="60px">
+                <h2 align="center">{{ comunicazione.istruttoria.richiesta.procedura.titolo }}</h2>
+            {% elseif is_fsc == true %}
+                <img src="assets/img/regione/logo_fsc.jpg" alt="Loghi regione" height="80px">
+                <h2 align="center">{{ comunicazione.istruttoria.richiesta.procedura.titolo }}</h2>
+            {% else%}
+                <img src="assets/img/regione/logo_ue-por_fesr_2020.jpg" alt="Loghi regione" height="60px">
+                <h2 align="center">POR-FESR EMILIA ROMAGNA 2014-2020</h2>
+            {% endif %}
+        </div>
+    {% endblock dati_intestazione %}
+
+    <h3 align="center">Comunicazione esito istruttoria</h3>
+    <div>
+        In relazione alla sua richiesta di finanziamento ricevuta con protocollo n° {{ comunicazione.istruttoria.richiesta.protocollo }} si trasmette la seguente documentazione in allegato.<br>
+    </div>
+    <br/>
+    {% for documento in documenti%}
+        <p>{{ documento.descrizione|raw }}</p>
+    {% endfor %}
+{% endblock %}

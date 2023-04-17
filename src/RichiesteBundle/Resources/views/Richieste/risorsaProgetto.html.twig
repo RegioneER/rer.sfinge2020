@@ -1,0 +1,11 @@
+{% extends '::base.html.twig' %}
+
+{% block intestazione %}
+	{{ parent() }}
+	{{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% block body %}
+	<h4>{{risorsaProgetto.tipologiarisorsa is not null ? 'Risorsa Progetto: ' ~risorsaProgetto.tipologiarisorsa.descrizione : 'Risorsa Progetto'}}</h4>
+	{{ form(form) }}
+{% endblock %}

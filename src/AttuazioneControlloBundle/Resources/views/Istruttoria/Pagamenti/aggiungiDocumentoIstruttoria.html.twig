@@ -1,0 +1,13 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+
+	{% if form is not null %}
+		<div class="form-body">
+			<h4>Carica documento istruttoria</h4>
+			{{ form(form) }}
+		</div>
+	{% endif %}
+	
+{% endblock %}
+		

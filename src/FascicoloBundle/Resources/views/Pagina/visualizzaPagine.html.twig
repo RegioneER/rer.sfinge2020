@@ -1,0 +1,40 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <div class="table-toolbar">
+        <div class="btn-group">
+            <a href="{{ path('crea_pagina', {'id_fascicolo':id_fascicolo}) }}"><button id="sample_editable_1_new" class="btn green"><span class="fa fa-plus"></span></button>
+            </a>
+        </div>
+    </div>
+	{% if pagine|length > 0 %}
+    <table class="table table-striped table-hover table-bordered" id="notizie-elenco">
+        <thead>
+            <tr>
+                <th>Titolo</th>
+				<th>Alias</th>
+				<th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+			{% for pagina in pagine %}
+				<tr>
+					<td>{{ pagina.titolo }}</td>
+					<td>{{ pagina.alias }}</td>
+					<td><div class="dropdown">
+							<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuPagine" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								Azioni
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenuPagine">
+								<li><a href="{{ path('modifica_pagina', {'id_pagina':pagina.id}) }}">Modifica</a></li>
+								<li><a href="{{ path('elimina_pagina', {'id_pagina':pagina.id, '_token': csrfToken }) }}">Elimina</a></li>
+							</ul>
+						</div>
+					</td>
+				</tr>
+			{% endfor %}
+        </tbody>
+    </table>
+	{% endif %}
+{% endblock %}

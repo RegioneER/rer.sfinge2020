@@ -1,0 +1,128 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="table-toolbar">
+        <div class="btn-group">
+            <a href="{{ path('crea_notizia') }}"><button id="sample_editable_1_new" class="btn btn-primary"><span class="fa fa-plus"></span> Aggiungi notizia</button></a>
+            <a href="#"><button id="btn_ricerca_notizia" data-target="#ricerca-notizia-modal" data-toggle="modal" class="btn btn-info"><span class="fa fa-search"></span> Ricerca</button></a>
+        </div>
+    </div>
+    <div class="count">
+        Numero elementi trovati: {{ notizie.getTotalItemCount }} - Filtro attivo: {{ filtro_attivo ? "Si" : "No" }}
+
+    </div>
+    <table class="table table-striped table-hover table-bordered" id="notizie-elenco">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Titolo</th>
+                <th>Testo</th>
+                <th>Data Inizio Visualizzazione</th>
+                <th>Data Fine Visualizzazione</th>
+                <th>Visibilità</th>
+                <th>Procedura</th>
+                <th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+
+        {% for notizia in notizie %}
+            <tr data-id="{{ notizia.id }}">
+                <td>{{ notizia.id }}</td>
+                <td>{{ notizia.titolo }}</td>
+                <td>
+					<a href="#" class="btn_testo_notizia" data-target="#testo-notizia-modal" data-toggle="modal">
+						<span class="fa fa-search"></span> {{ (notizia.testo|slice(0, 250))|striptags}}
+					</a>
+				</td>
+                <td>{% if notizia.dataInizioVisualizzazione %}{{ notizia.dataInizioVisualizzazione|date('d-m-Y') }}{% endif %}</td>
+                <td>{% if notizia.dataFineVisualizzazione %}{{ notizia.dataFineVisualizzazione|date('d-m-Y') }}{% endif %}</td>
+                <td>{% for ruolo in notizia.visibilita %}{{ ruolo ~ " " }}{% endfor %}</td>
+                <td>{% if notizia.procedura %}{{ notizia.procedura }}{% endif %}</td>
+
+
+				<td><div class="dropdown">
+							<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuNotizie" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								Azioni
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenuNotizie">
+								<li><a href="{{ path('modifica_notizia', {'id_notizia':notizia.id}) }}">Modifica</a></li>
+								<li><a href="{{ path('elimina_notizia', {'id_notizia':notizia.id, '_token': csrfToken }) }}">Elimina</a></li>
+							</ul>
+						</div>
+					</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {# display navigation #}
+    <div class="navigation">
+        {{ knp_pagination_render(notizie) }}
+    </div>
+	
+	<div id="testo-notizia-modal" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3 id="ricerca-istruttoria-modal-titolo">Testo notizia</h3>
+				</div>
+				<div class="modal-body">
+				</div>
+				<div id="wait" style="text-align:center; padding-bottom: 20px"><img src="{{asset('assets/img/waitbar.gif')}}"></div>
+				<div class="modal-footer">
+					<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Chiudi</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+    <div id="ricerca-notizia-modal" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h3 id="ricerca-istruttoria-modal-titolo">Ricerca Notizie</h3>
+                </div>
+                <div class="modal-body">
+                    {{ form(formRicerca) }}
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Chiudi</button>
+                    <a class="btn btn-default" href="{{ path("elenco_notizie_admin_pulisci") }}">Annulla Ricerca</a>
+                    <a class="btn btn-primary" href="#" id="ricercaOk">Ricerca</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{%block  jquery_page_document_ready %}
+    <script>
+        jQuery(document).ready(function() {
+            $("#ricercaOk").click(function(e){
+                e.preventDefault();
+                $(this).parents(".modal-content").find("form").submit();
+            });
+			
+			var notizia_url = '{{ path("testo_notizia_ajax", { 'notizia_id' : 'notizia_id' }) }}';
+			
+			$(".btn_testo_notizia").on('click', function () {
+				$("#testo-notizia-modal .modal-body").html("");
+				$(this).closest("tr").attr("data-id");
+				var url = notizia_url;
+				url = url.replace("notizia_id", $(this).closest("tr").attr("data-id"));
+					$.ajax({
+						url: url,
+						beforeSend: function() { $('#wait').show(); },
+						complete: function() { $('#wait').hide(); },
+						success: function (res) {
+							$("#testo-notizia-modal .modal-body").html(res.testo);
+						}
+					});
+			});
+		});
+    </script>
+{% endblock %}

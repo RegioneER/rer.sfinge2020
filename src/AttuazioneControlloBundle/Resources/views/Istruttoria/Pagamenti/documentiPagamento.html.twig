@@ -1,0 +1,53 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	
+	{#% if istruttoria_773 is not defined %#}
+	
+	{#% include 'AttuazioneControlloBundle:Istruttoria/Pagamenti:menu.html.twig' with {'pagamento' : pagamento } %#}		
+	
+		<h4>Documento trasmissione rendicontazione</h4>
+		<table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+			<tbody>
+				<tr>
+					{% if pagamento.documentoPagamentoFirmato %}
+						<td>{{ mostra_file_dettaglio_utente(pagamento.documentoPagamentoFirmato, null )}}</td>
+					{% else %}
+						<td>Nessun documento</td>
+					{% endif %}
+				</tr>
+			</tbody>
+		</table>	
+
+		<h4>Documenti allegati al pagamento</h4>
+		<table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+			<tbody>
+				{% for documento in pagamento.documentiPagamento %}
+					<tr>
+					<td>{{ mostra_file_dettaglio_utente(documento.documentoFile, null )}}</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		
+	{#% endif %#}	
+		
+	<h4>Carica documento di supporto alla fase di istruttoria</h4>
+    {{ form(form) }}
+	<h4>Documenti allegati durante la fase di istruttoria</h4>
+    <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+        <tbody>
+			{% for documento in pagamento.documentiIstruttoria %}
+				<tr>
+					<td>{{ mostra_file_dettaglio_utente(documento, path('elimina_documento_istruttoria_pagamento', {'id_documento': documento.id, 'id_pagamento': pagamento.id }) ) }}</td>
+				</tr>
+			{% endfor %}
+        </tbody>
+    </table>		
+			
+	{#% if istruttoria_773 is defined %#}
+		<a href="{{path('riepilogo_istruttoria_pagamento', {'id_pagamento' : pagamento.id})}}" class="btn btn-default btn-page-action btn-form-back">Indietro</a>
+	{#% endif %#}	
+			
+{% endblock %}
+

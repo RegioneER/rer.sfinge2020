@@ -1,0 +1,137 @@
+services:
+  schema.twig.indietro_extension:
+    class: BaseBundle\TwigExtension\IndietroTwigExtension
+    arguments: ['@service_container']
+    tags:
+      - { name: twig.extension }
+
+  schema.twig.mostra_soggetto_extension:
+    class: BaseBundle\TwigExtension\MostraSoggettoTwigExtension
+    arguments: ['@service_container']
+    tags:
+      - { name: twig.extension }
+
+  schema.twig.modale_ricerca_extension:
+      class: BaseBundle\TwigExtension\ModaleRicercaTwigExtension
+      arguments: ['@service_container']
+      tags:
+        - { name: twig.extension }
+
+  schema.twig.mostra_sede_extension:
+      class: BaseBundle\TwigExtension\MostraSedeTwigExtension
+      arguments: ['@service_container']
+      tags:
+        - { name: twig.extension }
+
+  schema.twig.mostra_persona_extension:
+        class: BaseBundle\TwigExtension\MostraPersonaTwigExtension
+        arguments: ['@service_container']
+        tags:
+          - { name: twig.extension }
+
+  schema.twig.mostra_utente_extension:
+        class: BaseBundle\TwigExtension\MostraUtenteTwigExtension
+        arguments: ['@service_container']
+        tags:
+          - { name: twig.extension }
+
+  schema.twig.mostra_procedura_extension:
+      class: BaseBundle\TwigExtension\MostraProceduraTwigExtension
+      arguments: ['@service_container']
+      tags:
+        - { name: twig.extension }
+
+  schema.type.entity_hidden:
+        class: BaseBundle\Form\EntityHiddenType
+        arguments: ["@doctrine.orm.entity_manager"]
+        tags:
+        - { name: form.type, alias: entity_hidden }
+
+  funzioni_utili:
+    class: BaseBundle\Service\FunzioniUtili
+    arguments: ['@service_container']
+
+  ricerca:
+    class: BaseBundle\Service\RicercaService
+    arguments: ['@service_container']
+
+  base:
+    class: BaseBundle\Service\BaseService
+    arguments: ['@service_container']
+
+  indirizzo.type:
+      class: BaseBundle\Form\IndirizzoType
+      arguments: ["@doctrine.orm.entity_manager"]
+      tags:
+      - { name: form.type, alias: indirizzo_type }
+
+  schema.twig.form_prototype_extension:
+        class: BaseBundle\TwigExtension\FormPrototypeTwigExtension
+        arguments: ['@service_container']
+        tags:
+          - { name: twig.extension }
+
+  sfinge.stati:
+    class: BaseBundle\Service\StatoService
+    arguments: ['@service_container']
+
+  controllo_accesso_listener:
+    class: BaseBundle\EventListener\ControlloAccessoListener
+    tags: [{name: kernel.event_listener, event: kernel.controller, method: onKernelController}]
+    arguments: ['@service_container']
+    
+  log_listener:
+        class: BaseBundle\EventListener\LogListener
+        tags: [{name: kernel.event_listener, event: kernel.request, method: onKernelRequest}]
+        arguments: ['@service_container']      
+    
+  contesto:
+    class: BaseBundle\Service\Contesto
+    
+  schema.twig.access_listener_extension:
+      class: BaseBundle\TwigExtension\AccessibilitaUrlTwigExtension
+      arguments: ['@security.token_storage', '@security.access.decision_manager', '@security.access_map', '@security.authentication.manager', '@router']
+      tags:
+        - { name: twig.extension }    
+        
+  security.access.anonymous.voter:
+      class: BaseBundle\Security\AnonymousVoter
+      arguments: ['@security.authentication.trust_resolver']
+      tags:
+          - { name: security.voter }      
+      public: false    
+
+        
+  recursive_xml_builder:
+      class: BaseBundle\Service\RecursiveXmlBuilder
+
+  indirizzo.catastale.type:
+      class: BaseBundle\Form\IndirizzoCatastaleType
+      arguments: ["@doctrine.orm.entity_manager"]
+      tags:
+      - { name: form.type, alias: indirizzo_type }
+
+  adapter_memory_service:
+      class: BaseBundle\Service\AdapterMemoryService
+      
+
+  gelf.handler.log:
+      class: BaseBundle\Service\GelfLogger
+      arguments: [ '@service_container' ]
+      tags:
+          - { name: log_handler }
+
+  phpoffice.spreadsheet:
+    class: BaseBundle\Service\SpreadsheetFactory
+
+  
+  sfinge.username:
+      class: BaseBundle\Service\UsernameService
+      arguments: 
+        - '@security.token_storage'
+
+  schema.twig.funzioni_utili:
+      class: BaseBundle\TwigExtension\FunzioniGenericheTwigExtension
+      arguments: ['@service_container']
+      tags:
+        - { name: twig.extension }

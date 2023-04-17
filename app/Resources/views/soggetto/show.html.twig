@@ -1,0 +1,84 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Soggetto</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ soggetto.id }}</td>
+            </tr>
+            <tr>
+                <th>Denominazione</th>
+                <td>{{ soggetto.denominazione }}</td>
+            </tr>
+            <tr>
+                <th>Partita_iva</th>
+                <td>{{ soggetto.partitaiva }}</td>
+            </tr>
+            <tr>
+                <th>Codice_fiscale</th>
+                <td>{{ soggetto.codicefiscale }}</td>
+            </tr>
+            <tr>
+                <th>Data_registrazione</th>
+                <td>{% if soggetto.dataregistrazione %}{{ soggetto.dataregistrazione|date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Data_costituzione</th>
+                <td>{% if soggetto.datacostituzione %}{{ soggetto.datacostituzione|date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Sito_web</th>
+                <td>{{ soggetto.sitoweb }}</td>
+            </tr>
+            <tr>
+                <th>Dimensione</th>
+                <td>{{ soggetto.dimensione }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ soggetto.email }}</td>
+            </tr>
+            <tr>
+                <th>Tel</th>
+                <td>{{ soggetto.tel }}</td>
+            </tr>
+            <tr>
+                <th>Fax</th>
+                <td>{{ soggetto.fax }}</td>
+            </tr>
+            <tr>
+                <th>Via</th>
+                <td>{{ soggetto.via }}</td>
+            </tr>
+            <tr>
+                <th>Civico</th>
+                <td>{{ soggetto.civico }}</td>
+            </tr>
+            <tr>
+                <th>Cap</th>
+                <td>{{ soggetto.cap }}</td>
+            </tr>
+            <tr>
+                <th>Localita</th>
+                <td>{{ soggetto.localita }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('soggetto_index') }}">Back to the list</a>
+        </li>
+        <li>
+            <a href="{{ path('soggetto_edit', { 'id': soggetto.id }) }}">Edit</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+{% endblock %}

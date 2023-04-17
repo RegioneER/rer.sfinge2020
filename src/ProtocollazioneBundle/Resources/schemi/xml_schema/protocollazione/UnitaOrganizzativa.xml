@@ -1,0 +1,10 @@
+<UnitaOrganizzativa ##tipo##>
+	##Denominazione##
+	##Identificativo##
+	##Ruolo##
+	##Persona##
+	##IndirizzoPostale##
+	##IndirizzoTelematico##
+	##Telefono##
+	##Fax##
+</UnitaOrganizzativa>

@@ -1,0 +1,19 @@
+{% extends '::base.html.twig' %}
+
+
+{% block body %}
+	
+{% include 'AttuazioneControlloBundle:PA/Richieste:menu.html.twig' with {'attuazione_controllo' : attuazione_controllo }%}	
+
+<br>
+<h4>Dati generali</h4>
+
+{{ form_start(form) }}
+	{{ form_row(form.cup) }}
+	{{ form_row(form.data_avvio) }}
+	{{ form_row(form.data_termine) }}
+	{{ form_row(form.data_termine_effettivo) }}
+{{ form_end(form) }}
+
+{% endblock %}
+

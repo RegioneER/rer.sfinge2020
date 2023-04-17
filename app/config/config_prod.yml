@@ -1,0 +1,39 @@
+imports:
+    - { resource: config.yml }
+
+#framework:
+#    validation:
+#        cache: validator.mapping.cache.apc
+#    serializer:
+#        cache: serializer.mapping.cache.apc
+
+#doctrine:
+#    orm:
+#        metadata_cache_driver: apc
+#        result_cache_driver: apc
+#        query_cache_driver: apc
+
+monolog:
+    handlers:
+        nested:
+            type:  rotating_file
+            path:  "%kernel.logs_dir%/%kernel.environment%.log"
+            level: debug
+            formatter: monolog.formatter.standard
+        console:
+            type:  console
+        gelf:
+            type: service
+            id: gelf.handler.log
+            channels: ["schema31"]
+
+performer_pay_er:
+    codice_portale: 'SFINGE_2020'
+    iv: '106e92a1'
+    key: '2d9a4b0f281448c2915091f7'
+    ebollo:
+        app_domain: "https://servizifederati.regione.emilia-romagna.it"
+        codice_servizio: 'SERV_SFINGE'
+        url_acquisto_carrello_mbd: 'https://payerbollo.lepida.net/ebollo/api/v1/AcquistoCarrelloMbd'
+        url_invio_carrello_mbd: 'https://payerbollo.lepida.net/ebollo/api/v1/InvioCarrelloMbd'
+        url_esito_carrello_mbd: 'https://payerbollo.lepida.net/ebollo/api/v1/EsitoCarrelloMbd'

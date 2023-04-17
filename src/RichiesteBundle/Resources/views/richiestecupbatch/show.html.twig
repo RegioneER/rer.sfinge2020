@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>RichiestaCupBatch</h1>
+
+	<table class="table table-striped table-hover table-bordered" id="notizie-elenco">        
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ richiestaCupBatch.id }}</td>
+            </tr>
+            <tr>
+                <th>Data_creazione</th>
+                <td>{% if richiestaCupBatch.getDataCreazione %}{{ richiestaCupBatch.getDataCreazione|date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+			{% if richiestaCupBatch.cupBatchDocumentoRichiesta %}
+				<tr>
+					<th>File di richiesta Cup Batch</th>
+					<td>{{ scarica_file(richiestaCupBatch.cupBatchDocumentoRichiesta) }}</td>
+				</tr>
+			{% endif %}
+            <tr>
+                <th>Data_Risposta</th>
+                <td>{% if richiestaCupBatch.dataRisposta %}{{ richiestaCupBatch.dataRisposta|date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+			{% if richiestaCupBatch.cupBatchDocumentoRisposta %}
+				<tr>
+					<th>File di risposta Cup Batch</th>
+					<td>{{ scarica_file(richiestaCupBatch.cupBatchDocumentoRisposta) }}</td>
+				</tr>
+			{% endif %}
+			<tr>
+                <th>Data_Scarto</th>
+                <td>{% if richiestaCupBatch.dataScarto %}{{ richiestaCupBatch.dataScarto|date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+			{% if richiestaCupBatch.cupBatchDocumentoScarto %}
+				<tr>
+					<th>File di scarti Cup Batch</th>
+					<td>{{ scarica_file(richiestaCupBatch.cupBatchDocumentoScarto) }}</td>
+				</tr>
+			{% endif %}
+			
+			
+        </tbody>
+    </table>
+			
+	    {{ include('RichiesteBundle:richiestecupbatch:elenco_esiti_associa_risposta.html.twig', { 'esiti': richiestaCupBatch.esiti }) }}
+		{{ include('RichiesteBundle:richiestecupbatch:elenco_scarti.html.twig', { 'scarti': richiestaCupBatch.scarti }) }}
+		
+        <a class="btn btn-default btn-page-action btn-form-back pull-left" role="button" href="{{ path('richiestacupbatch_index') }}"><span class="fa fa-arrow-left"></span>Torna ad elenco</a>
+        
+        
+   
+{% endblock %}

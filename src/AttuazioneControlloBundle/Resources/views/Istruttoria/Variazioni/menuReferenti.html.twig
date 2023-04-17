@@ -1,0 +1,15 @@
+<li role="presentation"{% if menu|default() == "piano_costi" %}class="active"{% endif %}>
+    <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+        Referenti<span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+        {% for proponente in variazione.richiesta.proponenti %}
+                <li>
+                    <a href="{{ path('referente_istruttoria_variazione', {'id_variazione':variazione.id, 'id_proponente':proponente.id}) }}">
+                        {{ proponente.soggetto }}
+                    </a>
+                </li>
+        {% endfor %}
+
+    </ul>
+</li>

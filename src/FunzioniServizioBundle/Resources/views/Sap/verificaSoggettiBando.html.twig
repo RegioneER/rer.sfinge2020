@@ -1,0 +1,83 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <p class="lead">SAP test suite - Verifica soggetti bando</p>
+
+    {{ form_start(form) }}
+
+    {{ form_end(form) }}
+
+    <a href="{{ path('sap_test_suite') }}" type="button">Torna alla suite</a>
+
+    <br />
+    <br />
+
+    {% set counter = 1 %}
+    {% if success is not empty %}
+        <h5>Soggetti</h5>
+        <table class="table table-striped table-hover table-bordered" id="proponenti-elenco">
+            <thead>
+                <tr>
+                    <th>Incrementale</th>
+                    <th>Soggetto</th>
+                    <th>Codice fiscale / Partita IVA</th>
+                    <th>Categoria economica</th>
+                    <th>Comune</th>
+                    <th>LIFNR</th>
+                    <th>Eliminato</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in success %}
+                    <tr>
+                        <td>{{ counter }}</td>
+                        <td>{{ item.ragione_sociale }}</td>
+                        <td>{{ item.codice_fiscale }}</td>
+                        <td style="font-weight:{{ item.categoria_economica == 900 ? "bold" : "normal" }}; color: {{ item.categoria_economica == 900 ? "red" : "black" }}">
+                            {{ item.categoria_economica }}
+                        </td>
+                        <td>{{ item.comune }}</td>
+                        <td>
+                            <a href="{{ path('mostra_soggetto_sap', {'lifnr' : item.lifnr, 'env' : 'Dev'}) }}">{{ item.lifnr }} (Dev)</a>
+                            <a href="{{ path('mostra_soggetto_sap', {'lifnr' : item.lifnr, 'env' : 'Prod'}) }}">{{ item.lifnr }} (Prod)</a>
+                        </td>
+                        <td>{{ item.eliminato }}</td>
+                    </tr>
+                    {% set counter = counter + 1 %}
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    {% set counter = 1 %}
+    {% if error is not empty %}
+        <h5>Soggetti con errori</h5>
+        <table class="table table-striped table-hover table-bordered" id="proponenti-elenco">
+            <thead>
+            <tr>
+                <th>Incrementale</th>
+                <th>Soggetto</th>
+                <th>Codice fiscale</th>
+                <th>Partita IVA</th>
+                <th>Categoria economica</th>
+                <th>LIFNR</th>
+                <th>Errori</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in error %}
+                <tr>
+                    <td>{{ counter }}</td>
+                    <td>{{ item.soggetto.denominazione }}</td>
+                    <td>{{ item.soggetto.codice_fiscale }}</td>
+                    <td>{{ item.soggetto.partita_iva }}</td>
+                    <td>{{ item.categoria_economica }}</td>
+                    <td>{{ item.lifnr }}</td>
+                    <td>{{ item.errori|join('|') }}</td>
+                </tr>
+                {% set counter = counter + 1 %}
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}

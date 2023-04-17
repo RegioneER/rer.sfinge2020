@@ -1,0 +1,12 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+
+    <p class="lead">Inserire una risorsa per il progetto </p>
+
+    {{ form_start(form) }}
+	{{ form_row(form.tipologia_risorsa) }}
+    {{ form_end(form) }}
+
+{% endblock %}
+

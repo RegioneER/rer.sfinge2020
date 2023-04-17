@@ -1,0 +1,39 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+
+<div class="form-body">
+	{{ form_start(form) }}
+	<div>
+		<h4>Dati atto</h4>
+		{{ form_row(form.numero) }}
+		{{ form_row(form.titolo) }}
+		{{ form_row(form.tipo_atto) }}
+		{{ form_row(form.dirigente_responsabile) }}
+		{{ form_row(form.data_pubblicazione) }}
+		{{ form_row(form.procedura) }}
+                {% if form.documento_atto is defined %}
+                    {{ form_row(form.documento_atto) }}
+                {% else %}
+                    <table class="table table-striped table-hover table-bordered">
+                        <thead>
+                            <tr>
+                                <th style="width: 74%;">Nome Documento</th>
+                                <th style="width: 10%;">Data</th>
+                                <th style="width: 16%;">Azioni</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{ mostra_file_dettaglio_utente_tr(form.vars.value.documentoatto, path('cancella_documento_atto', {'id_atto': atto.id}) ) }}
+                        </tbody>
+                    </table>
+                {% endif %}
+	</div>
+	
+	<br/>
+	{{ form_end(form) }}
+</div>
+
+	{% endblock %}
+	{%block  jquery_page_document_ready %}   
+
+	{% endblock %}

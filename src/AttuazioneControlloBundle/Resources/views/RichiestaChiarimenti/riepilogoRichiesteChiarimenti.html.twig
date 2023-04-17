@@ -1,0 +1,167 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+	
+{% if menu_eventi is defined %}
+	{% include menu_eventi with {'pagamento' : pagamento }%}
+{% else %}
+	{% include 'AttuazioneControlloBundle:Istruttoria/Pagamenti:menuEventi.html.twig' with {'pagamento' : pagamento } %}	
+{% endif %}
+
+<h4>Richiesta di chiarimenti</h4>
+
+{% set stato_bottone_crea_richiesta_chiarimenti = '' %}
+
+{% if pagamento.richiestechiarimenti|length > 0 %}
+					
+<br/>
+
+{% if messaggio_contatore is defined and messaggio_contatore != '' %}
+	<div class="{{classe_messaggio_contatore}}">{{messaggio_contatore}}</div>	
+	<br/>
+{% endif %}
+
+ <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+	<thead>
+		<tr>
+			<th>Numero</th>
+			<th>Protocollo PA</th>
+			<th>Stato protocollo</th>
+			<th>Data consegna PEC</th>
+			<th>Documento di richiesta chiarimento</th>	
+			<th>Data invio risposta</th>
+			<th>Protocollo Beneficiario</th>
+			<th>Istruttoria complessiva</th>
+			<th>Documenti istruiti</th>	
+			<th>Azioni</th>			
+		</tr>
+	</thead>	
+	<tbody>
+		{% for richiestachiarimenti in pagamento.richiestechiarimenti %}
+			{% if richiestachiarimenti.stato == 'RICH_CHIAR_INSERITA' or (richiestachiarimenti.stato != 'RICH_CHIAR_INSERITA' and richiestachiarimenti.isInAttesaRisposta == true)%}
+				{% set stato_bottone_crea_richiesta_chiarimenti = 'disabled' %}
+			{% endif %}	
+			<tr>				
+				<td>{{richiestachiarimenti.id}}</td>
+				<td>
+					{{richiestachiarimenti.protocollorichiestachiarimenti}}
+					{% if richiestachiarimenti.dataprotocollorichiestachiarimenti is not null %}
+						 del {{ richiestachiarimenti.dataprotocollorichiestachiarimenti|date('d-m-Y') }}
+					{% endif %}
+				</td>
+				<td>{{richiestachiarimenti.statoleggibile}}</td>
+				
+				{% set data_consegna_pec = '-' %}
+				{% set richieste_protocollo = richiestachiarimenti.richiesteprotocollo %}
+				{% if  richieste_protocollo|length != 0 %}
+					{% set richiesta_protocollo = richieste_protocollo|last %}
+					{% set emails_protocollo    = richiesta_protocollo.EmailProtocollo %}
+					{% if  emails_protocollo|length != 0 %}
+						{% set email_protocollo = emails_protocollo|last %}
+						{% set data_consegna_pec = email_protocollo.dataconsegna %}
+					{% endif %}						
+				{% endif %}					
+				<td>{{data_consegna_pec}}</td>
+				
+				<td>{{ richiestachiarimenti.documento is null ? '' : scarica_file(richiestachiarimenti.documento, null )}}</td>
+
+				<td>
+					{% if richiestachiarimenti.risposta is not null and richiestachiarimenti.risposta.data is not null %}
+						{{richiestachiarimenti.risposta.data|date('d/m/Y')}}
+					{% else %}
+						-
+					{% endif %}	
+				</td>
+				
+				<td>
+					{% if richiestachiarimenti.risposta is not null and richiestachiarimenti.risposta.stato == 'RICH_CHIAR_PROTOCOLLATA' %}
+						{{richiestachiarimenti.risposta.protocollorispostarichiestachiarimenti}} del {{richiestachiarimenti.risposta.dataprotocollorispostarichiestachiarimenti|date('d-m-Y')}}
+					{% else %}
+						-
+					{% endif %}	
+				</td>
+				<td>
+					{% if richiestachiarimenti.risposta is not null and richiestachiarimenti.risposta.stato == 'RICH_CHIAR_PROTOCOLLATA' %}				
+						{% set istruttoria = richiestachiarimenti.istruttoriaoggettopagamento %}
+						{% if istruttoria is null %}	
+							<span class="text-danger">Da istruire</span>
+						{% elseif istruttoria.statoValutazione == 'Completa' %}
+							<span class="text-success">{{istruttoria.statoValutazione}}</span>
+						{% elseif istruttoria.statoValutazione == 'Incompleta' %}
+							<span class="text-warning">{{istruttoria.statoValutazione}}</span>
+						{% elseif istruttoria.statoValutazione == 'Integrazione' %}
+							<span class="text-info">{{istruttoria.statoValutazione}}</span>
+						{% endif %}	
+					{% else %}
+						-
+					{% endif %}					
+				</td>				
+				<td>
+					{% set documenti_risposta_totali   = 0 %}
+					{% set documenti_risposta_istruiti = 0 %}
+					{% for documento in richiestachiarimenti.risposta.documenti %}
+						{% set documenti_risposta_totali = documenti_risposta_totali + 1 %}
+						{% set istruttoria = documento.istruttoriaoggettopagamento %}
+						{% if istruttoria is not null and istruttoria.statoValutazione == 'Completa' %}
+							{% set documenti_risposta_istruiti = documenti_risposta_istruiti + 1 %}
+						{% endif %}
+					{% endfor %}					
+					{% if richiestachiarimenti.risposta is not null and richiestachiarimenti.risposta.stato == 'RICH_CHIAR_PROTOCOLLATA' %}				
+						{{documenti_risposta_istruiti}} / {{documenti_risposta_totali}}
+					{% else %}
+						-
+					{% endif %}
+				</td>				
+				<td>									
+					<div class="dropdown">
+						<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+							Azioni
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+							{% if richiestachiarimenti.risposta is not null and richiestachiarimenti.risposta.stato == 'RICH_CHIAR_PROTOCOLLATA' %}
+								<li><a href="{{ path('istruttoria_richiesta_chiarimenti', {'id_richiesta_chiarimenti' : richiestachiarimenti.id}) }}">Istruisci risposta</a></li>
+							{% endif %}
+							{% if richiestachiarimenti.stato == 'RICH_CHIAR_INVIATA_PA' or richiestachiarimenti.stato == 'RICH_CHIAR_PROTOCOLLATA'  %}
+								<li><a href="{{ path('gestione_richiesta_chiarimenti', {'id_richiesta_chiarimenti' : richiestachiarimenti.id}) }}">Dettaglio richiesta</a></li>
+							{% else %}
+								<li><a href="{{ path('gestione_richiesta_chiarimenti', {'id_richiesta_chiarimenti' : richiestachiarimenti.id}) }}">Gestisci richiesta</a></li>
+							{% endif %}	
+							{% if richiestachiarimenti.stato == 'RICH_CHIAR_INSERITA' %}
+								<li><a href="{{ path('cancella_richiesta_chiarimenti', {'id_richiesta_chiarimenti' : richiestachiarimenti.id}) }}">Cancella richiesta</a></li>
+							{% endif %}	
+						</ul>
+					</div>  															
+				</td>
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>
+{% else %}
+	<div>Non ci sono richieste di chiarimenti.</div>
+{% endif %}
+
+<br><br>
+
+{% set messaggio_disabilitazione = '' %}
+{% set integrazione = (pagamento.integrazioni)|last %}
+
+{% if pagamento.integrazioni|length == 0 or integrazione.stato == 'INT_INSERITA' or (integrazione.stato != 'INT_INSERITA' and integrazione.risposta.stato != 'INT_PROTOCOLLATA') and integrazione.isScaduta == false %}
+	{% set stato_bottone_crea_richiesta_chiarimenti = 'disabled' %}
+	{% set messaggio_disabilitazione = 'Attenzione! Prima di inviare una richiesta di chiarimenti è necessario attendere la risposta del beneficiario ad una integrazione o la scadenza dei giorni previsti per la risposta ' %}
+{% endif %}
+
+{% if is_granted('ROLE_ISTRUTTORE_SUPERVISORE_ATC') or is_granted('ROLE_ISTRUTTORE_ATC') %}
+	<a class="btn btn-info {{stato_bottone_crea_richiesta_chiarimenti}}" href="{{path('crea_richiesta_chiarimenti_pagamento', {'id_pagamento': pagamento.id})}}">Crea richiesta di chiarimenti</a>
+{% endif %}
+<br><br>
+
+<div class="text-warning">{{messaggio_disabilitazione}}</div>
+
+<br>
+
+<a class="btn btn-default btn-page-action btn-form-back pull-left" href="{{indietro}}">
+	<span class="fa fa-arrow-left"></span> Indietro
+</a>
+
+{% endblock %}

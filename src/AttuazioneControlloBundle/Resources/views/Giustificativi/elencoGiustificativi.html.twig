@@ -1,0 +1,92 @@
+{% set giustificativiImportati = false %}
+
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+
+    {{ mostra_validazione_attuazione('giustificativi_pagamento', null, null, pagamento) }}
+
+    <div class="table-toolbar">
+        <div>
+            {% if not is_aggiungi_disabilitato %}
+                <a class="btn btn-primary" href="{{ path('aggiungi_giustificativo', {'id_pagamento' : pagamento.id }) }}">
+                    <span class="fa fa-plus"></span> Aggiungi giustificativo
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if giustificativi |length > 0 %}
+
+        <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+            <thead>
+                <tr>
+                    <th>Fornitore</th>
+                    <th>Numero e data giustificativo</th>
+
+                    {% if rendicontazioneProceduraConfig.rendicontazioneMultiProponente %}
+                        <th>Proponente</th>
+                        {% endif %}
+
+                    <th>Tipologia</th>
+                    <th>Importo giustificativo</th>
+                    <th>Importo su cui si richiede il contributo</th>
+                    <th>Azioni</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for giustificativo in giustificativi %}
+                    <tr>
+                        <td>{{ giustificativo.denominazioneFornitore }} - {{ giustificativo.codiceFiscaleFornitore }}</td>
+                        <td>{{ giustificativo.numeroGiustificativo }} - {{ giustificativo.dataGiustificativo | date('d/m/Y') }}</td>
+
+                        {% if rendicontazioneProceduraConfig.rendicontazioneMultiProponente %}
+                            <td>{{ giustificativo.proponente }}</td>
+                        {% endif %}
+
+                        <td>{{ giustificativo.tipologiaGiustificativo ? giustificativo.tipologiaGiustificativo : '-' }}</td>
+                        <td>&euro; {{ giustificativo.importoGiustificativo|number_format(2, ',', '.') }}</td>
+                        <td>
+                            &euro; {{ giustificativo.importoRichiesto|number_format(2, ',', '.') }}
+                            {%- if giustificativo.getGiustificativoOrigine %}*
+                                {% set giustificativiImportati = true %}
+                            {% endif -%}
+                        </td>
+                        <td>
+                            <div class="dropdown">
+                                <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    Azioni
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                    <li><a href="{{ path("dettaglio_giustificativo", {"id_giustificativo" : giustificativo.id }) }}">Gestisci</a></li>
+                                        {% if not giustificativo.giustificativoOrigine %}
+                                        <li><a href="{{ path("modifica_giustificativo", {"id_giustificativo" : giustificativo.id }) }}">Modifica</a></li>
+                                        {% endif %}
+                                        {% if not is_aggiungi_disabilitato and giustificativo.modificabileIntegrazione and not giustificativo.giustificativoOrigine %}
+                                        <li><a href="{{ path("elimina_giustificativo", {"id_giustificativo" : giustificativo.id }) }}">Elimina</a></li>
+                                        {% endif %}
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% if giustificativiImportati %}
+            <span class="text">
+                * Giustificativo in sola lettura importato dal pagamento precedente per spese ammesse al pagamento successivo.
+            </span>
+        {% endif %}
+
+    {% endif %}
+
+    <div class="page-actions"> 
+        {% if rendicontazioneProceduraConfig.sezioneContratti == true %}
+            {{ pulsante_indietro( path("elenco_contratti",{"id_pagamento" : pagamento.id} )) }}
+        {% else %}
+            {{ pulsante_indietro( path("dettaglio_pagamento",{"id_pagamento" : pagamento.id} )) }}
+        {% endif %}
+    </div>
+
+{% endblock %}

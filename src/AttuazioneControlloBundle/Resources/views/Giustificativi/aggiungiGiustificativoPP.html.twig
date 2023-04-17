@@ -1,0 +1,27 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+
+	{{ form_start(form) }}
+	
+		<h4>Fornitore</h4>
+		{{ form_row(form.denominazione_fornitore) }}
+		{{ form_row(form.codice_fiscale_fornitore) }}
+
+		<h4>Dati giustificativo</h4>
+		{{ form_row(form.numero_giustificativo) }}
+		{{ form_row(form.data_giustificativo) }}
+		{{ form_row(form.importo_giustificativo) }}
+
+		{% if form.proponente is defined %}
+			{{ form_row(form.proponente) }}
+		{% endif %}
+
+		{{ form_row(form.nota_beneficiario) }}
+
+		{{ form_row(form.documento_giustificativo.file) }}
+
+	{{ form_end(form) }}
+	
+{% endblock %}
+		

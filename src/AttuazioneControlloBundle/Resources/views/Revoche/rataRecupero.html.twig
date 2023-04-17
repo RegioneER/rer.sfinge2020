@@ -1,0 +1,25 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+	{% include 'AttuazioneControlloBundle:PA/Richieste:menu.html.twig' with {'attuazione_controllo' : richiesta.attuazioneControllo } %}	
+
+	<div class="form-body">
+		{{ form_start(form) }}
+		<div>
+			<h4>Dati rata</h4>
+			{{ form_row(form.numero_incasso) }}
+			{{ form_row(form.data_incasso) }}			
+			{{ form_row(form.importo_rata) }}
+			{{ form_row(form.importo_interesse_legale) }}
+			{{ form_row(form.importo_interesse_mora) }}
+			{% if penalita == true %}
+				{{ form_row(form.importo_sanzione) }}
+			{% endif %}
+		</div>
+
+		<br/>
+		{{ form_row(form.pulsanti) }}
+		{{ form_row(form._token) }}
+
+	</div>
+
+{% endblock %}  

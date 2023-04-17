@@ -1,0 +1,22 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    {% include 'AttuazioneControlloBundle:PA/Richieste:menu.html.twig' with {'attuazione_controllo' : attuazione_controllo }%}	
+    {% if documenti_istruttoria|length > 0 %}
+        <h4>Documenti allegati durante la fase di Istruttoria</h4>
+        <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+            <tbody>
+                {% for documento in documenti_istruttoria %}
+                    <tr>
+                        <td>{{ mostra_file(documento.documentoFile, null )}}</td>                    
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+    {% if not is_granted('ROLE_CONSULENTE_FESR') and  not is_granted('ROLE_OPERATORE_COGEA')  %}
+        <h4>Carica documento</h4>
+        {{ form(form) }}
+    {% endif %}
+{% endblock %}
+

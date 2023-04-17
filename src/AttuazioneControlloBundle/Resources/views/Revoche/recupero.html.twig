@@ -1,0 +1,107 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+    {% include 'AttuazioneControlloBundle:PA/Richieste:menu.html.twig' with {'attuazione_controllo' : richiesta.attuazioneControllo } %}	
+
+    <div class="form-body">
+        {{ form_start(form) }}
+        <div>
+            <h4>Dati recupero</h4>
+            {{ form_row(form.tipo_fase_recupero) }}
+            {{ form_row(form.tipo_specifica_recupero) }}
+            {{ form_row(form.contributo_corso_recupero) }}
+            {{ form_row(form.contributo_restituito) }}		
+            {{ form_row(form.importo_interesse_legale) }}
+            {{ form_row(form.importo_interesse_mora) }}
+            {% if penalita == true %}
+                {{ form_row(form.importo_sanzione) }}
+            {% endif %}
+            <div id="mancato">
+                {{ form_row(form.azioni_mancato_recupero) }}
+                {{ form_row(form.contributo_non_recuperato) }}
+            </div>
+        </div>
+
+        <br/>
+        {{ form_row(form.pulsanti) }}
+        {{ form_row(form._token) }}
+        {{ form_end(form) }}
+
+    </div>
+    <br/>
+    <div>
+        <h4>Elenco Rate</h4>
+        {% if readonly == false %}
+            {% if recupero is defined %}
+                <a class="btn btn-primary" href="{{ path("crea_rata_recupero", {'id_recupero':recupero.id}) }}">
+                    <span class="fa fa-plus"></span> Aggiungi rata
+                </a>
+                <br/><br/>
+            {% endif %}
+        {% endif %}
+        {% if recupero is defined %}
+            {% if recupero.rate|length > 0 %}	
+                <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+                    <thead>
+                        <tr>
+                            <th>Numero reversale/i d'incasso</th>
+                            <th>Data reversale/i d'incasso</th>
+                            <th>Importo rata</th>
+                            <th>Interessi legali</th>
+                            <th>Interessi di mora</th>
+                            <th>Azioni</th>
+                        </tr>
+                    </thead>	
+                    <tbody>
+                        {% for rata in recupero.rate %}
+                            <tr>
+                                <td>{{ rata.numeroincasso }}</td>
+                                <td>{{ rata.dataincasso|date('d-m-Y') }}</td>
+                                <td>{{ rata.importorata|number_format(2,',', '.') }}</td>
+                                <td>{{ rata.importointeresselegale|number_format(2,',', '.') }}</td>
+                                <td>{{ rata.importointeressemora|number_format(2,',', '.')}}</td>				
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                            Azioni
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                            {% if is_granted('ROLE_REVOCHE') or is_granted('ROLE_SUPER_ADMIN') %}
+                                                <li><a href="{{ path("modifica_rata_recupero",{"id_recupero":recupero.id, 'id_rata':rata.id}) }}" >Modifica</a></li>
+                                                <li><a href="{{ path("cancella_rata_recupero",{"id_rata":rata.id}) }}" >cancella</a></li>
+                                                {% endif %}
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        {% endif %}
+        <br/><br/>
+    </div>
+    <script>
+        $(document).ready(function () {
+
+            $("#recupero_tipo_fase_recupero").change(nascondiSezioni);
+
+            function nascondiSezioni() {
+                confronto = $("#recupero_tipo_fase_recupero").val();
+                if (confronto == 1) {
+                    $("#mancato").hide();
+                } else if (confronto == 2) {
+                    $("#mancato").hide();
+                } else if (confronto == 3) {
+                    $("#mancato").show();
+                } else {
+                    $("#mancato").show();
+                }
+            }
+
+            nascondiSezioni();
+        });
+
+    </script>
+
+{% endblock %}  

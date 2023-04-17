@@ -1,0 +1,22 @@
+{% extends '::base.html.twig' %}
+
+{% block intestazione %}
+	{{ parent() }}
+	{{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% block body %}
+
+	<h4>Dati Referente</h4>
+	{{ mostra_persona(referente.persona) }}
+	{% if abilita_qualifica is defined %} 
+		<h4>Tipologia/qualifica</h4>
+		{{ referente.tipoReferenza.descrizione ~" con qualifica di "~referente.qualifica}}
+	{% else %}
+		<h4>Tipologia</h4>
+		{{ referente.tipoReferenza.descrizione }}
+	{% endif %}
+	<div class="page-actions">
+		{{ pulsante_indietro(path("dettaglio_proponente", {'id_richiesta':id_richiesta, 'id_proponente':id_proponente})) }}
+	</div>
+{% endblock %}

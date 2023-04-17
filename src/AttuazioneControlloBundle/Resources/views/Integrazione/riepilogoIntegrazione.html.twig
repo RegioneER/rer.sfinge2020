@@ -1,0 +1,150 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+
+{% include 'AttuazioneControlloBundle:Istruttoria/Pagamenti:menuEventi.html.twig' with {'pagamento' : pagamento } %}	
+
+<h4>Integrazioni</h4>
+
+{% set stato_bottone_crea_integrazione = '' %}
+
+{% if pagamento.integrazioni|length > 0 %}
+<br/>
+ <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+	<thead>
+		<tr>
+			<th>Numero</th>
+			<th>Protocollo PA</th>
+			<th>Stato protocollo</th>
+			<th>Data consegna PEC</th>
+			<th>Documento integrazione</th>	
+			<th>Data invio risposta</th>
+			<th>Protocollo Beneficiario</th>
+			<th>Istruttoria complessiva</th>
+			<th>Documenti istruiti</th>	
+			<th>Azioni</th>			
+		</tr>
+	</thead>	
+	<tbody>
+		{% for integrazione in pagamento.integrazioni %}
+			{% if integrazione.stato == 'INT_INSERITA' or (integrazione.stato != 'INT_INSERITA' and integrazione.isInAttesaRisposta == true)%}
+				{% set stato_bottone_crea_integrazione = 'disabled' %}
+			{% endif %}	
+			<tr>				
+				<td>{{integrazione.id}}</td>
+				<td>
+					{{integrazione.protocollointegrazione}}
+					{% if integrazione.dataprotocollointegrazione is not null %}
+						 del {{ integrazione.dataprotocollointegrazione|date('d-m-Y') }}
+					{% endif %}
+				</td>
+				<td>{{integrazione.statoleggibile}}</td>
+				
+				{% set data_consegna_pec = '-' %}
+				{% set richieste_protocollo = integrazione.richiesteprotocollo %}
+				{% if  richieste_protocollo|length != 0 %}
+					{% set richiesta_protocollo = richieste_protocollo|last %}
+					{% set emails_protocollo    = richiesta_protocollo.EmailProtocollo %}
+					{% if  emails_protocollo|length != 0 %}
+						{% set email_protocollo = emails_protocollo|last %}
+						{% set data_consegna_pec = email_protocollo.dataconsegna %}
+					{% endif %}						
+				{% endif %}	
+				<td>{{data_consegna_pec}}</td>
+				
+				<td>
+					{% if integrazione.documento is not null %}
+						{{ scarica_file(integrazione.documento, null )}}
+					{% else %}
+						-
+					{% endif %}	
+				</td>
+
+				<td>
+					{% if integrazione.risposta is not null and integrazione.risposta.data is not null %}
+						{{integrazione.risposta.data|date('d/m/Y')}}
+					{% else %}
+						-
+					{% endif %}	
+				</td>
+				
+				<td>
+					{% if integrazione.risposta is not null and integrazione.risposta.stato == 'INT_PROTOCOLLATA' %}
+						{{integrazione.risposta.protocollorispostaintegrazione}} del {{integrazione.risposta.dataprotocollorispostaintegrazione|date('d-m-Y')}}
+					{% else %}
+						-
+					{% endif %}	
+				</td>
+				<td>
+					{% if integrazione.risposta is not null and integrazione.risposta.stato == 'INT_PROTOCOLLATA' %}				
+						{% set istruttoria = integrazione.istruttoriaoggettopagamento %}
+						{% if istruttoria is null %}	
+							<span class="text-danger">Da istruire</span>
+						{% elseif istruttoria.statoValutazione == 'Completa' %}
+							<span class="text-success">{{istruttoria.statoValutazione}}</span>
+						{% elseif istruttoria.statoValutazione == 'Incompleta' %}
+							<span class="text-warning">{{istruttoria.statoValutazione}}</span>
+						{% elseif istruttoria.statoValutazione == 'Integrazione' %}
+							<span class="text-info">{{istruttoria.statoValutazione}}</span>
+						{% endif %}	
+					{% else %}
+						-
+					{% endif %}					
+				</td>				
+				<td>
+					{% set documenti_risposta_totali   = 0 %}
+					{% set documenti_risposta_istruiti = 0 %}
+					{% for documento in integrazione.risposta.documenti %}
+						{% set documenti_risposta_totali = documenti_risposta_totali + 1 %}
+						{% set istruttoria = documento.istruttoriaoggettopagamento %}
+						{% if istruttoria is not null and istruttoria.statoValutazione == 'Completa' %}
+							{% set documenti_risposta_istruiti = documenti_risposta_istruiti + 1 %}
+						{% endif %}
+					{% endfor %}					
+					{% if integrazione.risposta is not null and integrazione.risposta.stato == 'INT_PROTOCOLLATA' %}				
+						{{documenti_risposta_istruiti}} / {{documenti_risposta_totali}}
+					{% else %}
+						-
+					{% endif %}
+				</td>				
+				<td>									
+					<div class="dropdown">
+						<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+							Azioni
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+							{% if integrazione.risposta is not null and (integrazione.risposta.stato == 'INT_PROTOCOLLATA' or integrazione.risposta.stato == 'INT_INVIATA_PA'  )%}
+								<li><a href="{{ path('istruttoria_integrazione', {'id_integrazione' : integrazione.id}) }}">Istruisci risposta</a></li>
+							{% endif %}
+							{% if integrazione.stato == 'INT_INVIATA_PA' or integrazione.stato == 'INT_PROTOCOLLATA'  %}
+								<li><a href="{{ path('gestione_richiesta_integrazione', {'id_integrazione' : integrazione.id}) }}">Dettaglio richiesta</a></li>
+							{% else %}
+								<li><a href="{{ path('gestione_richiesta_integrazione', {'id_integrazione' : integrazione.id}) }}">Gestisci richiesta</a></li>
+							{% endif %}	
+							{% if integrazione.stato == 'INT_INSERITA' %}
+								<li><a href="{{ path('cancella_richiesta_integrazione', {'id_integrazione' : integrazione.id}) }}">Cancella richiesta</a></li>
+							{% endif %}	
+						</ul>
+					</div>  															
+				</td>
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>
+{% else %}
+	<div>Non ci sono integrazioni.</div>
+{% endif %}
+
+<br><br>
+
+{% if is_granted('ROLE_ISTRUTTORE_SUPERVISORE_ATC') or is_granted('ROLE_ISTRUTTORE_ATC') %}
+	<a class="btn btn-info {{stato_bottone_crea_integrazione}}" href="{{path('crea_integrazione_pagamento', {'id_pagamento': pagamento.id})}}">Crea integrazione</a>
+{% endif %}
+<br><br>
+
+<a class="btn btn-default btn-page-action btn-form-back pull-left" href="{{indietro}}">
+	<span class="fa fa-arrow-left"></span> Indietro
+</a>
+
+{% endblock %}

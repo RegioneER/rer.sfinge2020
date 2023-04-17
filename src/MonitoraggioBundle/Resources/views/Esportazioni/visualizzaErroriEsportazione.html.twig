@@ -1,0 +1,52 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+    <div class="table-toolbar">
+        <div>
+            <button class="btn btn-info" data-target="#ricerca-contesto-modal" data-toggle="modal">
+                <span class="fa fa-search"></span> Ricerca
+            </button>
+        </div>
+    </div>
+        <div class="count">
+        Numero elementi trovati: {{ risultato.risultato.getTotalItemCount }} - Filtro attivo: {{ risultato.filtro_attivo ? "Si" : "No" }}
+    </div>
+    {% if risultato.risultato|length > 0 %}
+    <table class="table table-striped table-hover table-bordered">
+        <thead>
+            <tr>
+                <th>Struttura</th>
+                <th>Progressivo</th>
+                <th>Descrizione errore</th>
+                <th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for errore in risultato.risultato %}
+            {% for struttura in errore.monitoraggioconfigurazioneesportazionetavole %}
+            <tr>
+                <td>{{ errore.monitoraggioconfigurazioneesportazionetavole.tavolaprotocollo }}</td>
+                <td>{{ struttura.progressivopuc is null ? '-' : struttura.progressivopuc }}</td>
+                <td>{{errore.errore}}</td>
+                <td>
+                    <a class="btn btn-primary pull-right" href="{{- path('visualizza_struttura_protocollo',{tabellaId:struttura|strutturaId, recordId:struttura.id }) -}}">Visualizza struttura</a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td>{{ errore.monitoraggioconfigurazioneesportazionetavole.tavolaprotocollo }}</td>
+                <td>-</td>
+                <td>{{errore.errore}}</td>
+                <td>-</td>
+            </tr>
+            {% endfor %}
+        {% endfor %}
+        </tbody>
+    </table>
+<div class="navigation">
+        {{ knp_pagination_render(risultato.risultato) }}
+    </div>
+
+    {% endif %}
+    {{ modale_ricerca("Ricerca esportazioni",risultato.form_ricerca,"monitoraggio_esportazione_visualizza_errori_configurazione_pulisci", "ricerca-contesto-modal",{esportazione_id:esportazione.id}) }}
+
+{% endblock %}

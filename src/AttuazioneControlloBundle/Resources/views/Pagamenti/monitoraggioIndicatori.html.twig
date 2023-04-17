@@ -1,0 +1,32 @@
+{% extends '::base_ente.html.twig' %}
+
+
+{% block body %}
+
+    {% set linkIndicatori = 'http://fesr.regione.emilia-romagna.it/opportunita/indicatori-di-output-in-sede-di-rendicontazione' %}
+
+    <div class="form-body">
+
+        <h4>Nota</h4>
+        <div style="font-size: 15px">Informativa per la rilevazione degli indicatori di output:</div> <br>
+        <a href="{{ linkIndicatori }}" target="_blank"> {{ linkIndicatori }} </a>
+
+        <h4>Indicatori di output</h4>
+        {% if indicatori|length > 0 %}
+        <ul class="list-group list-checked">
+            {% for element in indicatori %}
+                <li class="list-group-item {{element.validation|length ? '': 'complete'}}">
+                    <a href="{{- path('gestione_monitoraggio_singolo_indicatore', {
+                        id_pagamento: pagamento.id,
+                        id_indicatore: element.value.id
+                    }) -}}">
+                        {{ element.value.indicatore }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+            <h3>Non sono presenti indicatori di output</h3>
+        {% endif %}
+    </div>
+{% endblock %}

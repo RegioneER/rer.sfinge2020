@@ -1,0 +1,28 @@
+{% extends "FOSUserBundle::layout.html.twig" %}
+
+{% block fos_user_content %}
+<div class="row">
+    <div class="col-md-12">
+        <!-- BEGIN PAGE TITLE & BREADCRUMB-->			
+        <h3 class="page-title">
+            Profilo <small>pagina con i dati del profilo</small>
+        </h3>
+        <ul class="page-breadcrumb breadcrumb">
+            <li>
+                <span class="fa fa-home"></span>
+                <a href="index.html">Home</a> 
+                <span class="fa fa-angle-right"></span>
+            </li>
+            <li><a href="#">Dati profilo</a></li>
+            <li class="pull-right">
+                <div id="dashboard-report-range" class="dashboard-date-range tooltips" data-placement="top" data-original-title="Change dashboard date range">
+                    <span class="fa fa-calendar"></span>
+                    <span class="fa fa-angle-down"></span>
+                </div>
+            </li>
+        </ul>
+        <!-- END PAGE TITLE & BREADCRUMB-->
+    </div>
+</div>
+{% include "FOSUserBundle:Profile:show_content.html.twig" %}
+{% endblock fos_user_content %}

@@ -1,0 +1,170 @@
+{% extends "::base.html.twig" %}
+
+{% block body %}
+    {% set percorso %} {{ path('invia_elenco_richieste') }}  {% endset %}
+    {% set valueBtn %} Invia Elenco {% endset %}
+    {% if tipo == 'elenco' %} 
+        {% set percorso %} {{ path('valida_richieste') }} {% endset %}
+        {% set valueBtn %} Valida Richieste {% endset %} 
+    {% endif %}
+	<div class="table-toolbar">
+		<a href="#" data-target="#ricerca-istruttoria-modal" data-toggle="modal" class="btn btn-info"><span class="fa fa-search"></span> Ricerca</a>
+    </div>
+	{% if listaRichiesteCipe.getTotalItemCount is defined %}
+		{% set numeroElementi = listaRichiesteCipe.getTotalItemCount %}
+	{% else %}	
+		{% set numeroElementi = listaRichiesteCipe|length %}
+	{% endif %}
+	<div class="count">
+		Numero elementi trovati: {{ numeroElementi }} {% if filtro_attivo is defined %} - Filtro attivo: {{ filtro_attivo ? "Si" : "No" }} {% endif %}
+	</div>
+    <form name="elenco_richieste_cipe" action={{ percorso }} method="POST">
+        <div class="table-toolbar">
+            <div>
+                <input id="checkAll" type="button" class="btn btn-primary" style="width:150px" value="Seleziona tutti"/>
+            </div>
+        </div>
+        <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+            <thead>
+                <tr>
+                    <th>Sel.</th>
+                    <th>Id</th>
+                    <th>Bando</th>
+                    <th>Titolo operazione</th>
+					<th>Natura cup</th>
+                    <th>Denominazione mandatario</th>
+                    <th>Protocollo</th>
+                    <th>Costo ammesso</th>
+                    <th>Contributo ammesso</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% set disabilita = "" %}
+                {% set danger = "" %}
+                {% set visibile = "hidden" %} 
+                {% set btnclass %} btn btn-primary active {% endset %}
+				
+                {% if listaRichiesteCipe is empty %}
+                    {% set disabilita = 'disabled' %}
+                    {% set btnclass %} btn btn-primary {% endset %}
+                {% endif %}
+
+                {% for richiestaCipe in listaRichiesteCipe %}
+                    {% if tipo != 'elenco' and richiestaCipe.getValidazione() is not null and richiestaCipe.getValidazione() != "valida" %} 
+                        {% set disabilita = 'disabled' %}
+                        {% set danger = "class= danger" %}
+                        {% set visibile = 'visible' %}
+                    {% else %}
+                        {% set disabilita = "" %}
+                        {% set danger = "" %}
+                    {% endif %}
+                    <tr {{ danger }}>
+                        <td>
+                            <div class="checkbox-list">
+                                <input type="checkbox" class="checkbox" name="check[]" value={{ richiestaCipe.id }} {{ disabilita }}>
+                            </div>    
+                        </td>
+                        <td>{{ richiestaCipe.id }}</td>
+                        <td>{{ richiestaCipe.getRichiesta().getProcedura() }}</td>
+                        <td>{{ richiestaCipe.getRichiesta().getTitolo() }}</td>
+						<td>{% if richiestaCipe.cupnatura is not defined %}
+								-
+							{% else %}
+								{{ richiestaCipe.cupnatura  }}
+							{% endif %}
+						</td>
+                        <td>{{ richiestaCipe.getRichiesta().getSoggetto() }}</td>
+                        <td>{% if richiestaCipe.richiesta.getProtocollo() %} 
+                                {{ richiestaCipe.richiesta.getProtocollo()}} 
+                            {% else %} 
+                                {{ "-" }} 
+                            {% endif %}
+                        </td>
+                        <td>{% if richiestaCipe.getCostoAmmesso() %} 
+                                {{ richiestaCipe.getCostoAmmesso() }} 
+                            {% else %} 
+                                {{ "-" }} 
+                            {% endif %}
+                        </td>
+                        <td>{% if richiestaCipe.getContributoAmmesso() %} 
+                                {{ richiestaCipe.getContributoAmmesso() }} 
+                            {% else %} 
+                                {{ "-" }} 
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div>    
+            <a href="javascript: history.back()" class="btn btn-default pull-left" role="button" style="visibility: {{ visibile }}">
+                <span class="fa fa-arrow-left"></span> Indietro
+            </a>            
+        </div>
+                
+        <div class="pull-right">
+            <div>
+                <a href="{{ path('richieste_non_valide') }}" class="btn btn-primary" role="button" style="visibility: {{ visibile }}">Elenco Errori</a>
+                <button type="submit" class="{{ btnclass }}" {{ disabilita }}>{{ valueBtn }}</button>
+            </div>
+        </div>
+    </form> 
+	{% if formRicercaIstruttoria is defined %}
+	<div id="ricerca-istruttoria-modal" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3 id="ricerca-istruttoria-modal-titolo">Ricerca Istruttoria</h3>
+				</div>
+				<div class="modal-body">
+					{{ form(formRicercaIstruttoria) }}
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Chiudi</button>
+					<a class="btn btn-default" href="{{ path("elenco_richieste_cipe_pulisci") }}">Annulla Ricerca</a>
+					<a class="btn btn-primary" href="#" id="ricercaOk">Ricerca</a>
+				</div>
+			</div>
+		</div>
+	</div>			
+	{% endif %}			
+{% endblock %}
+	
+{%block  jquery_page_document_ready %}
+<script>
+	jQuery(document).ready(function() {
+		$("#ricercaOk").click(function(e){
+			e.preventDefault();
+			$(this).parents(".modal-content").find("form").submit();
+		})
+	});
+</script>
+{% endblock %}
+
+{% block  page_level_scripts %}
+    <script>
+        $("#checkAll").attr("data-type", "check");
+        $("#checkAll").click(function() {
+            if ($("#checkAll").attr("data-type") === "check") {
+                
+                $(".checkbox").each(function(){
+                    
+                    $(this).prop("checked", true);
+                    
+                    if ($(this).is(':disabled')) {
+                        $(this).prop("checked", false);
+                    }
+                })
+                
+                $("#checkAll").attr("value", "Deseleziona tutti");
+                $("#checkAll").attr("data-type", "uncheck");
+            } else {
+                $(".checkbox").prop("checked", false);
+                $("#checkAll").attr("value", "Seleziona tutti");               
+                $("#checkAll").attr("data-type", "check");
+            }
+        })
+        
+    </script>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+	
+	{#
+	$esito = array(
+									"id_progetto"		=> $id_progetto,
+									"codifica_locale"	=> $codifica_locale,
+									"codice_cup"			=> $codice_cup,
+									"messaggi_scarto"	=> $messaggi_scarto (nullo che codice_cup è valorizzato)
+									"risultato"			=> risultato elaborazione
+									);
+	#}
+	    <h1>Risultato elaborazione tracciato risposta</h1>
+
+	    {{ include('RichiesteBundle:richiestecupbatch:elenco_esiti_associa_risposta.html.twig', { 'esiti': esiti }) }}
+
+    
+{% endblock %}

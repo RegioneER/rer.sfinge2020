@@ -1,0 +1,490 @@
+{% extends ':pdf:base.pdf.html.twig' %}
+
+{% set attuazione_controllo = operazione.richiesta.attuazioneControllo %}
+
+{% block content %}
+	<div>
+		<table width="100%" class="text-small">
+			<tbody>
+				<tr>
+					<td width="50%">Verificatore</td>
+					<td>{{ operazione.verificatore }}</td>
+				</tr>
+				<tr>
+					<td>Sede legale / Unità locale</td>
+					<td>{{ operazione.sedeLegaleControllo }}</td>
+				</tr>
+				<tr>
+					<td>Data sopralluogo</td>
+					<td>{{ operazione.dataSopralluogo is null ? '-' : operazione.dataSopralluogo|date('d/m/Y') }}</td>
+				</tr>
+				<tr>
+					<td>Tipo di controllo</td>
+					<td>{{ operazione.operazioneConclusa is null ? '-' : (operazione.operazioneConclusa ? 'Operazione conclusa' : 'Operazione in corso') }}</td>
+				</tr>		
+			</tbody>
+		</table>
+		<br>
+		
+		<h4 class="titolo-sezione">Principale normativa di riferimento</h4><br>
+		<table width="100%" style="font-size: 10px;">
+			<tbody>
+				<tr>
+					<td width="30%" style="padding: 2px 8px !important;">Reg. (UE) n. 1303/2013 (RDC) </td>
+					<td style="padding: 2px 8px !important;">Regolamento recante disposizioni comuni </td>
+				</tr>
+				<tr>
+					<td width="30%" style="padding: 2px 8px !important;">Reg. (UE) n. 480/2014 (RD) </td>
+					<td style="padding: 2px 8px !important;">Regolamento delegato che integra il RDC</td>
+				</tr>
+				<tr>
+					<td width="30%" style="padding: 2px 8px !important;">Reg. (UE) n. 1301/2013 </td>
+					<td style="padding: 2px 8px !important;">Regolamento FESR</td>
+				</tr>
+				<tr>
+					<td width="30%" style="padding: 2px 8px !important;"> Reg. (UE) n. 651/2014 </td>
+					<td style="padding: 2px 8px !important;">Regolamento che dichiara alcune categorie di aiuti compatibili con il mercato interno</td>
+				</tr>
+				<tr>
+					<td width="30%" style="padding: 2px 8px !important;"> Reg. (UE) 1407/2013 </td>
+					<td style="padding: 2px 8px !important;">Regolamento aiuti "de minimis"</td>
+				</tr>			
+			</tbody>
+		</table>
+		<br>
+
+		<h4 class="titolo-sezione">Dati riepilogativi operazione</h4><br>
+		<table width="100%" class="text-small">
+			<tbody>
+				<tr>
+					<td>Numero operazione</td><td>{{ attuazione_controllo.richiesta.id }}</td>
+				</tr>
+				<tr>
+					<td>Numero protocollo</td><td>{{ attuazione_controllo.richiesta.protocollo }}</td>
+				</tr>
+				<tr>
+					<td>CUP</td><td>{{ attuazione_controllo.richiesta.istruttoria.codiceCup }}</td>
+				</tr>
+				<tr>
+					<td>Titolo operazione</td><td>{{ attuazione_controllo.richiesta.titolo is not null ?attuazione_controllo.richiesta.titolo : "-" }}</td>
+				</tr>
+				<tr>
+					<td>Soggetto mandatario</td><td>{{ attuazione_controllo.richiesta.mandatario.soggettoVersion }}</td>
+				</tr>
+				<tr>
+					<td>Proponenti</td><td>{{ attuazione_controllo.richiesta.proponenti|length == 1 ? "Singolo soggetto" : "Rete di soggetti" }}</td>
+				</tr>
+				<tr>
+					<td>Abstract</td><td>{{ attuazione_controllo.richiesta.abstract }}</td>
+				</tr>
+				<tr>
+					<td>Aiuto di stato</td><td>{{ attuazione_controllo.richiesta.getAiutoDiStato is null ? 'NO' : 'SI' }}</td>
+				</tr>
+				<tr>
+					<td>Valuta</td><td>Euro</td>
+				</tr>
+
+				<tr>
+					<td>Data avvio</td><td>{{ attuazione_controllo.dataAvvio is null ? '-' : attuazione_controllo.dataAvvio|date('d/m/Y') }}</td>
+				</tr>
+				<tr>
+					<td>Data termine</td><td>{{ attuazione_controllo.dataTermine is null ? '-' : attuazione_controllo.dataTermine|date('d/m/Y') }}</td>
+				</tr>
+				<tr>
+					<td>Data termine effettivo</td><td>{{ attuazione_controllo.dataTermineEffettivo is null ? '-' : attuazione_controllo.dataTermineEffettivo|date('d/m/Y') }}</td>
+				</tr>			
+			</tbody>
+		</table>
+		<br>
+
+		<h4 class="titolo-sezione">Dati riepilogativi bando</h4><br>
+
+		<table width="100%" style="font-size: 10px;">
+			<tbody>
+				<tr>
+					<td style="padding: 2px 8px !important;">Atto</td>
+					<td style="padding: 2px 8px !important;">{{ attuazione_controllo.richiesta.procedura.atto }} </td>
+				</tr>
+				<tr>
+					<td style="padding: 2px 8px !important;">Titolo</td>
+					<td style="padding: 2px 8px !important;">{{ attuazione_controllo.richiesta.procedura.titolo }}</td>
+				</tr>
+				<tr>
+					<td style="padding: 2px 8px !important;">Asse</td>
+					<td style="padding: 2px 8px !important;">{{ attuazione_controllo.richiesta.procedura.asse.titolo }}</td>
+				</tr>
+				<tr>
+					<td style="padding: 2px 8px !important;">Obiettivi specifici</td>
+					<td style="padding: 2px 8px !important;">{{ attuazione_controllo.richiesta.procedura.obiettivispecifici|join(', ') }}</td>
+				</tr>
+				<tr>
+					<td style="padding: 2px 8px !important;">Azioni</td>
+					<td style="padding: 2px 8px !important;">{{ attuazione_controllo.richiesta.procedura.azioni|join(', ') }}</td>
+				</tr>
+				<tr>
+					<td style="padding: 2px 8px !important;">Amministrazione emittente</td>
+					<td style="padding: 2px 8px !important;">{{ attuazione_controllo.richiesta.procedura.amministrazioneemittente.descrizione }}</td>
+				</tr>
+					{% if not attuazione_controllo.richiesta.isProceduraParticolare %}
+						<tr>
+							<td style="padding: 2px 8px !important;">Data di approvazione</td>
+							<td style="padding: 2px 8px !important;">{{ attuazione_controllo.richiesta.procedura.dataapprovazione|date('d-m-Y') }}</td>
+						</tr>
+						<tr>
+							<td style="padding: 2px 8px !important;">Data di pubblicazione BUR</td>
+							<td style="padding: 2px 8px !important;">{{ attuazione_controllo.richiesta.procedura.datapubblicazione|date('d-m-Y') }}</td>
+						</tr>
+					{% endif %}
+			</tbody>
+		</table>
+		<br>
+
+		<h4 class="titolo-sezione">Atto e concessione</h4><br>
+		<table width="100%" style="font-size: 10px;">
+			<tbody>
+				<tr>
+					<td style="padding: 2px 8px !important;">Atto di ammossibilità</td>
+					<td style="padding: 2px 8px !important;">{{ attuazione_controllo.richiesta.istruttoria.attoammissibilitaatc }}</td>
+				</tr>
+				<tr>
+					<td style="padding: 2px 8px !important;">Atto di concessione</td>
+					<td style="padding: 2px 8px !important;">{{ attuazione_controllo.richiesta.istruttoria.attoconcessioneatc }}</td>
+				</tr>	
+			</tbody>
+		</table>
+		<br>
+
+		<h4 class="titolo-sezione">Avanzamento finanziario (rendicontato)</h4><br>
+
+		{% for sezione in avanzamento %}
+			{% if avanzamento|length > 1 %}
+				<h4>{{ sezione["sezione"].titoloSezione }}</h4>
+			{% endif %}
+			<table width="100%" class="text-small">
+				<thead>
+					<tr>
+						<th style="width: 28%">Voce piano costo</th>
+						<th style="text-align: center; width: 18%">Importo ammesso</th>
+						<th style="text-align: center; width: 18%">Importo variato</th>
+						<th style="text-align: center; width: 18%">% Variazione</th>
+						<th style="text-align: center; width: 18%">Importo rendicontato</th>
+						<th style="text-align: center; width: 18%">Importo rendicontato ammesso</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for voce in sezione["voci"] %}
+						<tr {% if voce["voce"].pianocosto.codice == 'TOT' %}style="font-weight: bold;"{% endif%}>
+							{% set percent_variazione = voce["ammesso"] == 0 ? null : (voce["variato"] - voce["ammesso"])/voce["ammesso"]*100 %}
+							<td>{{ voce["voce"].pianocosto.titolo }}</td>
+							<td style="text-align: center;">&euro; {{ voce["ammesso"]|number_format(2,',', '.') }}</td>
+							<td style="text-align: center;">&euro; {{ voce["variato"]|number_format(2,',', '.') }}</td>
+							<td style="text-align: center;{{ percent_variazione == 0 ? '' : (percent_variazione > 0 ? 'color: green;' : 'color:red;')}}">
+								{{ percent_variazione > 0 ? '+' : '' }}{{ percent_variazione is null ? '-' : percent_variazione|round(2, 'common') }} 
+								{{ percent_variazione is null ? '' : '%' }}</td>
+							<td style="text-align: center;">&euro; {{ voce["rendicontato"]|number_format(2,',', '.') }}</td>
+							<td style="text-align: center;">&euro; {{ voce["pagato"]|number_format(2,',', '.') }}</td>
+						</tr>
+					{% endfor %}		
+				</tbody>
+			</table>		
+		{% endfor %}
+
+		<h4>Dati finanziari</h4>
+		<table width="100%" class="text-small">
+			<tr>
+				<td>Importo del sostegno pubblico:</td><td>&euro; {{ richiesta.contributoRichiesta|number_format(2,',', '.') }}</td>
+			</tr>
+			<tr>
+				{% if richiesta.proponenti.0.soggetto.formaGiuridica.soggettoPubblico %}
+					<td>Importo dei costi ammissibili che costituiscono spesa pubblica</td><td>&euro; {{ richiesta.istruttoria.costoAmmesso|number_format(2,',', '.') }}</td>
+				{% else %}
+					<td>Importo dei costi ammissibili che costituiscono spesa pubblica</td><td>&euro; {{ richiesta.contributoRichiesta|number_format(2,',', '.') }}</td>
+				{% endif %}
+			</tr>
+		</table>
+		<br>
+
+		<h4 class="titolo-sezione">Richieste di rimborso</h4><br>
+		<table width="100%" class="text-small">
+			<thead>
+				<tr>
+					<th>Modalità pagamento</th>
+					<th>Stato</th>
+					<th>Importo richiesto</th>
+					<th>Importo pagato</th>
+					<th>Rendic.</th>
+					<th>Rendic. Ammesso</th>
+					<th>Data invio</th>
+					<th>Certificazioni</th>
+				</tr>
+			</thead>	
+			<tbody>
+				{% for pagamento in attuazione_controllo.pagamenti %}
+					{% if pagamento.isProceduraParticolare == true and pagamento.stato.codice == 'PAG_INVIATO_PA' %}
+						<tr>
+							<td>{{ pagamento.modalitaPagamento.descrizione }}</td>
+							<td>{{ pagamento.stato }}</td>
+							<td>{{ pagamento.importoRichiesto == 0 ? "-" : "€ " ~ pagamento.importoRichiesto|number_format(2, ',', '.') }}</td>
+							{% if pagamento.mandatoPagamento is not null %}
+								<td>{{ pagamento.mandatoPagamento.importoPagato == 0 ? "-" : "€ " ~ pagamento.mandatoPagamento.importoPagato|number_format(2, ',', '.') }}</td>				
+							{% else %}
+								<td>-</td>
+							{% endif %}
+							<td>{{"€ " ~  pagamento.getRendicontato|number_format(2, ',', '.') }}</td>
+							<td>{{"€ " ~  pagamento.getRendicontatoAmmesso|number_format(2, ',', '.') }}</td>
+							<td>{{ pagamento.dataInvio is null ? "-" : pagamento.dataInvio | date('d/m/Y') }}</td>
+							<td>
+							</td>
+						</tr>
+					{% elseif pagamento.isProceduraParticolare == false and pagamento.stato.codice == 'PAG_PROTOCOLLATO'%}
+						<tr>
+							<td>{{ pagamento.modalitaPagamento.descrizione }}</td>
+							<td>{{ pagamento.stato }}</td>
+							<td>{{ pagamento.importoRichiesto == 0 ? "-" : "€ " ~ pagamento.importoRichiesto|number_format(2, ',', '.') }}</td>					
+							{% if pagamento.mandatoPagamento is not null %}
+								<td>{{ pagamento.mandatoPagamento.importoPagato == 0 ? "-" : "€ " ~ pagamento.mandatoPagamento.importoPagato|number_format(2, ',', '.') }}</td>				
+							{% else %}
+								<td>-</td>
+							{% endif %}
+							<td>{{ "€ " ~ pagamento.getRendicontato|number_format(2, ',', '.') }}</td>
+							<td>{{ "€ " ~ pagamento.getRendicontatoAmmesso|number_format(2, ',', '.') }}</td>							
+							<td>{{ pagamento.dataInvio is null ? "-" : pagamento.dataInvio | date('d/m/Y') }}</td>
+							<td>{{ pagamento.certificazioniArray|join(', ') }}</td>
+						</tr>
+					{% endif %}
+				{% endfor %}
+			</tbody>
+		</table>
+		<br>
+
+		<h4 class="titolo-sezione">Osservazioni</h4><br>
+		<div class="text-area text-small">
+			{{operazione.note|raw}}
+		</div>	
+		<br>
+		
+		{% if operazione.conforme is not null and operazione.conforme == false %}
+		<h4 class="titolo-sezione">Taglio AdA trasversale</h4><br>
+		<table width="100%" class="text-small">
+			<tbody>
+				<tr>
+					<td>Spesa pubblica irregolare pre-contraddittorio</td><td>{{operazione.altrotaglioprecontraddittorio|number_format(2, ',', '.')}}</td>
+				</tr>
+				<tr>
+					<td>Spesa pubblica irregolare post-contraddittorio</td><td>{{operazione.altrotagliopostcontraddittorio|number_format(2, ',', '.')}}</td>
+				</tr>	
+				<tr>
+					<td>Spesa pubblica irregolare proposta per la decurtazione</td><td>{{operazione.taglioadaproposto|number_format(2, ',', '.')}}</td>
+				</tr>	
+			</tbody>
+		</table>
+		<br>
+		{% endif %}
+
+		<h4 class="titolo-sezione">Giustificativi di spesa con osservazioni ADA</h4><br>
+		{% for auditGiustificativo in operazione.campioni %}
+			{% set giustificativo = auditGiustificativo.giustificativo %}
+			{% if auditGiustificativo.conforme is not null and auditGiustificativo.conforme == false %}
+				<table width="100%" class="text-small">
+					<tbody>
+						<tr>
+							<td width="30%">Fornitore</td>
+							{% if giustificativo.denominazioneFornitore is not null %}
+								<td style="padding: 2px 8px !important;">{{ giustificativo.denominazioneFornitore }} - {{ giustificativo.codiceFiscaleFornitore }}</td>
+							{% elseif giustificativo.estensione.nome is defined %}
+								<td style="padding: 2px 8px !important;">{{ giustificativo.estensione.nome }} {{ giustificativo.estensione.cognome }}</td>
+							{% else %}
+								<td style="padding: 2px 8px !important;">-</td>
+							{% endif %}
+						</tr>
+						<tr>
+							<td width="30%">Descrizione</td>
+							<td>{{ giustificativo.descrizioneGiustificativo }}</td>
+						</tr>
+						<tr>
+							<td width="30%">Numero fattura</td>
+							<td>{{ giustificativo.numeroGiustificativo }}</td>
+						</tr>
+						<tr>
+							<td width="30%">Data fattura</td>
+							<td>{{ giustificativo.dataGiustificativo is null ? "-" : giustificativo.dataGiustificativo|date('d/m/Y')}}</td>
+						</tr>	
+						<tr>
+							<td width="30%">Importo giustificativo</td>
+							{% if giustificativo.importoGiustificativo is not null%}
+								<td style="padding: 2px 8px !important;">{{ giustificativo.importoGiustificativo|number_format(2, ',', '.') }}</td>
+							{% else %}
+								<td style="padding: 2px 8px !important;">{{ giustificativo.TotaleImputato|number_format(2, ',', '.') }}</td>
+							{% endif %}
+						</tr>
+						<tr>
+							<td width="30%">Importo ammesso</td>
+							{% if giustificativo.importoapprovato is not null%}
+								<td style="padding: 2px 8px !important;">{{ giustificativo.importoapprovato|number_format(2,',','.') }}</td>
+							{% else %}
+								<td style="padding: 2px 8px !important;">{{ giustificativo.TotaleImputatoApprovato|number_format(2,',','.') }}</td>
+							{% endif %}
+						</tr>	
+						<tr>
+							<td width="30%">Spesa non ammissibile pre-contraddittorio</td>
+							<td>{{ auditGiustificativo.spesaIrregolarePreContraddittorio|number_format(2,',','.') }}</td>
+						</tr>
+						<tr>
+							<td width="30%">Contributo pubblico non ammissibile pre-contraddittorio</td>
+							<td>{{ auditGiustificativo.contributopubblicoprecontraddittorio|number_format(2,',','.') }}</td>
+						</tr>
+						<tr>
+							<td width="30%">Spesa non ammissibile post-contraddittorio</td>
+							<td>{{ auditGiustificativo.spesaIrregolarePostContraddittorio|number_format(2,',','.') }}</td>
+						</tr>	
+						<tr>
+							<td width="30%">Contributo pubblico non ammissibile post-contraddittorio</td>
+							<td>{{ auditGiustificativo.contributopubblicopostcontraddittorio|number_format(2,',','.') }}</td>
+						</tr>	
+						<tr>
+							<td width="30%">Contributo pubblico proposto per la decurtazione</td>
+							<td>{{ auditGiustificativo.taglioProposto|number_format(2,',','.') }}</td>
+						</tr>
+						<tr>
+							<td width="30%">Natura irregolarità</td>
+							<td>{{auditGiustificativo.naturairregolarita is null ? "-" : auditGiustificativo.naturairregolarita }}</td>
+						</tr>
+						<tr>
+							<td width="30%">Tipo irregolarità</td>
+							<td>{{auditGiustificativo.tipoirregolarita is null ? "-" : auditGiustificativo.tipoirregolarita }}</td>
+						</tr>
+						<tr>
+							<td width="30%">Note</td>
+							<td>{{ auditGiustificativo.note }}</td>
+						</tr>		
+					</tbody>
+				</table>
+			<br>
+			{% endif %}
+		{% endfor %}
+
+		<h4 class="titolo-sezione">Altri giustificativi di spesa esaminati</h4><br>
+		{% for auditGiustificativo in operazione.campioni %}
+			{% set giustificativo = auditGiustificativo.giustificativo %}
+			{% if auditGiustificativo.conforme is not null and auditGiustificativo.conforme == true %}
+                    <table width="100%" style="font-size: 10px;">
+					<tbody>
+                        <tr>
+                            <td width="30%" style="padding: 2px 8px !important;">Fornitore</td>
+							{% if giustificativo.denominazioneFornitore is not null %}
+								<td style="padding: 2px 8px !important;">{{ giustificativo.denominazioneFornitore }} - {{ giustificativo.codiceFiscaleFornitore }}</td>
+							{% elseif giustificativo.estensione.nome is defined %}
+								<td style="padding: 2px 8px !important;">{{ giustificativo.estensione.nome }} {{ giustificativo.estensione.cognome }}</td>
+							{% else %}
+								<td style="padding: 2px 8px !important;">-</td>
+							{% endif %}
+						</tr>
+						<tr>
+							<td width="30%" style="padding: 2px 8px !important;">Descrizione</td>
+							<td style="padding: 2px 8px !important;">{{ giustificativo.descrizioneGiustificativo }}</td>
+						</tr>
+						<tr>
+							<td width="30%" style="padding: 2px 8px !important;">Numero fattura</td>
+							<td style="padding: 2px 8px !important;">{{ giustificativo.numeroGiustificativo }}</td>
+						</tr>
+						<tr>
+							<td width="30%" style="padding: 2px 8px !important;">Data fattura</td>
+							<td style="padding: 2px 8px !important;">{{ giustificativo.dataGiustificativo is null ? "-" : giustificativo.dataGiustificativo|date('d/m/Y')}}</td>
+						</tr>	
+						<tr>
+							<td width="30%" style="padding: 2px 8px !important;">Importo giustificativo</td>
+							{% if giustificativo.importoGiustificativo is not null%}
+								<td style="padding: 2px 8px !important;">{{ giustificativo.importoGiustificativo|number_format(2, ',', '.') }}</td>
+							{% else %}
+								<td style="padding: 2px 8px !important;">{{ giustificativo.TotaleImputato|number_format(2, ',', '.') }}</td>
+							{% endif %}
+						</tr>
+						<tr>
+							<td width="30%" style="padding: 2px 8px !important;">Importo ammesso</td>
+							{% if giustificativo.importoapprovato is not null%}
+								<td style="padding: 2px 8px !important;">{{ giustificativo.importoapprovato|number_format(2,',','.') }}</td>
+							{% else %}
+								<td style="padding: 2px 8px !important;">{{ giustificativo.TotaleImputatoApprovato|number_format(2,',','.') }}</td>
+							{% endif %}
+						</tr>	
+						<tr>
+							<td width="30%" style="padding: 2px 8px !important;">Spesa non ammissibile pre-contraddittorio</td>
+							<td style="padding: 2px 8px !important;">{{ auditGiustificativo.spesaIrregolarePreContraddittorio|number_format(2,',','.') }}</td>
+						</tr>
+						<tr>
+							<td width="30%" style="padding: 2px 8px !important;">Contributo pubblico non ammissibile pre-contraddittorio</td>
+							<td style="padding: 2px 8px !important;">{{ auditGiustificativo.taglioPreContraddittorio|number_format(2,',','.') }}</td>
+						</tr>
+						<tr>
+							<td width="30%" style="padding: 2px 8px !important;">Spesa non ammissibile post-contraddittorio</td>
+							<td style="padding: 2px 8px !important;">{{ auditGiustificativo.spesaIrregolarePostContraddittorio|number_format(2,',','.') }}</td>
+						</tr>	
+						<tr>
+							<td width="30%" style="padding: 2px 8px !important;">Contributo pubblico non ammissibile post-contraddittorio</td>
+							<td style="padding: 2px 8px !important;">{{ auditGiustificativo.taglioPostContraddittorio|number_format(2,',','.') }}</td>
+						</tr>
+						<tr>
+							<td width="30%" style="padding: 2px 8px !important;">Contributo pubblico proposto per la decurtazione</td>
+							<td style="padding: 2px 8px !important;">{{ auditGiustificativo.taglioProposto|number_format(2,',','.') }}</td>
+						</tr>
+						<tr>
+							<td width="30%" style="padding: 2px 8px !important;">Natura irregolarità</td>
+							<td style="padding: 2px 8px !important;">{{auditGiustificativo.naturairregolarita is null ? "-" : auditGiustificativo.naturairregolarita }}</td>
+						</tr>
+						<tr>
+							<td width="30%" style="padding: 2px 8px !important;">Tipo irregolarità</td>
+							<td style="padding: 2px 8px !important;">{{auditGiustificativo.tipoirregolarita is null ? "-" : auditGiustificativo.tipoirregolarita }}</td>
+						</tr>	
+						<tr>
+							<td width="30%" style="padding: 2px 8px !important;">Note</td>
+							<td style="padding: 2px 8px !important;">{{ auditGiustificativo.note is null ? "-" : auditGiustificativo.note}}</td>
+						</tr>	
+					</tbody>
+				</table>
+			<br>
+			{% endif %}
+		{% endfor %}	
+		<br>
+		<h4 class="titolo-sezione">Riepilogo controllo</h4><br>
+		<table width="100%" class="text-small">
+			<tbody>
+				<tr>
+					<td width="30%">Spesa certificata al momento del controllo</td>
+					<td>&euro; {{ attuazione_controllo.richiesta.totaleCertificato|number_format(2,',','.') }}</td>
+				</tr>
+				<tr>
+					<td width="30%">Spesa controllata dall'AdA</td>
+					<td>&euro; {{ operazione.calcolaSottopostaAuditCampioni|number_format(2,',','.') }}</td>
+				</tr>
+				<tr>
+					<td width="30%">Spesa non ammissibile pre-contraddittorio</td>
+					<td>&euro;  {{ operazione.calcolaIrregolarePreContraddittorioTotale|number_format(2,',','.') }}</td>
+				</tr>
+				<tr>
+					<td width="30%">Contributo pubblico non ammissibile pre-contraddittorio</td>
+					<td>&euro;  {{ operazione.calcolaContributoPreContraddittorioTotale|number_format(2,',','.') }}</td>
+				</tr>
+				<tr>
+					<td width="30%">Spesa non ammissibile post-contraddittorio</td>
+					<td>&euro;  {{ operazione.calcolaIrregolarePostContraddittorioTotale|number_format(2,',','.') }}</td>
+				</tr>
+				<tr>
+					<td width="30%">Contributo pubblico non ammissibile post-contraddittorio</td>
+					<td>&euro;  {{ operazione.calcolaContributoPostContraddittorioTotale|number_format(2,',','.') }}</td>
+				</tr>
+				<tr>
+					<td width="30%">Contributo pubblico proposto per la decurtazione</td>
+					<td>&euro;  {{ operazione.calcolaTaglioAdaTotale|number_format(2,',','.') }}</td>
+				</tr>
+				{#<tr>
+					<td width="30%">Totale non ammissibile AdA post-contraddittorio</td>
+					<td>&euro; {{ (operazione.altroTaglioPostContraddittorio + operazione.calcolaTaglioPostContraddittorioCampioni)|number_format(2,',','.') }}</td>
+				</tr>
+				<tr>
+					<td width="30%">Totale decurtazione proposta per la decertificazione</td>
+					<td>&euro; {{ (operazione.taglioAdaProposto + operazione.calcolaTaglioAdaCampioni)|number_format(2,',','.') }}</td>
+				</tr>#}
+			</tbody>
+		</table>
+	</div>
+{% endblock content %}

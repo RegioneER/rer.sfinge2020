@@ -1,0 +1,25 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	{% include 'AttuazioneControlloBundle:Controlli:menu_principale.html.twig' %}		
+	{% include 'AttuazioneControlloBundle:Controlli:menu.html.twig' with {'controllo' : controllo } %}		
+	
+	<h4>Carica documento</h4>
+
+    {{ form(form) }}
+	
+	<h4>Documenti allegati durante il controllo</h4>
+    <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+        <tbody>
+			{% for documento in controllo.documentiControllo %}
+				{% if documento.id is not null and documento.documentoFile.tipologiadocumento.codice != 'CONTROLLO_VERBALE_SPR' %}
+				<tr>
+					<td>{{ mostra_file_data(documento.documentoFile, disabled ? null : path('elimina_documento_controllo', {'id_controllo': controllo.id, 'id_documento': documento.id, 'verbale': 0  }) ) }}</td>
+				</tr>
+				{% endif %}
+			{% endfor %}
+        </tbody>
+    </table>
+			
+{% endblock %}
+

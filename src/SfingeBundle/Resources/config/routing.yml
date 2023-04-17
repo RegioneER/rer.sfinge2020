@@ -1,0 +1,79 @@
+atti_consultazione:
+    resource: "@SfingeBundle/Controller/AttoConsultazioneController.php"
+    type:    annotation
+    prefix:   /atti/consultazione
+    
+atti_gestione:
+    resource: "@SfingeBundle/Controller/AttoGestioneController.php"
+    type:    annotation
+    prefix:   /atti/gestione    
+
+permessi:
+    resource: "@SfingeBundle/Controller/PermessiController.php"
+    type:    annotation
+    prefix:   /permessi
+
+manuali_consultazione:
+    resource: "@SfingeBundle/Controller/ManualeConsultazioneController.php"
+    type:    annotation
+    prefix:   /manuali/consultazione    
+    
+manuali_gestione:
+    resource: "@SfingeBundle/Controller/ManualeGestioneController.php"
+    type:    annotation
+    prefix:   /manuali/gestione
+    
+procedure_gestione:
+    resource: "@SfingeBundle/Controller/ProcedureGestioneController.php"
+    type:    annotation
+    prefix:   /procedure/gestione
+    
+procedure_consultazione:
+    resource: "@SfingeBundle/Controller/ProcedureConsultazioneController.php"
+    type:    annotation
+    prefix:   /procedure/consultazione  
+    
+procedure_definizione:
+    resource: "@SfingeBundle/Controller/ProcedureDefinizioneController.php"
+    type:    annotation
+    prefix:   /procedure/definizione      
+    
+assistenza_tecnica_gestione:
+    resource: "@SfingeBundle/Controller/AssistenzaTecnicaGestioneController.php"
+    type:    annotation
+    prefix:   /assistenze_tecniche/gestione
+    
+ingegneria_finanziaria_gestione:
+    resource: "@SfingeBundle/Controller/IngegneriaFinanziariaGestioneController.php"
+    type:    annotation
+    prefix:   /ingegneria_finanziaria/gestione
+    
+acquisizioni_gestione:
+    resource: "@SfingeBundle/Controller/AcquisizioniGestioneController.php"
+    type:    annotation
+    prefix:   /acquisizioni/gestione
+
+import_ctrl:
+    resource: "@SfingeBundle/Controller/ImportController.php"
+    type:    annotation
+    prefix:   /import
+
+sfinge_ctrl:
+    resource: "@SfingeBundle/Controller/SfingeController.php"
+    type:    annotation
+    prefix:   /
+    
+sfinge_exception:
+    resource: "@SfingeBundle/Controller/SfingeExceptionController.php"
+    type:    annotation
+    prefix:   /
+    
+organismi_intermedi:
+    resource: "@SfingeBundle/Controller/OrganismiIntermediController.php"
+    type:    annotation
+    prefix:   /
+
+utilities:
+    resource: "@SfingeBundle/Controller/UtilitiesController.php"
+    type: annotation
+    prefix: /

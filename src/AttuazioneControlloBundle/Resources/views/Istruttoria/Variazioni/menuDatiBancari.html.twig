@@ -1,0 +1,15 @@
+<li role="presentation" {% if menu|default() == "dati_bancari" %} class="active" {% endif %}>
+    <a aria-expanded="false" aria-haspopup="true" class="dropdown-toggle" data-toggle="dropdown" href="#" role="button">
+        Dati bancari<span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+        {% for variazione_dati in variazione.datiBancari %}
+            {% set proponente = variazione_dati.datiBancari.proponente %}
+                <li>
+                    <a href="{{- path('dati_bancari_istruttoria_variazione', { id_variazione:variazione.id, id_proponente:proponente.id }) -}}">
+                        {{ proponente.soggetto }}
+                    </a>
+                </li>
+        {% endfor %}
+    </ul>
+</li>

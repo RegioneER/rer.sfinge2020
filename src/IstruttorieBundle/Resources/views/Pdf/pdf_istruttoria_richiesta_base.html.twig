@@ -1,0 +1,27 @@
+{% extends ':pdf:base.pdf.html.twig' %}
+
+{% block content %}
+
+    {% block intestazione %}
+        <div class="center">
+            {% if richiesta.procedura.isNuovaProgrammazione %}
+                <img src="assets/img/regione/Loghi_CoesioneITA_UE_REP_ER_21_27.jpg" alt="Loghi regione" height="45px">
+            {% elseif richiesta.procedura.asse.codice == 'A0' %}
+                <img src="assets/img/regione/logo_ue-regione-emilia-romagna.jpg" alt="Loghi regione" height="60px">
+            {% elseif is_fsc == true %}
+                <img src="assets/img/regione/logo_fsc.jpg" alt="Loghi regione" height="80px">            
+            {% else%}
+                <img src="assets/img/regione/logo_ue-por_fesr_2020.jpg" alt="Loghi regione" height="60px">
+            {% endif %}
+            <br>
+            <h2 align="center">
+                {% block titolo_intestazione %}					
+                {% endblock titolo_intestazione %}
+            </h2>
+        </div>
+    {% endblock intestazione %}
+
+    {% block corpo %}		
+    {% endblock corpo %}		
+
+{% endblock content%}

@@ -1,0 +1,15 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+
+    <p class="lead">Indicare il firmatario della richiesta</p>
+
+
+    {{ form_start(form) }}
+
+    <h4>Firmatario</h4>
+    {{ form_row(form.firmatario) }}
+
+	{{ form_end(form) }}
+{% endblock %}
+

@@ -1,0 +1,97 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <div class="table-toolbar">
+        <div class="btn-group">
+			<a href="#"><button id="btn_ricerca_ws_genera_cup" data-target="#ricerca-ws_genera_cup-modal" data-toggle="modal" class="btn btn-info"><span class="fa fa-search"></span> Ricerca</button></a>
+        </div>
+    </div>
+	<div class="count">
+		Numero elementi trovati: {{ wsGeneraCups.getTotalItemCount }} - Filtro attivo: {{ filtro_attivo ? "Si" : "No" }}
+	</div>
+	{% if wsGeneraCups.getTotalItemCount == 0 %}
+        <div class="alert alert-warning">
+            Non è stata trovata alcuna richiesta WsGeneraCup.
+        </div>
+	{% endif%}
+
+    <table class="table table-striped table-hover table-bordered" id="notizie-elenco">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Idrichiesta</th>
+                <th>Idprogetto</th>
+                <th>Richiesta valida</th>
+                <th>Curlhttpstatuscode</th>
+                <th>Curlerror</th>
+                <th>Timestamprichiesta</th>
+                <th>Timestamprisposta</th>
+                <th>Esito</th>
+                <th>Azioni</th>
+            </tr>
+        </thead>
+		<tbody>
+        {% for wsGeneraCup in wsGeneraCups %}
+            <tr>
+				{% set show_target = 'cipe_'~profile~'_visualizza_ws_genera_cup' %}
+                 <td><a href="{{ path(show_target, { 'WsGeneraCup_id': wsGeneraCup.id }) }}">{{ wsGeneraCup.id }}</a></td>
+                <td>{{ wsGeneraCup.idRichiesta }}</td>
+                <td>{{ wsGeneraCup.idProgetto }}</td>
+                <td>{% if wsGeneraCup.richiestaValida %}Si{% else %}No{% endif %}</td>
+                <td>{{ wsGeneraCup.curlHttpStatusCode }}</td>
+                <td>{% if wsGeneraCup.curlError %}Si{% else %}No{% endif %}</td>
+                <td>{% if wsGeneraCup.timeStampRichiesta %}{{ wsGeneraCup.timeStampRichiesta|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>{% if wsGeneraCup.timeStampRisposta %}{{ wsGeneraCup.timeStampRisposta|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>{% if wsGeneraCup.esito %}Si{% else %}No{% endif %}</td>
+                <td>
+					<div class="dropdown">
+						<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+							Azioni
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+							<li><a href="{{ path(show_target, { 'WsGeneraCup_id': wsGeneraCup.id }) }}">Visualizza</a></li>
+						</ul>
+					</div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+       
+    </table>
+
+	{# display navigation #}
+	<div class="navigation">
+		{{ knp_pagination_render(wsGeneraCups) }}
+	</div>
+
+	<div id="ricerca-ws_genera_cup-modal" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3 id="ricerca-persone-modal-titolo">Ricerca Richiesta Ws Genera Cup</h3>
+				</div>
+				<div class="modal-body">
+					{{ form(formRicercaWsGeneraCup) }}
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Chiudi</button>
+					{# <a class="btn btn-default" href="{{ path("elenco_ws_genera_cup_pulisci") }}">Annulla Ricerca</a> #}
+					<a class="btn btn-primary" href="#" id="ricercaOk">Ricerca</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}
+{%block  jquery_page_document_ready %}
+<script>
+	jQuery(document).ready(function() {
+		$("#ricercaOk").click(function(e){
+			e.preventDefault();
+			$(this).parents(".modal-content").find("form").submit();
+		})
+	});
+</script>
+{% endblock %}

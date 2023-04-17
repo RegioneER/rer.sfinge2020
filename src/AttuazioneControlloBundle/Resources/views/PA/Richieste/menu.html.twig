@@ -1,0 +1,57 @@
+<ul class="nav nav-tabs">
+    <li role="presentation"{% if menu|default() == "riepilogo" %}class="active"{% endif %}>
+        <a href="{{path('riepilogo_richiesta_attuazione', {'id_richiesta':attuazione_controllo.richiesta.id})}}">Riepilogo</a></li>
+
+    <li role="presentation"{% if menu|default() == "richiesta" %}class="active"{% endif %}>
+        <a href="{{path('dati_richiesta_attuazione', {'id_richiesta':attuazione_controllo.richiesta.id})}}">Dati generali</a></li>
+
+    <li role="presentation"{% if menu|default() == "documenti" %}class="active"{% endif %}>
+        <a href="{{path('documenti_richiesta_attuazione', {'id_richiesta':attuazione_controllo.richiesta.id})}}">Documenti Progetto</a></li>  
+
+    <li role="presentation"{% if menu|default() == "documenti_istruttoria" %}class="active"{% endif %}>
+        <a href="{{path('documenti_richiesta_istruttoria_pa', {'id_richiesta':attuazione_controllo.richiesta.id})}}">Documenti Istruttoria</a></li>  
+
+    <li role="presentation"{% if menu|default() == "beneficiari" %}class="active"{% endif %}>
+        <a href="{{path('riepilogo_beneficiari', {'id_richiesta':attuazione_controllo.richiesta.id})}}">Beneficiari</a></li>
+
+    {% set richiesta = attuazione_controllo.richiesta %}
+    {% set proponenti_piano_costi = richiesta.proponentiPianoCosto %}
+    {% if proponenti_piano_costi | length > 0 %}
+        <li role="presentation"{% if menu|default() == "piano_costi" %}class="active"{% endif %}>
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                Piano costi<span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                {% for proponente in proponenti_piano_costi %}
+                    {% set annualita_piano_costi = annualita_piano_costo(proponente.id) %}
+                    {% for chiave, valore in annualita_piano_costi %}
+                        {% set label = proponenti_piano_costi|length > 1 ? (proponente.soggetto ~ " / Annualità " ~ valore) : ("Annualità " ~ valore) %}
+                        <li><a href="{{ path('avanzamento_piano_costi', {'id_richiesta':proponente.richiesta.id, 'id_proponente':proponente.id, 'annualita' : chiave}) }}">{{ label }}</a></li>
+                        {% endfor %}
+                    {% endfor %}
+                <li><a href="{{ path('avanzamento_piano_costi', {'id_richiesta':richiesta.id, 'id_proponente':'0', 'annualita' : '0'}) }}">Totali</a></li>
+            </ul>
+        </li>
+    {% endif %}
+
+    <li role="presentation" {% if menu|default() == "pagamenti" %}class="active"{% endif %}>
+        <a href="{{ path("elenco_pagamenti_attuazione", {"id_richiesta" : attuazione_controllo.richiesta.id}) }}">Pagamenti</a>
+    </li>
+
+    {% if attuazione_controllo.proroghe|length > 0%}
+        <li role="presentation"{% if menu|default() == "proroghe" %}class="active"{% endif %}>
+            <a href="{{path('riepilogo_proroghe_atc', {'id_richiesta':attuazione_controllo.richiesta.id})}}"> Proroghe</a>
+        </li>
+    {% endif %}
+    <li role="presentation" {% if menu|default() == "comunicazioni" %}class="active"{% endif %}>
+        <a href="{{ path("elenco_comunicazioni_attuazione", {"id_richiesta" : attuazione_controllo.richiesta.id}) }}">Comunicazioni</a>
+    </li>
+
+    <li role="presentation" {% if menu|default() == "revoche" %}class="active"{% endif %}>
+        <a href="{{ path("elenco_revoche", {"id_richiesta" : attuazione_controllo.richiesta.id}) }}">Revoche</a>
+    </li>
+
+    <li role="presentation" {% if menu|default() == "recuperi" %}class="active"{% endif %}>
+        <a href="{{ path("elenco_recuperi", {"id_richiesta" : attuazione_controllo.richiesta.id}) }}">Recuperi</a>
+    </li>
+</ul>

@@ -1,0 +1,5 @@
+services:
+  fos_user.security.controller:
+      class: UtenteBundle\Controller\SecurityController
+      arguments:
+        - '@service_container'

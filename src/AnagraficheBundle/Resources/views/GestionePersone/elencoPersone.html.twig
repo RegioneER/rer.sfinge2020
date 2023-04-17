@@ -1,0 +1,74 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <div class="table-toolbar">
+        <div class="btn-group">
+            <button id="btn_ricerca_persona" data-target="#ricerca-persona-modal" data-toggle="modal" class="btn btn-info"><span class="fa fa-search"></span> Ricerca</button>
+        </div>
+    </div>
+    <div class="count">
+        Numero elementi trovati: {{ persone.getTotalItemCount }} - Filtro attivo: {{ filtro_attivo ? "Si" : "No" }}
+    </div>
+    <table class="table table-striped table-hover table-bordered" id="notizie-elenco">
+        <thead>
+        <tr>
+            <th>{{ knp_pagination_sortable(persone, 'Id', 'p.id') }}</th>
+            {#% if app.user is not null and is_granted('ROLE_SUPER_ADMIN') %}
+				<th>Creato da</th>
+				<th>Data creazione</th>
+            {% endif %#}
+            <th>Nome</th>
+            <th>Cognome</th>
+            <th>Codice fiscale</th>
+            <th>Email</th>
+            <th>Ruoli</th>
+            <th>Azioni</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for persona in persone %}
+            <tr>
+                <td><a href="{{ path('visualizza_persona_admin', { 'id_persona': persona.id }) }}">{{ persona.id }}</a></td>
+                {#% if app.user is not null and is_granted('ROLE_SUPER_ADMIN') %}
+					<td>{{ persona.creatoda }}</td>
+					<td>{{ persona.datacreazione|date("d/m/Y") }}</td>
+                {% endif %#}
+                <td>{{ persona.nome }}</td>
+                <td>{{ persona.cognome }}</td>
+                <td>{{ persona.codicefiscale }}</td>
+                <td>{{ persona.emailPrincipale}}</td>
+                <td>
+                    {% if persona.utente is not null %}
+                        {%  for ruolo in persona.utente.getRoles() %}
+                            {{ ruolo }}
+                            {% if not loop.last %},{% endif %}
+                        {%  endfor %}
+                    {%  else %}
+                        Nessuno
+                    {% endif %}
+                </td>
+                <td><div class="dropdown">
+                        <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            Azioni
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                            <li><a href="{{ path('visualizza_persona_admin', {'id_persona' : persona.id}) }}">Visualizza</a></li>
+                            <li><a href="{{ path('modifica_persona_admin', {'id_persona' : persona.id}) }}">Modifica</a></li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {# display navigation #}
+    <div class="navigation">
+        {{ knp_pagination_render(persone) }}
+    </div>
+
+    {{ modale_ricerca("Persone",form_ricerca,"elenco_persone_admin_pulisci","ricerca-persona-modal") }}
+
+{% endblock %}
+

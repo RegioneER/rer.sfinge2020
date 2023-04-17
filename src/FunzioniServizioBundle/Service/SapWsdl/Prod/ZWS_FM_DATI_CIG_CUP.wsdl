@@ -1,0 +1,536 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="ZWS_FM_DATI_CIG_CUP" targetNamespace="http://emilia-romagna.it/contabilita/interfacce/ext"
+                  xmlns:rfc="urn:sap-com:document:sap:rfc:functions"
+                  xmlns:p1="http://emilia-romagna.it/contabilita/interfacce/ext"
+                  xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
+                  xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    <wsdl:documentation/>
+    <wsp:UsingPolicy wsdl:required="false"/>
+    <wsp:Policy wsu:Id="OP_Z_WS_DATI_CAP_IMP_DA_CUP_CIG"/>
+    <wsp:Policy wsu:Id="OP_Z_WS_DATI_FATTURE_DA_CUP_CIG"/>
+    <wsp:Policy wsu:Id="OP_Z_WS_DATI_MANDATI_DA_CUP_CIG"/>
+    <wsdl:types>
+        <xsd:schema targetNamespace="urn:sap-com:document:sap:rfc:functions"
+                    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="urn:sap-com:document:sap:rfc:functions">
+            <xsd:element name="Z_WS_DATI_FATTURE_DA_CUP_CIG.Response">
+                <xsd:complexType>
+                    <xsd:all>
+                        <xsd:element name="E_DESCRIZIONE_RC" type="xsd:string" minOccurs="0"/>
+                        <xsd:element name="E_OUTPUT" minOccurs="0">
+                            <xsd:complexType>
+                                <xsd:sequence>
+                                    <xsd:element name="item" type="ZWS_DATI_FATTURE_DA_CUP_CIG" minOccurs="0"
+                                                 maxOccurs="unbounded"/>
+                                </xsd:sequence>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="E_RC" type="xsd:integer" minOccurs="0"/>
+                    </xsd:all>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="Z_WS_DATI_MANDATI_DA_CUP_CIG">
+                <xsd:complexType>
+                    <xsd:all>
+                        <xsd:element name="I_BUKRS">
+                            <xsd:simpleType>
+                                <xsd:restriction base="xsd:string">
+                                    <xsd:maxLength value="4"/>
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:element>
+                        <xsd:element name="I_CIG" minOccurs="0">
+                            <xsd:simpleType>
+                                <xsd:restriction base="xsd:string">
+                                    <xsd:maxLength value="10"/>
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:element>
+                        <xsd:element name="I_CUP" minOccurs="0">
+                            <xsd:simpleType>
+                                <xsd:restriction base="xsd:string">
+                                    <xsd:maxLength value="15"/>
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:element>
+                    </xsd:all>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="Z_WS_DATI_CAP_IMP_DA_CUP_CIG">
+                <xsd:complexType>
+                    <xsd:all>
+                        <xsd:element name="I_BUKRS">
+                            <xsd:simpleType>
+                                <xsd:restriction base="xsd:string">
+                                    <xsd:maxLength value="4"/>
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:element>
+                        <xsd:element name="I_CIG" minOccurs="0">
+                            <xsd:simpleType>
+                                <xsd:restriction base="xsd:string">
+                                    <xsd:maxLength value="10"/>
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:element>
+                        <xsd:element name="I_CUP" minOccurs="0">
+                            <xsd:simpleType>
+                                <xsd:restriction base="xsd:string">
+                                    <xsd:maxLength value="15"/>
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:element>
+                    </xsd:all>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="Z_WS_DATI_CAP_IMP_DA_CUP_CIG.Response">
+                <xsd:complexType>
+                    <xsd:all>
+                        <xsd:element name="E_DESCRIZIONE_RC" type="xsd:string" minOccurs="0"/>
+                        <xsd:element name="E_OUTPUT" minOccurs="0">
+                            <xsd:complexType>
+                                <xsd:sequence>
+                                    <xsd:element name="item" type="ZWS_DATI_CAP_IMP_DA_CUP_CIG" minOccurs="0"
+                                                 maxOccurs="unbounded"/>
+                                </xsd:sequence>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="E_RC" type="xsd:integer" minOccurs="0"/>
+                    </xsd:all>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="Z_WS_DATI_FATTURE_DA_CUP_CIG">
+                <xsd:complexType>
+                    <xsd:all>
+                        <xsd:element name="I_BUKRS">
+                            <xsd:simpleType>
+                                <xsd:restriction base="xsd:string">
+                                    <xsd:maxLength value="4"/>
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:element>
+                        <xsd:element name="I_CIG" minOccurs="0">
+                            <xsd:simpleType>
+                                <xsd:restriction base="xsd:string">
+                                    <xsd:maxLength value="10"/>
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:element>
+                        <xsd:element name="I_CUP" minOccurs="0">
+                            <xsd:simpleType>
+                                <xsd:restriction base="xsd:string">
+                                    <xsd:maxLength value="15"/>
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:element>
+                    </xsd:all>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="Z_WS_DATI_MANDATI_DA_CUP_CIG.Response">
+                <xsd:complexType>
+                    <xsd:all>
+                        <xsd:element name="E_DESCRIZIONE_RC" type="xsd:string" minOccurs="0"/>
+                        <xsd:element name="E_OUTPUT" minOccurs="0">
+                            <xsd:complexType>
+                                <xsd:sequence>
+                                    <xsd:element name="item" type="ZWS_DATI_MANDATI_DA_CUP_CIG" minOccurs="0"
+                                                 maxOccurs="unbounded"/>
+                                </xsd:sequence>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="E_RC" type="xsd:integer" minOccurs="0"/>
+                    </xsd:all>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:simpleType name="date">
+                <xsd:union memberTypes="xsd:date genericDate" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                           xmlns="urn:sap-com:document:sap:rfc:functions"/>
+            </xsd:simpleType>
+            <xsd:simpleType name="genericDate">
+                <xsd:restriction base="xsd:string">
+                    <xsd:pattern value="....-..-.."/>
+                </xsd:restriction>
+            </xsd:simpleType>
+            <xsd:complexType name="ZWS_DATI_CAP_IMP_DA_CUP_CIG">
+                <xsd:sequence>
+                    <xsd:element name="CUP" minOccurs="0">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="15"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="CIG" minOccurs="0">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="10"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="CAPITOLO" minOccurs="0">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="24"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="ESERCIZIO" minOccurs="0">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="4"/>
+                                <xsd:pattern value="\d+"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="NUMERO_IMPEGNO" minOccurs="0">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="10"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="DATA_IMPEGNO" type="date" minOccurs="0"/>
+                    <xsd:element name="NUMERO_ATTO_IMPEGNO" minOccurs="0">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="9"/>
+                                <xsd:pattern value="\d+"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="DATA_ATTO_IMPEGNO" type="date" minOccurs="0"/>
+                    <xsd:element name="NOTE" minOccurs="0">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="50"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="ZWS_DATI_FATTURE_DA_CUP_CIG">
+                <xsd:sequence>
+                    <xsd:element name="CUP" minOccurs="0">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="15"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="CIG" minOccurs="0">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="10"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="NUMERO_FATTURA" minOccurs="0">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="20"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="DATA_FATTURA" type="date" minOccurs="0"/>
+                    <xsd:element name="DATA_ARRIVO" type="date" minOccurs="0"/>
+                    <xsd:element name="OGGETTO" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="CF" minOccurs="0">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="16"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="PIVA" minOccurs="0">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="11"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="RAGIONE_SOCIALE" minOccurs="0">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="140"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="IMPORTO_LORDO" minOccurs="0">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:decimal">
+                                <xsd:totalDigits value="13"/>
+                                <xsd:fractionDigits value="2"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="RITENUTE" minOccurs="0">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:decimal">
+                                <xsd:totalDigits value="15"/>
+                                <xsd:fractionDigits value="2"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="IMPONIBILE_IVA" minOccurs="0">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:decimal">
+                                <xsd:totalDigits value="13"/>
+                                <xsd:fractionDigits value="2"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="IVA" minOccurs="0">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:decimal">
+                                <xsd:totalDigits value="13"/>
+                                <xsd:fractionDigits value="2"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="NUMERO_MANDATO" minOccurs="0">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="10"/>
+                                <xsd:pattern value="\d+"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="DATA_MANDATO" type="date" minOccurs="0"/>
+                    <xsd:element name="IMPORTO_MANDATO" minOccurs="0">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:decimal">
+                                <xsd:totalDigits value="15"/>
+                                <xsd:fractionDigits value="2"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="DATI_IVA_NON_SIGNIFICATIVI" minOccurs="0">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="1"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="ZWS_DATI_MANDATI_DA_CUP_CIG">
+                <xsd:sequence>
+                    <xsd:element name="CUP" minOccurs="0">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="15"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="CIG" minOccurs="0">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="10"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="DATA" type="date" minOccurs="0"/>
+                    <xsd:element name="CODICE" minOccurs="0">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="10"/>
+                                <xsd:pattern value="\d+"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="TIPO" minOccurs="0">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="9"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="IMPONIBILE" minOccurs="0">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:decimal">
+                                <xsd:totalDigits value="13"/>
+                                <xsd:fractionDigits value="2"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="IVA" minOccurs="0">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:decimal">
+                                <xsd:totalDigits value="13"/>
+                                <xsd:fractionDigits value="2"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="TOTALE" minOccurs="0">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:decimal">
+                                <xsd:totalDigits value="15"/>
+                                <xsd:fractionDigits value="2"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="CF" minOccurs="0">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="16"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="PIVA" minOccurs="0">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="11"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="RAGIONE_SOCIALE" minOccurs="0">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="140"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="CAPITOLO" minOccurs="0">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="24"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="NUMERO_IMPEGNO" minOccurs="0">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="10"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="NUMERO_ODP" minOccurs="0">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="8"/>
+                                <xsd:pattern value="\d+"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="DATA_ODP" type="date" minOccurs="0"/>
+                    <xsd:element name="NUMERO_ATTO_LIQ" minOccurs="0">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="9"/>
+                                <xsd:pattern value="\d+"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="DATA_ATTO_LIQ" type="date" minOccurs="0"/>
+                    <xsd:element name="CAUSALE" minOccurs="0">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="180"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="SIOPE" minOccurs="0">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="10"/>
+                                <xsd:pattern value="\d+"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="rfc.Z_WS_DATI_CAP_IMP_DA_CUP_CIG.Input">
+        <wsdl:documentation/>
+        <wsdl:part name="parameters" element="rfc:Z_WS_DATI_CAP_IMP_DA_CUP_CIG"/>
+    </wsdl:message>
+    <wsdl:message name="rfc.Z_WS_DATI_CAP_IMP_DA_CUP_CIG.Output">
+        <wsdl:documentation/>
+        <wsdl:part name="parameters" element="rfc:Z_WS_DATI_CAP_IMP_DA_CUP_CIG.Response"/>
+    </wsdl:message>
+    <wsdl:message name="rfc.Z_WS_DATI_FATTURE_DA_CUP_CIG.Input">
+        <wsdl:documentation/>
+        <wsdl:part name="parameters" element="rfc:Z_WS_DATI_FATTURE_DA_CUP_CIG"/>
+    </wsdl:message>
+    <wsdl:message name="rfc.Z_WS_DATI_FATTURE_DA_CUP_CIG.Output">
+        <wsdl:documentation/>
+        <wsdl:part name="parameters" element="rfc:Z_WS_DATI_FATTURE_DA_CUP_CIG.Response"/>
+    </wsdl:message>
+    <wsdl:message name="rfc.Z_WS_DATI_MANDATI_DA_CUP_CIG.Input">
+        <wsdl:documentation/>
+        <wsdl:part name="parameters" element="rfc:Z_WS_DATI_MANDATI_DA_CUP_CIG"/>
+    </wsdl:message>
+    <wsdl:message name="rfc.Z_WS_DATI_MANDATI_DA_CUP_CIG.Output">
+        <wsdl:documentation/>
+        <wsdl:part name="parameters" element="rfc:Z_WS_DATI_MANDATI_DA_CUP_CIG.Response"/>
+    </wsdl:message>
+    <wsdl:portType name="ZWS_FM_DATI_CIG_CUP">
+        <wsdl:documentation/>
+        <wsdl:operation name="Z_WS_DATI_CAP_IMP_DA_CUP_CIG">
+            <wsdl:documentation/>
+            <wsp:Policy>
+                <wsp:PolicyReference URI="#OP_Z_WS_DATI_CAP_IMP_DA_CUP_CIG"/>
+            </wsp:Policy>
+            <wsdl:input message="p1:rfc.Z_WS_DATI_CAP_IMP_DA_CUP_CIG.Input"/>
+            <wsdl:output message="p1:rfc.Z_WS_DATI_CAP_IMP_DA_CUP_CIG.Output"/>
+        </wsdl:operation>
+        <wsdl:operation name="Z_WS_DATI_FATTURE_DA_CUP_CIG">
+            <wsdl:documentation/>
+            <wsp:Policy>
+                <wsp:PolicyReference URI="#OP_Z_WS_DATI_FATTURE_DA_CUP_CIG"/>
+            </wsp:Policy>
+            <wsdl:input message="p1:rfc.Z_WS_DATI_FATTURE_DA_CUP_CIG.Input"/>
+            <wsdl:output message="p1:rfc.Z_WS_DATI_FATTURE_DA_CUP_CIG.Output"/>
+        </wsdl:operation>
+        <wsdl:operation name="Z_WS_DATI_MANDATI_DA_CUP_CIG">
+            <wsdl:documentation/>
+            <wsp:Policy>
+                <wsp:PolicyReference URI="#OP_Z_WS_DATI_MANDATI_DA_CUP_CIG"/>
+            </wsp:Policy>
+            <wsdl:input message="p1:rfc.Z_WS_DATI_MANDATI_DA_CUP_CIG.Input"/>
+            <wsdl:output message="p1:rfc.Z_WS_DATI_MANDATI_DA_CUP_CIG.Output"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="ZWS_FM_DATI_CIG_CUPBinding" type="p1:ZWS_FM_DATI_CIG_CUP">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"
+                      xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+        <wsdl:operation name="Z_WS_DATI_CAP_IMP_DA_CUP_CIG">
+            <soap:operation soapAction="http://sap.com/xi/WebService/soap1.1"
+                            xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+            <wsdl:input>
+                <soap:body use="literal" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Z_WS_DATI_FATTURE_DA_CUP_CIG">
+            <soap:operation soapAction="http://sap.com/xi/WebService/soap1.1"
+                            xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+            <wsdl:input>
+                <soap:body use="literal" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Z_WS_DATI_MANDATI_DA_CUP_CIG">
+            <soap:operation soapAction="http://sap.com/xi/WebService/soap1.1"
+                            xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+            <wsdl:input>
+                <soap:body use="literal" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="ZWS_FM_DATI_CIG_CUPService">
+        <wsdl:port name="HTTP_Port" binding="p1:ZWS_FM_DATI_CIG_CUPBinding">
+            <soap:address
+                    location="https://piws.regione.emilia-romagna.it:443/XISOAPAdapter/MessageServlet?senderParty=RER&amp;senderService=Sfinge&amp;receiverParty=&amp;receiverService=&amp;interface=ZWS_FM_DATI_CIG_CUP&amp;interfaceNamespace=http%3A%2F%2Femilia-romagna.it%2Fcontabilita%2Finterfacce%2Fext"
+                    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

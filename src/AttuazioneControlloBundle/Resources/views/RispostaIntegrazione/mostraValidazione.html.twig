@@ -1,0 +1,26 @@
+{% if esito.esito %}
+	<li class="list-group-item complete">
+		<a href="{{path}}">
+			{{ label }}
+		</a>
+	</li>
+{% else  %}
+	<li class="list-group-item">
+		<a href="{{path}}">
+			{{ label }}
+		</a>
+		{% set messaggioPopover = "" %}
+		{% for messaggio in esito.messaggiSezione %}
+			{% set messaggioPopover  = "- " ~ messaggioPopover ~ messaggio ~ "<br><br>" %}
+		{% endfor %}
+		<span class="help"
+			  data-container="body"
+			  data-toggle="popover"
+			  data-trigger="hover"
+			  data-placement="top"
+			  data-title="Suggerimenti di compilazione"
+			  data-html="true"
+			  data-content="{{ messaggioPopover }}">
+			istruzioni</span>
+	</li>
+{% endif  %}

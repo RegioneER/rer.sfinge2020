@@ -1,0 +1,11 @@
+{% if firmato %}
+    <a href="{{ path("scarica", {"path_codificato":path}) }}" target="_blank" class="word-break" title="file firmato">{{ nomeFirmato }}</a>
+    <br/>
+    <a href="{{ path("scarica_originale", {"path_codificato":path}) }}" target="_blank" class="word-break" title="file contenuto nel p7m">{{ nome }} (contenuto)</a>
+{% else %}
+    <a href="{{ path("scarica", {"path_codificato":path}) }}" target="_blank" class="word-break">{{ nome }}</a>
+    {% if (documento.xml and documento.giustificativo) or documento.tipologiaDocumento.codice == 'INTEGRAZIONE_PAGAMENTO_FATTURA_ELETTRONICA' or documento.tipologiaDocumento.codice == 'RISPOSTA_RICHIESTA_CHIARIMENTI_FATTURA_ELETTRONICA'%}
+        <br/>
+        <a href="{{ path("scarica_originale", {"path_codificato":path}) }}" target="_blank" class="word-break" title="contenuto del file xml">{{ nome }} (contenuto)</a>
+    {% endif %}
+{% endif %}

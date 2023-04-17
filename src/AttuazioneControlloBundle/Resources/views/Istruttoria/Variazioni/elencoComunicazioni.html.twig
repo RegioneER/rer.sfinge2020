@@ -1,0 +1,40 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+	{% include 'AttuazioneControlloBundle:Istruttoria/Variazioni:menu.html.twig' with {'variazione' : variazione } %}	
+	
+	<h4>Comunicazioni </h4>
+	<a class="btn btn-primary" href="{{ path('crea_comunicazione_variazione', {'id_variazione' : variazione.id }) }}">Crea comunicazione</a>
+	<br/><br/>
+	{% if variazione.comunicazioniprogetto | length > 0 %}
+		<table class="table">
+			<thead>
+				<tr>
+					<th style="width: 20%">Data inserimento</th>
+					<th style="width: 20%">Stato</th>
+					<th style="width: 20%">Protocollo</th>
+					<th style="width: 20%">Data risposta</th>
+					<th style="width: 20%">Azioni</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for comunicazioneProgetto in variazione.comunicazioniprogetto %}
+					{% if comunicazioneProgetto.tipooggetto == 'VARIAZIONE'%}
+					<tr>
+						<td>{{ comunicazioneProgetto.data | date('d/m/Y') }}</td>
+						<td>{{ comunicazioneProgetto.statoleggibile }}</td>
+						<td>{{ comunicazioneProgetto.protocollocomunicazione }}</td>
+						<td>{{ comunicazioneProgetto.risposta is null or comunicazioneProgetto.risposta.data is null ? "-" : comunicazioneProgetto.risposta.data | date('d/m/Y') }}</td>
+						{% if comunicazioneProgetto.stato.codice != 'COM_PROTOCOLLATA'%}
+							<td><a class="btn btn-primary" href="{{ path('gestione_comunicazione_variazione', {'id_comunicazione_progetto' : comunicazioneProgetto.id}) }}">Gestione</a></td>
+						{% else %}
+							<td><a class="btn btn-primary" href="{{ path('dettaglio_comunicazione_variazione_pa', {'id_comunicazione_progetto' : comunicazioneProgetto.id, 'da_comunicazione' : 'true'}) }}">Dettagli</a></td>
+						{% endif %}
+					</tr>
+					{% endif %}
+				{% endfor %}
+			</tbody>		
+		</table>
+	{% else %}
+		Nessuna comunicazione
+	{% endif %}
+{% endblock %}

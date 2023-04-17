@@ -1,0 +1,47 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+	
+	{{ mostra_validazione_variazione('documenti_variazione', null, "Documenti", variazione) }}
+
+	{% if form is not null %}
+		<div class="form-body">
+			<h4>Carica documento</h4>
+				{{ form(form) }}
+	    </div>
+	{% endif %}			
+
+	{% if variazione.documentiVariazione |length > 0 %}
+	<h4>Elenco documenti caricati</h4>			
+    <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+        <thead>
+            <tr>
+                <th>Tipologia</th>
+				<th>Documento</th>
+				<th>Azioni</th>
+            </tr>
+        </thead>	
+        <tbody>
+			{% for documento in variazione.documentiVariazione %}
+				<tr>
+                    <td>{{ documento.documentoFile.tipologiaDocumento.descrizione }}</td>
+					<td>{{ scarica_file(documento.documentoFile) }}</td>
+					<td>
+						<div class="dropdown">
+							<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								Azioni
+								<span class="caret"></span>
+							</button>
+							{% if not variazione.isRichiestaDisabilitata and is_granted('ROLE_UTENTE') %}
+								<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+									<li><a href="{{ path("elimina_documento_variazione", {"id_documento_variazione" : documento.id, '_token': csrfToken }) }}">Elimina</a></li>													
+								</ul>
+							{% endif %}
+						</div>
+					</td>
+				</tr>
+			{% endfor %}
+        </tbody>
+    </table>
+	{% endif %}
+{% endblock %}

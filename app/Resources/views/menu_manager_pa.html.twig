@@ -1,0 +1,17 @@
+{% include 'menu_accreditamento.html.twig' %}
+{% include 'menu_atti_amministrativi.html.twig' %}
+{% include 'menu_richieste_pa.html.twig' %}
+{% if is_granted('ROLE_CERTIFICATORE') or is_granted('ROLE_CERTIFICATORE_ASSE') or is_granted('ROLE_CERTIFICATORE_AGREA') or is_granted('ROLE_CERTIFICATORE_READONLY') %}
+	{% include 'menu_certificazioni.html.twig' %}
+{% endif %}
+{% if is_granted('ROLE_GESTIONE_INGEGNERIA_FINANZIARIA') %}
+	{% include 'menu_ingegneria_finanziaria.html.twig' %}
+{% endif %}
+{% if is_granted('ROLE_GESTIONE_ASSISTENZA_TECNICA') %}
+	{% include 'menu_assistenza_tecnica.html.twig' %}
+{% endif %}
+{% if is_granted('ROLE_GESTIONE_ACQUISIZIONI') %}
+	{% include 'menu_acquisizioni.html.twig' %}
+{% endif %}
+{% include 'menu_procedure_pa.html.twig' %}
+

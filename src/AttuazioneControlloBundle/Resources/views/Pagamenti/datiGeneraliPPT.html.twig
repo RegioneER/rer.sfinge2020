@@ -1,0 +1,13 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+{{ form_start(form) }}
+
+<h4>Dati bancari</h4>
+{{ form_row(form.intestatario) }}
+{{ form_row(form.banca) }}
+{{ form_row(form.agenzia) }}
+{{ form_row(form.iban) }}
+{{ form_end(form) }}
+	
+{% endblock %}

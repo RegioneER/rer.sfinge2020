@@ -1,0 +1,146 @@
+{% extends '::base.html.twig' %}
+
+
+{% block body %}
+
+    {% include 'MonitoraggioBundle:Progetti:menu.html.twig' with {'page_view' : page_view }%}
+    {% form_theme form.mon_indicatore_risultato _self %}
+    {% form_theme form.mon_indicatore_output _self %}
+    <h5>
+        Codice locale progetto: {{richiesta.protocollo}}
+    </h5>
+    
+        {{form_start(form)}}
+    <section>
+        <h4>
+            Indicatori di risultato
+        </h4>
+
+        <table style="visibility:{{ form.mon_indicatore_risultato|length > 0 ? 'visible' : 'hidden' }};"  class="table table-hover table-bordered" id="indicatori-risultato-elenco" data-prototype="{{ form_row(form.mon_indicatore_risultato.vars.prototype)|e }}">
+            <thead>
+                <tr>
+                    <th>Indicatore di risultato</th>
+                    {% if app.user is not null and (is_granted('ROLE_MONITORAGGIO_SCRITTURA')) %}
+                        <th>Azioni</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for risultato in form.mon_indicatore_risultato %}
+                    <tr>
+                        {{ form_widget(risultato) }}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+
+        {% if app.user is not null and (is_granted('ROLE_MONITORAGGIO_SCRITTURA')) %}
+            <a onclick="aggiungiElemento(this);" class="btn btn-primary">Aggiungi</a>
+        {% endif %}
+
+        <div style="margin-bottom:5em;"></div>
+    </section>
+
+    <section>
+        <h4>
+            Indicatori di output
+        </h4>
+
+        <table style="visibility:{{ form.mon_indicatore_output|length >0 ? 'visible' : 'hidden' }};" class="table table-hover table-bordered" id="indicatori-output-elenco" data-prototype="{{ form_row(form.mon_indicatore_output.vars.prototype)|e }}">
+            <thead>
+                <tr>
+                    <th>Tipo indicatore di output</th>
+                    <th>Valore programmato</th>
+                    <th>Valore realizzato</th>
+                    <th>Fine validità</th>
+                    {% if app.user is not null and (is_granted('ROLE_MONITORAGGIO_SCRITTURA')) %}
+                        <th>Azioni</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for output in form.mon_indicatore_output %}
+                    {{ form_widget(output) }}
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% if app.user is not null and (is_granted('ROLE_MONITORAGGIO_SCRITTURA')) %}
+            <a onclick="aggiungiElemento(this);" class="btn btn-primary">Aggiungi</a>
+        {% endif %}
+
+    </section>
+    {{form_rest(form)}}
+    {{form_end(form)}}
+{% endblock %}
+
+{% block form_row -%}
+
+    {{- not form.vars.compound ? '<td>' : '' -}}
+    {{- form_widget(form) -}}
+    {{- form_errors(form) -}}
+    {{- not form.vars.compound ? '</td>' : '' -}}
+
+{%- endblock form_row %}
+
+{% block form_widget_compound %}
+    {% if form.vars.prototype is not defined %}
+        {% set isIndicatoreOutput = form.vars.value is instanceof('RichiesteBundle\\Entity\\IndicatoreOutput')%}
+        {% set isScaduto = isIndicatoreOutput and form.vars.value.validoA is not null and form.vars.value.validoA < date() %}
+
+        <tr class="{{isScaduto ? 'bg-grey' : ''}}" {{ block('widget_container_attributes') }}>
+            {{- block('form_rows') -}}
+            {% if isIndicatoreOutput %}
+                <td>{{form.vars.value.validoA ? form.vars.value.validoA|default('-')|date("d/m/Y")}}</td>
+            {% endif %}
+            {% if app.user is not null and (is_granted('ROLE_MONITORAGGIO_SCRITTURA')) %}
+                <td>
+                    <a class="btn btn-info dropdown-toggle red " onclick="eliminaElemento(this)">
+                        Cancella&nbsp;<i class="fa fa-trash"></i>
+                    </a>
+                </td>
+            {% endif %}
+        </tr>
+    {% endif %}
+{% endblock %}
+
+{% block jquery_page_document_ready %}
+
+    <script type="text/javascript">
+        'use strict';
+        function aggiungiElemento(target) {
+            var tabella = $(target).prev('table');
+            var numeroElementi = tabella.find('tr').length - 1;
+            numeroElementi = numeroElementi ? numeroElementi : 0;
+            $(tabella).css("visibility", "visible");
+
+            var nuovoElemento =
+                    $(tabella)
+                    .data('prototype')
+                    .replace(/__name__/g, numeroElementi++);
+            tabella.attr('data-elements', numeroElementi);
+
+            tabella.find('tbody')
+                    .append(nuovoElemento);
+
+            tabella
+                    .find('tbody > tr:last-of-type')
+                    .find('.input-date, .datepicker, .date-picker > input')
+                    .datetimepicker({
+                        pickTime: false,
+                        language: 'it',
+                        direction: 'down'
+                    })
+
+            ;
+            App.initAjax();
+
+        }
+
+        function eliminaElemento(e) {
+            $(e).parent().parent().remove().trigger('change');
+        }
+
+    </script>
+{% endblock %}

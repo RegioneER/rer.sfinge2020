@@ -1,0 +1,18 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	{% include 'AuditBundle:Audit:menu.html.twig' %}
+	
+	<h4>Carica documento</h4>
+	{{ form_start(form) }}					
+	{{ form_end(form) }}
+
+	<h4>Documenti e allegati</h4>
+	{% for documento in strategia.documentistrategia%}
+		{{ mostra_file(documento.documentofile, path('elimina_documento_strategia', {'id_documento_strategia': documento.id, '_token': csrfToken }) ) }}		
+		<br/>
+	{% endfor %}
+	<br/><br/>
+	{{ pulsante_indietro(path("elenco_pianificazioni",{"id_tipo":tipo})) }}
+
+{% endblock %} 

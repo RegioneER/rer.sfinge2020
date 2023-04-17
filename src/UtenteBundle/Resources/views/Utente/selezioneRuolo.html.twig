@@ -1,0 +1,14 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+
+    <p class="lead">Selezionare il ruolo con cui operare</p>
+
+	<a class="btn btn-info" href="{{ path("seleziona_ruolo", {'contesto': 'FESR'}) }}" role="button">
+		FESR <span class="fa"></span>
+	</a>
+	<a class="btn btn-info" href="{{ path("seleziona_ruolo", {'contesto': 'INVITALIA'}) }}" role="button">
+		INVITALIA <span class="fa"></span>
+	</a>
+
+{% endblock %}

@@ -1,0 +1,4 @@
+services:
+  messaggi.email:
+    class: MessaggiBundle\Service\EmailService
+    arguments: ['@service_container',  '@mailer']

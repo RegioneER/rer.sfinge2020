@@ -1,0 +1,43 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+
+    <h2>
+        {{ tipo }} - {{ procedura.titolo }}
+    </h2>
+
+
+    <h4>
+        Documenti già caricati
+    </h4>
+    <table class="table table-striped table-hover table-bordered" id="notizie-elenco">
+    <thead>
+    <tr>
+        <th>Descrizione</th>
+        <th>Azioni</th>
+    </tr>
+    </thead>
+    <tbody>
+	{% for documento in documenti %}
+        <tr>
+            <td>
+                {{ documento.descrizione }}
+            </td>
+            <td>
+                {{ scarica_file(documento.documento) }}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+
+	{% if form is defined %}
+		<h4>
+			Inserimento nuovo documento
+		</h4>
+		{{ form_start(form) }}
+
+		{{ form_end(form) }}
+	{% endif %}
+{% endblock %}
+

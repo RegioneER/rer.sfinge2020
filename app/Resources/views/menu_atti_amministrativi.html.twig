@@ -1,0 +1,60 @@
+{% if is_granted("ROLE_VALUTATORE_FESR") == false and is_granted("ROLE_CONSULENTE_FESR") == false and is_granted("ROLE_OPERATORE_COGEA") == false %}
+	<li class="">
+		<a href="javascript:;">
+			<span class="fa fa-file"></span>
+			<span class="title">Atti amministrativi</span>
+			<span class="arrow "></span>
+		</a>
+		<ul class="sub-menu">
+			<li id="elencoAtti">
+				<a href="{{ path("elenco_atti_amministrativi") }}">Elenco procedure</a>
+			</li>
+			<li id="creaBando">
+				<a href="{{ path("crea_bando") }}">Crea bando</a>
+			</li>
+			<li id="creaManifestazioneInteresse">
+				<a href="{{ path("crea_manifestazione_interesse") }}">Crea manifestazione d'interesse</a>
+			</li>
+			{% if is_granted('ROLE_GESTIONE_ASSISTENZA_TECNICA') or is_granted('ROLE_SUPER_ADMIN') %}
+				<li id="creaAssistenzaTecnica">
+					<a href="{{ path("crea_assistenza_tecnica") }}">Crea assistenza tecnica</a>
+				</li>
+			{% endif %}
+			{% if is_granted('ROLE_GESTIONE_INGEGNERIA_FINANZIARIA') or is_granted('ROLE_SUPER_ADMIN') %}
+				<li id="creaIngegneriaFinanziaria">
+					<a href="{{ path("crea_ingegneria_finanziaria") }}">Crea ingegneria finanziaria</a>
+				</li>
+			{% endif %}		
+			{% if is_granted('ROLE_GESTIONE_ACQUISIZIONI') or is_granted('ROLE_SUPER_ADMIN') %}
+				<li id="creaIngegneriaFinanziaria">
+					<a href="{{ path("crea_acquisizione") }}">Crea procedura acquisizione</a>
+				</li>
+			{% endif %}		
+			<li id="elencoAtto">
+				<a href="{{ path("elenco_atti") }}">Elenco atti</a>
+			</li>
+			{% if is_granted('ROLE_ISTRUTTORE_SUPERVISORE_ATC') or is_granted('ROLE_SUPER_ADMIN')%}
+				<li id="elencoAttoLiquidazione">
+					<a href="{{ path("elenco_atti_liquidazione") }}">Atti di liquidazione</a>
+				</li>
+				<li id="estrazioneRsiGenerale">
+					<a href="{{ path('estrazione_rsi_generale') }}">Estrazione RSI</a>
+				</li>
+				<li id="estrazioneRsiGenerale">
+					<a href="{{ path('estrazione_rsi_generale_new') }}">Estrazione Nuovo RSI</a>
+				</li>
+				<li id="estrazioneRsiGenerale">
+					<a href="{{ path('estrazione_rsi_per_settore') }}">Estrazione RSI per settore</a>
+				</li>
+			{% endif %}
+			{% if is_granted('ROLE_SUPER_ADMIN')%}
+				<li id="estrazionePagamentiMandato">
+					<a href="{{ path('esporta_pagamenti_mandato') }}">Estrazione pagamenti con mandato</a>
+				</li>
+			{% endif %}
+			<li id="elencoAttoRevoca">
+				<a href="{{ path("elenco_atti_revoca") }}">Atti di revoca</a>
+			</li>	
+		</ul>
+	</li>
+{% endif %}

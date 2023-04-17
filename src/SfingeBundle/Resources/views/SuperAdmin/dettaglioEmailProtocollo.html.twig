@@ -1,0 +1,71 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+    <div class="alert alert-warning">
+        Nel caso in cui si voglia procedere con il re-invio di una PEC procedere nel seguente modo:
+        <ul style="font-size: 13px;">
+            <li>Se l’indirizzo PEC al quale si vuole mandare la comunicazione è diverso dall’indirizzo precedente, modificare l’indirizzo nell’anagrafica
+                del soggetto <a href="{{ path('azienda_modifica', {'id_soggetto': soggetto.id}) }}">{{ soggetto.denominazione }}</a>;</li>
+            <li>
+                Cliccare sul menù "Azioni" -> "Re-invia PEC".
+            </li>
+        </ul>
+    </div>
+
+    <h4>
+        Elenco email protocollo
+    </h4>
+
+    <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Destinatario</th>
+                <th>Data invio</th>
+                <th>Stato</th>
+                <th>Ricevute</th>
+				<th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for emailProtocollo in emailsProtocollo %}
+            <tr>
+                <td>{{ emailProtocollo.id }}</td>
+                <td>{{ emailProtocollo.destinatario }}</td>
+                <td>{{ emailProtocollo.dataInvio ? emailProtocollo.dataInvio|date("d/m/Y H:i:s") : '' }}</td>
+                <td>{{ emailProtocollo.getStatoLeggibile }}</td>
+                <td>{{ emailProtocollo.ricevutePervenute|json_encode() }}</td>
+                <td>
+                    <div class="dropdown">
+                        <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            Azioni
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                            <li>
+                                <a href="{{- path('reinvia_email_protocollo', {id: emailProtocollo.id})-}}"
+                                    data-confirm="L’operazione svuoterà i campi del record in modo tale che al prossimo passaggio del CRON venga effettuato un nuovo invio PEC. Si conferma l'operazione?">
+                                    <i class="fa fa-paper-plane"></i> Reinvia PEC
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="page-actions">
+        {{ pulsante_indietro(path("elenco_richieste_protocollo")) }}
+    </div>
+{% endblock body %}
+{% block  jquery_page_document_ready %}
+    <script>
+        jQuery(document).ready(function() {
+            $("#ricercaOk").click(function(e){
+                e.preventDefault();
+                $(this).parents(".modal-content").find("form").submit();
+            })
+        });
+    </script>
+{% endblock %}

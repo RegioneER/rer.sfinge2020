@@ -1,0 +1,50 @@
+{% extends '::base.html.twig' %}
+  
+{% block body %}
+
+	<h4>Riepilogo certificazione</h4>
+	<table class="table table-striped">
+		<tr>
+			<td style="width:30%;">Numero</td>
+			<td><strong>{{ certificazione.numero }}</strong></td>
+		</tr>
+		<tr>
+			<td>Anno</td>
+			<td><strong>{{ certificazione.anno }}</strong></td>
+		</tr>
+		<tr>
+			<td>Stato</td>
+			<td><strong>{{ certificazione.stato }}</strong></td>
+		</tr>
+		<tr>
+			<td>Data proposta</td>
+			<td><strong>{{ certificazione.dataPropostaAdg is not null ? certificazione.dataPropostaAdg|date('d-m-Y') : "-" }}</strong></td>
+		</tr>
+		<tr>
+			<td>Data Approvazione</td>
+			<td><strong>{{ certificazione.dataApprovazione is not null ? certificazione.dataApprovazione|date('d-m-Y') : "-" }}</strong></td>
+		</tr>
+		<tr>
+			<td>Importo Proposto</td>
+			<td><strong>€ {{ certificazione.importoProposto|number_format(2, ',', '.') }}</strong></td>
+		</tr>
+		<tr>
+			<td>Tagli AdC</td>
+			<td><strong>€ {{ certificazione.importoTagliAdC|number_format(2, ',', '.') }}</strong></td>
+		</tr>	
+		<tr>
+			<td>Tagli AdA</td>
+			<td><strong>€ {{ certificazione.importoTagliAdA|number_format(2, ',', '.') }}</strong></td>
+		</tr>		
+		<tr>
+			<td>Importo Certificato</td>
+			<td><strong>€ {{ certificazione.importoCertificato|number_format(2, ',', '.') }}</strong></td>
+		</tr>
+	</table>			
+			
+	<h4>Azioni</h4>		
+	<a href="{{ path("scarica_allegato_a_certificazione", {"id_certificazione" : certificazione.id }) }}" class="btn btn-info">Scarica Allegato A</a>	
+	<a href="{{ path("scarica_allegato_b_certificazione", {"id_certificazione" : certificazione.id }) }}" class="btn btn-info">Scarica Allegato B</a>
+	<a href="{{ path("approva_certificazione", {"id_certificazione" : certificazione.id, '_token': csrfToken}) }}" class="btn btn-info">Approva Certificazione</a>		
+				
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <p class="lead">Funzioni IRAP</p>
+    <ul>
+        <li><a href="{{ path('popola_cor_irap') }}">Popola Cor</a></li>
+        <li><a href="{{ path('porta_in_atc_irap') }}">Porta in ATC</a></li>
+    </ul>
+{% endblock %}

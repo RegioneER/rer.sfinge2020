@@ -1,0 +1,389 @@
+{% extends 'AttuazioneControlloBundle:Istruttoria/Pagamenti:base_istruttoria.html.twig' %}
+
+{% form_theme form _self %}
+
+{% block form_label_class -%}
+    {% if compound is defined and not compound or (form.vars["empty_value_in_choices"] is defined and compound) %}
+
+    {% else %}
+form-compound-child compound-label
+    {% endif %}
+	left
+{%- endblock form_label_class %}
+
+{% block checkbox_label -%}
+    {{- block('form_label') -}}
+{%- endblock checkbox_label %}
+
+{%- block checkbox_widget -%}
+    <input type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
+{%- endblock checkbox_widget -%}
+
+{# ridefinito blocco del base istruttoria #}
+
+{# attenzione che a quanto pare se un pulsante è disabled viene nascosto..credo dal css #}
+{% block checklist_buttons_widget %}
+	
+    {% if form.children.pulsante_indietro is defined %}
+		<div class="pull-left">
+			{{ form_widget(form.children.pulsante_indietro) }}       
+		</div>
+    {% endif %}
+	
+	{% if form.children.pulsante_submit is defined %}
+		<div class="pull-right" style="margin-left: 10px;">
+			{{ form_widget(form.children.pulsante_submit) }}
+		</div>	
+	{% endif %}
+	
+	{% if form.children.pulsante_valida is defined %}
+		<div class="pull-right" style="margin-left: 10px;">
+			{{ form_widget(form.children.pulsante_valida) }}
+		</div>
+	{% endif %}
+	
+	{% if form.children.pulsante_valida_liq is defined %}
+		<div class="pull-right" style="margin-left: 10px;">
+			{{ form_widget(form.children.pulsante_valida_liq) }}
+		</div>
+	{% endif %}
+	
+	{% if form.children.pulsante_valida_liq_controllo is defined %}
+		<div class="pull-right" style="margin-left: 10px;">
+			{{ form_widget(form.children.pulsante_valida_liq_controllo) }}
+		</div>
+	{% endif %}
+	
+	{% if form.children.pulsante_valida_non_liq is defined %}
+		<div class="pull-right" style="margin-left: 10px;">
+			{{ form_widget(form.children.pulsante_valida_non_liq) }}
+		</div>
+	{% endif %}
+
+	{% if form.children.pulsante_invalida is defined %}	
+		<div class="pull-right" style="margin-left: 10px;">
+			{{ form_widget(form.children.pulsante_invalida) }}
+		</div>
+	{% endif %}
+
+{% endblock checklist_buttons_widget %}
+
+
+{% block body %}
+
+	{% if no_tab is not defined or not no_tab %}	
+		{% include 'AttuazioneControlloBundle:Istruttoria/Pagamenti:menu.html.twig' with {'pagamento' : pagamento } %}	
+	{% endif %}
+
+	{{ form_start(form) }}
+	
+	{{ form_errors(form) }}
+
+	{% block pre_form %}{% endblock %}
+
+	{% block dati_riepilogo %}
+
+		{% if mostra_riepilogo_progetto is defined %}
+
+			<h4>Dati riepilogo del progetto</h4>
+
+			<table class="table table-striped table-hover table-bordered">
+				<thead>
+					<tr>
+						<th>Procedura di attivazione</th>
+						<th>Numero e data protocollo della domanda di progetto</th>
+						<th>Beneficiario</th>
+						<th>Titolo del progetto</th>
+						<th>Identificativo progetto</th>
+						<th>CUP</th>
+						<th>Tipologia di richiesta di rimborso</th>
+						<th>Richiesta di rimborso (data e protocollo)</th>
+						<th>Progetto campionato per controllo in loco</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						{% set richiesta = pagamento.richiesta %}
+						{% set oggetto = richiesta.oggettirichiesta|first%}
+						<td>{{ richiesta.procedura.titolo }} </td>
+						<td>{{ richiesta.protocollo }} {{ richiesta.richiesteprotocollo[0].datapg | date("d/m/Y") }}</td>
+						<td>
+							{{ richiesta.soggetto.denominazione }}
+							<br>
+							{{ richiesta.soggetto.codiceFiscale }}
+						</td>
+						<td>{{ richiesta.titolo }}</td>
+						<td>{{ richiesta.protocollo }}</td>
+						<td>{{ richiesta.istruttoria.codicecup is null ? "-" : richiesta.istruttoria.codicecup }}</td>
+						<td>{{ pagamento.modalitaPagamento }}</td>
+						<td>{{ pagamento.protocollo }} {{ pagamento.richiesteprotocollo|length > 0 ? pagamento.richiesteprotocollo[0].datapg | date("d/m/Y") : '-' }}</td>
+						<td><strong>{{ richiesta.hasControlliProgetto ? 'Si' : 'No' }}</strong></td>
+					</tr>
+				</tbody>			
+			</table>
+
+		{% endif %}		
+	{% endblock %}
+	
+	{% set valutazione_checklist = form.vars.value %}
+	
+	{# solo per checklist appalti #}
+	{% block documenti_checklist %}
+		
+		{% if valutazione_checklist.checklist.isTipologiaAppaltiPubblici %}
+		
+			{% set documentiChecklist = valutazione_checklist.documentiChecklist %}
+			
+			<br>
+			<h4>Documentazione associata alla checklist</h4>
+
+			<div class="table-toolbar">
+				<div>
+					{% if enable_carica_documenti and documentiChecklist|length == 0%}
+						<a class="btn btn-primary" href="{{ path('aggiungi_documento_checklist_pagamento', {'id_valutazione_checklist' : valutazione_checklist.id }) }}">
+							<span class="fa fa-plus"></span> Aggiungi documento checklist
+						</a>
+					{% endif %}
+				</div>
+			</div>
+			<table class="table table-striped table-hover table-bordered" id="documenti-checklist">
+				<thead>
+					<tr>
+						<th>Tipologia documento</th>
+						<th>Nome File</th>					
+						<th>Azioni</th>
+					</tr>
+				</thead>
+				<tbody>      
+
+					{% for documentoChecklist in documentiChecklist %}
+
+						{% set eliminaPath = enable_carica_documenti ? path('elimina_documento_checklist_pagamento', {'id_valutazione_checklist': valutazione_checklist.id, 'id_documento': documentoChecklist.id }) : null %}
+
+						<tr>
+							{{ mostra_file_checklist_pagamento(documentoChecklist, eliminaPath ) }}
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>		
+			
+		{% endif %}
+	{% endblock documenti_checklist %}
+	
+
+	<br>
+	
+	{% set sezione = (form.valutazioni_elementi|first).vars.value.elemento.sezioneChecklist %}	
+	<h4>{{ sezione.descrizione }}</h4>	
+
+	<table class="table">
+		<thead>
+			<tr>
+				<th style="width:40%; text-align: center;">Campo</th>
+				<th style="width:{{ sezione.commento ? "30" : "60" }}%; text-align: center;">Valore</th>
+				{% if sezione.commento %}
+					<th style="width:30%; text-align: center;">Commento</th>
+				{% endif %}
+			</tr>
+		</thead>
+		<tbody>
+		{% for valutazione in form.valutazioni_elementi %}
+
+			{# verifico se c'è un cambio di sezione.. se si chiudo la tabella e ne apro un'altra stampando il titolo della nuova sezione #}
+			{% set elemento = valutazione.vars.value.elemento %}
+			{% if elemento.sezioneChecklist.id != sezione.id %}
+				{% set sezione = elemento.sezioneChecklist %}
+				</tbody></table>
+				<h4>{{sezione.descrizione}}</h4>
+				<table class="table">
+					<thead>
+						<tr>
+							<th style="width:40%; text-align: center;">Campo</th>
+							<th style="width:{{ sezione.commento ? "30" : "60" }}%; text-align: center;">Valore</th>
+							{% if sezione.commento %}
+								<th style="width:30%; text-align: center;">Commento</th>
+							{% endif %}
+						</tr>
+					</thead>
+					<tbody>			
+			{% endif %}
+			<tr>
+				<td>{{ form_label(valutazione.valore) }}<br />
+					{% if valutazione.vars.value.elemento.note is not null %}
+						<br /><span style="font-size: 90%;">{{ valutazione.vars.value.elemento.note }}</span><br />
+					{% endif %}
+					{{ form_errors(valutazione.valore) }}</td>
+				<td>
+					{{ form_widget(valutazione.valore) }}
+				</td>
+				{% if valutazione.commento is defined %}
+					<td>{{ form_widget(valutazione.commento) }}</td>
+				{% endif %}
+			</tr>
+		{% endfor %}
+		</tbody>	
+	</table>
+	
+	
+	{% block dati_extra %}
+	{% endblock %}
+
+	{% if valutazione_checklist.valutatore is not null %}
+		<p class="well alert alert-info">
+			Validata da {{ valutazione_checklist.valutatore }} in data {{ valutazione_checklist.dataValidazione|date('d/m/Y') }}
+			{{ validata_come }}
+		</p>
+	{% endif %}	
+	
+	{% set storicoAzioni = valutazione_checklist.storicoAzioni %}
+	{% if storicoAzioni | length > 0%}
+		<div>
+			<h4>Storico azioni</h4>
+			<ul>
+				{% for storicoAzione in storicoAzioni%}
+					<li>{{ storicoAzione.descrizioneEvento }} da {{ storicoAzione.valutatore }} in data {{ storicoAzione.data | date('d/m/Y') }}
+						{% if storicoAzione.nota is not null %}
+							<br>Nota: {{storicoAzione.nota}}
+						{% endif %}
+					</li>
+				{% endfor %}
+			</ul>
+		</div>
+	{% endif %}
+	
+	{% if form.notaInvalidazione is defined %}
+		{{ form_errors(form.notaInvalidazione) }}
+		{{ form_label(form.notaInvalidazione) }}
+		{{ form_widget(form.notaInvalidazione) }}
+	{% endif %}
+	
+	{% if form.pulsanti is defined %}
+		<div id="pulsanti_container">
+			{{ form_row(form.pulsanti) }}
+		</div>
+	{% endif %}
+
+	<div id="conferma_operazione_valida_non_liq" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&#x2613;</button>
+					<h3 id="dataConfirmLabel">Conferma necessaria</h3>
+				</div>
+				<div class="modal-body">
+					Confermi l'operazione di salvataggio e validazione della checklist come NON LIQUIDABILE?
+				</div>
+				<div class="modal-footer">
+					<a class="btn" data-dismiss="modal" aria-hidden="true" href="">No</a>
+					<button type="submit" name="valutazione_checklist_pagamento_standard[pulsanti][pulsante_valida_non_liq]" class="btn btn-primary">Si</button>					
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="conferma_operazione_valida_liq" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&#x2613;</button>
+					<h3 id="dataConfirmLabel">Conferma necessaria</h3>
+				</div>
+				<div class="modal-body">
+					Confermi l'operazione di salvataggio e validazione della checklist come LIQUIDABILE?
+				</div>
+				<div class="modal-footer">
+					<a class="btn" data-dismiss="modal" aria-hidden="true" href="">No</a>
+					<button type="submit" name="valutazione_checklist_pagamento_standard[pulsanti][pulsante_valida_liq]" class="btn btn-primary">Si</button>					
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="conferma_operazione_invalida" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&#x2613;</button>
+					<h3 id="dataConfirmLabel">Conferma necessaria</h3>
+				</div>
+				<div class="modal-body">
+					Confermi l'operazione di invalidazione della checklist?
+				</div>
+				<div class="modal-footer">
+					<a class="btn" data-dismiss="modal" aria-hidden="true" href="">No</a>
+					<button type="submit" name="valutazione_checklist_pagamento_standard[pulsanti][pulsante_invalida]" class="btn btn-primary">Si</button>					
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id="conferma_operazione_valida_liq_controllo" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&#x2613;</button>
+					<h3 id="dataConfirmLabel">Conferma necessaria</h3>
+				</div>
+				<div class="modal-body">
+					Confermi l'operazione di salvataggio e validazione della checklist come LIQUIDABILE per controllo in loco?
+				</div>
+				<div class="modal-footer">
+					<a class="btn" data-dismiss="modal" aria-hidden="true" href="">No</a>
+					<button type="submit" name="valutazione_checklist_pagamento_standard[pulsanti][pulsante_valida_liq_controllo]" class="btn btn-primary">Si</button>					
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id="conferma_operazione_valida" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&#x2613;</button>
+					<h3 id="dataConfirmLabel">Conferma necessaria</h3>
+				</div>
+				<div class="modal-body">
+					Confermi l'operazione di salvataggio e validazione della checklist?
+				</div>
+				<div class="modal-footer">
+					<a class="btn" data-dismiss="modal" aria-hidden="true" href="">No</a>
+					<button type="submit" name="valutazione_checklist_pagamento_standard[pulsanti][pulsante_valida]" class="btn btn-primary">Si</button>					
+				</div>
+			</div>
+		</div>
+	</div>
+
+	{{ form_end(form) }}
+
+{% endblock %}
+{%block  jquery_page_document_ready %}
+	<script>
+		jQuery(document).ready(function () {
+
+			$("#valutazione_checklist_pagamento_standard_pulsanti_pulsante_valida_non_liq").click(function (e) {
+				e.preventDefault();
+				$("#conferma_operazione_valida_non_liq").modal("show");
+			});
+			
+			$("#valutazione_checklist_pagamento_standard_pulsanti_pulsante_valida_liq").click(function (e) {
+				e.preventDefault();
+				$("#conferma_operazione_valida_liq").modal("show");
+			});
+
+			$("#valutazione_checklist_pagamento_standard_pulsanti_pulsante_invalida").click(function (e) {
+				e.preventDefault();
+				$("#conferma_operazione_invalida").modal("show");
+			});
+			
+			$("#valutazione_checklist_pagamento_standard_pulsanti_pulsante_valida_liq_controllo").click(function (e) {
+				e.preventDefault();
+				$("#conferma_operazione_valida_liq_controllo").modal("show");
+			});
+			
+			$("#valutazione_checklist_pagamento_standard_pulsanti_pulsante_valida").click(function (e) {
+				e.preventDefault();
+				$("#conferma_operazione_valida").modal("show");
+			});
+		});
+	</script>
+{% endblock %}

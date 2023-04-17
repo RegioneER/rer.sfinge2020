@@ -1,0 +1,229 @@
+{% extends ':pdf:base.pdf.html.twig' %}
+
+{% block content %}
+
+    {% set richiesta = pagamento.richiesta %}
+    {% set procedura = pagamento.procedura %}
+   {% block dati_intestazione %}
+        {% if procedura.asse.codice == 'A0' %}
+            <div class="center">
+                <img src="assets/img/regione/logo_ue-regione-emilia-romagna.jpg" alt="Loghi regione" height="60px">
+                <h2 align="center">{{procedura.titolo}}</h2>
+            </div>
+        {% elseif is_fsc == true %}
+            <div class="center">
+                <img src="assets/img/regione/logo_fsc.jpg" alt="Loghi regione" height="80px">
+                <h2 align="center">{{procedura.titolo}}</h2>
+                <p class="text-medium">{{ procedura.asse.titolo }} - {{ procedura.asse.descrizione }}</p>
+                <p class="text-medium">{{ procedura.azioni|join(';') }}</p>
+            </div>
+        {% else %}
+            <div class="center">
+                <img src="assets/img/regione/logo_ue-por_fesr_2020.jpg" alt="Loghi regione" height="90px">
+                <h2 align="center">{{procedura.titolo}}</h2>
+                <p class="text-medium">{{ procedura.asse.titolo }} - {{ procedura.asse.descrizione }}</p>
+                <p class="text-medium">{{ procedura.azioni|join(';') }}</p>
+            </div>
+        {% endif %}
+    {% endblock dati_intestazione %}
+
+    {% block dati_riepilogo %}
+        <h4>Riepilogo dati</h4>
+        <table width="100%" class="text-small">
+            <tr>
+                <td width="40%">Numero e data protocollo progetto</td>
+                <td width="60%">{{richiesta.protocollo}} {{richiesta.richiesteprotocollo[0].datapg | date("d/m/Y")}}</td>
+            </tr>
+            <tr>
+                <td width="40%">CUP</td>
+                <td width="60%">{{ richiesta.istruttoria.codicecup is null ? "-" : richiesta.istruttoria.codicecup }}</td>
+            </tr>
+            <tr>
+                <td width="40%">Ragione Sociale</td>
+                <td width="60%">{{ capofila.soggetto.denominazione }}</td>
+            </tr>
+            <tr>
+                <td width="40%">Legale rappresentante</td>
+                {% set legaleRappresentante = richiesta.soggetto.lr %}
+                <td width="60%">
+                    {{ legaleRappresentante.nome }} {{ legaleRappresentante.cognome }} 
+                    - Codice fiscale: {{ legaleRappresentante.codiceFiscale }}
+                </td>
+            </tr>
+            <tr>
+                <td width="40%">Partita IVA</td>
+                <td width="60%">{{ capofila.soggetto.partitaIva }}</td>
+            </tr>
+            <tr>
+                <td width="40%">Numero e data protocollo trasmissione rendicontazione</td>
+                <td width="60%">{{pagamento.protocollo}} {{pagamento.richiesteprotocollo[0].datapg | date("d/m/Y")}}</td>
+            </tr>
+        </table>
+    {% endblock dati_riepilogo %}
+
+    <h4 align="center">Richiesta di integrazione</h4>
+
+    <div class="text-small">
+        {% if dati_integrazione['dati_bancari'] is not null %}
+            <div style="margin-bottom: 40px; page-break-inside: avoid;">
+                <h4>Sezione dati bancari</h4>
+                <div>{{ dati_integrazione['dati_bancari']|replace({'\r\n' : '<br>', '\n' : '<br>'})|raw }}</div>
+            </div>
+        {% endif %}
+
+        {% if dati_integrazione['dati_durc'] is not null %}
+            <div style="margin-bottom: 40px; page-break-inside: avoid;">
+                <h4>Sezione dati DURC</h4>
+                <div>{{ dati_integrazione['dati_durc']|replace({'\r\n' : '<br>', '\n' : '<br>'})|raw }}</div>
+            </div>
+        {% endif %}
+
+        {% if dati_integrazione['antimafia_casellario'] is not null and  pagamento.isAntimafiaRichiesta%}
+            <div style="margin-bottom: 40px; page-break-inside: avoid;">
+                <h4>Sezione antimafia/casellario</h4>
+                <div>{{ dati_integrazione['antimafia_casellario']|replace({'\r\n' : '<br>', '\n' : '<br>'})|raw }}</div>
+            </div>
+        {% endif %}
+
+        {% if dati_integrazione['incremento_occupazionale'] is not null %}
+            <div style="margin-bottom: 40px; page-break-inside: avoid;">
+                <h4>Sezione incremento occupazionale</h4>
+                <div>{{ dati_integrazione['incremento_occupazionale']|replace({'\r\n' : '<br>', '\n' : '<br>'})|raw }}</div>
+            </div>
+        {% endif %}
+
+        {% if rendicontazioneProceduraConfig.sezioneContratti == true %}
+            {% if dati_integrazione['contratto_singoli']|length > 0 %}
+                <div style="margin-bottom: 40px;">
+                    <h4>Sezione contratti</h4>
+                    <table style="width: 100%">
+                        <tr>
+                            <th>Numero contratto</th>
+                            <th>Fornitore</th>
+                            <th style="width: 60%">Nota</th>
+                        </tr>
+                        {% for datiContratto in dati_integrazione['contratto_singoli'] %}
+                            <tr>
+                                <td>{{ datiContratto['numero'] }}</td>
+                                <td>{{ datiContratto['fornitore'] }}</td>
+                                <td>{{ datiContratto['nota'] }}</td>
+                            </tr>
+                        {% endfor %}
+
+                    </table>
+                </div>
+            {% endif %}
+            {% if dati_integrazione['documenti_contratto_singoli']|length > 0 %}
+                <div style="margin-bottom: 40px;">
+                    <h4>Sezione documenti contratti</h4>
+                    <table style="width: 100%">
+                        <tr>
+                            <th>Nome documento</th>
+                            <th>Numero contratto</th>
+                            <th>Tipo</th>
+                            <th style="width: 60%">Nota</th>
+                        </tr>
+                        {% for datiDocumento in dati_integrazione['documenti_contratto_singoli'] %}
+                            <tr>
+                                <td>{{ datiDocumento['filename'] }}</td>
+                                <td>{{ datiDocumento['numero_contratto'] }}</td>
+                                <td>{{ datiDocumento['tipo'] }}</td>
+                                <td>{{ datiDocumento['nota'] }}</td>
+                            </tr>
+                        {% endfor %}
+
+                    </table>
+                </div>
+            {% endif %}
+        {% endif %}
+
+        {% if dati_integrazione['documenti_progetto_generale'] is not null or dati_integrazione['documenti_progetto_singoli']|length > 0 %}	
+            <div style="margin-bottom: 40px;">
+                <h4>Sezione documenti progetto</h4>
+
+                {% if dati_integrazione['documenti_progetto_generale'] is not null %}
+                    <div style="margin-bottom: 20px">
+                        {{ dati_integrazione['documenti_progetto_generale']|replace({'\r\n' : '<br>', '\n' : '<br>'})|raw }}
+                    </div>
+                {% endif %}
+
+                {% if dati_integrazione['documenti_progetto_singoli']|length > 0 %}
+                    <table style="width: 100%">
+                        <tr>
+                            <th>Nome documento</th>
+                            <th>Tipo</th>
+                            <th style="width: 60%">Nota</th>
+                        </tr>
+                        {% for datiDocumento in dati_integrazione['documenti_progetto_singoli'] %}
+                            <tr>
+                                <td>{{ datiDocumento['filename'] }}</td>
+                                <td>{{ datiDocumento['tipo'] }}</td>
+                                <td>{{ datiDocumento['nota'] }}</td>
+                            </tr>
+                        {% endfor %}
+
+                    </table>
+
+                {% endif %}			
+            </div>			
+        {% endif %}
+
+        {% if dati_integrazione['giustificativi']|length > 0 %}	
+
+            {# verifico che è stata definita la chiave..basta controllare su uno dei giustificativi #}
+            {% set isRendicontazioneMultiProponente = dati_integrazione['giustificativi'][0]['proponente'] is defined %}
+
+            <div style="margin-bottom: 40px">
+                <h4>Sezione giustificativi</h4>
+                <table style="width: 100%">					
+                    <tr>
+                        {% if isRendicontazioneMultiProponente %}
+                            <th style="width: 15%">Proponente</th>
+                            <th style="width: 15%">Fornitore</th>
+                            <th style="width: 10%">Numero e data</th>
+                            <th style="width: 60%">Nota</th>
+                            {% else %}
+                            <th style="width: 20%">Fornitore</th>
+                            <th style="width: 20%">Numero e data</th>
+                            <th style="width: 60%">Nota</th>
+                            {% endif %}
+                    </tr>
+                    {% for giustificativo in dati_integrazione['giustificativi'] %}
+                        <tr>
+                            {% if isRendicontazioneMultiProponente %}
+                                <td>{{ giustificativo['proponente'] }}</td>
+                            {% endif %}
+                            <td>{{ giustificativo['fornitore'] }}</td>
+                            <td>
+                                {{ giustificativo['numero'] }}<br>
+                                {{ giustificativo['data'] }}
+                            </td>							
+                            <td>{{ giustificativo['nota']|regex_replace('/(\\S{40})(?=\\S)/', '$1<wbr>') }}</td>
+                        </tr>
+                    {% endfor %}
+
+                </table>
+            </div>
+        {% endif %}		
+
+        {% if dati_integrazione['nota_integrazione'] is not null %}
+            <div style="margin-bottom: 40px; page-break-inside: avoid;">
+                <h3>Note alla richiesta di integrazione</h3>
+                <div>
+                    {{ dati_integrazione['nota_integrazione']|replace({'\r\n' : '<br>', '\n' : '<br>'})|raw }}
+                </div>
+            </div>
+        {% endif %}
+
+
+        <div>
+            <div id="data" style="width:100%; text-align: left;">
+                <div style="text-align: center; float:right; width: 200px">
+                    <strong>{{ "now"|date("d/m/Y") }}</strong><br>
+                    __________<br>Data					
+                </div>
+            </div>		
+        </div>
+
+    </div>	
+{% endblock %}

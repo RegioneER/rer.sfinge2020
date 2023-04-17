@@ -1,0 +1,31 @@
+{% extends "FOSUserBundle::layout.html.twig" %}
+
+{% block intestazione %}
+    <h3 class="page-title">
+        Registrazione sul sistema
+    </h3>
+{% endblock intestazione %}
+
+{% block fos_user_content %}
+
+    <br>
+    <br>
+    <div class="form-body">
+        {{ form_start(form, {'method': 'post', 'action': path('fos_user_registration_register'), 'attr': {'class': 'fos_user_registration_register'}}) }}
+        
+        {{ form_row(form.email) }}
+        {{ form_row(form.username) }}
+        {{ form_widget(form.plainPassword) }}
+        <div class="row">
+            <div class="col-sm-offset-3 col-sm-6">
+                <input type="submit" class="btn btn-primary" value="Registrati" />
+            </div>
+        </div>
+
+        <br>
+        <br>
+
+        {{ form_end(form) }}
+    </div>
+
+{% endblock fos_user_content %}

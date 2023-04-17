@@ -1,0 +1,19 @@
+{% extends 'AttuazioneControlloBundle:Variazioni:dettaglioVariazione.html.twig' %}
+
+
+{% block elementi_domanda %}
+{% for dati in variazione.datiBancari %}
+{{ mostra_validazione_in_line_variazione(
+                    'dati_bancari', 
+                    path('dati_bancari_variazione', {
+                        id_variazione: variazione.id,
+                        id_dati_bancari : dati.id
+                        }), 
+                    'Dati bancari -' ~ dati.datiBancari.proponente.soggetto, 
+                    variazione, 
+                    null, 
+                    null,
+                    dati) 
+                }}
+{% endfor %}
+{% endblock elementi_domanda %}

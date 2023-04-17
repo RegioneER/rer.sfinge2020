@@ -1,0 +1,61 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <h2 style="margin-bottom: 2em;">{{tabella.codice}} - {{tabella.descrizione}}</h2>
+    
+    <div class="table-toolbar">
+        <div>
+			<button class="btn btn-info" data-target="#ricerca-contesto-modal" data-toggle="modal">
+				<span class="fa fa-search"></span> Ricerca
+			</button>
+        </div>
+    </div>
+    <div class="count">
+        Numero elementi trovati: {{ risultato.getTotalItemCount }} - Filtro attivo: {{ filtro_attivo ? "Si" : "No" }}
+    </div>
+    <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+        <thead>
+            <tr>
+                <th>Codice </th>
+                <th>Descrizione</th>
+                <th>Soggetto responsabile</th>
+                <th>Data approvazione</th>
+                <th>Codice tipologia</th>
+                <th>Descrizione tipologia</th>
+				<th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+			{% for record in risultato %}
+				<tr>
+                    <td>{{record.codstruatt}}</td>
+                    <td>{{record.descstrumentoattuativo}}</td>
+                    <td>{{record.denomrespstruatt}}</td>
+                    <td>{{record.dataapprovstruatt == NULL ? '' : record.dataapprovstruatt | date('d/m/Y')}}</td>
+                    <td>{{record.codtipstruatt}}</td>
+                    <td>{{record.desctipstruatt}}</td>
+					<td>
+						<div class="dropdown">
+							<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								Azioni
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                <li><a href="{{ path('visualizza_tabelle_contesto',{'tabellaId': tabella.id, 'recordId': record.id}) }}">Visualizza</a></li>
+                                {% if app.user is not null and (is_granted('ROLE_MONITORAGGIO_SCRITTURA')) %}
+                                    <li><a href="{{ path('modifica_tabelle_contesto',{'tabellaId': tabella.id, 'recordId': record.id}) }}">Modifica</a></li>
+                                {% endif %}
+							</ul>
+						</div>
+					</td>
+				</tr>
+			{% endfor %}
+        </tbody>
+    </table>
+    {# display navigation #}
+    <div class="navigation">
+        {{ knp_pagination_render(risultato) }}
+    </div>
+		
+	{{ modale_ricerca("Tabelle di contesto",form_ricerca,"dettaglio_tabelle_contesto_pulisci","ricerca-contesto-modal", {'tabellaId': tabella.id}) }}
+{% endblock %}

@@ -1,0 +1,26 @@
+<h4>
+    Economie
+</h4>
+
+{% if richiesta.moneconomie|length > 0 %}
+
+<table class="table table-striped table-hover table-bordered">
+    <thead>
+        <tr>
+            <th>Codice fondo</th>
+            <th>Importo</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for risultato in richiesta.moneconomie %}
+            <tr>
+                <td>{{ risultato.tc33fontefinanziaria.codfondo }}</td>
+                <td>{{ risultato.importo|number_format(2, ',', '.') }}&nbsp;&euro;</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% else %}
+    <h5>Nessun elemento trovato</h5></br>
+{% endif %}

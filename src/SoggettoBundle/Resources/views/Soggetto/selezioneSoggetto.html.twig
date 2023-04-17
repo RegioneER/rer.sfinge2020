@@ -1,0 +1,39 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+
+    <p class="lead">Selezionare un soggetto nell'elenco per continuare con l'operazione...</p>
+
+	{% if soggetti|length %}
+    <table class="table table-striped table-hover table-bordered" id="notizie-elenco">
+        <thead>
+            <tr>
+                <th>Denominazione</th>
+                <th>Partita iva</th>
+                <th>Codice fiscale</th>
+				<th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+			{% for soggetto in soggetti %}
+				<tr>
+					<td>{{ soggetto.denominazione }}</td>
+					<td>{{ soggetto.partitaiva }}</td>
+					<td>{{ soggetto.codicefiscale }}</td>
+					<td>
+						<a class="btn btn-info btn-sm" href="{{ path("seleziona_soggetto", {'contesto': contesto, 'id_soggetto':soggetto.id}) }}" role="button">
+                            Seleziona <span class="fa fa-arrow-right"></span>
+						</a>
+					</td>
+				</tr>
+			{% endfor %}
+        </tbody>
+    </table>
+		{% else %}
+		<div class="row">
+			<div class="col-md-12">
+				<p>Nessun soggetto associato alla persona connessa</p>
+			</div>
+		</div>
+	{% endif %}
+{% endblock %}

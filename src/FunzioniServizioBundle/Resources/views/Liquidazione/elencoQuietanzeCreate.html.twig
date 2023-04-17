@@ -1,0 +1,96 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <a href="{{ path('crea_quietanza_elenco_richieste', {'procedura_id':procedura_id }) }}">Torna</a>
+    <br/>
+    <br/>
+
+    {% if esito_creazione_quietanze is empty %}
+        Nessuna richiesta selezionata
+    {% else %}
+        <p class="lead">Esito creazione quietanza/e</p>
+    {% endif %}
+
+    {% if esito_creazione_quietanze %}
+        {% if esito_creazione_quietanze['creati'] %}
+            <div class="alert alert-success">
+                Creati con successo: {{ esito_creazione_quietanze['creati']|length }}
+            </div>
+
+            <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+                <thead>
+                <tr>
+                    <th>Progressivo</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% set progressivo = 1 %}
+                {% for quietanza in esito_creazione_quietanze['creati'] %}
+                    <tr>
+                        <td>{{ progressivo }}</td>
+                        <td>{{ quietanza.messaggi|join(' - ') }}</td>
+                    </tr>
+                    {% set progressivo = progressivo + 1 %}
+                {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    {% endif %}
+
+    {% if esito_creazione_quietanze %}
+        {% if esito_creazione_quietanze['gia_presenti'] %}
+            <div class="alert alert-success">
+                Già presenti: {{ esito_creazione_quietanze['gia_presenti']|length }}
+            </div>
+
+            <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+                <thead>
+                <tr>
+                    <th>Progressivo</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% set progressivo = 1 %}
+                {% for quietanza in esito_creazione_quietanze['gia_presenti'] %}
+                    <tr>
+                        <td>{{ progressivo }}</td>
+                        <td>{{ quietanza.messaggi|join(' - ') }}</td>
+                    </tr>
+                    {% set progressivo = progressivo + 1 %}
+                {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    {% endif %}
+
+    {% if esito_creazione_quietanze %}
+        {% if esito_creazione_quietanze['altri'] %}
+            <div class="alert alert-success">
+                Altri: {{ esito_creazione_quietanze['altri']|length }}
+            </div>
+
+            <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+                <thead>
+                <tr>
+                    <th>Progressivo</th>
+                    <th>Messaggi</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% set progressivo = 1 %}
+                {% for quietanza in esito_creazione_quietanze['altri'] %}
+                    <tr>
+                        <td>{{ progressivo }}</td>
+                        <td>{{ quietanza.messaggi|join(' - ') }}</td>
+                    </tr>
+                    {% set progressivo = progressivo + 1 %}
+                {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    {% endif %}
+
+    <br/>
+    <br/>
+    <a href="{{ path('crea_quietanza_elenco_richieste', {'procedura_id':procedura_id }) }}">Torna</a>
+{% endblock %}

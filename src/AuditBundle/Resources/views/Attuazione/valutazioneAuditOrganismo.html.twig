@@ -1,0 +1,24 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	{% if audit_organismo.documentiAttuazioneOrganismo is not empty %}
+		<h4>Elenco documenti caricati</h4>
+		<div class="form-body">	
+			{% for documento in audit_organismo.documentiAttuazioneOrganismo %}
+				{{ mostra_file(documento.documentoFile, path('elimina_documento_organismo_attuazione', {'id_documento_organismo': documento.id, '_token': csrfToken }) ) }}		
+				<br/>
+			{% endfor %}
+		</div>
+	{% endif %}
+	
+	<div class="form-body">
+		<h4>Carica documento</h4>
+			{{ form(form_doc) }}
+	</div>		
+	
+	<h4>Valutazione organismo</h4>
+
+	{{ form(form) }}
+
+
+{% endblock %}

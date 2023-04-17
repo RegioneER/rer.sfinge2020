@@ -1,0 +1,52 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    {% include 'AttuazioneControlloBundle:ControlliStabilita:menu_principale.html.twig' %}
+    <div>
+        <a class="btn btn-primary" href="{{ path('aggiungi_campione') }}">
+            Aggiungi campione
+        </a>
+    </div>
+    <br/>
+    <table class="table table-striped table-hover table-bordered" id="notizie-elenco">
+        <thead>
+            <tr>
+                <th>Nome campione</th>
+                <th>Universo campionario </th>
+                <th>Campione estratto</th>
+                <th>Verifiche effettuate </th>
+                <th>Verifiche pendenti</th>
+                <th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for campione in risultati %}
+                <tr>
+                    <td style="text-align: right">{{campione.descrizione}}</td>
+                    <td style="text-align: right">{{campione.universo}}</td>
+                    <td style="text-align: right">{{campione.ImpreseCampionate}}</td>
+                    <td style="text-align: right">{{campione.ImpreseControllate}}</td>
+                    <td style="text-align: right">{{campione.ClRendAmmesse}}</td>
+                    <td>
+                        <div class="dropdown">
+                            <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                Azioni
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                <li><a href="{{ path("associa_operazioni_campione_stabilita", {'id_campione':campione.id}) }}">Universo campionario</a></li>
+                                <li><a href="{{ path("estrazione_universo_campionario", {'id_campione':campione.id}) }}">Estrazione universo campionario</a></li>
+                                <li><a href="{{ path("elenco_controlli_stabilita", {'id_campione':campione.id}) }}">Campione</a></li>
+                                <li><a href="{{ path("importa_campione", {'id_campione':campione.id}) }}">Importa Campione</a></li>
+                                <li><a href="{{ path("documenti_controllo_campione", {'id_controllo':campione.id}) }}">Documenti</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+{%block  jquery_page_document_ready %}
+{% endblock %}
+

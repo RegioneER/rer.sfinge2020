@@ -1,0 +1,186 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	
+{% include 'IstruttorieBundle:Istruttoria:menu.html.twig' with {'istruttoria' : istruttoria }%}	
+	
+	{{form_errors(form)}}
+	{{ form_start(form) }}
+	{% set numCol = form.voci_piano_costo.children|length %}
+	{% set primoChild = form.voci_piano_costo.children|first %}
+	{% set precedente = primoChild.vars.value.pianocosto.sezionepianocosto.codice %}
+	<h4 style="margin-bottom: 5px">{{ primoChild.vars.value.pianocosto.sezionepianocosto.titolosezione}}</h4>
+	<table class="sezione table table-bordered table-striped" id="{{precedente}}" style=" width: 100%">
+		<thead>
+			<tr>
+				<th style="width: 20%"><h5>Voci di spesa</h5></th>
+				<th style="text-align: center; width: 20%">Costo presentato</th>
+				<th style="text-align: center; width: 20%">Taglio</th>
+				<th style="text-align: center; width: 20%">Costo ammesso</th>
+				<th style="text-align: center; width: 20%">Commento</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for voce_piano_costo in form.voci_piano_costo.children %}
+				{% set attuale = voce_piano_costo.vars.value.pianocosto.sezionepianocosto.codice %}
+				{% if attuale != precedente%}
+				</tbody>
+			</table>
+			<br/>
+			<h4 style="margin-bottom: 5px">{{ voce_piano_costo.vars.value.pianocosto.sezionepianocosto.titolosezione}}</h4>
+			<table class="sezione table table-bordered table-striped" id="{{attuale}}" style="width: 100%">
+				<thead>
+					<tr>
+						<th style="width: 20%"><h5>Voci di spesa</h5></th>
+						<th style="text-align: center; width: 20%">Costo presentato</th>
+						<th style="text-align: center; width: 20%">Taglio</th>
+						<th style="text-align: center; width: 20%">Costo ammesso</th>
+						<th style="text-align: center; width: 20%">Commento</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% set precedente = voce_piano_costo.vars.value.pianocosto.sezionepianocosto.codice %}
+				{% endif %}
+
+				{% set codice = voce_piano_costo.vars.value.pianocosto.codice %}
+				<tr data-totale="{{ codice != 'TOT' ? 'false' : 'true' }}">
+					<td>
+						{% if voce_piano_costo.vars.value.pianocosto.codice != 'TOT' %}
+							{{ voce_piano_costo.vars.value.pianocosto.codice}}) 
+						{% endif %}
+						{{ voce_piano_costo.vars.value.pianocosto.titolo}}
+					</td>
+					{% set child = attribute(voce_piano_costo,'importo_anno_'~annualita) %}
+					
+					<td>
+						{% set classe =  form_errors(child)|length > 0 ? 'cell-red-error' : '' %}
+						{{ form_widget(child, {  'id': 'voce-spesa-'~voce_piano_costo.vars.value.pianocosto.identificativohtml|lower, 
+								'attr': { 
+									'class': classe, 'style': 'text-align: right'
+								} 
+							}) 
+						}}
+					</td>
+					{% for child_istruttoria in voce_piano_costo.istruttoria %}
+						<td>{{ form_widget(child_istruttoria,
+							{	
+								'attr': { 
+									'class': classe, 'style': 'text-align: right'
+								} 
+							}) }}</td>
+					{% endfor %}
+				</tr>
+
+
+			{% endfor %}
+		</tbody>
+	</table>
+
+	<h4 style="margin-bottom: 5px">Complessivo</h4>
+	
+	<table class="table table-bordered table-striped" id ="totali" style=" width: 80%">
+		<thead>
+			<tr>
+				<th style="width: 25%"></th>
+				<th style="text-align: center; width: 18%">Costo Presentato</th>
+				<th style="text-align: center; width: 19%">Taglio</th>
+				<th style="text-align: center; width: 18%">Importo ammissibile</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><h5>Totale</h5></td>
+				<td>
+					<input id="totale_presentato" class="form-control" type="text" style="text-align: right" data-totale="false" disabled="disabled">
+				</td>
+				<td>
+					<input id="totale_taglio" class="form-control" type="text" style="text-align: right" data-totale="false" disabled="disabled">									
+				</td>
+				<td>
+					<input id="totale_ammissibile" class="form-control" type="text" style="text-align: right" data-totale="false" disabled="disabled">									
+				</td>
+			</tr>
+			
+		</tbody>
+	</table>
+	
+	{% block extraForm %}{% endblock %}
+
+	{{ form_end(form) }}
+
+	<script type="text/javascript" language="javascript">
+
+		function calcolaTotaleSezione() {
+
+		totalePresentatoSezioni = 0.00;
+		totaleTagliSezioni = 0.00;
+		totaleAmmissibileSezioni = 0.00;
+		
+		$(".sezione").each(function () {
+			totaleTagliSezione = 0.00;
+			totalePresentatoSezione = 0.00;
+			var divTotale = '';
+			$(this).find('tbody tr').each(function () {		
+				var controlloTotale = $(this).attr('data-totale');
+				var presentato = $(this).find('td:nth-child(2) input');
+				if(presentato.val() == "" ){
+					presentato.val(parseFloat(0).formatMoney());
+				}
+				var taglio = $(this).find('td:nth-child(3) input');
+				if(taglio.val() == "" ){
+					taglio.val(parseFloat(0).formatMoney());
+				}
+				var ammissibile = $(this).find('td:nth-child(4) input');
+				if (controlloTotale === 'false') {
+					var importo = taglio.val();
+					if (!Number.prototype.pattern.test(importo)) {
+						importo = 0.00;
+					} else {
+						importo = parseFloat(importo.deformatMoney());
+					}
+					totaleTagliSezione = parseFloat(totaleTagliSezione) + importo;
+					var diff = parseFloat(presentato.val().deformatMoney()) - importo;
+					ammissibile.val(isNaN(diff) ? (0).formatMoney() : diff.formatMoney());
+				} else {
+					divTotale = $(this);
+					totalePresentatoSezione = parseFloat(divTotale.find('td:nth-child(2) input').val().deformatMoney());
+				}		
+			});
+			divTotale.find('td:nth-child(3) input').val(totaleTagliSezione.formatMoney());
+			divTotale.find('td:nth-child(4) input').val((parseFloat(totalePresentatoSezione) - parseFloat(totaleTagliSezione)).formatMoney());
+			totalePresentatoSezioni += totalePresentatoSezione;
+			console.log(totalePresentatoSezioni);
+			totaleTagliSezioni += totaleTagliSezione;
+			// console.log(totaleTagliSezioni);
+		});
+		
+		$("#totale_presentato").val(parseFloat(totalePresentatoSezioni).formatMoney());
+		$("#totale_taglio").val(parseFloat(totaleTagliSezioni).formatMoney());
+		$("#totale_ammissibile").val((parseFloat(totalePresentatoSezioni)-parseFloat(totaleTagliSezioni)).formatMoney());
+		}
+	</script>
+
+	{% block extraPianoCosto %}
+	<script type="text/javascript" language="javascript">
+		$(document).ready(function () {
+			{{ onKeyUp }}();
+		});
+	</script>
+	{% endblock %}
+	
+	<script type="text/javascript">
+		$(document).ready(function () {
+			var query = ".sezione input";
+					
+			$("form").on('keyup', query, function(){
+				$(this).formatAmount();
+				{{ onKeyUp }}();
+			});
+
+			$("form").on('blur', query, function(){
+				$(this).approximate();
+			});	
+		});
+	</script>	
+	
+{% endblock %}

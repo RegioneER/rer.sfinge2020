@@ -1,0 +1,88 @@
+{% extends '::base.html.twig' %}
+
+
+{% block body %}
+
+    {% include 'MonitoraggioBundle:Progetti:menu.html.twig' with {'page_view' : page_view }%}
+
+    <h5>
+        Codice locale progetto: {{richiesta.protocollo}}
+    </h5>
+
+    <ul id="contenitore_tab" class="nav nav-tabs">
+        <li role="presentation" class="active"><a data-nome="fdf" href="#" onclick="visualizza(this);">Fonti di finanziamento</a></li>
+        <li role="presentation"><a data-nome="cam" href="#" onclick="visualizza(this);">Costo ammesso</a></li>
+        <li role="presentation"><a data-nome="qec" href="#" onclick="visualizza(this);">Quadro economico</a></li>
+        <li role="presentation"><a data-nome="pdc" href="#" onclick="visualizza(this);">Piano dei Costi</a></li>
+        <li role="presentation"><a data-nome="imp" href="#" onclick="visualizza(this);">Impegni</a></li>
+        <li role="presentation"><a data-nome="dis" href="#" onclick="visualizza(this);">Disimpegni</a></li>
+        <li role="presentation"><a data-nome="pag" href="#" onclick="visualizza(this);">Pagamenti</a></li>
+        <li role="presentation"><a data-nome="rec" href="#" onclick="visualizza(this);">Recuperi</a></li>
+        <li role="presentation"><a data-nome="pec" href="#" onclick="visualizza(this);">Percettori</a></li>
+        <li role="presentation"><a data-nome="sce" href="#" onclick="visualizza(this);">Spese Certificate</a></li>
+        <li role="presentation"><a data-nome="ecn" href="#" onclick="visualizza(this);">Economie</a></li>
+    </ul>
+    <div id="contenitore_div">
+        <div id="fdf">
+            {% include 'MonitoraggioBundle:Progetti:sf_fontiDiFinanziamento.html.twig'%}
+        </div>
+
+        <div id="cam">
+            {% include 'MonitoraggioBundle:Progetti:sf_costoAmmesso.html.twig'%}
+        </div>
+
+        <div id="qec">
+             {% include 'MonitoraggioBundle:Progetti:sf_quadroEconomico.html.twig'%}
+        </div>
+        <div id="pdc">
+            {% include 'MonitoraggioBundle:Progetti:sf_pianoDeiCosti.html.twig'%}
+        </div>
+
+        <div id="imp">
+            {% include 'MonitoraggioBundle:Progetti:sf_impegni.html.twig'%}
+        </div>
+
+        <div id="dis">
+            {% include 'MonitoraggioBundle:Progetti:sf_disimpegni.html.twig'%}
+        </div>
+
+        <div id="pag">
+            {% include 'MonitoraggioBundle:Progetti:sf_pagamenti.html.twig'%}
+        </div>
+
+        <div id="rec">
+            {% include 'MonitoraggioBundle:Progetti:sf_recuperi.html.twig'%}
+        </div>
+
+        <div id="pec">
+            {% include 'MonitoraggioBundle:Progetti:sf_percettori.html.twig'%}
+        </div>
+
+        <div id="sce">
+            {% include 'MonitoraggioBundle:Progetti:sf_speseCertificate.html.twig'%}
+        </div>
+
+        <div id="ecn">
+            {% include 'MonitoraggioBundle:Progetti:sf_economie.html.twig'%}
+        </div>
+    </div>
+{% endblock %}
+
+{% block  jquery_page_document_ready %}
+    <script async src="{{ asset('assets/scripts/backToTop.js') }}"></script>
+    <script type="text/javascript">
+        "use strict";
+        function visualizza(tab_selezionato) {
+            var tab = $(tab_selezionato);
+            var selezionato = tab.data('nome');
+            //$('#contenitore_div').children().hide();
+            $('#contenitore_tab').children().removeClass("active");
+            tab.parent().addClass("active");
+            //$('#' + selezionato).show();
+            $('html, body').animate({
+                scrollTop: $('#' + selezionato).offset().top - 100
+            }, 1000);
+        }
+    </script>
+{% endblock %}
+

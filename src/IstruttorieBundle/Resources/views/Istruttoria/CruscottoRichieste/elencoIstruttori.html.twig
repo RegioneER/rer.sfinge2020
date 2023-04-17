@@ -1,0 +1,39 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <table class="table table-striped table-hover table-bordered" id="istruttori-elenco">
+        <thead>
+            <tr>
+				<th>Cognome e nome</th>
+				<th>Richieste istruite</th>
+				<th>Richieste assegnate</th>
+				<th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+			{% for istruttore in risultati %}
+				<tr>
+                    <td>{{ istruttore }}</td>
+					<td>{{ dati_aggiuntivi[istruttore.id]["completate"] }}
+					<td>{{ dati_aggiuntivi[istruttore.id]["assegnate"] }}
+					<td>
+						<div class="dropdown">
+							<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								Azioni
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+								<li><a href="{{ path("elenco_richieste_assegnate", {'id_istruttore':istruttore.id}) }}">Richieste assegnate</a></li>
+							</ul>
+						</div>
+					</td>
+				</tr>
+			{% endfor %}
+        </tbody>
+    </table>
+			
+	{# display navigation #}
+	<div class="navigation">
+		{{ knp_pagination_render(risultati) }}
+	</div>		
+{% endblock %}

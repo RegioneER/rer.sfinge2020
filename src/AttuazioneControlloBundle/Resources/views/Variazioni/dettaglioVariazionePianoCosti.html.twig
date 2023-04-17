@@ -1,0 +1,25 @@
+{% extends 'AttuazioneControlloBundle:Variazioni:dettaglioVariazione.html.twig' %}
+
+
+{% block elementi_domanda %}
+
+    {% for chiave, valore in annualita %}
+        {% for proponente in variazione.attuazioneControlloRichiesta.richiesta.proponenti %}
+            {% if proponente.vociPianoCosto | length > 0 %}
+                {% set label = ("Piano costi annualità " ~ valore ~ ' ' ~ proponente.denominazione) %}
+                {{ mostra_validazione_in_line_variazione(
+                    'piano_costi_variazione', 
+                    path('piano_costi_variazione', {id_variazione:variazione.id, annualita: chiave, id_proponente : proponente.id}), 
+                    label, 
+                    variazione, 
+                    chiave, 
+                    proponente) 
+                }}
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+
+{% endblock elementi_domanda %}
+
+{% block validazione_domanda %}
+{% endblock validazione_domanda %}

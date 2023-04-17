@@ -1,0 +1,57 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+
+{% set pagamento = form.vars.value %}
+
+{% if istruttoria773 is not defined %}
+	{% include 'AttuazioneControlloBundle:Istruttoria/Pagamenti:menu.html.twig' with {'pagamento' : form.vars.value } %}
+{% else %}	
+	{% include 'AttuazioneControlloBundle:Istruttoria/Pagamenti/bando_7:menuEventi.html.twig' with {'pagamento' : pagamento } %}	
+{% endif %}
+
+<h4>Valutazione pagamento</h4>
+
+{{ form_start(form) }}
+{{ form_row(form.esito_istruttoria) }}
+
+{#{% if pagamento.esitoIstruttoria is not null and not pagamento.esitoIstruttoria %}
+<h4>Integrazione</h4>
+<a class="btn btn-primary" href="{{ path("richiedi_integrazione_pagamento", {"id_pagamento": pagamento.id })}}">Richiesta integrazione</a>
+<br>
+{% endif %}#}
+
+{{ form_end(form) }}
+<div id="conferma_operazione" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&#x2613;</button>
+					<h3 id="dataConfirmLabel">Conferma necessaria</h3>
+				</div>
+				<div class="modal-body">
+					Confermi l'operazione ?
+				</div>
+				<div class="modal-footer">
+					<a class="btn" data-dismiss="modal" aria-hidden="true" href="">No</a>
+					<a class="btn btn-primary" id="confermaOk" type="submit" >Si</a>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+{%block  jquery_page_document_ready %}
+	<script>
+		jQuery(document).ready(function () {
+			$("#esito_pagamento_pulsanti_pulsante_submit").click(function (e) {
+				e.preventDefault();
+				$("#conferma_operazione").modal("show");
+			});
+			$("#confermaOk").click(function (e) {
+				e.preventDefault();
+				$("form").submit();
+			});
+		});
+	</script>
+{% endblock %}
+

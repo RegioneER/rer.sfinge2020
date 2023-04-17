@@ -1,0 +1,15 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}		
+    <h4>Elenco documenti caricati</h4>
+    {% if documenti is not empty %}
+        <div class="form-body">	
+            {% for documento in documenti %}
+                {{ mostra_file(documento.documentoFile, null )}}
+                <br/>
+            {% endfor %}
+        </div>
+    {% else %}
+        <h6>Nessun documento caricato</h6>
+    {% endif %}
+{% endblock %}

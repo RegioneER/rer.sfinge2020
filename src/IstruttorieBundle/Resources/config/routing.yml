@@ -1,0 +1,34 @@
+default:
+    resource: "@IstruttorieBundle/Controller/IstruttoriaController.php"
+    type:    annotation
+    prefix:   /istruttoria
+
+integrazione:
+  resource: "@IstruttorieBundle/Controller/IntegrazioneController.php"
+  type:    annotation
+  prefix:   /integrazione
+
+risposta_integrazione:
+    resource: "@IstruttorieBundle/Controller/RispostaIntegrazioneController.php"
+    type:    annotation
+    prefix:   /risposta_integrazione  
+    
+risposta_comunicazione:
+    resource: "@IstruttorieBundle/Controller/RispostaComunicazioneController.php"
+    type:    annotation
+    prefix:   /risposta_comunicazione 
+    
+risposta_comunicazione_gen:
+    resource: "@IstruttorieBundle/Controller/RispostaComunicazioneProgettoController.php"
+    type:    annotation
+    prefix:   /risposta_comunicazione_gen
+    
+batch_cipe:
+    resource: "@IstruttorieBundle/Controller/BatchCipeController.php"
+    type:    annotation
+    prefix:   /
+
+cruscotto_richieste:
+    resource: "@IstruttorieBundle/Controller/CruscottoRichiesteController.php"
+    type:    annotation
+    prefix:   /cruscotto_richieste

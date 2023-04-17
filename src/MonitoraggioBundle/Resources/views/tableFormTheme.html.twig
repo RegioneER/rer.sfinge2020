@@ -1,0 +1,16 @@
+{% block form_row %}
+
+    {{ not form.vars.compound ? '<td>' : '' }}
+    {{ form_widget(form) -}}
+    {{ form_errors(form) -}}
+    {{ not form.vars.compound ? '</td>' : '' }}
+
+{% endblock form_row %}
+
+{% block form_widget_compound %}
+    {% if form.vars.prototype is not defined %}
+        <tr id="{{- block('widget_container_attributes') -}}">
+            {{ block('form_rows') }}                
+        </tr>
+    {% endif %}
+{% endblock %}

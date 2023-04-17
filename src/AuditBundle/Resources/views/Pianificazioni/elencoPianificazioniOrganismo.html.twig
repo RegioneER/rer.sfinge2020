@@ -1,0 +1,41 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	{% include 'AuditBundle:Audit:menu.html.twig' %}
+	<br/>
+	<a class="btn btn-primary btn-sm" href="{{ path("lista_organismi", {'id_pianificazione': pianificazione.id}) }}" role="button">
+		Aggiungi organismo <span class="fa fa-plus"></span>
+	</a>
+
+	<h4>Pianificazioni del periodo {{pianificazione.periodocontabile}} tipo {{pianificazione.tipo.descrizione}}</h4>
+	<table class="table table-striped table-hover table-bordered" id="organismi-elenco">
+		<thead>
+			<tr>
+				<td style="width: 90%">Nome</td>
+				<td style="width: 10%"></td>
+			</tr>
+		</thead>
+		<tbody>
+			{% if pianificazioni_organismi|length > 0%}
+				{% for pianificazione_organismo in pianificazioni_organismi %}
+					<tr>
+						<td>{{pianificazione_organismo.organismo.codice}}</td>
+						<td>
+							<div class="dropdown">
+								<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+									Azioni
+									<span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+									<li><a href="{{ path("scheda_organismo", {'id_pianificazione_organismo': pianificazione_organismo.id}) }}">Scheda organismo</a></li>
+									<li><a href="{{ path("associa_requisiti_organismo", {'id_pianificazione_organismo': pianificazione_organismo.id}) }}">Associa requisiti</a></li>
+									<li><a href="{{ path("rimuovi_pianificazione_organismo", {'id_pianificazione_organismo': pianificazione_organismo.id}) }}">Rimuovi</a></li>
+								</ul> 
+							</div>
+						</td>
+					</tr>
+				{% endfor %}
+			{% endif %}
+		</tbody>
+	</table>			
+{% endblock %}

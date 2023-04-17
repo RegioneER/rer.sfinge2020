@@ -1,0 +1,83 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+
+{% include 'AttuazioneControlloBundle:Istruttoria/Pagamenti:menuEventi.html.twig' with {'pagamento' : pagamento } %}	
+
+<h4>Riepilogo esito finale</h4>
+
+<br/>
+ <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+	<thead>
+		<tr>
+			<th>Numero</th>
+			<th>Protocollo</th>
+			<th>Stato</th>
+			<th>Data consegna PEC</th>
+			<th>Documento esito</th>	
+		</tr>
+	</thead>	
+	<tbody>
+		
+		{% set esitoIstruttoria = pagamento.esitiIstruttoriaPagamento.last %}
+
+		<tr>				
+			<td>{{ esitoIstruttoria.id }}</td>
+			<td>
+				{{ esitoIstruttoria.protocolloEsitoIstruttoria }}
+				{% set dataProtocollo = esitoIstruttoria.dataProtocolloEsitoIstruttoria %}
+				{{ dataProtocollo ? 'del' ~ dataProtocollo : '' }}								
+			</td>
+			<td>{{ esitoIstruttoria.stato.descrizione }}</td>
+
+			{% set data_consegna_pec = '-' %}
+			{% set richieste_protocollo = esitoIstruttoria.richiesteprotocollo %}
+			{% if  richieste_protocollo|length != 0 %}
+				{% set richiesta_protocollo = richieste_protocollo|last %}
+				{% set emails_protocollo    = richiesta_protocollo.EmailProtocollo %}
+				{% if  emails_protocollo|length != 0 %}
+					{% set email_protocollo = emails_protocollo|last %}
+					{% set data_consegna_pec = email_protocollo.dataconsegna %}
+				{% endif %}						
+			{% endif %}	
+			<td>{{data_consegna_pec}}</td>
+
+			<td>
+				{% if esitoIstruttoria.documento is not null %}
+					{{ scarica_file(esitoIstruttoria.documento, null )}}
+				{% else %}
+					-
+				{% endif %}	
+			</td>
+
+		</tr>
+	
+	</tbody>
+</table>
+
+<br><br>
+
+<h4>Elenco documenti caricati</h4>
+<div class="form-body">	
+	{% for documento in esitoIstruttoria.documentiEsitoIstruttoria %}
+		<b>Nota:</b> {{documento.descrizione}}
+		<br><br>
+
+		{{ mostra_file(documento.documentoFile, null )}}
+		
+		<br>
+		<hr>
+	{% endfor %}
+</div>
+
+<h4>Testo inviato tramite pec al beneficiario</h4>
+<div class="form-body">
+	{{ esitoIstruttoria.testoEmail | replace({'\r\n' : '<br>', '\n' : '<br>'}) | raw }}
+</div>
+
+
+<a class="btn btn-default btn-page-action btn-form-back pull-left" href="{{indietro}}">
+	<span class="fa fa-arrow-left"></span> Indietro
+</a>
+
+{% endblock %}

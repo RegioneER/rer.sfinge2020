@@ -1,0 +1,8 @@
+INSERT INTO `richieste_protocollo` (`processo_id`, `istanza_processo_id`, `procedura_id`, `richiesta_id`, `tipo`, `data_creazione_richiesta`, `data_invio_PA`, `oggetto`, `stato`, `fase`, `esito_fase`, `fascicolo`, `anno_pg`, `data_pg`, `num_pg`, `oggetto_pg`, `registro_pg`, `anno_pg_validazione`, `registro_pg_validazione`, `num_pg_validazione`, `data_cancellazione`, `data_creazione`, `data_modifica`, `creato_da`, `modificato_da`, `pagamento_id`, `variazione_id`, `proroga_id`, `integrazione_id`, `risposta_integrazione_id`, `integrazione_pagamento_id`, `risposta_integrazione_pagamento_id`, `comunicazione_esito_id`, `risposta_comunicazione_id`, `esito_istruttoria_pagamento_id`, `richiesta_chiarimenti_id`, `risposta_richiesta_chiarimenti_id`)
+VALUES
+	(1, NULL, 21, 4637, 'FINANZIAMENTO', '2017-10-02 14:41:37', NULL, 'Domanda di contributo n.4637 Regione Emilia-Romagna ', 'POST_PROTOCOLLAZIONE', 0, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-02 14:41:37', '2017-10-02 14:41:37', 'PCCRCR73P15C980O', 'PCCRCR73P15C980O', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+
+
+INSERT INTO `attuazione_controllo_richieste` ( `richiesta_id`, `documento_accettazione_id`, `utente_accettazione_id`, `contributo_accettato`, `data_limite_accettazione`, `data_accettazione`, `cup`, `data_avvio`, `data_termine`, `data_termine_effettivo`, `partenariato_pubblico_privato`, `data_cancellazione`, `data_creazione`, `data_modifica`, `creato_da`, `modificato_da`, `maggiorazione_accettata`)
+VALUES
+	( 4637, NULL, NULL, NULL, '2017-10-02 14:41:37', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-02 14:41:37', '2017-10-02 14:41:37', 'PCCRCR73P15C980O', 'PCCRCR73P15C980O', NULL);

@@ -1,0 +1,10 @@
+{% extends ":email:base.email.html.twig" %}
+
+{% block content %}
+
+Il suo incarico non è stato confermato per il seguente motivo<br/><br/>
+
+{{incarico.nota}}<br/><br/>
+
+Deve quindi procedere con una nuova richiesta d'incarico.<br/><br/>
+{% endblock %}

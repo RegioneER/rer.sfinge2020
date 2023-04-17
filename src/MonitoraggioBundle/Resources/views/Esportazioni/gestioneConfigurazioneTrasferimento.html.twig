@@ -1,0 +1,56 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+{% include 'MonitoraggioBundle:Esportazioni:menu.html.twig' with {'page_view' : 'trasferimento' } %}
+
+{% if form.monitoraggio_configurazione|length > 0 %}
+{{ form_start(form)}}
+<table class="table table-striped table-hover table-bordered">
+    <thead>
+        <tr>
+            <th>Trasferimento</th>
+            <th>Errori</th>
+            <th style="min-width: 100px;">TR00</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for configurazioneTrasferimento in form.monitoraggio_configurazione  %}
+        {% form_theme configurazioneTrasferimento.monitoraggio_configurazione_esportazione_tavole _self %}
+            {% set configurazione = configurazioneTrasferimento.vars['value'] %}
+              {% set numeroErrori = configurazione.id in numero_errori|keys  ? numero_errori[configurazione.id] : 0 %}
+            <tr>
+                <td>{{ configurazione.trasferimento }}</td>
+                <td>
+                    {% if numeroErrori > 0 %}
+                        <a target="_blank" href="{{ path('monitoraggio_esportazione_mostra_errori',{ configurazione_id: configurazioneTrasferimento.vars['value'].id }) }}">
+                            {% if numeroErrori == 1 %}
+                                <span style ="white-space: nowrap;">&Egrave; presente un errore</span>
+                            {% else %}
+                            <span style ="white-space: nowrap;">Sono presenti {{ numeroErrori }} errori</span>
+                            {% endif %}
+                        </a>
+                    {% else %}
+                        Non sono presenti errori
+                    {% endif %}   
+                </td>
+                {{ form_row(configurazioneTrasferimento.monitoraggio_configurazione_esportazione_tavole[0]) }}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{{ form_rest(form) }}
+{{ form_end(form) }}
+
+{% else %}
+<h2> Non ci sono trasferimenti esportabili</h2>
+{% endif %}
+{% endblock %}
+
+{% block form_row -%}
+
+        {{- not form.vars.compound ? '<td>' : '' -}}
+            {{- form_errors(form) -}}
+            {{- form_widget(form) -}}
+        {{- not form.vars.compound ? '</td>' : '' -}}
+    
+{% endblock form_row %}

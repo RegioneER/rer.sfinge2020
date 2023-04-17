@@ -1,0 +1,417 @@
+
+{% import '@Richieste/Pdf/macro/macro_richiesta.html.twig' as macro_richiesta %}
+
+ {% block dati_intestazione_rl %}
+        <div class="center">
+            <img src="assets/img/regione/logo_ue-por_fesr_2020.jpg" alt="Loghi regione" height="60px">
+
+            <h2 align="center">POR-FESR EMILIA ROMAGNA 2014-2020</h2>
+        </div>
+    {% endblock dati_intestazione_rl %}
+
+    {% block dati_bando_rl %}
+        <h3 align="center">{{ procedura.asse.titolo }} - {{ procedura.asse.descrizione }}</h3>
+        {% for azione in procedura.azioni %}
+            <p class="text-medium italic" align="center">Azione {{ azione.codice }} {{ azione.descrizione }}</p>
+        {% endfor %}
+
+        <h3 class="bold" align="center">Bando per</h3>
+        <h3 class="bold" align="center">{{ procedura.titolo }}</h3>
+
+        <br>
+        <h3 class="bold" align="center">Relazione tecnica intermedia</h3>
+        <br>
+
+    {% endblock dati_bando_rl %}
+	
+	
+	{% block dati_progetto_rl %}
+		<p class="text-medium" align="center"><strong>Progetto n. PG/2015/{{ pagamento.richiesta.protocollo}}</strong></p>
+		<p class="text-small" align="center"><strong>Relazione relativa al periodo di attività dal {{pagamento.dataInizioRendicontazione| date("d/m/Y")}} al {{pagamento.dataFineRendicontazione| date("d/m/Y")}}</strong></p>
+		
+		
+		<div>
+			<table style="width: 100%; font-size: 9px;">
+				<tr>
+					<th style="width: 20%;" >Titolo progetto</th>
+					<td>{{ richiesta.titolo }}</td>
+				</tr>					
+				<tr>
+					<th style="width: 20%;">Ragione sociale</th>
+					<td>{{ richiesta.mandatario.soggetto.denominazione }}</td>
+				</tr>
+				<tr>
+					<th style="width: 20%;">Tipologia progetto</th>
+					<td>{{richiesta.oggettiRichiesta[0].tipologia}}</td>
+				</tr>
+
+			</table>
+		</div>
+		
+		<br/>
+	<!--	<div>
+			<table style="width: 100%; font-size: 9px;">
+				<tr>
+					<th style="width: 20%;">Data inizio progetto</th>
+					<td>01/05/2016</td>
+				</tr>					
+			</table>
+		</div>	
+		<br/>-->
+		<div>
+			<table style="width: 100%; font-size: 9px;">
+				{% if pagamento.referenti|length > 0 %}
+				<tr>
+					<th style="width: 20%;">Referente della relazione</th>
+					<td>{{pagamento.referenti[0].persona.nome~" "~pagamento.referenti[0].persona.cognome}}</td>
+				</tr>	
+				<tr>
+					<th style="width: 20%;">Referente della relazione</th>
+					<td>{{pagamento.referenti[0].persona.nome~" "~pagamento.referenti[0].persona.cognome}}</td>
+				</tr>
+				{% else %}
+				<tr>
+					<th style="width: 20%;">Referente della relazione</th>
+					<td>-</td>
+				</tr>
+				<tr>
+					<th style="width: 20%;">Referente della relazione</th>
+					<td>-</td>
+				</tr>
+				{% endif %}
+			</table>
+		</div>	
+	{% endblock dati_progetto_rl %} 
+
+	{% block attivita_realizzate_rl %}
+	{% endblock attivita_realizzate_rl %} 
+	
+	{% block diffusione_risultati_rl %}
+	{% endblock diffusione_risultati_rl %} 
+	
+	{% block obiettivo_realizzativo_rl %}
+		<div style="page-break-after: always"></div>
+		<div>
+			<h4 class="sezione">Stato di avanzamento degli Obiettivi Realizzativi previsti nel progetto</h4>
+			<table style="width: 100%; font-size: 9px;">
+				<tr>
+					<td>Titolo dell’OR</td>
+					<td>Mese inizio attività previsto</td>
+					<td>Mese inizio attività effettivo</td>	
+					<td>Mese termine attività previsto</td>
+					<td>Mese termine attività effettivo</td>
+				</tr>
+				{% for obiettiviRealizzativo in pagamento.obiettiviRealizzativi %}
+					<tr>
+						<td>{{ obiettiviRealizzativo.titoloOr }}</td>
+						<td>{{ obiettiviRealizzativo.meseAvvioPrevisto }}</td>
+						<td>{{ obiettiviRealizzativo.meseAvvioEffettivo }}</td>
+						<td>{{ obiettiviRealizzativo.meseFinePrevisto }}</td>
+						<td>{{ obiettiviRealizzativo.meseFineEffettivo }}</td>
+					</tr>
+				{% endfor %}
+			</table>
+
+		</div>
+
+		{% for obiettiviRealizzativo in pagamento.obiettiviRealizzativi %}
+			<div>
+				<h4 class="sezione">Attività e risultati per singolo Obiettivo Realizzativo</h4>
+				<table style="width: 100%; font-size: 9px;">
+					<tr>
+						<td>Titolo dell’OR</td>
+						<td>{{ obiettiviRealizzativo.titoloOr }}</td>
+						<td>%RI</td>	
+						<td>{{ obiettiviRealizzativo.percentualeRi }}</td>
+						<td>%SS</td>	
+						<td>{{ obiettiviRealizzativo.percentualeSs }}</td>
+					</tr>
+					<tr>
+						<td rowspan="2">Attività previste</td>
+						<td colspan="5">Attività svolte: {{ obiettiviRealizzativo.attivitaSvolte }}</td>
+					</tr>
+					<tr>
+						<td colspan="5">Attività ancora da realizzare: {{ obiettiviRealizzativo.attivitaDaRealizzare }}</td>
+					</tr>
+					<tr>
+						<td>Obiettivi previsti dell’OR e risultati attesi</td>
+						<td colspan="5">Obiettivi Previsti: {{ obiettiviRealizzativo.obiettiviPrevisti }}<br/>
+										Risultati Attesi: {{ obiettiviRealizzativo.risultatiAttesi }}</td>
+					</tr>	
+				</table>
+			</div>
+		{% endfor %}
+		
+	{% endblock obiettivo_realizzativo_rl %}
+	
+    {% block personale_rl %}
+		<div>
+			<h4 class="sezione">Personale</h4>
+			<p class="text-medium"><strong>3.1 Ricercatori neoassunti per il progetto</strong></p>
+			<table class="table table-striped table-hover table-bordered" style="width: 100%; font-size: 9px;">
+				<thead>
+					<tr>
+						<th colspan="1" rowspan="2" style="text-align: center;">Cognome e nome</th>
+						<th colspan="1" rowspan="2" style="text-align: center;">Data assunzione o stabilizzazione</th>
+						<th colspan="1" rowspan="2" style="text-align: center;">Mansione o ruolo nel progetto</th>
+						<th colspan="2" style="text-align: center;">Numero di ore lavorate sul progetto</th>
+						<th colspan="1" rowspan="2" style="text-align: center;">Attività svolta nel progetto</th>
+					</tr>
+					<tr>
+						<th style="text-align: center;">RI</th>
+						<th style="text-align: center;">SS</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for ricercatore in ricercatori %}
+						<tr>
+							<td>{{ ricercatore.cognome}} {{ ricercatore.nome}}</td>
+							<td>{{ ricercatore.dataassunzione|date('d/m/Y')}}</td>
+							<td>{{ ricercatore.mansione}}</td>
+							<td>{{ ricercatore.numerooreri}}</td>
+							<td>{{ ricercatore.numerooress}}</td>
+							<td>{{ ricercatore.attivita}}</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+			
+			<br/>
+			<p class="text-medium"><strong>3.2 Personale adibito ad attività di ricerca, progettazione, sperimentazione ed in possesso di adeguata qualificazione coinvolto nel progetto</strong></p>
+			<table class="table table-striped table-hover table-bordered" style="width: 100%; font-size: 9px;">
+				<thead>
+					<tr>
+						<th colspan="1" rowspan="2" style="text-align: center;">Cognome e nome</th>
+						<th colspan="1" rowspan="2" style="text-align: center;">Mansione o ruolo nel progetto</th>
+						<th colspan="2" style="text-align: center;">Numero di ore lavorate sul progetto</th>
+						<th colspan="1" rowspan="2" style="text-align: center;">Attività svolta nel progetto</th>
+					</tr>
+					<tr>
+						<th style="text-align: center;">RI</th>
+						<th style="text-align: center;">SS</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for personale in personale_voce_2 %}
+						<tr>
+							<td>{{ personale.cognome}} {{ personale.nome}}</td>
+							<td>{{ personale.mansione}}</td>
+							<td>{{ personale.numerooreri}}</td>
+							<td>{{ personale.numerooress}}</td>
+							<td>{{ personale.attivita}}</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+				
+			<br/>
+			<p class="text-medium"><strong>3.3 Personale adibito a funzioni di produzione o personale di ricerca non laureato anche con esperienza inferiore a 10 anni coinvolto nel progetto</strong></p>
+			<table class="table table-striped table-hover table-bordered" style="width: 100%; font-size: 9px;">
+				<thead>
+					<tr>
+						<th colspan="1" rowspan="2" style="text-align: center;">Cognome e nome</th>
+						<th colspan="1" rowspan="2" style="text-align: center;">Mansione o ruolo nel progetto</th>
+						<th colspan="2" style="text-align: center;">Numero di ore lavorate sul progetto</th>
+						<th colspan="1" rowspan="2" style="text-align: center;">Attività svolta nel progetto</th>
+					</tr>
+					<tr>
+						<th style="text-align: center;">RI</th>
+						<th style="text-align: center;">SS</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for personale in personale_voce_3 %}
+						<tr>
+							<td>{{ personale.cognome}} {{ personale.nome}}</td>
+							<td>{{ personale.mansione}}</td>
+							<td>{{ personale.numerooreri}}</td>
+							<td>{{ personale.numerooress}}</td>
+							<td>{{ personale.attivita}}</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+			
+		</div>
+		
+	{% endblock personale_rl %}
+	
+	{% block collaborazioni_esterne_rl %}
+		<div>
+			<h4 class="sezione">Collaborazioni esterne</h4>
+			<p class="text-medium"><strong>4.1 Collaborazioni con i Laboratori di Ricerca</strong></p>
+			
+			<table class="table table-striped table-hover table-bordered" style="width: 100%; font-size: 9px;">
+				<thead>
+					<tr>
+						<th style="text-align: center;">Denominazione del laboratorio, centro di ricerca ed eventuale ente di appartenenza</th>
+						<th style="text-align: center;">Referente</th>
+						<th style="text-align: center;">Importo contratto complessivo</th>
+						<th style="text-align: center;">Importo contratto rendicontato</th>
+						<th style="text-align: center;">Elenco fatture rendicontate</th>
+						<th style="text-align: center;">Attività realizzate / ruolo nel progetto</th>
+					</tr>
+				</thead>
+			<tbody>
+				{% for collaborazione in collaborazioni_laboratori %}
+					<tr>
+						<td>{{collaborazione.fornitore}}</td>
+						<td>{{collaborazione.referente}}</td>
+						<td>{{collaborazione.importocontrattocomplessivo|number_format(2,',', '.')}}</td>
+						<td>{{collaborazione.sommaimportoimputazioneRISP|number_format(2,',', '.')}}</td>
+						<td>{{collaborazione.fatture}}</td>
+						<td>{{collaborazione.attivita}}</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		<br/>
+		<p class="text-medium"><strong>4.2 Consulenze specialistiche</strong></p>
+			
+			<table class="table table-striped table-hover table-bordered" style="width: 100%; font-size: 9px;">
+				<thead>
+					<tr>
+						<th style="text-align: center;">Nominativo del consulente, società di consulenza</th>
+						<th style="text-align: center;">Referente</th>
+						<th style="text-align: center;">Importo contratto complessivo</th>
+						<th style="text-align: center;">Importo contratto rendicontato</th>
+						<th style="text-align: center;">Elenco fatture rendicontate</th>
+						<th style="text-align: center;">Attività realizzate / ruolo nel progetto</th>
+					</tr>
+				</thead>
+			<tbody>
+				{% for collaborazione in collaborazioni_specialistiche %}
+					<tr>
+						<td>{{collaborazione.fornitore}}</td>
+						<td>{{collaborazione.referente}}</td>
+						<td>{{collaborazione.importocontrattocomplessivo|number_format(2,',', '.')}}</td>
+						<td>{{collaborazione.sommaimportoimputazioneRISP|number_format(2,',', '.')}}</td>
+						<td>{{collaborazione.fatture}}</td>
+						<td>{{collaborazione.attivita}}</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		</div>
+
+	{% endblock collaborazioni_esterne_rl %}
+	
+	{% block attrezzature_rl %}
+		<div>
+			<h4 class="sezione">Attrezzature e strumentazioni</h4>
+			{% if attrezzature | length > 0 %}
+			<table class="table table-striped table-hover table-bordered" style="width: 100%; font-size: 9px;">
+				<thead>
+					<tr>
+						<th style="text-align: center;">N.</th>
+						<th style="text-align: center;">Fornitore</th>
+						<th style="text-align: center;">Fattura</th>
+						<th style="text-align: center;">Descrizione dell’attrezzatura/licenza/software specialistico</th>
+						<th style="text-align: center;">Giustificazione della necessità dell’attrezzatura/licenza</th>
+						<th style="text-align: center;">Utilizzata nell’ambito degli OR n.</th>
+						<th style="text-align: center;">% utilizzo sul progetto</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for attrezzatura in attrezzature %}
+						<tr>
+							<td>{{attrezzatura.id}}</td>
+							<td>{{attrezzatura.giustificativopagamento.denominazionefornitore}}</td>
+							<td>{{attrezzatura.giustificativopagamento.datagiustificativo|date('d/m/Y')}} - {{attrezzatura.giustificativopagamento.numerogiustificativo}}</td>
+							<td>{{attrezzatura.descrizioneattrezzatura}}</td>
+							<td>{{attrezzatura.giustificazioneattrezzatura}}</td>
+							<td>{{attrezzatura.obiettivirealizzativi|join(' ')}}</td>
+							<td>{{attrezzatura.percentualeuso}}</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+			{% endif %}
+		</div>
+	{% endblock attrezzature_rl %}	
+	{% block propotipi_rl %}
+		<div>
+			<h4 class="sezione">Prototipi, dimostratori, impianti pilota</h4>
+			<table class="table table-striped table-hover table-bordered" style="width: 100%; font-size: 9px;">
+				<tr>
+					<td>Descrizione prototipi, dimostratori e impianti pilota</td>
+					<td>{{pagamento.estensione.descrizionePrototipo}}</td>
+				</tr>
+			</table>
+			<br/>
+			<p class="text-medium"><strong>6.1 Spese per materiali e lavorazioni imputabili al prototipo</strong></p>
+			{% if prototipi | length > 0 %}
+				<table class="table table-striped table-hover table-bordered" style="width: 100%; font-size: 9px;">
+					<thead>
+						<tr>
+							<th style="text-align: center;">N.</th>
+							<th style="text-align: center;">Fornitore</th>
+							<th style="text-align: center;">n. fattura e data</th>
+							<th style="text-align: center;">Denominzione componente</th>
+							<th style="text-align: center;">Utilizzata nell’ambito degli OR n.</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for prototipo in prototipi %}
+							<tr>
+								<td>{{prototipo.id}}</td>
+								<td>{{prototipo.giustificativopagamento.denominazionefornitore}}</td>
+								<td>{{prototipo.giustificativopagamento.datagiustificativo|date('d/m/Y')}} - {{prototipo.giustificativopagamento.numerogiustificativo}}</td>
+								<td>{{prototipo.giustificativopagamento.descrizionegiustificativo}}</td>
+								<td>{{prototipo.obiettivirealizzativi|join(' ')}}</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			{% endif %}
+			
+		</div>
+	{% endblock propotipi_rl %}
+	
+	{% block brevetti_rl %}
+		
+		<div>
+			<h4 class="sezione">Brevetti</h4>
+			<table class="table table-striped table-hover table-bordered" style="width: 100%; font-size: 9px;" >
+				<thead>
+					<tr>
+						<th style="text-align: center;">Titolo brevetto</th>
+						<th style="text-align: center;">N. domanda brevetto</th>
+						<th style="text-align: center;">Data domanda</th>
+						<th style="text-align: center;">Stato</th>
+						<th style="text-align: center;">Ambito</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for brevetto in brevetti %}
+						<tr>
+							<td>{{brevetto.titolobrevetto}}</td>
+							<td>{{brevetto.numerodomandabrevetto}}</td>
+							{% if brevetto.datadomandabrevetto is not null %}
+								<td>{{brevetto.datadomandabrevetto|date('d/m/Y')}}</td>
+							{% else %}
+								<td></td>
+							{% endif %}
+							<td>{{brevetto.statobrevetto}}</td>
+							<td>{{brevetto.ambitobrevetto}}</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	{% endblock brevetti_rl %}
+	
+	{% block altre_informazioni_rl %}
+		<div>
+			<h4 class="sezione">Altre informazioni</h4>
+			<table class="table table-striped table-hover table-bordered" style="width: 100%; font-size: 9px;">
+				<tr>
+					<td>{{pagamento.estensione.altreInformazioni}}</td>
+				</tr>
+			</table>
+		</div>
+	{% endblock altre_informazioni_rl %}
+	
+	{% block piano_costi_rl %}
+
+	{% endblock piano_costi_rl %}

@@ -1,0 +1,95 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+	{% include 'IstruttorieBundle:Comunicazioni:menu.html.twig' %}
+
+	
+    <div class="table-toolbar">
+		<a href="#" data-target="#ricerca-comunicazione-modal" data-toggle="modal" class="btn btn-info"><span class="fa fa-search"></span> Ricerca</a>
+    </div>
+	<div class="count">
+		Numero elementi trovati: {{ risultati.getTotalItemCount }} - Filtro attivo: {{ filtro_attivo ? "Si" : "No" }}
+	</div>
+	
+	<h4>Comunicazioni progetto</h4>
+	<br/><br/>
+	<table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+        <thead>
+            <tr>
+				<th>Id</th>
+                <th>Titolo procedura</th>
+				<th>Soggetto</th>
+				<th>Protocollo richiesta</th>
+				<th>Data invio</th>
+				<th>Stato Comunicazione</th>
+				<th>Stato PEC</th>
+				<th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+			{% for risultato in risultati %}
+				{% set richiesta = risultato.variazione.richiesta %}
+				<tr>
+					<td>{{ risultato.id }}</td>
+                    <td>{{ richiesta.procedura.titolo }}</td>
+					<td>{{ richiesta.soggetto }}</td>
+					<td>{{ richiesta.protocollo }}</td>
+					<td>{{ risultato.datainvio | date("d/m/Y") }}</td>	
+					{% if risultato.rispondibile == false %}
+						<td>Risposta non richiesta</td>
+					{% elseif risultato.isInAttesaRisposta == true %}
+						<td>Richiesta in attesa di risposta</td>		
+					{% else  %}
+						<td>Risposta inviata</td>	
+					{% endif %}
+					<td>{{ risultato.richiesteprotocollo[0].emailProtocollo[0].StatoLeggibile }}</td>	
+					<td>
+						<div class="dropdown">
+							<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								Azioni
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+								<li><a href="{{ path("dettaglio_comunicazione_progetto_pa", {'id_comunicazione_progetto':risultato.id}) }}">Visualizza</a></li>
+							</ul>
+						</div>
+					</td>
+				</tr>
+			{% endfor %}
+        </tbody>
+    </table>
+
+	{# display navigation #}
+	<div class="navigation">
+		{{ knp_pagination_render(risultati) }}
+	</div>
+
+	<div id="ricerca-comunicazione-modal" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3 id="ricerca-comunicazione-modal-titolo">Ricerca Comunicazione</h3>
+				</div>
+				<div class="modal-body">
+					{{ form(form_ricerca) }}
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Chiudi</button>
+					<a class="btn btn-default" href="{{ path("elenco_comunicazioni_pa_pulisci") }}">Annulla Ricerca</a>
+					<a class="btn btn-primary" href="#" id="ricercaOk">Ricerca</a>
+				</div>
+			</div>
+		</div>
+	</div>			
+{% endblock %}
+
+{%block  jquery_page_document_ready %}
+	<script>
+		jQuery(document).ready(function () {
+			$("#ricercaOk").click(function (e) {
+				e.preventDefault();
+				$(this).parents(".modal-content").find("form").submit();
+			})
+		});
+	</script>
+{% endblock %}

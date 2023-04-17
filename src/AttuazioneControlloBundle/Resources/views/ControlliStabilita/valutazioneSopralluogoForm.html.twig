@@ -1,0 +1,30 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	{% include 'AttuazioneControlloBundle:ControlliStabilita:menu_principale.html.twig' %}		
+	{% include 'AttuazioneControlloBundle:ControlliStabilita:menu.html.twig' with {'controllo' : controllo } %}	
+	
+	<div class="form-body">
+		<h4>Carica documento</h4>
+			{{ form(form_doc) }}
+	</div>	
+
+	{% if controllo.documenticontrollo is not empty %}
+		<h4>Elenco documenti caricati</h4>
+		<div class="form-body">	
+			{% for documento in controllo.documenticontrollo %}
+				{% if documento.id is not null and documento.documentoFile.tipologiadocumento.codice == 'CONTROLLO_VERBALE_SPR' %}
+					<td>{{ mostra_file(documento.documentoFile, disabled ? null : path('elimina_documento_controllo_stabilita', {'id_controllo': controllo.id, 'id_documento': documento.id, 'verbale': 1 }) ) }}</td>
+					<br/>
+				{% endif %}
+			{% endfor %}
+		</div>
+	{% endif %}
+		
+	
+	<h4>Valutazione sopralluogo</h4>
+
+	{{ form(form) }}
+
+
+{% endblock %}

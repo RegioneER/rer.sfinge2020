@@ -1,0 +1,159 @@
+{% extends 'IstruttorieBundle:Istruttoria:base_istruttoria.html.twig' %}
+
+{% form_theme form _self %}
+
+{% block form_label_class -%}
+    {% if compound is defined and not compound or (form.vars["empty_value_in_choices"] is defined and compound) %}
+
+    {% else %}
+form-compound-child compound-label
+    {% endif %}
+	left
+{%- endblock form_label_class %}
+
+{% block checkbox_label -%}
+    {{- block('form_label') -}}
+{%- endblock checkbox_label %}
+
+{%- block checkbox_widget -%}
+    <input type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
+{%- endblock checkbox_widget -%}
+
+{% block istruttorie_buttons_widget %}
+    {% if form.children.pulsante_indietro is defined %}
+    <div class="pull-left">
+        {{ form_widget(form.children.pulsante_indietro) }}
+    </div>
+    {% endif %}
+	
+    <div class="pull-right" style="margin-left: 10px; ">
+        {{ form_widget(form.children.pulsante_submit) }}
+    </div>
+	{% if is_granted('ROLE_ISTRUTTORE_SUPERVISORE') %}
+		<div class="pull-right" style="margin-left: 10px; ">
+			{{ form_widget(form.children.pulsante_valida) }}
+		</div>
+		{% if form.children.pulsante_invalida is defined %}	
+		<div class="pull-right"  style="margin-left: 10px; ">
+			{{ form_widget(form.children.pulsante_invalida, {'disabled': false}) }}
+		</div>
+		{% endif %}
+	{% endif %}
+	{% if form.children.pulsante_integrazione is defined %}
+		<div class="pull-right" style="margin-left: 10px; ">
+			{{ form_widget(form.children.pulsante_integrazione) }}
+		</div>
+	{% endif %}
+{% endblock istruttorie_buttons_widget %}
+
+{% block body %}
+	
+{% include 'IstruttorieBundle:Istruttoria:menu.html.twig' with {'istruttoria' : istruttoria } %}
+<style>
+   form .select2-container .select2-choice > .select2-chosen { white-space:pre-line; }
+</style>
+{{ form_start(form) }}
+{{ form_errors(form) }}
+
+{% block pre_form %}{% endblock %}
+
+{% set sezione = (form.valutazioni_elementi|first).vars.value.elemento.sezioneChecklist %}
+{% if sezione.checklist.proponente == true %}
+	{% set proponente = (form.valutazioni_elementi|first).vars.value.valutazionechecklist.proponente %}
+	<h4>{{ sezione.descrizione }}: {{proponente.soggetto.denominazione}}</h4>
+{% else %}
+	<h4>{{ sezione.descrizione }}</h4>
+{% endif %}
+<table class="table">
+	<thead>
+		<tr>
+			<th style="width:40%; text-align: center;">Campo</th>
+			<th style="width:{{ sezione.commento ? "30" : "60" }}%; text-align: center;">Valore</th>
+			{% if sezione.commento %}
+				<th style="width:30%; text-align: center;">Commento</th>
+			{% endif %}
+		</tr>
+	</thead>
+	<tbody>
+	{% for valutazione in form.valutazioni_elementi %}
+
+		{% set elemento = valutazione.vars.value.elemento %}
+		{% if elemento.sezioneChecklist.id != sezione.id %}
+			{% set sezione = elemento.sezioneChecklist %}
+			</tbody></table>
+			<h4>{{sezione.descrizione}}</h4>
+			<table class="table">
+				<thead>
+					<tr>
+						<th style="width:40%; text-align: center;">Campo</th>
+						<th style="width:{{ sezione.commento ? "30" : "60" }}%; text-align: center;">Valore</th>
+						{% if sezione.commento %}
+							<th style="width:30%; text-align: center;">Commento</th>
+						{% endif %}
+					</tr>
+				</thead>
+				<tbody>
+		{% endif %}
+		<tr>
+			<td>{{ form_label(valutazione.valore) }}<br />
+				{% if valutazione.vars.value.elemento.note is not null %}
+					<br /><span style="font-size: 90%;">{{ valutazione.vars.value.elemento.note }}</span><br />
+				{% endif %}
+				{{ form_errors(valutazione.valore) }}</td>
+			<td>{{ form_widget(valutazione.valore) }}</td>
+			{% if valutazione.commento is defined %}
+				<td>{{ form_widget(valutazione.commento) }}</td>
+			{% endif %}
+		</tr>
+	{% endfor %}
+	</tbody>
+</table>
+
+<h6>Elenco ultime modifiche</h6>
+<ul class="well alert alert-info">
+{% for log in istruttoria.istruttorieLog|slice(0,5) if log.oggetto == valutazione_checklist.checklist.codice   %}
+	<li> {{ log.utente.persona.nome ~ " " ~ log.utente.persona.cognome }} in data {{ log.data|date('d/m/Y H:i:s') }}</li>
+{% endfor %}
+</ul>
+
+{% if valutazione_checklist.valutatore is not null %}
+	<p class="well alert alert-info">Validata da {{ valutazione_checklist.valutatore }} in data {{ valutazione_checklist.dataValidazione|date('d/m/Y') }}</p>
+{% endif %}
+
+{% if valutazione_checklist.integrazioni | length > 0 %}
+	<h4>Integrazioni</h4>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Data inserimento</th>
+				<th>Data risposta</th>
+				<th>Dettagli</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for integrazione in valutazione_checklist.integrazioni %}
+				<tr>
+					<td>{{ integrazione.data | date('d/m/Y') }}</td>
+					<td>{{ integrazione.risposta is null or integrazione.risposta.data is null ? "-" : integrazione.risposta.data | date('d/m/Y') }}</td>
+					{% if integrazione.stato.codice == 'INT_INVIATA_PA' or integrazione.stato.codice == 'INT_PROTOCOLLATA' %}
+							<td>
+								<a class="btn btn-primary" href="{{ path('dettaglio_integrazione_istruttoria_pa', {id_integrazione_istruttoria : integrazione.id}) }}">
+									Dettagli
+								</a>
+							</td>
+						{% else %}
+							<td>
+								<a class="btn btn-primary" href="{{ path('gestione_integrazione_istruttoria_pa', {id_integrazione_istruttoria : integrazione.id, da_comunicazione : false }) }}">
+									Gestione
+								</a>
+							</td>
+						{% endif %}
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+{% endif %}
+
+{{ form_end(form) }}
+
+{% endblock %}

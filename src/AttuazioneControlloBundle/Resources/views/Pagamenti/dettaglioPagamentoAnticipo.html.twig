@@ -1,0 +1,117 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block begin_page_level_plugin_style %}
+    <link href="{{ asset('assets/css/wizard.css') }}" rel="stylesheet" type="text/css"/>
+{% endblock %}
+
+{% block body %}
+    <ul class="nav nav-pills nav-wizard {{ avanzamenti|length == 2 ? "two-steps" : "" }}">
+        {% for avanzamento, attivo in avanzamenti %}
+            <li {% if attivo  %}class="active"{% endif %}>{% if not loop.first %}<div class="nav-wedge"></div>{% endif %}<span>{{avanzamento}}</span>{% if not loop.last %}<div class="nav-arrow"></div>{% endif %}</li>
+                {% endfor %}
+    </ul>
+
+    {# qua non serve #}
+    {#% if variazione_pendente == true %}
+            <br>
+            <div class="alert alert-warning" role="alert">
+                    Per il progetto esiste una variazione in attesa di istruttoria quindi il piano costi potrebbe non essere ancora aggiornato.
+            </div>
+    {% endif %#}
+    <section style="margin-top:2em; margin-bottom:2em;">
+        {% include 'AttuazioneControlloBundle:Pagamenti:notificaMonitoraggio.html.twig' %}
+    </section>
+
+    <h4>Riepilogo</h4>
+    <table class="table table-striped table-hover">
+
+        <tr>
+            <th>Procedura</th>
+            <td>{{ richiesta.procedura.titolo }}</td>
+        </tr>
+
+        <tr>
+            <th>CUP</th>
+            <td>{{ richiesta.istruttoria.codiceCup }}</td>
+        </tr>
+
+        <tr>
+            <th>Richiesta di finanziamento</th>
+            <td><a target="_blank" href="{{ path('dettaglio_richiesta', { 'id_richiesta' : richiesta.id }) }}">{{ richiesta.protocollo }}</a></td>
+        </tr>
+
+        <tr>
+            <th style="width:40%">Modalità richiesta di pagamento</th>
+            <td><strong>{{ pagamento.modalitaPagamento }}</strong></td>
+        </tr>
+
+        <tr>
+            <th>Data di invio</th>
+            <td>{{ pagamento.dataInvio is null ? "-" : pagamento.dataInvio | date('d/m/Y') }}</td>
+        </tr>	
+        <tr>
+            <th>Protocollo pagamento</th>
+            <td>				
+                {% if pagamento.protocollato %}
+                    {{ pagamento.protocollo }}<br>{{ pagamento.dataProtocollo }}
+                {% else %}
+                    -
+                {% endif %}								
+            </td>
+        </tr>
+
+        {% set tempoRestante = pagamento.getTempoRendicontazioneRestante %}
+        {% if tempoRestante is not null %}
+            <tr>
+                <th>Tempo restante per inviare la rendicontazione</th>
+                <td>
+                    {% if tempoRestante == '0' %}
+                        <span style="color:red">SCADUTA</span>
+                    {% else %}
+                        {{ tempoRestante }}
+                    {% endif %}
+                </td>
+            </tr>
+        {% endif %}
+
+    </table>
+
+    {% if not isUtenteAbilitatoPagamenti %}
+        <div style="font-size: 15px" class="alert alert-warning">
+            <strong>ATTENZIONE: </strong> solamente il <strong>legale rappresentante</strong> o un suo <strong>delegato</strong> possono <strong>validare</strong> ed <strong>inviare</strong> la richiesta.
+        </div>
+    {% endif %}
+
+    <h4>Sezioni</h4>
+    <ul class="list-group list-checked">
+
+        {{ mostra_validazione_in_line_attuazione('dati_generali_pagamento', path('dati_generali_pagamento', {'id_pagamento':pagamento.id}), "Dati generali", pagamento) }}
+
+        {{ mostra_validazione_in_line_attuazione('date_progetto', path('date_progetto', {'id_pagamento':pagamento.id}), "Date progetto", pagamento) }}
+
+        {{ mostra_validazione_in_line_attuazione('dati_bancari_pagamento', path('dati_bancari_pagamento', {'id_pagamento':pagamento.id}), 'Dati bancari', pagamento) }}
+
+        {{ mostra_validazione_in_line_attuazione('documenti_anticipo_pagamento', path('gestione_documenti_anticipo_pagamento', {'id_pagamento':pagamento.id}), "Documenti pagamento", pagamento) }}
+
+        {% include 'AttuazioneControlloBundle:Pagamenti:dettaglioPagamentoSezioneMonitoraggio.html.twig' %}
+    </ul>	
+
+
+    {% set vociMenu = voci_menu_pagamento(pagamento.id) %}
+    <div class="page-actions">
+        {% for voceMenu in vociMenu %}
+            {# schippo la voce attuale della pagina attuale #}
+            {% set pathAttuale = path(app.request.attributes.get('_route'),app.request.attributes.get('_route_params')) %}
+            {% if voceMenu.path != pathAttuale %}
+                <a href="{{ voceMenu.path }}" {{ voceMenu.attr is defined ? (voceMenu.attr |raw) : "" }} class="btn btn-info">{{ voceMenu.label }}</a>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <script type="text/javascript" language="javascript">
+        $(document).ready(function () {
+            $('[data-toggle="popover"]').popover();
+        });
+    </script>
+
+{% endblock %}

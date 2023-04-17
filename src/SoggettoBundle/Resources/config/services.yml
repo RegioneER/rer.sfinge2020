@@ -1,0 +1,45 @@
+services:
+    soggetto.soggetto_voter:
+        class: SoggettoBundle\Security\SoggettoVoter
+        arguments: ['@security.access.decision_manager']
+        tags:
+            - { name: security.voter }
+        public: false
+        
+    soggetto.incarico_persona_voter:
+        class: SoggettoBundle\Security\IncaricoPersonaVoter
+        arguments: ['@security.access.decision_manager']
+        tags:
+            - { name: security.voter }
+        public: false   
+        
+    soggetto.versioning:
+        class: SoggettoBundle\Service\SoggettoVersioning
+
+    app.adrier_service:
+        class: SoggettoBundle\Service\AdrierService
+        arguments: ['@service_container']
+
+    SoggettoBundle\Service\SoggettoListener:
+        class: SoggettoBundle\Service\SoggettoListener
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@soggetto.versioning"
+        tags:
+            -
+                name: doctrine.orm.entity_listener
+                event: postUpdate
+                entity: SoggettoBundle\Entity\Soggetto
+                lazy: true
+                
+    SoggettoBundle\Service\SoggettoListenerPersist:
+        class: SoggettoBundle\Service\SoggettoListenerPersist
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@soggetto.versioning"
+        tags:
+            -
+                name: doctrine.orm.entity_listener
+                event: postPersist
+                entity: SoggettoBundle\Entity\Soggetto
+                lazy: true

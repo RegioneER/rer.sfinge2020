@@ -1,0 +1,18 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	
+{% include 'AttuazioneControlloBundle:Controlli:menu_principale.html.twig' %}		
+{% include 'AttuazioneControlloBundle:Controlli:menu.html.twig' with {'controllo' : controllo } %}	
+<br>
+
+<div>
+	<a class="btn btn-primary" href="{{ path('genera_verbale_desk', {'id_controllo' : controllo.id }) }}">
+		Genera Verbale
+	</a>
+</div>
+
+<br>
+<h4>Dati verbale desk</h4>
+{{ form(form) }}
+{% endblock %}

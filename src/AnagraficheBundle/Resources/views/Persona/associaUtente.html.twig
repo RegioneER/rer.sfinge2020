@@ -1,0 +1,17 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+
+<div class="form-body">
+	{{ form_start(form) }}
+	<div class="row">
+		<div class="col-md-6">
+			{{ form_row(form.persona) }}
+		</div>	
+		<div class="col-md-6">
+			{{ form_row(form.utente) }}
+		</div>
+	</div>
+	{{ form_end(form) }}
+</div>
+
+	{% endblock %}

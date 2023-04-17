@@ -1,0 +1,84 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	{% set richiesta = pagamento.attuazioneControlloRichiesta.richiesta %}
+	<h4>Dati pagamento</h4>
+
+	<div class="row">
+		<div class="col-md-12">
+			<table class="table table-striped table-hover">
+				<tr>
+					<td style="width: 30%;">Titolo procedura</td><td>{{ richiesta.procedura.titolo }}</td>
+				</tr>	
+				<tr>
+					<td>Soggetto</td><td>{{ richiesta.mandatario.soggetto.denominazione|capitalize }}</td>
+				</tr>
+				<tr>
+					<td>Modalità pagamento</td><td>{{ pagamento.modalitaPagamento }}</td>
+				</tr>
+				<tr>
+					<td>Importo pagato</td><td>&euro; {{pagamento.mandatoPagamento is not null ? pagamento.mandatoPagamento.importoPagato|number_format(2, ',', '.') :  0|number_format(2, ',', '.')}}</td>
+				</tr>
+				<tr>
+					<td>Importo certificato</td><td>&euro; {{ pagamento.importoCertificato|number_format(2, ",", ".") }}</td>
+				</tr>
+				<tr>
+					<td>Importo decertificabile</td><td>&euro; {{ (-(pagamento.importoCertificato - pagamento.importoDecertificato))|number_format(2, ",", ".") }}</td>
+				</tr>				
+			</table>
+		</div>
+	</div>
+
+	<h4>Elenco decertificazioni</h4>
+	
+	<a class="btn btn-primary" href="{{ path("decertifica_pagamento", {'id_pagamento':pagamento.id}) }}">
+		<span class="fa fa-plus"></span> Aggiungi decertificazione
+	</a>
+	<br/><br/>
+	<table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+		<thead>
+			<tr>
+				<th style="font-size: 10pt">Id pagamento</th>
+				<th style="font-size: 10pt">Data invio pagamento</th>					
+				<th style="font-size: 10pt">Importo decertificato</th>
+				<th style="font-size: 10pt">Nota decertificazione</th>
+				<th style="font-size: 10pt">Certificazione</th>
+				<th style="font-size: 10pt">Ritiro</th>
+				<th style="font-size: 10pt">Recupero</th>
+				<th style="font-size: 10pt">Sospeso art. 137</th>
+				<th style="font-size: 10pt">Irregolarità</th>
+				<th style="font-size: 10pt">Segnalazione ada</th>
+				<th style="font-size: 10pt">Azioni</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for certPag in decertificazioni %}
+				<tr>
+					<td>{{certPag.pagamento.id}}</td>
+					<td>{{certPag.pagamento.datainvio|date('d-m-Y')}}</td>
+					<td>{{certPag.importo|number_format(2,',','.')}}</td>
+					<td>{{certPag.notadecertificazione}}</td>
+					<td>{{certPag.certificazione.annocontabile }}.{{ certPag.certificazione.numero }}</td>
+					<td>{{certPag.ritiro is not null ? (certPag.ritiro == true ? 'Si' : 'No') : 'No'}}</td>
+					<td>{{certPag.recupero is not null ? (certPag.recupero == true ? 'Si' : 'No') : 'No'}}</td>
+					<td>{{certPag.articolo137 is not null ? (certPag.articolo137 == true ? 'Si' : 'No') : 'No'}}</td>
+					<td>{{certPag.irregolarita is not null ? (certPag.irregolarita == true ? 'Si' : 'No') : 'No'}}</td>
+					<td>{{certPag.segnalazioneada is not null ? (certPag.segnalazioneada == true ? 'Si' : 'No') : 'No'}}</td>
+					<td>
+						<div class="dropdown">
+							<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								Azioni
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">		
+								<li>
+									<a href="{{ path("decertifica_modifica_pagamento", {"id_pagamento" : certPag.pagamento.id, "id_certificazione_pagamento" : certPag.id}) }}">Modifica</a>
+								</li>
+							</ul>
+						</div>
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	<h4>Dati Protocollo</h4>
+	{{ form_start(form) }}
+	
+	<div>
+	{{ form_label(form.registro_pg) }}{{ form_widget(form.registro_pg) }}<span>&nbsp;\&nbsp;</span>{{ form_widget(form.anno_pg) }}<span>&nbsp;\&nbsp;</span>{{ form_widget(form.num_pg) }}
+	</div>
+	<br/>
+	<div>
+	{{ form_label(form.registro_pg_validazione) }}{{ form_widget(form.registro_pg_validazione) }}<span>&nbsp;\&nbsp;</span>{{ form_widget(form.anno_pg_validazione) }}<span>&nbsp;\&nbsp;</span>{{ form_widget(form.num_pg_validazione) }}
+	</div>
+	
+	{{ form_end(form) }}
+{% endblock %}

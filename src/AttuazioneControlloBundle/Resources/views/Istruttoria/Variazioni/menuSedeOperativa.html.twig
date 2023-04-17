@@ -1,0 +1,5 @@
+<li role="presentation" {% if menu|default() == "sede_operativa" %} class="active" {% endif %}>
+    <a href="{{- path('sede_operativa_istruttoria_variazione', { id_variazione:variazione.id }) -}}">
+        UL / Sede progetto
+    </a>
+</li>

@@ -1,0 +1,90 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    {% include 'AttuazioneControlloBundle:PA/Richieste:menu.html.twig' with {'attuazione_controllo' : richiesta.attuazionecontrollo }%}	
+
+    <h4>Comunicazione progetto</h4>
+    <table class="table table-striped">
+        <tbody>
+            <tr>
+                <td style="width: 50%;"><strong>Data inserimento</strong></td>
+                <td>{{ comunicazione.data | date('d/m/Y') }}</td>
+            </tr>
+            <tr>
+                <td style="width: 50%;"><strong>Protocollo</strong></td>
+                <td>{{ comunicazione.protocollocomunicazione }}</td>
+            </tr>
+            <tr>
+                <td style="width: 50%;"><strong>Data protocollazione</strong></td>
+                <td>{{ comunicazione.DataProtocolloComunicazione ? comunicazione.DataProtocolloComunicazione | date('d/m/Y') : '-' }}</td>
+            </tr>
+            <tr>
+                <td><strong>Testo email richiesta</strong></td>
+                <td>{{ comunicazione.testoEmail }}</td>
+            </tr>
+            <tr>
+                <td><strong>Documento richiesta</strong></td>
+                {% if comunicazione.documento is not null %}
+                    <td>{{ scarica_file(comunicazione.documento)}}</td>
+                {% else %}
+                    <td>-</td>
+                {% endif %}
+            </tr>				
+        </tbody>
+    </table>
+
+    <h4>Documenti allegati alla richiesta</h4>
+    <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+        <tbody>
+            {% for documento in comunicazione.documenticomunicazione %}
+                <tr>
+                    <td>{{ mostra_file(documento.documentoFile, null )}}</td>
+                </tr>
+            {% else %}
+                <h6>Nessun documento allegato</h6>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if comunicazione.hasRispostaInviata %}		
+        <h4>Risposta comunicazione</h4>
+        <table class="table table-striped">
+            <tbody>		
+                <tr>
+                    <td style="width: 50%;"><strong>Data invio</strong></td>
+                    <td>{{ comunicazione.risposta is null or comunicazione.risposta.data is null ? "-" : comunicazione.risposta.data | date('d/m/Y') }}</td>
+                </tr>
+                <tr>
+                    <td style="width: 50%;"><strong>Protocollo</strong></td>
+                    <td>{{ comunicazione.risposta.ProtocolloRispostaComunicazione }}</td>
+                </tr>
+                <tr>
+                    <td style="width: 50%;"><strong>Data protocollazione</strong></td>
+                    <td>{{ comunicazione.risposta.dataProtocolloRispostaComunicazione is null ? "-" : comunicazione.risposta.dataProtocolloRispostaComunicazione|date('d/m/Y') }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Nota risposta</strong></td>
+                    <td>{{ comunicazione.risposta is null or comunicazione.risposta.testo is null ? "-" : comunicazione.risposta.testo|replace({'\r\n' : '<br>', '\n' : '<br>'})|raw }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Documento risposta</strong></td>
+                    <td>{{ mostra_file(comunicazione.risposta.documentoRispostaFirmato) }}</td>
+                </tr>				
+            </tbody>
+        </table>
+
+        <h4>Documenti allegati alla risposta</h4>
+        <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+            <tbody>
+                {% for documento in comunicazione.risposta.documenti %}
+                    <tr>
+                        <td>{{ mostra_file(documento.documentoFile, null )}}</td>
+                    </tr>
+                {% else %}
+                    <h6>Nessun documento allegato</h6>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}			
+
+{% endblock %}

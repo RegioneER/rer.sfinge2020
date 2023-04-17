@@ -1,0 +1,199 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+
+	<h4>Avanzamento piano costi <strong>({{ proponente is null ? 'totale' : proponente }})</strong></h4>
+	
+	{% if rendicontazioneProceduraConfig.rendicontazioneMultiProponente %}	
+		{% if formProponenti is defined %}
+			<div style="margin-bottom: 40px">
+				{{ form_start(formProponenti) }}
+					{{ form_row(formProponenti.proponente) }}
+					{{ form_row(formProponenti.submit) }}
+				{{ form_end(formProponenti) }}
+			</div>
+		{% endif %}		
+	{% endif %}
+	
+
+	<div>
+		<table class="table table-striped table-bordered" >
+			<thead>
+				<tr>
+					<th style="width: 15%" rowspan="2">Voce piano costo</th>
+					<th style="text-align: center; min-width: 95px; width: 10%" rowspan="2">Importo approvato (&euro;)</th>
+					{% for pagamento in pagamenti %}
+						<th style="text-align: center; width: 20%" colspan="3">{{ pagamento.modalitaPagamento.descrizioneBreve }}</th>
+					{% endfor %}
+					
+					{# mostriamo i totali solo se esiste più di un pagamento, altrimenti non ha senso #}
+					{% if pagamenti|length > 1%}
+						<th style="text-align: center; width: 20%" colspan="3">TOTALE</th>
+					{% endif %}
+				</tr>
+				<tr>
+					{% for i in 1..pagamenti|length  %}
+						<th style="text-align: center; min-width: 95px;">
+							Importo rendicontato (&euro;)
+						</th>
+						<th style="text-align: center; min-width: 95px;">
+							Importo rendicontato ammesso (&euro;)
+						</th>
+						<th style="text-align: center; min-width: 95px;">
+							Importo rendicontato non ammesso (&euro;)
+						</th>
+					{% endfor %}
+					
+					{# mostriamo i totali solo se esiste più di un pagamento, altrimenti non ha senso #}
+					{% if pagamenti|length > 1%}
+						<th style="text-align: center; min-width: 95px;">
+							Importo rendicontato (&euro;)
+						</th>
+						<th style="text-align: center; min-width: 95px;">
+							Importo rendicontato ammesso (&euro;)
+						</th>
+						<th style="text-align: center; min-width: 95px;">
+							Importo rendicontato non ammesso (&euro;)
+						</th>
+					{% endif %}
+				</tr>
+			</thead>
+
+			<tbody>
+
+				{# 1 è per la colonna approvato, poi per ogni pagamento(e totalone) ci sono tre colonne..rendicontato , rendicontato ammesso, rendicontato non ammesso #}
+				{% set colspan = 1 + ((pagamenti|length + 1) * 3) %}
+
+				{# avanzamento[sezioneId][ordinamentoVoce] #}
+				
+				{# stampo le varie voci dell'avanzamento #}	
+				{% for sezione in avanzamento %}
+					
+					{% set titoloSezione = (sezione|first).sezione %}
+					
+					<tr style="font-weight: bold;">
+						<td>{{ titoloSezione }}</td>
+						<td colspan="{{ colspan }}"></td>
+					</tr>
+					
+
+					{% for voce in sezione %}
+						
+						<tr {% if voce.codice == 'TOT' %}style="font-weight: bold;"{% endif %}>
+
+							<td>
+								{{ voce.titolo }}
+							</td>
+
+							<td style="text-align: center;">
+								{{ voce.importoApprovato|number_format(2,',', '.') }}
+							</td>
+
+							{% set rendicontatoPagamenti = voce.rendicontatoPagamenti %}
+							{% for rendicontatoPagamento in rendicontatoPagamenti %}
+									
+								{# il totale è sempre in ultima posizione..se c'è un solo pagmento lo nascondiamo, non ha senso #}
+								{% if  rendicontatoPagamenti|length == 2 and loop.last %}
+									{# do nothing..non esiste il continue in twig #}
+								{% else %}
+								
+									<td style="text-align: center;">
+										{{ rendicontatoPagamento.importoRendicontato|number_format(2,',', '.') }}
+									</td>
+
+									<td style="text-align: center;">
+										{{ rendicontatoPagamento.importoRendicontatoAmmesso|number_format(2,',', '.') }}
+									</td>
+
+									<td style="text-align: center;">
+										{{ rendicontatoPagamento.importoRendicontatoNonAmmesso|number_format(2,',', '.') }}
+									</td>
+									
+								{% endif %}
+							
+							{% endfor %}
+
+						</tr>	
+
+					{% endfor %}
+					
+					{# riga di separazione tra una sezione e l'altra #}
+					{% if not loop.last %}
+						<tr>
+							<td colspan="{{ colspan + 1 }}" style="height: 40px"></td>
+						</tr>
+					{% endif %}
+					
+				{% endfor %}
+
+			</tbody>
+		</table>
+	</div>		
+				
+	<div>
+	<h4>Riepilogo concessione</h4>
+		<table class="table table-striped table-bordered" >
+			<thead>
+				<tr>
+					<th>Investimento totale ammesso</th>
+					<th>Contributo totale concesso</th>
+				</tr>				
+			</thead>
+			<tbody>
+				<tr>
+					{# ho notato che in alcuni casi i dati di investimento totale ammesso  e contributo totale concesso mancano
+						questo è dovuto al fatto che c'è una variazione, ma non l'hanno approvata o è errata
+						in questo caso metto un trattino 
+					#}					
+					<td>{{ investimentoTotaleAmmesso is null ? '-' : investimentoTotaleAmmesso|number_format(2,',', '.') }}</td>
+					<td>{{ contributoTotaleConcesso is null ? '-' : contributoTotaleConcesso|number_format(2,',', '.') }}</td>
+				</tr>			
+			</tbody>
+		</table>
+	</div>
+				
+	<div>	
+		<h4>Riepilogo rendicontazione</h4>
+		<table class="table table-striped table-bordered" >
+			<thead>
+				<tr>
+					<th>Pagamento</th>
+					<th>Importo rendicontato</th>
+					<th>Importo rendicontato ammesso</th>
+					<th>Importo rendicontato non ammesso</th>
+					<th>Contributo erogabile</th>
+				</tr>				
+			</thead>
+			<tbody>
+				{% for modalitaPagamento, datiPagamento in datiPagamenti %}
+					<tr>
+						<td>{{ modalitaPagamento }}</td>
+						<td>{{ datiPagamento['importoRendicontato']|number_format(2,',', '.') }}</td>
+						<td>{{ datiPagamento['importoRendicontatoAmmesso']|number_format(2,',', '.') }}</td>
+						<td>{{ datiPagamento['importoRendicontatoNonAmmesso']|number_format(2,',', '.') }}</td>
+						<td>{{ datiPagamento['contributoErogabile'] ? datiPagamento['contributoErogabile']|number_format(2,',', '.') : '-' }}</td>
+					</tr>		
+				{% endfor %}
+			</tbody>
+		</table>				
+	</div>	
+			
+	{% if formContributoVisibile == true %}	
+		<div class="alert alert-info">
+			Questo campo si riferisce al contributo complessivo spettante calcolato sull'intera spesa rendicontata fino a questo momento.<br>
+			Quindi ad esempio se si sta istruendo un SALDO ed il beneficiario aveva presentato in precedenza un SAL,
+			il contributo complessivo spettante sarà calcolato sulla spesa complessiva ammessa del SAL sommata alla spesa complessiva ammessa del SALDO.
+		</div>
+		<div style="margin-top: 40px">
+			{{ form_start(formContributo) }}
+				{{ form_row(formContributo.contributoComplessivoSpettante) }}
+				{{ form_row(formContributo.submit_contributo) }}
+			{{ form_end(formContributo) }}
+		</div>
+	{% endif %}
+					
+	<div>
+		{{ pulsante_indietro(path("riepilogo_istruttoria_pagamento",{"id_pagamento" : pagamento.id})) }}
+	</div>
+		
+{% endblock %}

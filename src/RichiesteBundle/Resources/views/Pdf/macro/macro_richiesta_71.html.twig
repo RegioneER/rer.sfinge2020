@@ -1,0 +1,22 @@
+
+{% macro tabella_sezione_dinamica_fascicolo_elenco(label, istanza, path_albero,raw) %}
+	<li class="text-medium" style="text-align: justify">
+	<span class="text"><b>{{ label }}</b></span>
+    <br/>
+    {% set voci_sezione =  dati_frammento(istanza,path_albero, raw|default(false)) %}
+    {% for valore_sezione in voci_sezione %}
+        <ul>
+        {% for path_sezione, valore in valore_sezione.form %}
+			{% set path_label = path_albero ~".form."~path_sezione %}
+            <li>
+                {% if raw|default(false) == true %}
+                    {{ valore|raw }}
+                {% else %}
+                    {{ valore }}
+                {% endif %}
+            </li>
+        {% endfor %}
+        </ul>
+    {% endfor %}
+	</li>
+{% endmacro %}

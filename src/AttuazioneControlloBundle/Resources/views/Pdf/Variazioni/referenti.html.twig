@@ -1,0 +1,121 @@
+{% extends '@AttuazioneControllo/Pdf/Variazioni/variazione_generica.html.twig' %}
+{% block chiede %}
+
+    <p class="text-medium" align="center"><b>A TAL FINE</b><p>
+    <p class="text-small">
+        <b>consapevole delle conseguenze, anche penali previste nel medesimo decreto per chi presenta dichiarazioni false o mendaci.</b>
+    </p>
+    <p class="text-medium" align="center"><b>CHIEDE</b><p>
+    <p class="text-small">
+        l&apos;autorizzazione alla variazione 
+		{% if variazione.variazioniSingoloReferente|length > 0%}
+			dei referenti / responsabili 
+		{% else %}
+			del referente / responsabile 
+		{% endif %}
+		del procedimento
+    </p>
+
+{% endblock chiede %}
+
+{% block comunica %}
+
+    <p class="text-medium" align="center"><b>COMUNICA</b><p>
+    <p class="text-small">
+        La variazione 
+		{% if variazione.variazioniSingoloReferente|length > 0%}
+			dei referenti / responsabili 
+		{% else %}
+			del referente / responsabile 
+		{% endif %}
+		del procedimento
+    </p>
+    <p class="text-small">
+        {{variazione.note}}
+    </p>
+{% endblock comunica %}
+
+{% block body_variazione %}
+ <p class="text-medium" align="center"><b>DATI REFERENTE/RUP</b><p>
+
+	{% for p in variazione.variazioniSingoloReferente|map(v => v.proponente)|distinct %}
+    	<h5 style="text-align:center;">{{p.soggetto}}</h5>
+		{% for v in variazione.variazioniSingoloReferente|filter(v => v.proponente == p) %}
+			<table style="page-break-inside:avoid">
+				<thead>
+					<tr>
+						<th></th>
+						<th>Valore precedente</th>
+						<th>Valore variato</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<th>Tipo referenza</th>
+						<td>{{ _self.tipoReferenza(v) }}</td>
+						<td>{{ _self.tipoReferenza(v) }}</td>
+					</tr>
+					<tr>
+						<th>Nome cognome</th>
+						<td>{{ _self.nomeCognome(v.referenza.persona) }}</td>
+						<td>{{ _self.nomeCognome(v.persona) }}</td>
+					</tr>
+					<tr>
+						<th>Codice fiscale</th>
+						<td>{{ _self.cf(v.referenza.persona) }}</td>
+						<td>{{ _self.cf(v.persona) }}</td>
+					</tr>
+					<tr>
+						<th>Dati nascita</th>
+						<td>{{ _self.datiNascita(v.referenza.persona) }}</td>
+						<td>{{ _self.datiNascita(v.persona) }}</td>
+					</tr>
+					<tr>
+						<th>Dati residenza</th>
+						<td>{{ _self.datiResidenza(v.referenza.persona) }}</td>
+						<td>{{ _self.datiResidenza(v.persona) }}</td>
+					</tr>
+					<tr>
+						<th>Recapiti</th>
+						<td>{{ _self.recapito(v.referenza.persona) }}</td>
+						<td>{{ _self.recapito(v.persona) }}</td>
+					</tr>
+				</tbody>
+			</table>
+			<br>
+		{% endfor %}
+		<br>
+	{% endfor %}
+{% endblock body_variazione %}
+
+
+{% macro nomeCognome(persona) %}
+	{{ persona.nome }} {{ persona.cognome }}
+{% endmacro %}
+
+{% macro cf(persona) %}
+	{{ persona.codiceFiscale }}
+{% endmacro %}
+
+{% macro datiNascita(persona) %}
+	nato il {{ persona.dataNascita|date("d/m/Y") }}
+	in {{ persona.comune }}
+	stato {{ persona.statoNascita }}
+{% endmacro %}
+
+
+{% macro datiResidenza(persona) %}
+	residente in {{ persona.luogoResidenza.via }} {{ persona.luogoResidenza.numerocivico is not null ? ', '~persona.luogoResidenza.numerocivico : ''}}
+	- {{ persona.luogoResidenza.stato }} 
+	- {{ persona.luogoResidenza.comune }} 
+{% endmacro %}
+
+
+{% macro recapito(persona) %}
+	telefono {{ persona.telefonoPrincipale }} 
+	email {{ persona.emailPrincipale }}
+{% endmacro %}
+
+{% macro tipoReferenza(variazioneSingola) %}
+	{{ variazioneSingola.referenza.tipoReferenza.descrizione }}
+{% endmacro %}

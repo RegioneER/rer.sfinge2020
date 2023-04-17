@@ -1,0 +1,27 @@
+
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	{% if documenti is not empty %}
+		<h4>Elenco documenti caricati</h4>
+		<div class="form-body">		
+			{% for documento in documenti %}
+				{{ mostra_file(documento.documentoFile, path('elimina_documento_requisito', {'id_documento_requisito': documento.id, '_token': csrfToken }) ) }}
+				<br/>
+			{% endfor %}
+		</div>
+		{% else %}
+		<h6>Nessun documento caricato</h6>
+	{% endif %}
+	
+	<div class="form-body">
+		<h4>Carica documento</h4>
+			{{ form(form_doc) }}
+	</div>		
+	
+	<h4>Valutazione complessiva requisito chiave</h4>
+
+	{{ form(form) }}
+
+
+{% endblock %}

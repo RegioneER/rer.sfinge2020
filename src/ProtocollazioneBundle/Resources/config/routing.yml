@@ -1,0 +1,5 @@
+docer_protocollazione:
+    resource: "@ProtocollazioneBundle/Controller/DocERProtocollazioneController.php"
+    type:    annotation
+    prefix:   /protocollazione
+    

@@ -1,0 +1,35 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+
+	{{ form_start(form) }}
+
+	<h4>Dati personali</h4>
+
+	{{ form_row(form.denominazione) }}
+	{{ form_row(form.codice_fiscale) }}
+
+	<h4>Indirizzo residenza</h4>
+	{{ form_row(form.via) }}
+	{{ form_row(form.civico) }}
+	{{ form_row(form.stato) }}
+	{{ form_row(form.provincia) }}
+	{{ form_row(form.comune) }}
+	{{ form_row(form.provinciaEstera) }}
+	{{ form_row(form.comuneEstero) }}
+	{{ form_row(form.cap) }}
+	{{ form_row(form.localita) }}
+
+	<h4>Recapito principale</h4>
+
+	{{ form_row(form.tel) }}
+	{{ form_row(form.fax) }}
+	{{ form_row(form.email) }}
+	{{ form_row(form.email_pec) }}
+
+	{{ form_end(form) }}
+
+{% endblock %}
+{%block  jquery_page_document_ready %}
+	{% set vars = {'indirizzo': 'persona_fisica', 'form' : form }%}
+	{% include "BaseBundle:Base:province_comuni_js.html.twig" with vars %}
+{% endblock %}

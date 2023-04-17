@@ -1,0 +1,77 @@
+{% extends '::base.html.twig' %}
+  
+{% block body %}
+
+	<h4>Riepilogo certificazione</h4>
+	<table class="table table-striped">
+		<tr>
+			<td style="width:30%;">Numero</td>
+			<td><strong>{{ certificazione.numero }}</strong></td>
+		</tr>
+		<tr>
+			<td>Anno</td>
+			<td><strong>{{ certificazione.anno }}</strong></td>
+		</tr>
+		<tr>
+			<td>Stato</td>
+			<td><strong>{{ certificazione.stato }}</strong></td>
+		</tr>
+		<tr>
+			<td>Data proposta</td>
+			<td><strong>{{ certificazione.dataPropostaAdg is not null ? certificazione.dataPropostaAdg|date('d-m-Y') : "-" }}</strong></td>
+		</tr>
+		<tr>
+			<td>Data Approvazione</td>
+			<td><strong>{{ certificazione.dataApprovazione is not null ? certificazione.dataApprovazione|date('d-m-Y') : "-" }}</strong></td>
+		</tr>
+		<tr>
+			<td>Importo Proposto</td>
+			<td><strong>€ {{ certificazione.importoProposto|number_format(2, ',', '.') }}</strong></td>
+		</tr>
+	</table>
+	
+	<h4>Riepilogo asse</h4>
+	<table class="table table-striped">
+		<tr>
+			<td style="width:30%;">Titolo</td>
+			<td><strong>{{ asse.titolo }}</strong></td>
+		</tr>
+			<tr>
+				<td>Descrizione</td>
+				<td><strong>{{ asse.descrizione }}</strong></td>
+			</tr>
+	</table>
+			
+	<h4>Pagamenti</h4>		
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Titolo procedura</th>
+				<th>Soggetto</th>
+				<th>Data invio pagamento</th>				
+				<th>Modalità pagamento</th>
+				<th>Importo pagato</th>
+				<th>Importo da certificare</th>
+			</tr>
+		</thead>		
+		<tbody>
+		{% for certificazione_pagamento in certificazioni_pagamenti_asse %}
+			{% set pagamento = certificazione_pagamento.pagamento %}
+			{% set richiesta = pagamento.attuazioneControlloRichiesta.richiesta %}			
+			<tr>
+				<td>{{ richiesta.procedura.titolo }}</td>
+				<td>{{ richiesta.mandatario.soggetto.denominazione|capitalize }}</td>
+				<td>{{ pagamento.dataInvio | date("d/m/Y") }}</td>					
+				<td>{{ pagamento.modalitaPagamento }}</td>					
+				<td>{{ pagamento.mandatoPagamento is null ? "-" : "€ " ~ pagamento.mandatoPagamento.importoPagato|number_format(2, ',', '.') }}</td>
+				<td>&euro; {{ certificazione_pagamento.importo|number_format(2, ',', '.') }}</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>			
+			
+	<h4>Azioni</h4>		
+	<a href="{{ path("scarica_allegato_b_asse_certificazione", {"id_certificazione" : certificazione.id, 'id_asse': asse.id }) }}" class="btn btn-info">Scarica Allegato B</a>	
+	<a href="{{ path("valida_asse_certificazione", {"id_certificazione" : certificazione.id, 'id_asse': asse.id, '_token': csrfToken}) }}" class="btn btn-info">Valida Asse</a>		
+				
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends '@AttuazioneControllo/Pdf/Variazioni/variazione_generica.html.twig' %}
+
+{% block chiede %}
+
+		<p class="text-medium" align="center"><b>A TAL FINE</b><p>
+		<p class="text-small">
+			<b>consapevole delle conseguenze, anche penali previste nel medesimo decreto per chi presenta dichiarazioni false o mendaci.</b>
+		</p>
+		<p class="text-medium" align="center"><b>CHIEDE</b><p>
+		<p class="text-small">
+			l'autorizzazione alla variazione dei dati bancari associati al progetto.
+		</p>
+
+    {% endblock chiede %}
+
+    {% block comunica %}
+
+		<p class="text-medium" align="center"><b>COMUNICA</b><p>
+		<p class="text-small">
+			La variazione dei dati bancari
+		</p>
+		<p class="text-small">
+			{{variazione.note}}
+		</p>
+
+    {% endblock comunica %}
+
+{% block body_variazione %}
+<h3 style="text-align:center;">Dati bancari</h3>
+
+{% for datiBancari in variazione.datiBancari %}
+{% set current = datiBancari.datiBancari %}
+    <h4>{{ current.proponente.soggetto }}</h4>
+    <table style="margin-bottom:2em;">
+        <thead>
+            <tr>
+                <th>Campo</th>
+                <th>Valore precedente</th>
+                <th>Valore Variato</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th>Intestatario</th>
+                <td>{{ current.intestatario }}</td>
+                <td>{{ datiBancari.intestatario }}</td>
+            </tr>
+            <tr>
+                <th>Banca</th>
+                <td>{{ current.banca }}</td>
+                <td>{{ datiBancari.banca }}</td>
+            </tr>
+            <tr>
+                <th>Agenzia</th>
+                <td>{{ current.agenzia }}</td>
+                <td>{{ datiBancari.agenzia }}</td>
+            </tr>
+            <tr>
+                <th>IBAN</th>
+                <td>{{ current.iban }}</td>
+                <td>{{ datiBancari.iban }}</td>
+            </tr>
+            <tr>
+                <th>Conto tesoreria</th>
+                <td>{{ current.contoTesoreria }}</td>
+                <td>{{ datiBancari.contoTesoreria }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <hr/>
+{% endfor %}
+{% endblock body_variazione %}

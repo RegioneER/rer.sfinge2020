@@ -1,0 +1,39 @@
+<li class="">
+    <a href="javascript:;">
+        <span class="fa fa-users"></span>
+        <span class="title">Certificazioni</span>
+        <span class="arrow "></span>
+    </a>
+    <ul class="sub-menu">
+		<li id="elencoCertificazioni">
+			<a href="{{ path("elenco_certificazioni") }}">Elenco certificazioni</a>
+		</li>
+		<li id="elencoDecertificazioni">
+			<a href="{{ path("elenco_decertificazione_pagamenti") }}">Elenco decertificazioni</a>
+		</li>
+	    <li id="elencoRichiesteAttuazione">	
+            <a href="{{ path("elenco_gestione_certificazione") }}">Elenco operazioni</a>
+        </li>
+		<li id="elencoRichiesteAttuazione">	
+            <a href="{{ path("elenco_certificazione_pagamenti") }}">Elenco pagamenti</a>
+        </li>
+    </ul>
+</li>	
+<li class="">
+ <a href="javascript:;">
+	<span class="fa fa-users"></span>
+	<span class="title">Registro debitori</span>
+	<span class="arrow "></span>
+</a>
+<ul class="sub-menu">
+	<li id="elencoAssiRegistro">
+		<a href="{{ path("registro_elenco_assi") }}">Irregolarità</a>
+	</li>
+	<li id="elencoRichiesteAttuazione">	
+		<a href="{{ path("nonregolari_elenco_assi") }}">Importi non regolari</a>
+	</li>
+	<li id="elencoRichiesteAttuazione">	
+		<a href="{{ path("olaf_elenco_assi") }}">Olaf</a>
+	</li>
+</ul>
+</li>

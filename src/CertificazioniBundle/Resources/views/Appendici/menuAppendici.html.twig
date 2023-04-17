@@ -1,0 +1,29 @@
+<ul class="nav nav-tabs">
+	<li role="presentation"{% if menu|default() == "appendice1" %}class="active"{% endif %}>
+		<a href="{{ path("appendici_chiusura_1", {'id_chiusura' : chiusura.id })}}">Appendice 1</a>
+	</li>
+	<li role="presentation"{% if menu|default() == "appendice2" %}class="active"{% endif %}>
+		<a href="{{ path("appendici_chiusura_2", {'id_chiusura' : chiusura.id })}}">Appendice 2</a>
+	</li>
+	<li role="presentation"{% if menu|default() == "appendice3" %}class="active"{% endif %}>
+		<a href="{{ path("appendici_chiusura_3", {'id_chiusura' : chiusura.id })}}">Appendice 3</a>
+	</li>
+	<li role="presentation"{% if menu|default() == "appendice4" %}class="active"{% endif %}>
+		<a href="{{ path("appendici_chiusura_4", {'id_chiusura' : chiusura.id })}}">Appendice 4</a>
+	</li>
+	<li role="presentation"{% if menu|default() == "appendice5" %}class="active"{% endif %}>
+		<a href="{{ path("appendici_chiusura_5", {'id_chiusura' : chiusura.id })}}">Appendice 5</a>
+	</li>
+	<li role="presentation"{% if menu|default() == "appendice6" %}class="active"{% endif %}>
+		<a href="{{ path("appendici_chiusura_6", {'id_chiusura' : chiusura.id })}}">Appendice 6</a>
+	</li>
+	<li role="presentation"{% if menu|default() == "appendice7" %}class="active"{% endif %}>
+		<a href="{{ path("appendici_chiusura_7", {'id_chiusura' : chiusura.id })}}">Appendice 7</a>
+	</li>
+	<li role="presentation"{% if menu|default() == "appendice8" %}class="active"{% endif %}>
+		<a href="{{ path("appendici_chiusura_8", {'id_chiusura' : chiusura.id })}}">Appendice 8</a>
+	</li>
+</ul>
+
+
+

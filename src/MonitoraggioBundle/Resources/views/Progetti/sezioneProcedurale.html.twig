@@ -1,0 +1,188 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    
+    {% include 'MonitoraggioBundle:Progetti:menu.html.twig' with {'page_view' : page_view }%}
+    
+    {% set prototypeIter = form.mon_iter_progetti.vars.prototype %}
+    {% set childrensIter = prototypeIter.children %}
+    
+    {% set prototypeStato = form.mon_stato_progetti.vars.prototype %}
+    {% set childrensStato = prototypeStato.children %}
+    
+    {% form_theme form.mon_iter_progetti _self %}
+    {% form_theme form.mon_stato_progetti _self %}
+    
+    <h5>
+        Codice locale progetto: {{richiesta.protocollo}}
+    </h5>
+    
+     <article>
+        {{ form_start(form) }}
+        <section>
+        <h4>Iter di progetto</h4>
+
+        <table 
+            style = "visibility: {{- form.mon_iter_progetti|length >0 ? 'visible' : 'hidden' -}}" 
+            class="table table-striped table-hover table-bordered" 
+            id="lista-elementi-form" 
+            data-prototype="{{ form_row(prototypeIter)|e }}"
+            data-numero-elementi="{{- form.mon_iter_progetti|length -}}"
+        >
+
+            <thead>
+                <tr>
+                    <th style="min-width: 185px!important;">{{- childrensIter.fase_procedurale.vars.label -}}</th>
+                    <th>{{- childrensIter.data_inizio_prevista.vars.label -}}</th>
+                    <th>{{- childrensIter.data_inizio_effettiva.vars.label -}}</th>
+                    <th>{{- childrensIter.data_fine_prevista.vars.label -}}</th>
+                    <th>{{- childrensIter.data_fine_effettiva.vars.label -}}</th>
+                    {% if app.user is not null and (is_granted('ROLE_MONITORAGGIO_SCRITTURA')) %}
+                        <th>Azioni</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+            {% for iter in form.mon_iter_progetti %}
+                <tr>
+                    {{- form_row(iter.fase_procedurale) }}
+                    {{- form_row(iter.data_inizio_prevista) }}
+                    {{- form_row(iter.data_inizio_effettiva) }}
+                    {{- form_row(iter.data_fine_prevista) -}}
+                    {{- form_row(iter.data_fine_effettiva) -}}
+                    {% if app.user is not null and (is_granted('ROLE_MONITORAGGIO_SCRITTURA')) %}
+                    <td>
+                        <button class="btn btn-info dropdown-toggle red" onclick="eliminaElemento(this);" >
+                            Cancella&nbsp;<i class="fa fa-trash"></i>
+                        </button>
+                    </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+{% if app.user is not null and (is_granted('ROLE_MONITORAGGIO_SCRITTURA')) %}
+    <div>
+        <a id="aggiungi-elemento-iter-form" class="btn btn-page-action btn-primary" onclick="aggiungiElemento(this);">
+            Aggiungi
+        </a>
+    </div>
+{% endif %}
+
+        </section>
+            <h4>Stato di attuazione</h4>
+
+            <section>
+
+
+                <table 
+                    style = "visibility: {{- form.mon_stato_progetti|length > 0 ? 'visible' : 'hidden' -}};" 
+                    data-prototype="{{ form_row(prototypeStato)|e }}" 
+                    class="table table-striped table-hover table-bordered" 
+                    id="lista-elementi-form"
+                    data-numero-elementi="{{- form.mon_stato_progetti|length -}}"
+                    >
+                    <thead>
+                        <tr>
+                            <th>{{- childrensStato.stato_progetto.vars.label -}}</th>
+                            <th>{{- childrensStato.data_riferimento.vars.label -}}</th>
+                            {% if app.user is not null and (is_granted('ROLE_MONITORAGGIO_SCRITTURA')) %}
+                                <th>Azioni</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stato in form.mon_stato_progetti %}
+                        <tr>
+                            {{- form_row(stato.stato_progetto) -}}
+                            {{- form_row(stato.data_riferimento) -}}
+                            {% if app.user is not null and (is_granted('ROLE_MONITORAGGIO_SCRITTURA')) %}
+                                <td>
+                                    <button class="btn btn-info dropdown-toggle red" onclick="eliminaElemento(this);" >
+                                        Cancella&nbsp;<i class="fa fa-trash"></i>
+                                    </button>
+                                </td>
+                            {% endif %}
+                        </tr>
+                        {%  endfor %}
+                    </tbody>
+            </table>
+
+
+                {% if app.user is not null and (is_granted('ROLE_MONITORAGGIO_SCRITTURA')) %}
+            <div>
+                <a onclick="aggiungiElemento(this);" class="btn btn-page-action btn-primary" id="aggiungi-elemento-stato-form">Aggiungi</a>
+            </div>
+        {% endif %}
+
+            </section>
+    {{ form_end(form) }}
+     </article>
+{% endblock %}
+
+{% block jquery_page_document_ready %}
+<script type="text/javascript">
+    'use strict';
+    
+    function aggiungiElemento(event){
+        debugger;
+        var target = event.target;
+        var tabella = $(event).parent().parent().find('table');   
+        var numeroElementi = parseInt(tabella.attr('data-numero-elementi'));
+        var nuovoElemento = tabella
+            .attr('data-prototype')
+            .replace(/__name__/g, numeroElementi);
+        numeroElementi++;
+        tabella.attr('data-numero-elementi', numeroElementi);
+        
+        tabella.find('tbody')
+            .append(nuovoElemento);
+
+        tabella.css("visibility", "visible");
+
+        tabella
+            .find('tbody > tr:last-of-type')
+            .find('.input-date, .datepicker, .date-picker > input')
+            .datetimepicker({
+                pickTime: false,
+                language: 'it',
+                direction: 'down'
+        });
+        App.initAjax();
+
+    }
+
+    function eliminaElemento( e ){
+        $(e).parent().parent().remove().trigger('change');
+    }
+
+    
+
+    
+</script>
+{% endblock %}
+
+{% block form_row -%}
+
+        {{- not form.vars.compound ? '<td>' : '' -}}
+            {{- form_errors(form) -}}
+            {{- form_widget(form) -}}
+        {{- not form.vars.compound ? '</td>' : '' -}}
+    
+{%- endblock form_row %}
+
+{% block form_widget_compound %}
+{% if form.vars.prototype is not defined %}
+<tr {{ block('widget_container_attributes') }}>
+    {{ block('form_rows') }}
+    {% if app.user is not null and (is_granted('ROLE_MONITORAGGIO_SCRITTURA')) %}
+        <td>
+            <button class="btn btn-info dropdown-toggle red" onclick="eliminaElemento(this);" >
+                Cancella&nbsp;<i class="fa fa-trash"></i>
+            </button>
+        </td>
+    {% endif %}
+</tr>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,103 @@
+<h4>
+    Pagamenti
+</h4>
+
+{% if pagamentiAmmessi|length > 0 %}
+
+<table class="table table-striped table-hover table-bordered">
+    <thead>
+        <tr>
+            <th>Codice pagamento</th>
+            <th>Tipologia</th>
+            <th>Data pagamento</th>
+            <th>Importo pagamento</th>
+            <th>Data pag. ammesso</th>
+            <th>Importo pag. ammesso</th>
+            <th>Livello gerarchico</th>
+            <th>Note</th>
+            <th>Azioni</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for pagamento in pagamentiAmmessi %}
+                {% for pagamentoammesso in pagamento.pagamentiammessi %}
+                    <tr>
+                        <td>{{ pagamento.id }}</td>
+                        <td>{{ pagamento.tipologiapagamento }}</td>
+                        <td>{{ pagamento.datapagamento|date('d/m/Y') }}</td>
+                        <td>{{ pagamento.importo|number_format(2, ',', '.') }}</td>
+                        <td>{{ pagamentoammesso.datapagamento|date('d/m/Y') }}</td>
+                        <td>{{ pagamentoammesso.importo|number_format(2, ',', '.') }}</td>
+                        <td>{{ pagamentoammesso.livellogerarchico }}</td>
+                        <td>{{ pagamentoammesso.note }}</td>
+                        <td>
+                            <div class="dropdown">
+                                <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    Azioni
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                    {% if app.user is not null and (is_granted('ROLE_MONITORAGGIO_SCRITTURA')) %}
+                                        <li>
+                                            <a href="{{- path('monitoraggio_modifica_pagamento_ammesso', { 'pagamento_ammesso_id': pagamentoammesso.id}) -}}">
+                                                Modifica pagamento ammesso
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="{{- path('monitoraggio_aggiungi_pagamento_ammesso', { 'pagamento_id': pagamento.id }) -}}">
+                                                Aggiungi pagamento ammesso
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a data-confirm="Sei sicuro di voler eliminare il pagamento ammesso?" href="{{- path('monitoraggio_elimina_pagamento_ammesso', { 'pagamento_ammesso_id': pagamentoammesso.id, 'csrfToken' : csrfToken }) -}}">
+                                                Elimina pagamento ammesso
+                                            </a>
+                                        </li>
+
+                                    {% else %}
+
+                                        <li>
+                                            <a href="{{- path('monitoraggio_modifica_pagamento_ammesso', { 'pagamento_ammesso_id': pagamentoammesso.id}) -}}">
+                                                Visualizza pagamento ammesso
+                                            </a>
+                                        </li>
+
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>                    
+                {% else %}
+                    <tr>
+                        <td>{{ pagamento.id }}</td>
+                        <td>{{ pagamento.tipologiapagamento }}</td>
+                        <td>{{ pagamento.datapagamento|date('d/m/Y') }}</td>
+                        <td>{{ pagamento.importo|number_format(2, ',', '.') }}</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>
+                            <div class="dropdown">
+                                <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    Azioni
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                    <li>
+                                        <a href="{{- path('monitoraggio_aggiungi_pagamento_ammesso', { 'pagamento_id': pagamento.id }) -}}">
+                                            Aggiungi pagamento ammesso
+                                        </a>
+                                    </li> 
+                                </ul>
+                        </td>
+                    </tr>   
+                {% endfor %}
+            
+        {% endfor %}
+    </tbody>
+</table>
+
+{% else %}
+    <h5>Nessun elemento trovato</h5></br>
+{% endif %}

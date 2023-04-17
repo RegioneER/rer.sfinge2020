@@ -1,0 +1,21 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <a href="{{ path('funzionalita_liquidazione') }}">Torna</a>
+    <br/>
+    <br/>
+
+    <p class="lead">Seleziona la procedura per cui creare la/e quietanza/e</p>
+
+    {% for procedura in procedure %}
+        <ul>
+            <li>
+                <a href="{{ path('crea_quietanza_elenco_richieste', {'procedura_id':procedura.id }) }}">
+                    {{ procedura.id }} - {{ procedura.titolo }}
+                </a>
+            </li>
+        </ul>
+    {% endfor %}
+
+    <a href="{{ path('funzionalita_liquidazione') }}">Torna</a>
+{% endblock %}

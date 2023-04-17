@@ -1,0 +1,94 @@
+{% extends '::base.html.twig' %}
+
+{# |||||| Usa un tema per i form diverso |||||| #}
+{% form_theme form ':Form:form_inline_fields.html.twig' %}
+
+{% block intestazione %}
+	{{ parent() }}
+
+	{{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% block body %}
+
+	<p class="lead">Cercare la persona da associare all'incarico</p>
+	
+	<br>
+
+	{{ form_start(form) }}
+
+		{{ form_row(form.nome) }}
+		{{ form_row(form.cognome) }}
+		{{ form_row(form.codiceFiscale) }}
+		{{ form_row(form.submit) }}
+
+	{{ form_end(form) }}
+
+
+{% if incaricabili|length %}
+<table class="table table-striped table-hover table-bordered" id="incaricabili-elenco">
+	<thead>
+		<tr>
+			<th>Id</th>
+			<th>Nome</th>
+			<th>Cognome</th>
+			<th>Codice fiscale</th>
+			<th>Email</th>
+			<th>Azioni</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for incaricabile in incaricabili %}
+			<tr>
+				<td>{{ incaricabile.id }}</td>
+				<td>{{ incaricabile.nome }}</td>
+				<td>{{ incaricabile.cognome }}</td>
+				<td>{{ incaricabile.codiceFiscale }}</td>
+				<td>{{ incaricabile.emailPrincipale}}</td>
+				<td>
+					{% if is_granted('ROLE_SUPER_ADMIN') %}
+						<a href="{{ path("associa_incaricato",{"persona_id":incaricabile.id, "soggetto_id":soggetto_id, '_token': csrfToken}) }}">
+					{% else %}
+						<a href="{{ path("associa_incaricato",{"persona_id":incaricabile.id, '_token': csrfToken}) }}">
+					{% endif %}
+					<button id="seleziona" class="btn btn-info">Seleziona <span class="fa fa-arrow-right"></span></button></a>
+				</td>
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>
+{% elseif aiuto|length %}
+	<div class="row">
+		<div class="col-md-12">
+			<div class="alert alert-warning">
+				{{ aiuto }}
+			</div>
+			{% if nuova_persona == true %}
+			<div class="btn-group">
+				<a href="{{ path("crea_persona_incarico") }}" class="btn btn-primary">Inserisci persona </a>
+			</div>
+			{% endif %}
+		</div>
+	</div>
+	<div class="alert alert-warning">Attenzione!</div>
+{% endif %}
+
+	<div class="page-actions">
+		{{ pulsante_indietro("selezione_incarico") }}
+	</div>
+	
+	<script type="text/javascript" language="javascript">
+		$( document ).ready(function() {
+			$(this).val('Seleziona').attr('disabled','');
+		});
+		$(function()
+		{
+			$('#seleziona').on('click',function()
+			{
+				$(this).val('Attendere ...').attr('disabled','disabled');
+			});
+  
+		});
+	</script>
+
+{% endblock %}

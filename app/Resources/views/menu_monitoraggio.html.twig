@@ -1,0 +1,36 @@
+<li class="">
+    <a href="javascript:;">
+        <span class="fa fa-building"></span>
+        <span class="title">Aziende</span>
+        <span class="arrow "></span>
+    </a>
+    <ul class="sub-menu">
+        <li id="elencoAziende">
+            <a href="{{ path("elenco_aziende") }}">Elenco</a>
+        </li>
+        <li id="creaAzienda">
+            <a href="{{ path("crea_azienda") }}">Crea</a>
+        </li>
+    </ul>
+</li>
+<li>
+    <a href="javascript:;">
+        <span class="fa fa-building"></span>
+        <span class="title">Monitoraggio</span>
+        <span class="arrow "></span>
+    </a>
+    <ul class="sub-menu">
+        <li id="monitoraggio_menu">
+            <a href="{{- path('elenco_procedure_attivazione') -}}">Procedure di attivazione</a>
+            <a href="{{- path('elenco_trasferimenti') -}}">Trasferimenti</a>
+            <a href="{{- path('monitoraggio_elenco_progetti') -}}">Progetti</a>
+            <a href="{{ path("elenco_tabelle_contesto") }}">Elenco Tabelle di Contesto</a>
+            <a href="{{ path("elenco_strutture_protocollo") }}">Elenco Strutture Protocollo</a>
+            {% if app.user is not null and (is_granted('ROLE_MONITORAGGIO_SCRITTURA')) %}
+                 <a href="{{ path("elenco_monitoraggio_esportazione") }}">Gestione Invii</a>
+                 <a href="{{ path("monitoraggio_elenco_importazioni") }}">Importazioni</a>
+                 <a href="{{ path("monitoraggio_associazioni_azioni_indicatori") }}">Associazioni Azioni Indicatori</a>
+            {% endif %}
+        </li>
+    </ul>
+</li>

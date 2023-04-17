@@ -1,0 +1,42 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <div class="table-toolbar">
+        <div class="btn-group">
+            <a href="{{ path('crea_frammento', {'id_pagina':id_pagina}) }}"><button id="sample_editable_1_new" class="btn green"><span class="fa fa-plus"></span></button>
+            </a>
+        </div>
+    </div>
+	{% if frammenti|length > 0 %}
+    <table class="table table-striped table-hover table-bordered" id="notizie-elenco">
+        <thead>
+            <tr>
+				<th>Template</th>
+				<th>Alias</th>
+				<th>Titolo</th>
+				<th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+			{% for frammento in frammenti %}
+				<tr>
+					<td>{{ frammento.titolo }}</td>
+					<td>{{ frammento.alias }}</td>
+					<td>{{ frammento.tipoFrammento.nome }}</td>
+					<td><div class="dropdown">
+							<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuFrammenti" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								Azioni
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenuFrammenti">
+								<li><a href="{{ path('modifica_frammento', {'id_frammento':frammento.id}) }}">Modifica</a></li>
+								<li><a href="{{ path('elimina_frammento', {'id_frammento':frammento.id, '_token': csrfToken }) }}">Elimina</a></li>
+							</ul>
+						</div>
+					</td>
+				</tr>
+			{% endfor %}
+        </tbody>
+    </table>
+	{% endif %}
+{% endblock %}

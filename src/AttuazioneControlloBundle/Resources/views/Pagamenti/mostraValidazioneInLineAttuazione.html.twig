@@ -1,0 +1,39 @@
+{% if esito.esito %}
+	{% set addictional_class =  esito.messaggi is not iterable and esito.messaggi == 'Integrazione'  ? 'integrazione' : 'complete' %}
+	<li class="list-group-item {{addictional_class}}">
+		<a href="{{path}}">
+			{{ label }}
+			
+			{# TUTTO qUESTO PER LA MALEDETTA ISTRUTTORIA 773!!!! #}
+			{% if sezione is defined and sezione == 'monitoraggio_dichiarazioni' %}
+				<a href="{{path('questionario_pagamento_istruttoria_valuta', {'id_pagamento':pagamento.id})}}" class="label label-info" style="color: white">Istruisci</a>	
+			{% endif %}	
+			
+		</a>
+	</li>
+{% else  %}
+	<li class="list-group-item">
+		<a href="{{path}}">
+			{{ label }}
+		</a>
+		
+			{# TUTTO qUESTO PER LA MALEDETTA ISTRUTTORIA 773!!!! #}
+			{% if sezione is defined and sezione == 'monitoraggio_dichiarazioni' %}
+				<a href="{{path('questionario_pagamento_istruttoria_valuta', {'id_pagamento':pagamento.id})}}" class="label label-info" style="color: white">Istruisci</a>	
+			{% endif %}	
+		
+		{% set messaggioPopover = "" %}
+		{% for messaggio in esito.messaggiSezione %}
+			{% set messaggioPopover  = messaggioPopover ~ "- " ~ messaggio ~ "<br><br>" %}
+		{% endfor %}
+		<span class="help"
+			  data-container="body"
+			  data-toggle="popover"
+			  data-trigger="hover"
+			  data-placement="top"
+			  data-title="Suggerimenti di compilazione"
+			  data-html="true"
+			  data-content="{{ messaggioPopover }}">
+			istruzioni</span>
+	</li>
+{% endif  %}

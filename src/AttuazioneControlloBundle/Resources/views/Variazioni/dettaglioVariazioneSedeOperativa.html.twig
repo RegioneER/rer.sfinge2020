@@ -1,0 +1,17 @@
+{% extends 'AttuazioneControlloBundle:Variazioni:dettaglioVariazione.html.twig' %}
+
+
+{% block elementi_domanda %}
+	{{ mostra_validazione_in_line_variazione(
+                                            'sede_operativa', 
+                                            path('sede_operativa_variazione', {
+                                                id_variazione: variazione.id
+                                                }), 
+                                            'UL / Sede del progetto', 
+                                            variazione, 
+                                            null, 
+                                            null,
+                                            null
+        ) 
+    }}
+{% endblock elementi_domanda %}

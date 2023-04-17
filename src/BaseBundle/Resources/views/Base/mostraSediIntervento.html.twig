@@ -1,0 +1,44 @@
+{% if sedi|length > 0 %}
+	<h6>Unità locali/Sedi intervento</h6>
+	<div class="row">
+		<div class="col-md-12">
+			<table class="table table-striped table-hover table-bordered">
+				{% for sedeOP in sedi %}
+					{% set sede = sedeOP.sede %}
+					{% if sede.denominazione is not null %}
+						<tr>
+							<td style="width: 30%"><strong>Nome sede</strong></td>
+							<td style="width: 70%"><strong>{{ sede.denominazione }}</strong></td>
+						</tr>
+					{% endif %}
+					<tr>
+						<td style="width: 30%">Indirizzo</td>
+						<td style="width: 70%">{{ sede.indirizzo.via }} {{ sede.indirizzo.numeroCivico }}</td>
+					</tr>
+					<tr>
+						<td style="width: 30%">Cap</td>
+						<td style="width: 70%">{{ sede.indirizzo.cap }}</td>
+					</tr>
+					<tr>
+						<td style="width: 30%">Comune</td>
+						<td style="width: 70%">
+							{% if  sede.indirizzo is not null and  sede.indirizzo.stato.codicecompleto != '11101' %}
+								{{ sede.indirizzo.comuneEstero }} ({{ sede.indirizzo.provinciaEstera }})
+							{% else %}
+								{{ sede.indirizzo.comune }}
+							{% endif %}
+						</td>
+					</tr>
+					<tr>
+						<td style="width: 30%">Codice ATECO</td>
+						<td style="width: 70%">{{ sede.ateco }}</td>
+					</tr>
+					<tr>
+						<td style="width: 30%">Numero REA</td>
+						<td style="width: 70%">{{ sede.numeroRea }}</td>
+					</tr>
+				{% endfor %}
+			</table>
+		</div>
+	</div>
+{% endif %}

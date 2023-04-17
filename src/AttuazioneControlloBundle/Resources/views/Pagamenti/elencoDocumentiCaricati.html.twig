@@ -1,0 +1,22 @@
+{% extends '::base.html.twig' %}
+
+{% block intestazione %}
+	{{ parent() }}
+	{{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% block body %}
+
+    <table class="table table-striped table-hover table-bordered" id="pagamenti-elenco">
+        <tbody>
+			{% for documento in documenti %}
+				<tr>
+				<td>{{ mostra_file(documento.documentoFile, null )}}</td>
+				</tr>
+			{% endfor %}
+			<tr>
+				<td>{{ mostra_file(domanda, null )}}</td>
+			</tr>
+        </tbody>
+    </table>
+{% endblock %}

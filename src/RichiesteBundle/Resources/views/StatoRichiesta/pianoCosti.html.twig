@@ -1,0 +1,92 @@
+{% extends '::base.html.twig' %}
+
+{% block intestazione %}
+	{{ parent() }}
+	{{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% block body %}
+	<h3>
+		{% if proponente.richiesta.procedura.multipianocosto %}
+			<select id="scelta-proponente"  style="height: 20em">
+				{% for p in proponente.richiesta.proponenti  %}
+					<option value="{{-  p.id -}}" {{ p == proponente ? 'selected' : '' }}>{{ p.soggetto.denominazione }}</option>
+				{% endfor %}
+			</select>
+		{% else %}
+			{{ proponente.soggetto.denominazione }}
+		{% endif %}
+	</h3>
+
+	{% for sezione, voci in piano_costi %}
+	<div style="page-break-inside:avoid;">
+	<h4>{{ sezione }}</h4>
+	<table class="sezione table table-bordered table-striped"  style=" width: 100%; ">
+		<thead>
+			<tr>
+				<th rowspan="2">Voce spesa</th>
+				<th colspan="{{- annualita|length -}}" style="text-align:center; padding-left:0.2em; padding-right:0.2em;">Presentato</th>
+				<th colspan="{{- annualita|length -}}" style="text-align:center; padding-left:0.2em; padding-right:0.2em;">Ammissibile</th>
+			</tr>
+			<tr>
+				{% for anno in annualita %}
+                    <th  style="text-align:center;">{{ anno }}</th>
+                {% endfor %}
+				{% for anno in annualita %}
+                    <th  style="text-align:center;">{{ anno }}</th>
+                {% endfor %}
+			</tr>
+		</thead>
+		<tbody>
+				{% for voce in voci %}
+					<tr>
+						<td>{{ voce.pianocosto.titolo }}</td>
+						{% for indice, anno in annualita %}
+							<td class="euro bold">
+								{{- attribute(voce, "getImportoAnno#{indice}")|number_format(2,',','.') -}}
+							</td>
+						{% endfor %}
+						{% for indice, anno in annualita %}
+								{% set taglio = attribute(voce.istruttoria, "getTaglioAnno#{indice}") %}
+							<td>
+								<span style="{{ taglio > 0 ? 'color: red;' : '' }}">
+									<span  class="euro bold">
+										{{- attribute(voce.istruttoria, "getImportoAmmissibileAnno#{indice}")|number_format(2,',','.') -}}
+									</span>
+									{% if taglio > 0 %}
+										(<span class="euro">
+											{{- (-taglio)|number_format(2,',','.') -}}
+										</span>)
+									{% endif %}
+								</span>
+								{% set nota = attribute(voce.istruttoria, "getNotaAnno#{indice}")|trim %}
+								{% if nota is not null and nota is not empty %}
+									<div class="print-block">
+										<hr>
+										<p class="small">{{ nota }}</p>
+									</div>
+								{% endif %}
+							</td>
+						{% endfor %}
+					</tr>
+				{% endfor %}
+		</tbody>
+</table>
+</div>
+{% endfor %}
+
+<script>
+	'use strict';
+	$(document).ready( function(){
+		$('i[data-toggle="tooltip"]').tooltip();
+		$('#scelta-proponente').change(selezionaProponente);
+	});
+
+	function selezionaProponente(event){
+		var select = $(event.target);
+		var option = select.find(":selected");
+		location.assign(option.val());
+	}
+
+</script>
+{% endblock %}

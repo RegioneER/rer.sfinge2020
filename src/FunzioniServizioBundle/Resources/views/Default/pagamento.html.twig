@@ -1,0 +1,324 @@
+{% extends '::base.html.twig' %}
+
+    {% block begin_page_level_plugin_style %}
+        <style>
+            @media (min-width: 768px) {
+                .modal-xl {
+                    width: 90%;
+                    max-width: 1200px;
+                }
+                .modal-l {
+                    width: 40%;
+                    max-width: 1200px;
+                }
+            }
+        </style>
+    {% endblock %}
+
+    {% block body %}
+        <p class="lead">Dettagli del pagamento</p>
+
+        {% if progetto.elenco_pagamenti|length %}
+            {% set pagamento = progetto.elenco_pagamenti|first %}
+            <table class="table table-hover table-bordered" id="dettaglio-pagamento">
+                <tbody>
+                <tr>
+                    <td width="200px" class="bold">Titolo bando</td>
+                    <td>{{ progetto.titolo_bando }}</td>
+                </tr>
+                <tr>
+                    <td width="200px" class="bold">Nr. protocollo progetto</td>
+                    <td>{{ progetto.numero_protocollo }}</td>
+                </tr>
+                <tr>
+                    <td width="200px" class="bold">Data protocollo progetto</td>
+                    <td>{{ progetto.data_protocollo|date('d/m/Y') }}</td>
+                </tr>
+                <tr>
+                    <td width="200px" class="bold">Beneficiario</td>
+                    <td>{{ progetto.beneficiario }}</td>
+                </tr>
+                <tr>
+                    <td width="200px" class="bold">Codice fiscale</td>
+                    <td>{{ progetto.codice_fiscale }}</td>
+                </tr>
+                <tr>
+                    <td width="200px" class="bold">Partita IVA</td>
+                    <td>{{ progetto.partita_iva }}</td>
+                </tr>
+                <tr>
+                    <td width="200px" class="bold">Protocollo pagamento</td>
+                    <td>{{ pagamento.protocollo_domanda_pagamento }}</td>
+                </tr>
+                <tr>
+                    <td width="200px" class="bold">Data pagamento</td>
+                    <td>{{ pagamento.data_domanda_pagamento|date('d/m/Y') }}</td>
+                </tr>
+                <tr>
+                    <td width="200px" class="bold">Tipo pagamento</td>
+                    <td>{{ pagamento.tipo_domanda_pagamento }}</td>
+                </tr>
+                </tbody>
+            </table>
+            <br />
+            <input type="text" class="form-control" placeholder="Cerca tra gli allegati..." id="search_allegati">
+            <br />
+            <table class="table table-striped table-hover table-bordered" id="allegatos">
+                <thead>
+                <tr class="myHead">
+                    <th colspan="4">Allegati al pagamento</th>
+                </tr>
+                <tr class="myHead">
+                    <th>Nome</th>
+                    <th>Link</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for allegato in pagamento.elenco_documenti_allegati %}
+                    <tr>
+                        <td>{{ allegato.nome }}</td>
+                        <td>{% if allegato.url is not empty %}<a class="btn btn-info btn-sm" href="{{ allegato.url }}" role="button">Scarica <span class="fa fa-download"></span></a>{% else %}File non caricato dalla PA{% endif %}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <br />
+            <input type="text" class="form-control" placeholder="Cerca tra i giustificativi..." id="search_giustificativi">
+            <br />
+            <table class="table table-striped table-hover table-bordered" id="giustificativos">
+                <thead>
+                <tr class="myHead">
+                    <th colspan="4">Elenco giustificativi</th>
+                </tr>
+                <tr class="myHead">
+                    <th>Intestatario</th>
+                    <th>Importo</th>
+                    <th>Elenco imputazioni</th>
+                    <th>Elenco quietanze</th>
+                    <th>Link</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for giustificativo in pagamento.elenco_giustificativi %}
+                    <tr>
+                        <td>{{ giustificativo.intestatario }}</td>
+                        <td style="text-align: right">{{ giustificativo.importo_fattura|number_format(2, ',', '.') }} €</td>
+                        <td>
+                            <button href="#modalImputazioni_{{ loop.index }}" id="openImputazioni_{{ loop.index }}" data-toggle="modal" class="btn btn-default">Mostra</button>
+                        </td>
+                        <td>
+                            <button href="#modalQuietanze_{{ loop.index }}" id="openQuietanze_{{ loop.index }}" data-toggle="modal" class="btn btn-default">Mostra</button>
+                        </td>
+                        <td>{% if giustificativo.url is not empty %}<a class="btn btn-info btn-sm" href="{{ giustificativo.url }}" role="button">Scarica <span class="fa fa-download"></span></a>{% else %}File non caricato dalla PA{% endif %}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <br />
+            <input type="text" class="form-control" placeholder="Cerca tra i documenti di istruttoria..." id="search_istruttoria">
+            <br />
+            <table class="table table-striped table-hover table-bordered" id="documentoIstruttorias">
+                <thead>
+                <tr class="myHead">
+                    <th colspan="4">Istruttoria pagamento: elenco documenti</th>
+                </tr>
+                <tr class="myHead">
+                    <th>Tipologia</th>
+                    <th>Importo</th>
+                    <th>Numero</th>
+                    <th>Data</th>
+                    <th>Link</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for documentoIstruttoria in pagamento.elenco_documenti_istruttoria %}
+                    <tr>
+                        <td>{{ documentoIstruttoria.tipologia }}</td>
+                        <td style="text-align: right">{{ documentoIstruttoria.importo|number_format(2, ',', '.') }} €</td>
+                        <td style="text-align: right">{{ documentoIstruttoria.numero }}</td>
+                        <td style="text-align: center">{% if documentoIstruttoria.data is not empty %}{{ documentoIstruttoria.data|date('d/m/Y') }}{% endif %}</td>
+                        <td>{% if documentoIstruttoria.url is not empty %}<a class="btn btn-info btn-sm" href="{{ documentoIstruttoria.url }}" role="button">Scarica <span class="fa fa-download"></span></a>{% else %}File non caricato dalla PA{% endif %}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- modal-->
+            {% for giustificativo in pagamento.elenco_giustificativi %}
+                <div class="modal fade" id="modalImputazioni_{{ loop.index }}">
+                    <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                <p class="lead">Elenco imputazioni</p>
+                            </div>
+                            <div class="modal-body">
+                                <table class="table table-hover table-bordered" id="dettaglio-imputazione">
+                                    <tbody>
+                                    <tr>
+                                        <td width="200px" class="bold">Intestatario giustificativo</td>
+                                        <td>{{ giustificativo.intestatario }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td width="200px" class="bold">Importo giustificativo</td>
+                                        <td>{{ giustificativo.importo_fattura|number_format(2, ',', '.') }} €</td>
+                                    </tr>
+                                    <tr>
+                                        <td width="200px" class="bold">Protocollo pagamento</td>
+                                        <td>{{ pagamento.protocollo_domanda_pagamento }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td width="200px" class="bold">Tipo pagamento</td>
+                                        <td>{{ pagamento.tipo_domanda_pagamento }}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <table class="table table-striped table-hover table-bordered" id="imputaziones">
+                                    <thead>
+                                    <tr>
+                                        <th colspan="4">Elenco imputazioni</th>
+                                    </tr>
+                                    <tr class="myHead">
+                                        <th>Voce di spesa</th>
+                                        <th>Importo richiesto</th>
+                                        <th>Importo ammesso</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% if giustificativo.elenco_imputazioni is defined %}
+                                        {% for imputazione in giustificativo.elenco_imputazioni %}
+                                            <tr>
+                                                <td>{{ imputazione.voce_di_spesa }}</td>
+                                                <td style="text-align: right">{{ imputazione.importo_richiesto|number_format(2, ',', '.') }} €</td>
+                                                <td style="text-align: right">{{ imputazione.importo_ammesso|number_format(2, ',', '.') }} €</td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default " data-dismiss="modal">Chiudi</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="modalQuietanze_{{ loop.index }}">
+                    <div class="modal-dialog modal-l">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                <p class="lead">Elenco quietanze</p>
+                            </div>
+                            <div class="modal-body">
+                                <table class="table table-hover table-bordered" id="dettaglio-quietanza">
+                                    <tbody>
+                                    <tr>
+                                        <td width="200px" class="bold">Intestatario giustificativo</td>
+                                        <td>{{ giustificativo.intestatario }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td width="200px" class="bold">Importo giustificativo</td>
+                                        <td>{{ giustificativo.importo_fattura|number_format(2, ',', '.') }} €</td>
+                                    </tr>
+                                    <tr>
+                                        <td width="200px" class="bold">Protocollo pagamento</td>
+                                        <td>{{ pagamento.protocollo_domanda_pagamento }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td width="200px" class="bold">Tipo pagamento</td>
+                                        <td>{{ pagamento.tipo_domanda_pagamento }}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <table class="table table-striped table-hover table-bordered" id="quietanzas">
+                                    <thead>
+                                    <tr>
+                                        <th colspan="4">Elenco quietanze</th>
+                                    </tr>
+                                    <tr class="myHead">
+                                        <th>Importo</th>
+                                        <th>Link</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% if giustificativo.elenco_quietanze is defined %}
+                                        {% for quietanza in giustificativo.elenco_quietanze %}
+                                            <tr>
+                                                <td style="text-align: right">{{ quietanza.importo|number_format(2, ',', '.') }} €</td>
+                                                <td>{% if quietanza.url is not empty %}<a class="btn btn-info btn-sm" href="{{ quietanza.url }}" role="button">Scarica <span class="fa fa-download"></span></a>{% else %}File non caricato dalla PA{% endif %}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default " data-dismiss="modal">Chiudi</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            <!-- /modal -->
+        {% else %}
+            <div class="row">
+                <div class="col-md-12">
+                    <p>Nessun pagamento disponibile</p>
+                </div>
+            </div>
+        {% endif %}
+        <a type="button" class="btn btn-default" href="{{ path('funzioni_servizio_progetto', {'idBando': progetto.id_bando, 'idProgetto': progetto.id_progetto, 'piattaforma': progetto.piattaforma}) }}">Ritorna</a>
+    {% endblock %}
+
+{% block  jquery_page_document_ready %}
+    <script>
+        $('#search_allegati').on('keyup', function() {
+            var value = $(this).val();
+            var patt = new RegExp(value, "i");
+
+            $('#allegatos').find('tr').each(function() {
+                if (!($(this).find('td').text().search(patt) >= 0)) {
+                    $(this).not('.myHead').hide();
+                }
+                if (($(this).find('td').text().search(patt) >= 0)) {
+                    $(this).show();
+                }
+
+            });
+        });
+
+        $('#search_giustificativi').on('keyup', function() {
+            var value = $(this).val();
+            var patt = new RegExp(value, "i");
+
+            $('#giustificativos').find('tr').each(function() {
+                if (!($(this).find('td').text().search(patt) >= 0)) {
+                    $(this).not('.myHead').hide();
+                }
+                if (($(this).find('td').text().search(patt) >= 0)) {
+                    $(this).show();
+                }
+
+            });
+        });
+
+        $('#search_istruttoria').on('keyup', function() {
+            var value = $(this).val();
+            var patt = new RegExp(value, "i");
+
+            $('#documentoIstruttorias').find('tr').each(function() {
+                if (!($(this).find('td').text().search(patt) >= 0)) {
+                    $(this).not('.myHead').hide();
+                }
+                if (($(this).find('td').text().search(patt) >= 0)) {
+                    $(this).show();
+                }
+
+            });
+        });
+    </script>
+{% endblock %}

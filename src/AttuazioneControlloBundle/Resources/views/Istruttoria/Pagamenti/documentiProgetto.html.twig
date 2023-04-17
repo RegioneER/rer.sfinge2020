@@ -1,0 +1,90 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+		
+	<h4>Documento trasmissione rendicontazione</h4>
+	<table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+		<tbody>
+			<tr>
+				{% if pagamento.documentoPagamentoFirmato %}
+					<td>{{ mostra_file_dettaglio_utente(pagamento.documentoPagamentoFirmato, null )}}</td>
+				{% elseif pagamento.documentoPagamento and not pagamento.richiesta.procedura.rendicontazioneProceduraConfig.isRichiestaFirmaDigitale %}
+					<td>{{ mostra_file_dettaglio_utente(pagamento.documentoPagamento, null )}}</td>
+				{% else %}
+					<td>Nessun documento</td>
+				{% endif %}
+			</tr>
+		</tbody>
+	</table>	
+	
+
+	<h4>Documenti di progetto</h4>
+	<table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+		<tbody>
+			{% for documento in documentiProgetto %}
+				<tr>
+					<td>
+						{{ mostra_file_istruttoria(documento, path('singolo_doc_pagamento_istruttoria', {'id_pagamento' : pagamento.id, 'id_documento_pagamento' : documento.id})) }}
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+		
+	{% if istruttoria is defined %}
+		<h4>Istruttoria</h4>
+		{{ form_start(form_istruttoria) }}
+		{{ form_end(form_istruttoria) }}
+	{% endif %}
+
+	<h4>Documentazione caricata a supporto dell'istruttoria</h4>
+	
+	<div class="table-toolbar">
+        <div>
+			{# deve essere semre possibile caricare documenti a supporto
+			Una volta validato il mandato di pagamento .. la pratica e l'istruttoria della liquidazione viene giustamente bloccata , 
+			ma come era stato detto diverse volte, abbiamo spesso la necessità ( o per errore o per dimenticanza o per altro) 
+			di dover caricare altri documenti, anche successivi al mandato,  nella sezione "documenti di progetto"  nella : 
+			Documentazione caricata a supporto dell'istruttoria
+			ma una volta inserito il mandato il pulsante "aggiungi documento istruttoria" sparisce .. 
+			SI PUO' MANTENERE IL PULSANTE DI CARICAMENTO SEMPRE ATTIVO ( ALMENO PER L'INSERIMENTO), BLOCCANDO TUTTO IL RESTO? 
+			oggi ci troviamo a dover caricare dei documenti per audit
+			#}
+                        {% if not is_granted("ROLE_OPERATORE_COGEA") %}
+			<a class="btn btn-primary" href="{{ path('aggiungi_documento_istruttoria_pagamento', {'id_pagamento' : pagamento.id }) }}">
+				<span class="fa fa-plus"></span> Aggiungi documento istruttoria
+			</a>
+                        {% endif %}
+			{#% if not is_disabled %}
+			{% endif %#}
+        </div>
+	</div>
+	<table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+		<thead>
+			<tr>
+				<th>Tipologia documento</th>
+				<th>Nome File</th>
+				<th>Data richiesto</th>
+				<th>Data ricevuto</th>
+				<th>Data scadenza</th>				
+				<th>Azioni</th>
+			</tr>
+		</thead>
+		<tbody>      
+
+			{% for documentoIstruttoria in pagamento.documentiIstruttoria %}
+
+				{% set eliminaPath = is_disabled ? null : path('elimina_documento_istruttoria_pagamento', {'id_documento': documentoIstruttoria.id, 'id_pagamento': pagamento.id }) %}
+				{% set modificaPath = path('modifica_documento_istruttoria_pagamento', {'id_documento': documentoIstruttoria.id, 'id_pagamento': pagamento.id }) %}
+				
+				<tr>
+					{{ mostra_file_istruttoria_pagamento(documentoIstruttoria, eliminaPath, modificaPath ) }}
+				</tr>
+			{% endfor %}
+        </tbody>
+    </table>		
+
+	<a href="{{path('riepilogo_istruttoria_pagamento', {'id_pagamento' : pagamento.id})}}" class="btn btn-default btn-page-action btn-form-back">Indietro</a>
+			
+{% endblock %}
+

@@ -1,0 +1,52 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	{% include 'AuditBundle:Audit:menu.html.twig' %}
+
+	{% if organismi|length > 0 %}
+		<h4>Organismi</h4>
+		<table class="table table-striped table-hover table-bordered" id="organismi-elenco">
+			<thead>
+				<tr>
+					<td></td>
+					<td>Nome</td>
+					<td></td>
+				</tr>
+			</thead>
+			<tbody>
+				{% for organismo in organismi%}
+					<tr>
+						<td>{{organismo.id}}</td>
+						<td>{{organismo.denominazione}}</td>
+						<td><a class="btn btn-primary btn-sm" href="{{ path("associa_requisiti", {'id_organismo': organismo.id}) }}" role="button">
+								Associa Requisiti <span class="fa"></span>
+							</a>
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>			
+	{% endif %}
+
+	{% if requisiti|length > 0 %}	
+		<h4>Requisiti</h4>
+		<table class="table table-striped table-hover table-bordered" id="requisiti-elenco">
+			<thead>
+				<tr>
+					<td>Codice</td>
+					<td>Nome</td>
+					<td>Ambito</td>
+				</tr>
+			</thead>
+			<tbody>
+				{% for requisito in requisiti%}
+					<tr>
+						<td>{{requisito.codice}}</td>
+						<td>{{requisito.denominazione}}</td>
+						<td>{{requisito.organismi|join(', ')}}</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>			
+	{% endif %}
+{% endblock %}

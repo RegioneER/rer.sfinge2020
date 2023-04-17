@@ -1,0 +1,2 @@
+parameters:
+  geo.istat_comuni_csv_link: https://www.istat.it/storage/codici-unita-amministrative/Elenco-comuni-italiani.csv

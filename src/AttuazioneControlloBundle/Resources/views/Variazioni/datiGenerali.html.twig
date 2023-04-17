@@ -1,0 +1,8 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+{{ form_start(form) }}
+	<h4>Dati variazione</h4>
+	{{ form_row(form.note) }}
+{{ form_end(form) }}
+{% endblock %}

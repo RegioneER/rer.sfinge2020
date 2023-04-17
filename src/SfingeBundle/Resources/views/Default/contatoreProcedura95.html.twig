@@ -1,0 +1,36 @@
+{{ procedura.titolo }} ({{ procedura.atto.numero }} del {{ procedura.atto.datapubblicazione|date("d/m/Y") }})
+{# Mostro l’indicazione della finestra solamente dalla seconda finestra in poi #}
+{% if procedura.attualeFinestraTemporalePresentazione > 1 %}
+    {% set finestre = {2 : 'Seconda', 3 : 'Terza', 4 : 'Quarta', 5 : 'Quinta', 6 : 'Sesta'} %}
+    - <strong>{{ finestre[procedura.attualeFinestraTemporalePresentazione] }} finestra</strong>
+{% endif %}
+
+<br>
+
+Domande totali presentate all’amministrazione: {{ procedura.richiesteInviate.richieste_inviate }}
+{% if procedura.numeroMassimoRichiesteProcedura %}
+    di {{ procedura.numeroMassimoRichiesteProcedura }}.
+{% endif %}
+
+<br>
+<br>
+
+<table class="table table-hover table-bordered" id="sedi-operative-elenco">
+    <thead>
+    <tr>
+        <th style="width:33%;">Comune</th>
+        <th style="width:33%; text-align: right">Nr. domande inviate</th>
+        <th style="width:33%; text-align: right">Nr. massimo domande</th>
+    </tr>
+    </thead>
+    {% for dati in procedura.richiesteInviate.arrayRichiestePerComuni %}
+        <tr>
+            <td>{{ dati.denominazione }}</td>
+            <td align="right">{{ dati.richiesteInviate }}</td>
+            <td align="right">{{ dati.limite }}</td>
+        </tr>
+    {% endfor %}
+    <tbody>
+    </tbody>
+</table>
+</li>

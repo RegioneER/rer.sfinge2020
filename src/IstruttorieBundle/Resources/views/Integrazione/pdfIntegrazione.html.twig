@@ -1,0 +1,61 @@
+{% extends ':pdf:base.pdf.html.twig' %}
+
+{% block content %}
+
+    {% block dati_intestazione %}
+        <div class="center">
+            {% if integrazione_istruttoria.richiesta.procedura.isNuovaProgrammazione %}
+                <img src="assets/img/regione/Loghi_CoesioneITA_UE_REP_ER_21_27.jpg" alt="Loghi regione" height="45px">
+            {% elseif integrazione_istruttoria.richiesta.procedura.asse.codice == 'A0' %}
+                <img src="assets/img/regione/logo_ue-regione-emilia-romagna.jpg" alt="Loghi regione" height="60px">
+                <h2 align="center">{{ integrazione_istruttoria.richiesta.procedura.titolo }}</h2>
+            {% elseif is_fsc == true %}
+                    <img src="assets/img/regione/logo_fsc.jpg" alt="Loghi regione" height="80px">
+                    <h2 align="center">{{ integrazione_istruttoria.richiesta.procedura.titolo }}</h2>
+            {% else%}
+                <img src="assets/img/regione/logo_ue-por_fesr_2020.jpg" alt="Loghi regione" height="60px">
+                <h2 align="center">POR-FESR EMILIA ROMAGNA 2014-2020</h2>
+            {% endif %}
+        </div>
+    {% endblock dati_intestazione %}
+
+    <h3 align="center">Comunicazione richiesta di integrazione</h3>
+    <div>
+        In relazione alla sua richiesta di finanziamento ricevuta con protocollo n° {{ richiesta.protocollo }}<br>{# protocollo in ingresso #}
+        al fine di proseguire l'attività istruttoria, si richiedono le seguenti integrazioni:<br>
+        {{ integrazione_istruttoria.testo ? integrazione_istruttoria.testo|replace({'\r\n' : '<br>', '\n' : '<br>'})|raw : '-' }}
+    </div>
+    <br>	
+    <br>
+    <div>
+        Le integrazioni richieste vanno inviate tramite il portale sfinge e non tramite pec, seguendo le istruzioni dal titolo 
+        "Manuale risposta a richiesta integrazioni domanda - Beneficiario v1.0.pdf" scaricabile attraverso la tendina MANUALI, 
+        oppure al seguente link: <a href="https://servizifederati.regione.emilia-romagna.it/fesr2020/manuali/gestione/visualizza/29">https://servizifederati.regione.emilia-romagna.it/fesr2020/manuali/gestione/visualizza/29</a>
+    </div>
+    <br>	
+    <br>
+
+    {% if integrazione_istruttoria.tipologieDocumenti|length > 0 %}
+
+        <div>
+            Si richiede inoltre l'integrazione della seguente documentazione.
+            <br><br>
+            <table style="width:100%">
+                <tr>
+                    <th style="width:50%">Tipologia documento</th>
+                    <th style="width:50%">Nota</th>
+                </tr>
+
+                {% for documentoDaIntegrare in integrazione_istruttoria.tipologieDocumenti %}
+                    <tr>
+                        <td>{{ documentoDaIntegrare.tipologiaDocumento.descrizione }}</td>
+                        <td>{{ documentoDaIntegrare.nota|replace({'\r\n' : '<br>', '\n' : '<br>'})|raw }}</td>
+                    </tr>
+                {% endfor %}	
+            </table>
+
+        </div>
+
+    {% endif %}
+
+{% endblock %}

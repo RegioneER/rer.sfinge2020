@@ -1,0 +1,17 @@
+{% extends '::base.html.twig' %}
+
+{% block begin_page_level_plugin_style %}
+	<style>
+		.form-horizontal .col-lg-5 {
+			width: 95% !important;
+		}
+	</style>
+{% endblock %}
+
+{% block body %}
+
+	{{ form_start(form) }}
+
+	{{ form_end(form) }}
+
+{% endblock %}

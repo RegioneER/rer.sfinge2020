@@ -1,0 +1,120 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block intestazione %}
+    {{ parent() }}
+    {{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% block body %}
+
+    {% if menu_eventi is defined %}
+        {% include menu_eventi with {'pagamento' : pagamento }%}
+    {% else %}
+        {% include 'AttuazioneControlloBundle:Istruttoria/Pagamenti:menuEventi.html.twig' with {'pagamento' : pagamento } %}	
+    {% endif %}	
+
+    {% if form_documenti is not null %}
+        <div class="form-body">
+            <h4>Carica documento</h4>
+            {% form_theme form_documenti _self %}
+            {{ form(form_documenti) }}
+        </div>
+    {% endif %}			
+
+    <h4>Elenco documenti caricati</h4>
+    {% if documenti is not empty %}
+        <div class="form-body">	
+            {% for documento in documenti %}
+                <b>Nota:</b> {{documento.descrizione}}
+                <br><br>
+                {% if not disabilita_azioni and is_granted('ROLE_ISTRUTTORE_SUPERVISORE_ATC') %}
+                    {{ mostra_file(documento.documentoFile, path(route_cancellazione_documento, {'id_documento_esito_istruttoria': documento.id, '_token': csrfToken, mostra_elimina: true}) ) }}
+                {% else %}			
+                    {{ mostra_file(documento.documentoFile, null )}}
+                {% endif %}			
+                <br/>
+                <hr>
+            {% endfor %}
+        </div>
+    {% else %}
+        <h6>Nessun documento caricato</h6>
+    {% endif %}
+
+    <div style="margin-bottom: 40px">
+        <h4>PDF per esito rendicontazione</h4>
+        <a href="{{path('pdf_esito_istruttoria_pagamento', {'id_pagamento': pagamento.id}) }}" class="btn btn-info">Genera fac-simile</a>
+        {% if is_granted("ROLE_SUPER_ADMIN") %}
+            <a href="{{path('pdf_esito_istruttoria_pagamento_html', {'id_pagamento': pagamento.id}) }}" class="btn btn-info">Genera fac-simile html</a>
+        {% endif %}
+    </div>
+
+
+
+    {% if form_esito is not null %}
+        <div class="form-body">
+
+            <h4>Dati relativi all'esito</h4>
+
+            {{ form_start(form_esito) }}
+            {{ form_errors(form_esito) }}				
+
+            <div id="conferma_operazione_invio" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&#x2613;</button>
+                            <h3 id="dataConfirmLabel">Conferma necessaria</h3>
+                        </div>
+                        <div class="modal-body">
+                            Confermi l'operazione di invio dell'esito rendicontazione ?
+                        </div>
+                        <div class="modal-footer">
+                            <a class="btn" data-dismiss="modal" aria-hidden="true" href="">No</a>
+                            <button type="submit" name="esito_istruttoria_pagamento_standard[pulsanti][pulsante_invio]" class="btn btn-primary">Si</button>					
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="conferma_operazione_invio_2" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&#x2613;</button>
+                            <h3 id="dataConfirmLabel">Conferma necessaria</h3>
+                        </div>
+                        <div class="modal-body">
+                            Confermi l'operazione di invio dell'esito rendicontazione ?
+                        </div>
+                        <div class="modal-footer">
+                            <a class="btn" data-dismiss="modal" aria-hidden="true" href="">No</a>
+                            <button type="submit" name="esito_istruttoria_pagamento[pulsanti][pulsante_invio]" class="btn btn-primary">Si</button>					
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{ form_end(form_esito) }}
+
+        </div>
+    {% endif %}	
+
+
+{% endblock %}
+
+{%block  jquery_page_document_ready %}
+    <script>
+        jQuery(document).ready(function () {
+            $("#esito_istruttoria_pagamento_standard_pulsanti_pulsante_invio").click(function (e) {
+                e.preventDefault();
+                $("#conferma_operazione_invio").modal("show");
+            });
+        });
+        jQuery(document).ready(function () {
+            $("#esito_istruttoria_pagamento_pulsanti_pulsante_invio").click(function (e) {
+                e.preventDefault();
+                $("#conferma_operazione_invio_2").modal("show");
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,11 @@
+services:
+    geo.istat_api:
+        class: GeoBundle\Service\IstatAPIService
+        arguments:
+            - '@service_container'
+            - '%geo.istat_comuni_csv_link%'
+    
+    geo.istat_import:
+        class: GeoBundle\Service\IstatImportService
+        arguments:
+            - '@service_container'

@@ -1,0 +1,95 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-header">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h4>Dati del progetto</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <dl class="dl-horizontal">
+                        <dt>Titolo operazione</dt>
+                        <dd>{{ richiesta.titolo }}</dd>
+                        <dt>Bando</dt>
+                        <dd>{{ richiesta.procedura.titolo }}</dd>
+                        <dt>Contributo concesso</dt>
+                        {% if richiesta.procedura.id == 7 or richiesta.procedura.id == 8 %}
+                            {% set oggetto = richiesta.oggettirichiesta|first %}
+                            <dd>{{ "€ " ~ oggetto.ContributoImportatoExcel|number_format(2, ',', '.') }}</dd>
+                        {% else %}
+                            <dd>{{ "€ " ~ richiesta.istruttoria.contributoAmmesso|number_format(2, ',', '.') }}</dd>
+                        {% endif %}
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            {{ form_start(form) }}
+            <div class="box">
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h4>Dati per la stampa</h4>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            {{ form_errors(form) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            {{ form_row(form.nomeProgetto) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            {{ form_row(form.obiettivoPrincipale) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            {{ form_row(form.orientamento) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            {{ form_row(form.logoAggiuntivo1) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            {{ form_row(form.logoAggiuntivo2) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            {{ form_row(form.logoAggiuntivo3) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            {{ form_row(form.logoAggiuntivo4) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="box-footer">
+                    <div class="btn-group">
+                        <a href="{{ path('elenco_gestione_beneficiario') }}"
+                           type="button" class="btn btn-sm btn-info">Torna indietro</a>
+                        <button id="btnsubmit" type="submit" class="btn btn-sm btn-success">{{ azione }}</button>
+                    </div>
+                </div>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

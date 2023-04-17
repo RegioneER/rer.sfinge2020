@@ -1,0 +1,72 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    
+{% include 'IstruttorieBundle:Istruttoria:menu.html.twig' with {'istruttoria' : istruttoria } %}
+
+{% if istruttoria.valutazioniChecklist|length > 0 %}
+<h4>Riepilogo esito valutazioni</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Valutazione</th>
+            <th style="width:33%; text-align: center;">Ammissibilità</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for fase in istruttoria.richiesta.procedura.fasiIstruttoria %}
+            {% for checklist in fase.checklist %}
+                {% set numero_colonne = 1 + (checklist.proponente ? 0 : 1) %}
+                {% set valutazioni = istruttoria.valutazioniByChecklist(checklist) %}
+                {% if valutazioni|length > 0 %}
+                    {% for valutazione in valutazioni %}
+                        <tr>
+                            <td>{{ valutazione.descrizioneValutazione }}</td>
+                            <td style="text-align: center;">
+                                {% if valutazione.ammissibile is null %}
+                                    <span class="text-primary">Valutazione non completa</span>
+                                {% else %}
+                                    <span class="{{ valutazione.ammissibile ? "text-success" : "text-danger" }}">{{ valutazione.ammissibile ? "Ammissibile" : "Non ammissibile" }}</span>
+                                {% endif %}</td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+            {% endfor %} 
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+<h4>Valutazione finale</h4>
+
+{{ form(form) }}
+
+{% if url_genera_pdf is defined %}
+    <a class='btn btn-default btn-page-action pull-left' role="button" href="{{ url_genera_pdf }}">Genera Pdf</a>
+{% endif %}
+
+<br/>
+
+{% if (is_granted("ROLE_SUPER_ADMIN") and istruttoria.esito is not null and istruttoria.richiesta.attuazioneControllo is null and form.vars.valid) %}
+    <a href="#" data-target="#conferma_operazione_invio" data-toggle="modal" class="btn btn-info">Sblocca esito finale</a>
+
+    <div id="conferma_operazione_invio" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="dataConfirmLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&#x2613;</button>
+                    <h3 id="dataConfirmLabel">Conferma necessaria</h3>
+                </div>
+                <div class="modal-body">
+                    Confermi l’operazione di sblocco dell’istruttoria?
+                </div>
+                <div class="modal-footer">
+                    <a class="btn" data-dismiss="modal" aria-hidden="true" href="">No</a>
+                    <a class="btn btn-default" href="{{ path("sblocca_esito_finale_istruttoria", {'id_richiesta':istruttoria.richiesta.id}) }}">Sì</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+{% endblock %}

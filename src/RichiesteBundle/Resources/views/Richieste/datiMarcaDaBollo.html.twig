@@ -1,0 +1,219 @@
+{% extends '::base.html.twig' %}
+
+{% block intestazione %}
+    {{ parent() }}
+    {{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% block body %}
+    <h4>Dati della marca da bollo della richiesta</h4>
+
+    {% if richiesta.tipologiaMarcaDaBollo == constant('SfingeBundle\\Entity\\Procedura::MARCA_DA_BOLLO_DIGITALE')
+        and richiesta.acquistoMarcaDaBollo and richiesta.acquistoMarcaDaBollo.isInAttesaEsitoPagamento %}
+    <div class="alert alert-warning">
+        È stato eseguito un acquisto di marca da bollo digitale, siamo in attesa della ricezione dell’esito di tale acquisto.
+        <br/>
+        Fintanto che la notifica non sarà pervenuta, non sarà possibile effettuare un nuovo acquisto.
+        <br/>
+        Nel caso in cui la notifica non dovesse arrivare entro 10 minuti, contattare l'assistenza tecnica.
+        <br/>
+        Per verificare l’avvenuta notifica <a href="{{ path("dati_marca_da_bollo",{"id_richiesta":richiesta.id}) }}">ricaricare la pagina</a>.
+    </div>
+    {% endif %}
+
+    {{ form(form) }}
+
+    <div id="warning_pagamento_marca_da_bollo_digitale" style="display: none">
+        <br/>
+        <br/>
+        <div class="alert alert-warning">
+            <ul>
+                <li>
+                    Cliccando sul pulsante "Salva e vai al pagamento della marca da bollo digitale" si verrà portati alla
+                    pagina per il pagamento della marca da bollo digitale.
+                </li>
+                <li>
+                    Cliccando sul pulsante "Salva e paga successivamente" si salverà la modalità di pagamento
+                    scelta ma sarà necessario tornare in questa pagina per eseguire il pagamento
+                    della marca da bollo digitale.
+                </li>
+                <li>
+                    Nel caso in cui venga acquistata la marca da bollo elettronica questa non potrà essere recuperata
+                    in quanto associata alla presente domanda, anche se la domanda non verrà inviata.
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="confirm_pagamento_marca_da_bollo_digitale" style="display: none">
+        <br/>
+        <br/>
+        <div class="alert alert-success">
+            La marca da bollo digitale è stata acquistata con successo.
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var tipologia_marca_da_bollo = '{{ tipologia_marca_da_bollo }}';
+            var esenzione_marca_bollo = '{{ esenzione_marca_bollo }}';
+            var in_attesa_notifica = false;
+            {% if richiesta.tipologiaMarcaDaBollo == constant('SfingeBundle\\Entity\\Procedura::MARCA_DA_BOLLO_DIGITALE')
+                and richiesta.acquistoMarcaDaBollo and richiesta.acquistoMarcaDaBollo.isInAttesaEsitoPagamento %}
+                in_attesa_notifica = true;
+            {% endif %}
+
+            marcaDaBolloToggle(tipologia_marca_da_bollo, esenzione_marca_bollo, in_attesa_notifica);
+
+            $('input[name="marca_da_bollo[esente_marca_da_bollo]"]').change(function(){
+                marcaDaBolloToggle(tipologia_marca_da_bollo, esenzione_marca_bollo, in_attesa_notifica);
+            });
+
+            $('input[name="marca_da_bollo[tipologia_marca_da_bollo]"]').change(function(){
+                marcaDaBolloToggle(tipologia_marca_da_bollo, esenzione_marca_bollo, in_attesa_notifica);
+            });
+        });
+
+        function marcaDaBolloToggle(tipologia_marca_da_bollo_prevista, esenzione_marca_bollo_prevista, in_attesa_notifica) {
+            campoMotivazioneEsenzioneMarcaDaBollo();
+            campoTipologiaMarcaDaBollo(tipologia_marca_da_bollo_prevista, esenzione_marca_bollo_prevista);
+            campiDataNumeroMarcaDaBollo(tipologia_marca_da_bollo_prevista, esenzione_marca_bollo_prevista);
+            pulsanti(tipologia_marca_da_bollo_prevista, esenzione_marca_bollo_prevista, in_attesa_notifica);
+        }
+
+        function campoMotivazioneEsenzioneMarcaDaBollo() {
+            var campo_motivazioni_esenzione_marca_da_bollo = $('textarea#marca_da_bollo_riferimento_normativo_esenzione');
+
+            if ($('input[name="marca_da_bollo[esente_marca_da_bollo]"]:checked').val() == 1) {
+                campo_motivazioni_esenzione_marca_da_bollo.parent('div').parent('div').show();
+            } else {
+                campo_motivazioni_esenzione_marca_da_bollo.val('');
+                campo_motivazioni_esenzione_marca_da_bollo.parent('div').parent('div').hide();
+            }
+        }
+
+        function campoTipologiaMarcaDaBollo(tipologia_marca_da_bollo_prevista, esenzione_marca_bollo_prevista) {
+            var campo_tipologia_marca_da_bollo = $('#marca_da_bollo_tipologia_marca_da_bollo').parent('div').parent('div');
+            var campo_tipologia_marca_da_bollo_assegna_valore = $("[name=marca_da_bollo\\[tipologia_marca_da_bollo\\]]");
+
+            if ((tipologia_marca_da_bollo_prevista == 'FISICA_E_DIGITALE'
+                && $('input[name="marca_da_bollo[esente_marca_da_bollo]"]:checked').val() == 0)
+                || !esenzione_marca_bollo_prevista) {
+                campo_tipologia_marca_da_bollo.show();
+            } else {
+                campo_tipologia_marca_da_bollo_assegna_valore.prop('checked', false);
+                campo_tipologia_marca_da_bollo.hide();
+            }
+        }
+
+        function campiDataNumeroMarcaDaBollo(tipologia_marca_da_bollo_prevista, esenzione_marca_bollo_prevista) {
+            var campo_data_marca_da_bollo = $('input#marca_da_bollo_data_marca_da_bollo');
+            var campo_numero_marca_da_bollo = $('input#marca_da_bollo_numero_marca_da_bollo');
+
+            if ($('input[name="marca_da_bollo[esente_marca_da_bollo]"]:checked').val() == 0
+                && (tipologia_marca_da_bollo_prevista == 'FISICA'
+                    || (tipologia_marca_da_bollo_prevista == 'FISICA_E_DIGITALE'
+                    && $('input[name="marca_da_bollo[tipologia_marca_da_bollo]"]:checked').val() == 'FISICA'))
+                ) {
+                campo_data_marca_da_bollo.parent('div').parent('div').parent('div').show();
+                campo_numero_marca_da_bollo.parent('div').parent('div').show();
+            } else if (!esenzione_marca_bollo_prevista && $('input[name="marca_da_bollo[tipologia_marca_da_bollo]"]:checked').val() == 'FISICA') {
+                campo_data_marca_da_bollo.parent('div').parent('div').parent('div').show();
+                campo_numero_marca_da_bollo.parent('div').parent('div').show();
+            } else {
+                campo_data_marca_da_bollo.val('');
+                campo_data_marca_da_bollo.parent('div').parent('div').parent('div').hide();
+                campo_numero_marca_da_bollo.val('');
+                campo_numero_marca_da_bollo.parent('div').parent('div').hide();
+            }
+        }
+
+        function pulsanti(tipologia_marca_da_bollo_prevista, esenzione_marca_bollo_prevista, in_attesa_notifica) {
+            var numero_marca_da_bollo_digitale = '{{ numero_marca_da_bollo_digitale }}';
+
+            $('#marca_da_bollo_pulsante_submit_e_paga_marca_da_bollo_digitale').hide();
+            $('#marca_da_bollo_pulsante_submit_e_paga_marca_da_bollo_digitale').html('');
+            $('#warning_pagamento_marca_da_bollo_digitale').hide();
+
+            if (tipologia_marca_da_bollo_prevista == 'FISICA_E_DIGITALE' && esenzione_marca_bollo_prevista) {
+                if ($('input[name="marca_da_bollo[esente_marca_da_bollo]"]:checked').val() == 1) {
+                    $('#marca_da_bollo_pulsanti_pulsante_submit').show();
+                    $('#marca_da_bollo_pulsanti_pulsante_submit').html('Salva');
+
+                    $('#marca_da_bollo_pulsante_submit_e_paga_marca_da_bollo_digitale').hide();
+                    $('#marca_da_bollo_pulsante_submit_e_paga_marca_da_bollo_digitale').html('');
+                    $('#warning_pagamento_marca_da_bollo_digitale').hide();
+                } else if ($('input[name="marca_da_bollo[tipologia_marca_da_bollo]"]:checked').val() == 'DIGITALE') {
+                    $('#marca_da_bollo_pulsanti_pulsante_submit').show();
+                    $('#marca_da_bollo_pulsanti_pulsante_submit').html('Salva e paga successivamente');
+
+                    $('#marca_da_bollo_pulsante_submit_e_paga_marca_da_bollo_digitale').show();
+                    $('#marca_da_bollo_pulsante_submit_e_paga_marca_da_bollo_digitale').html('Salva e vai al pagamento della marca da bollo digitale');
+                    $('#warning_pagamento_marca_da_bollo_digitale').show();
+
+                    if (in_attesa_notifica) {
+                        $('#marca_da_bollo_pulsanti_pulsante_submit').prop("disabled", true);
+                        $('#marca_da_bollo_pulsante_submit_e_paga_marca_da_bollo_digitale').prop("disabled", true);
+                    }
+                } else if ($('input[name="marca_da_bollo[tipologia_marca_da_bollo]"]:checked').val() == 'FISICA') {
+                    $('#marca_da_bollo_pulsanti_pulsante_submit').show();
+                    $('#marca_da_bollo_pulsanti_pulsante_submit').html('Salva');
+
+                    $('#marca_da_bollo_pulsante_submit_e_paga_marca_da_bollo_digitale').hide();
+                    $('#marca_da_bollo_pulsante_submit_e_paga_marca_da_bollo_digitale').html('');
+                }
+            } else if (tipologia_marca_da_bollo_prevista == 'FISICA_E_DIGITALE' && !esenzione_marca_bollo_prevista) {
+                if ($('input[name="marca_da_bollo[tipologia_marca_da_bollo]"]:checked').val() == 'FISICA') {
+                    $('#marca_da_bollo_pulsanti_pulsante_submit').show();
+                    $('#marca_da_bollo_pulsanti_pulsante_submit').html('Salva');
+                } else if ($('input[name="marca_da_bollo[tipologia_marca_da_bollo]"]:checked').val() == 'DIGITALE') {
+                    $('#marca_da_bollo_pulsanti_pulsante_submit').show();
+                    $('#marca_da_bollo_pulsanti_pulsante_submit').html('Salva e paga successivamente');
+
+                    $('#marca_da_bollo_pulsante_submit_e_paga_marca_da_bollo_digitale').show();
+                    $('#marca_da_bollo_pulsante_submit_e_paga_marca_da_bollo_digitale').html('Salva e vai al pagamento della marca da bollo digitale');
+                    $('#warning_pagamento_marca_da_bollo_digitale').show();
+
+                    if (in_attesa_notifica) {
+                        $('#marca_da_bollo_pulsanti_pulsante_submit').prop("disabled",true);
+                        $('#marca_da_bollo_pulsante_submit_e_paga_marca_da_bollo_digitale').prop("disabled",true);
+                    }
+                }
+            } else if (tipologia_marca_da_bollo_prevista == 'DIGITALE' && esenzione_marca_bollo_prevista) {
+                if ($('input[name="marca_da_bollo[esente_marca_da_bollo]"]:checked').val() == 1) {
+                    $('#marca_da_bollo_pulsanti_pulsante_submit').show();
+                    $('#marca_da_bollo_pulsanti_pulsante_submit').html('Salva');
+
+                    $('#marca_da_bollo_pulsante_submit_e_paga_marca_da_bollo_digitale').hide();
+                    $('#marca_da_bollo_pulsante_submit_e_paga_marca_da_bollo_digitale').html('');
+                } else {
+                    $('#marca_da_bollo_pulsanti_pulsante_submit').show();
+                    $('#marca_da_bollo_pulsanti_pulsante_submit').html('Salva e paga successivamente');
+
+                    $('#marca_da_bollo_pulsante_submit_e_paga_marca_da_bollo_digitale').show();
+                    $('#marca_da_bollo_pulsante_submit_e_paga_marca_da_bollo_digitale').html('Salva e vai al pagamento della marca da bollo digitale');
+                    $('#warning_pagamento_marca_da_bollo_digitale').show();
+
+                    if (in_attesa_notifica) {
+                        $('#marca_da_bollo_pulsanti_pulsante_submit').prop("disabled",true);
+                        $('#marca_da_bollo_pulsante_submit_e_paga_marca_da_bollo_digitale').prop("disabled",true);
+                    }
+                }
+            } else if (tipologia_marca_da_bollo_prevista == 'DIGITALE' && !esenzione_marca_bollo_prevista) {
+                $('#marca_da_bollo_pulsanti_pulsante_submit').hide();
+                $('#marca_da_bollo_pulsante_submit_e_paga_marca_da_bollo_digitale').show();
+                $('#marca_da_bollo_pulsante_submit_e_paga_marca_da_bollo_digitale').html('Vai al pagamento della marca da bollo digitale');
+
+                if (in_attesa_notifica) {
+                    $('#marca_da_bollo_pulsanti_pulsante_submit').prop("disabled", true);
+                    $('#marca_da_bollo_pulsante_submit_e_paga_marca_da_bollo_digitale').prop("disabled", true);
+                }
+            }
+
+            if (numero_marca_da_bollo_digitale) {
+                $('#warning_pagamento_marca_da_bollo_digitale').hide();
+                $('#confirm_pagamento_marca_da_bollo_digitale').show();
+            }
+        }
+    </script>
+{% endblock %}

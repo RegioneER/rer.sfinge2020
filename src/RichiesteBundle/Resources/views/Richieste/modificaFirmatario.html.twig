@@ -1,0 +1,19 @@
+{% extends '::base.html.twig' %}
+
+{% block intestazione %}
+    {{ parent() }}
+    {{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% block body %}
+    <p class="lead">Selezionare il nuovo firmatario</p>
+
+    {% if firmatario is not null %}
+        <h4>Attuale firmatario</h4>
+        {{ mostra_persona(firmatario) }}
+    {% endif %}
+
+    <h4>Nuovo firmatario</h4>
+        {{ form(form) }}
+
+{% endblock %}

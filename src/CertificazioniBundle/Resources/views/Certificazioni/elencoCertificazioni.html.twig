@@ -1,0 +1,231 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	{% if isAccessibile('aggiungi_certificazione') %}
+		<div class="table-toolbar">
+			<div>
+				<a class="btn btn-primary" href="{{ path('aggiungi_certificazione') }}">
+					<span class="fa fa-plus"></span> Aggiungi certificazione
+				</a>
+				<a class="btn btn-primary" href="{{ path('aggiungi_chiusura_certificazione') }}">
+					<span class="fa fa-plus"></span> Aggiungi chiusura conti
+				</a>
+			</div>
+		</div>
+	{% endif %}			
+	{% if certificazioni |length > 0 %}	
+		<h4>Elenco certificazioni</h4>
+		<table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+			<thead>
+				<tr>
+					<th>Certificazione</th>
+					<th>Anno</th>
+					<th>Anno contabile</th>
+					<th>Tipologia</th>
+					<th>Stato</th>
+					<th>Azioni</th>
+				</tr>
+			</thead>	
+			<tbody>
+				{% for certificazione in certificazioni %}
+					{% if certificazione.isVisibileAgrea(app.user.roles) == true %}
+						<tr>
+							<td>{{ certificazione.annocontabile }}.{{ certificazione.numero }}</td>
+							<td>{{ certificazione.anno }}</td>
+							<td>{{ certificazione.annocontabile }}</td>
+							<td>{{ certificazione.tipologiacertificazione.descrizione }}</td>
+							<td>{{ certificazione.stato }}</td>
+							<td>
+								<div class="dropdown">
+									<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+										Azioni
+										<span class="caret"></span>
+									</button>
+									<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+										<li><a href="{{ path("dettaglio_certificazione", {"id_certificazione" : certificazione.id}) }}">Dettaglio</a></li>
+										<li><a href="{{ path("elenco_pagamenti_certificati", {"id_certificazione" : certificazione.id}) }}">Elenco Pagamenti</a></li>
+										<li><a href="{{ path("estrazione_pagamenti", {"id_certificazione" : certificazione.id}) }}">Estrazione Pagamenti</a></li>
+											{% if certificazione.stato.codice == 'CERT_INSERITA' and isAccessibile("associa_pagamenti_certificazione", {"id_certificazione" : certificazione.id}) %}
+											<li><a href="{{ path("associa_pagamenti_certificazione", {"id_certificazione" : certificazione.id}) }}">Associa pagamenti</a></li>
+											{% endif %}
+											{% if certificazione.isPrevalidabile and isAccessibile("prevalida_certificazione", {"id_certificazione" : certificazione.id})%}
+											<li><a href="{{ path("prevalida_certificazione", {"id_certificazione" : certificazione.id, '_token': csrfToken}) }}">Prevalida certificazione</a></li>
+											{% endif %}
+											{% if assi|length == 0 and certificazione.isCertificazioneChiusuraVuota and certificazione.isValidabile %}
+											<li><a href="{{ path("valida_asse_certificazione_vuoto", {"id_certificazione" : certificazione.id}) }}">Valida</a></li>
+											{% else %}
+												{% for asse in assi %}
+													{% if certificazione.isValidabile and isAccessibile("valuta_asse_certificazione", {"id_certificazione" : certificazione.id, 'id_asse': asse.id})%}
+													<li><a href="{{ path("valuta_asse_certificazione", {"id_certificazione" : certificazione.id, 'id_asse': asse.id}) }}">Valida {{ asse.titolo }}</a></li>
+													{% endif %}
+												{% endfor %}
+											{% endif %}
+											{% if certificazione.isInviabile and isAccessibile("invia_certificazione", {"id_certificazione" : certificazione.id}) %}
+											<li><a href="{{ path("invia_certificazione", {"id_certificazione" : certificazione.id, '_token': csrfToken}) }}">Invia certificazione</a></li>
+											{% endif %}								
+											{% if certificazione.isEliminabile and isAccessibile("elimina_certificazione", {"id_certificazione" : certificazione.id}) %}
+											<li><a href="{{ path("elimina_certificazione", {"id_certificazione" : certificazione.id, '_token': csrfToken}) }}">Elimina</a></li>
+											{% endif %}
+											{% if certificazione.isApprovabile and isAccessibile("valuta_certificazione", {"id_certificazione" : certificazione.id}) %}
+											<li><a href="{{ path("valuta_certificazione", {"id_certificazione" : certificazione.id, '_token': csrfToken}) }}">Approva certificazione</a></li>
+											{% endif %}			
+											{% if isAccessibile("suddivisioni_certificazioni", {"id_certificazione" : certificazione.id}) %}
+											<li><a href="{{ path("suddivisioni_certificazioni", {"id_certificazione" : certificazione.id}) }}">Suddivisione spese</a></li>
+											<li><a href="{{ path("appendice_certificazione_1", {"id_certificazione" : certificazione.id}) }}">Appendice 1</a></li>
+											<li><a href="{{ path("appendice_certificazione_2", {"id_certificazione" : certificazione.id}) }}">Appendice 2</a></li>
+											{% endif %}
+									</ul>
+								</div>
+							</td>
+						</tr>
+					{% endif %}
+				{% endfor %}
+			</tbody>
+		</table>
+	{% endif %}
+	{% if chiusure |length > 0 %}	
+		<h4>Chiusure conti</h4>
+		<table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+			<thead>
+				<tr>
+					<th>Numero certificazioni associate</th>
+					<th>Anno contabile</th>				
+					<th>Stato</th>
+					<th>Azioni</th>
+				</tr>
+			</thead>	
+			<tbody>
+				{% for chiusura in chiusure %}
+					<tr>
+						<td>{{ chiusura.getNumeriCertificazioni|join(', ')}}</td>
+						<td>{{ chiusura.getIntervalliAnni }}</td>					
+						<td>{{ chiusura.stato }}</td>
+						<td>
+							<div class="dropdown">
+								<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+									Azioni
+									<span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+									{% if chiusura.stato.codice == 'CHI_LAVORAZIONE' and isAccessibile("associa_certificazioni_chiusura", {"id_chiusura" : chiusura.id}) %}
+										<li><a href="{{ path("associa_certificazioni_chiusura", {'id_chiusura' : chiusura.id }) }}">Associa certificazioni</a></li>	
+										{% elseif chiusura.stato.codice == 'CHI_BLOCCATA' and isAccessibile("associa_certificazioni_chiusura", {"id_chiusura" : chiusura.id}) %}
+										<li><a href="{{ path("sblocca_chiusura", {'id_chiusura' : chiusura.id }) }}">Sblocca</a></li>
+										<li>
+											<a 
+												id="valida_chiusura{{- chiusura.id -}}" 
+												class="valida_chiusura" 
+												href="{{ path("valida_chiusura", {'id_chiusura' : chiusura.id }) }}" 
+												data-confirm="Confermi la validazione della chiusura ?"
+												>
+												Valida
+											</a>
+										</li>
+										<li><a href="{{ path("dettaglio_certificazioni_chiusura", {'id_chiusura' : chiusura.id }) }}">Dettaglio</a></li>
+										<li><a href="{{ path("appendici_certificazioni_chiusura", {'id_chiusura' : chiusura.id }) }}">Appendici</a></li>
+										{% else %}
+										<li><a href="{{ path("dettaglio_certificazioni_chiusura", {'id_chiusura' : chiusura.id }) }}">Dettaglio</a></li>
+										<li><a href="{{ path("appendici_certificazioni_chiusura", {'id_chiusura' : chiusura.id }) }}">Appendici</a></li>
+										{% endif %}
+										{% if chiusura.isInviabile and isAccessibile("invia_chiusura", {"id_chiusura" : chiusura.id}) %}
+										<li>
+											<a 
+												id="invia_chiusura{{- chiusura.id -}}" 
+												class="invia_chiusura" 
+												href="{{ path("invia_chiusura", {"id_chiusura" : chiusura.id}) }}"
+												data-confirm="Confermi l'invio della chiusura ?"
+												>
+												Invia Chiusura dei conti
+											</a>
+										</li>
+									{% endif %}	
+									{% if chiusura.isApprovabile and isAccessibile("approva_chiusura", {"id_chiusura" : chiusura.id}) and is_granted('ROLE_CERTIFICATORE_AGREA')%}
+										<li>
+											<a 
+												id="approva_chiusura{{- chiusura.id -}}" 
+												class="approva_chiusura" 
+												href="{{ path("approva_chiusura", {"id_chiusura" : chiusura.id}) }}"
+												data-confirm="Confermi l'invio della chiusura ?"
+												>
+												Approva Chiusura dei conti
+											</a>
+										</li>
+									{% endif %}	
+								</ul>
+							</div>
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+
+	{% endif %}
+
+	{% if is_granted('ROLE_CERTIFICATORE_AGREA') or is_granted('ROLE_SUPER_ADMIN') %}
+		<h4>Report</h4>
+		<table class="table table-striped table-hover table-bordered">
+			<thead>
+				<tr>
+					<th>Titolo</th>
+					<th width=10%>Azioni</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>Revoche con recuperi in corso</td>
+					<td>
+						<a class="btn btn-primary pull-right" href="{{- path('cert_agrea_scarica_report_revoche_inviate') -}}">Scarica</a>
+					</td>
+				</tr>			
+				<tr>
+					<td>Revoche con recuperi conclusi</td>
+					<td>
+						<a class="btn btn-primary pull-right" href="{{- path('cert_agrea_scarica_report_revoche_con_recupero') -}}">Scarica</a>
+					</td>
+				</tr>
+				<tr>
+					<td>Revoche</td>
+					<td>
+						<a class="btn btn-primary pull-right" href="{{- path('scarica_cert_agrea_revoche_universo') -}}">Scarica</a>
+					</td>
+				</tr>			
+				<tr>
+					<td>Pagamenti certificati</td>
+					<td>
+						<a class="btn btn-primary pull-right" href="{{- path('cert_agrea_scarica_report_pagamenti_certificati') -}}">Scarica</a>
+					</td>
+				</tr>
+			</tbody>			
+		</table>
+	{% endif %}
+
+	<h4>Estrazioni</h4>
+	<table class="table table-striped table-hover table-bordered">
+		<tbody>
+			<tr>
+				<td>Estrazione progetti e procedure</td>
+				<td><a 
+				class="btn btn-primary pull-right"
+				href="{{- path('estrazione_procedure_certificazione') -}}">
+					Scarica
+				</a></td>
+			</tr>
+		</tbody>
+	</table>
+{% endblock %}
+{%block  jquery_page_document_ready %}
+	<script>
+		jQuery(document).ready(function () {
+			$('[data-toggle="modal"]').click(function (e) {
+				e.preventDefault();
+				debugger;
+				var target = $(e.target);
+				var modal = $(target.data('target'));
+				var url = target.attr('href');
+				modal.find('div.modal-footer a').attr('href', url);
+				$("#conferma_operazione_valida").modal("show");
+			});
+
+		});
+	</script>
+{% endblock %}

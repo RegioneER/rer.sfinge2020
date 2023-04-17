@@ -1,0 +1,16 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+	<h4>Richiede</h4>
+	<p class="lead">L'applicazione della maggiorazione del contributo al 45%</p>	
+	{{ form_start(form) }}	
+	<div>
+        {{ form_row(form.incrOccupazione) }}
+		{{ form_row(form.femminile) }}
+		{{ form_row(form.giovanile) }}
+		{{ form_row(form.rating) }}
+    </div>		
+	{{ form_end(form) }}		
+
+{% endblock %}
+

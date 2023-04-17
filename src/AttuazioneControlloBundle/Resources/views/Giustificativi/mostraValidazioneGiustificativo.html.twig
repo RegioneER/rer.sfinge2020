@@ -1,0 +1,13 @@
+{% if not esito.esito %}
+<div class="alert alert-danger">
+    <ul class="list-unstyled">
+
+		{% for messaggio in esito.messaggiSezione %}
+            <li><span class="glyphicon glyphicon-exclamation-sign"></span> {{ messaggio }}</li>
+        {% endfor %}
+        {% for messaggio in esito.messaggi %}
+            <li><span class="glyphicon glyphicon-exclamation-sign"></span> {{ messaggio }}</li>
+        {% endfor %}
+    </ul>     
+</div>
+{% endif %}

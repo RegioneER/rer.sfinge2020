@@ -1,0 +1,19 @@
+performer.pay_er.homepage:
+  path: /
+  defaults: { _controller: PerformerPayERBundle:Default:index }
+
+performer.pay_er.ebollo_acquista:
+  path:     /ebollo/acquista
+  defaults: {_controller: Performer\PayERBundle\Controller\AcquistoMarcaDaBolloController::acquista}
+
+performer.pay_er.ebollo_notifica:
+  path:     /ebollo/notifica
+  defaults: {_controller: Performer\PayERBundle\Controller\AcquistoMarcaDaBolloController::notifica}
+
+performer.pay_er.ebollo_ritorno:
+  path: /ebollo/ritorno
+  defaults: { _controller: Performer\PayERBundle\Controller\AcquistoMarcaDaBolloController::ritorno }
+
+performer.pay_er.ebollo_indietro:
+  path: /ebollo/ritorno
+  defaults: { _controller: Performer\PayERBundle\Controller\AcquistoMarcaDaBolloController::indietro }

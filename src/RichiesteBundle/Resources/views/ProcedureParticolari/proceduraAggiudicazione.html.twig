@@ -1,0 +1,120 @@
+{% extends '::base_ente.html.twig' %} 
+{% block body %}
+
+	{% if richiesta.isAssistenzaTecnica == true %}
+		{% set suffisso = "_at" %}
+	{% elseif richiesta.isIngegneriaFinanziaria == true %}
+		{% set suffisso = "_ing_fin" %}
+	{% elseif richiesta.isAcquisizioni == true %}
+		{% set suffisso = "_acquisizioni" %}
+	{% endif %}
+
+	<section style="margin-bottom:2em;">
+		{{ form(form) }}
+	</section>
+	{% if procedureAggiudicazione|length > 0 %}
+		<table id="elenco_procedure_aggiudicazione" class="table table-striped table-hover table-bordered">
+			<thead>
+				<tr>
+					<th>CIG</th>
+					<th>Descrizione</th>
+					<th>Data pubblicazione</th>
+					<th>Importo</th>
+					<th>Azioni</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for procedura in procedureAggiudicazione %}
+					<tr>
+						<td>{{ procedura.cig }}</td>
+						<td>{{ procedura.descrizioneproceduraaggiudicazione }}</td>
+						<td>{{ procedura.datapubblicazione is null ? '' : procedura.datapubblicazione|date('d/m/Y') }}</td>
+						<td>{{ procedura.importoproceduraaggiudicazione|number_format(2,',','.') }}</td>
+						<td>
+							<div class="dropdown">
+								<button class="btn btn-info dropdown-toggle pull-right" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true"
+										aria-expanded="true">
+									Azioni
+									<span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+									<li>
+										<a href="{{- path('modifica_procedura_aggiudicazione'~suffisso, {id_richiesta : richiesta.id, id_procedura_aggiudicazione:procedura.id}) -}}">
+											{{ is_richiesta_disabilitata ? 'Visualizza' : 'Modifica' }}
+										</a>
+									</li>
+									{% if not is_richiesta_disabilitata %}
+										<li>
+											<a href="{{- path('elimina_procedura_aggiudicazione'~suffisso, {id_richiesta: richiesta.id, id_procedura_aggiudicazione:procedura.id, _token:csrfToken }) -}}"
+											   data-confirm="Confermi l'eliminazione della procedura di aggiudicazione selezionata?">
+												Elimina
+											</a>
+										</li>
+									{% endif %}
+								</ul>
+							</div>
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% else %}
+		<h3>Non sono presenti procedure di aggiudicazione</h3>
+	{% endif %}
+	<div style="margin-top:5em;">
+		<div class="pull-left">
+			<a class="btn btn-default btn-page-action btn-form-back pull-left" href="{{- path('dettaglio_richiesta'~suffisso,{id_richiesta:richiesta.id}) -}}">
+				<span class="fa fa-arrow-left"></span>Indietro
+			</a>
+		</div>
+		{% if not is_richiesta_disabilitata and richiesta.attuazionecontrollo.procedureaggiudicazione == true %}
+			<div class="pull-right">
+				<a class="btn btn-primary pull-right btn-page-action" href="{{- path('modifica_procedura_aggiudicazione'~suffisso,{id_richiesta:richiesta.id}) -}}">
+					Aggiungi
+				</a>
+			</div>
+		{% endif %}
+	</div>
+{% endblock %}
+
+{% block  jquery_page_document_ready %}
+    <script>
+		' use strict';
+
+		var select = $('#{{- form.procedure_aggiudicazione.vars.id -}}');
+
+		function changeDataConfirm() {
+			var value = select.val();
+			var tabellaVuota = $('table#elenco_procedure_aggiudicazione > tbody > tr').length == 0;
+			var bottone = $('#{{- form.submit.pulsante_submit.vars.id -}}');
+			if (value == 1 || tabellaVuota) {
+				bottone.removeAttr('data-confirm');
+			} else {
+				var msg = 'Attenzione verranno cancellati le procedure di aggiudicazione precedentemente immesse, ma non validati';
+				bottone.attr('data-confirm', msg);
+			}
+			registerDataConfirm();
+		}
+
+		function registerDataConfirm() {
+			$('[data-confirm]').click(function (ev) {
+				ev.preventDefault();
+				var href = $(this).attr('href');
+				$('#dataConfirmModal').find('.modal-body').text($(this).attr('data-confirm'));
+				$('#dataConfirmOK').attr('href', href);
+				$('#dataConfirmModal').modal({show: true});
+				return false;
+			});
+		}
+
+		function submitForm() {
+			$('form[name="{{- form.vars.name -}}"]').submit();
+		}
+
+		$(document).ready(function () {
+			changeDataConfirm();
+			select.on('change', changeDataConfirm);
+			$('#dataConfirmOK').click(submitForm);
+		});
+    </script>
+{% endblock %}

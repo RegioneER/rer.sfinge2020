@@ -1,0 +1,68 @@
+<Segnatura xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Intestazione>
+    <Oggetto>__INTESTAZIONE_OGGETTO__</Oggetto>
+    <Flusso>
+      <TipoRichiesta>E</TipoRichiesta>
+<!-- obbligatorio può avere i seguenti valori:
+                                                               E=Entrata
+                                                               U=Uscita
+                                                               I=Interno
+                                               -->
+      <Firma>FE</Firma>
+<!-- obbligatorio può avere i seguenti valori:
+                                                                              FD=firmato digitalmente
+                                                                              FE=firmato non digitalmente
+                                                                              F=da inoltrare alla firma
+                                                                              NF Non firmato
+                                                                             
+                                                                              Se TipoRichiesta=E => Forma : FD|FE
+                                                                              Se TipoRichiesta=U => Forma : FD|F
+                                                                             
+                                               -->    
+      <ForzaRegistrazione>1</ForzaRegistrazione>
+<!-- se 1 forza la protocollazione anche per docs non firmati -->
+      <Firmatario />
+    </Flusso>
+    <Mittenti>
+      <Mittente>
+        <Persona id="__PERSONA_ID__">
+          <Nome>__PERSONA_NOME__</Nome>
+          <Cognome>__PERSONA_COGNOME__</Cognome>
+          <Titolo></Titolo>
+          <IndirizzoTelematico tipo="smtp"></IndirizzoTelematico>
+          <IndirizzoPostale>
+            <Denominazione></Denominazione>
+          </IndirizzoPostale>
+          <Metadati />
+        </Persona>
+      </Mittente>
+    </Mittenti>
+    <Destinatari>
+      <Destinatario>
+        <Amministrazione>
+          <Denominazione>__AMMINISTRAZIONE_DENOMINAZIONE__</Denominazione>
+          <CodiceAmministrazione>__AMMINISTRAZIONE_CODICE_AMMINISTRAZIONE__</CodiceAmministrazione>
+          <IndirizzoTelematico></IndirizzoTelematico>
+          <UnitaOrganizzativa>
+            <Denominazione>__UNITA_ORGANIZZATIVA_DENOMINAZIONE__</Denominazione>
+            <Identificativo>__UNITA_ORGANIZZATIVA_IDENTIFICATIVO__</Identificativo>
+          </UnitaOrganizzativa>
+        </Amministrazione>
+        <AOO>
+          <Denominazione>__AOO_DENOMINAZIONE__</Denominazione>
+          <CodiceAOO>__AOO_CODICE__</CodiceAOO>
+          <IndirizzoTelematico></IndirizzoTelematico>
+        </AOO>
+      </Destinatario>
+    </Destinatari>
+    <FascicoloPrimario>
+      <CodiceAmministrazione>__FASCICOLOPRIMARIO_CODICE_AMMINISTRAZIONE__</CodiceAmministrazione>
+      <CodiceAOO>__FASCICOLO_PRIMARIO_CODICE_AOO__</CodiceAOO>
+      <Classifica>__FASCICOLO_PRIMARIO_CLASSIFICA__</Classifica>
+      <Anno>__FASCICOLO_PRIMARIO_ANNO__</Anno>
+      <Progressivo>__FASCICOLO_PRIMARIO_PROGRESSIVO__</Progressivo>
+    </FascicoloPrimario>
+    <FascicoliSecondari />
+    <Smistamento />
+  </Intestazione>
+</Segnatura>

@@ -1,0 +1,90 @@
+<li class="">
+    <a href="javascript:">
+        <span class="fa fa-users"></span>
+        <span class="title">Persone</span>
+        <span class="arrow "></span>
+    </a>
+    <ul class="sub-menu">
+        <li id="elencoPersone">
+            <a href="{{ path("elenco_persone") }}">Elenco</a>
+        </li>
+        <li id="creaPersona">
+            <a href="{{ path("crea_persona") }}">Crea</a>
+        </li>
+    </ul>
+</li>
+<li class="">
+    <a href="javascript:">
+        <span class="fa fa-users"></span>
+        <span class="title">Soggetti giuridici</span>
+        <span class="arrow "></span>
+    </a>
+    <ul class="sub-menu">
+        <li id="elencoSoggettiGiuridici">
+            <a href="{{ path("elenco_soggetti_giuridici") }}">Elenco</a>
+        </li>
+        <li id="creaSoggettoGiuridico">
+            <a href="{{ path("crea_soggetto_giuridico") }}">Crea</a>
+        </li>
+    </ul>
+</li>
+<li class="">
+    <a href="javascript:">
+        <span class="fa fa-file"></span>
+        <span class="title">Incarichi</span>
+        <span class="arrow "></span>
+    </a>
+    <ul class="sub-menu">
+        <li id="elencoIncarichi">
+            <a href="{{ path("selezione_soggetti", {'contesto':"persone"}) }}">Elenco</a>
+        </li>
+    </ul>
+</li>
+<li class="">
+    <a href="javascript:">
+        <span class="fa fa-file"></span>
+        <span class="title">Presentazioni</span>
+        <span class="arrow "></span>
+    </a>
+    <ul class="sub-menu">
+        <li id="elencoRichieste">
+			<a href="{{ path("selezione_soggetti", {'contesto':"richieste_elenco"}) }}">Elenco richieste</a>
+        </li>			
+		 <li id="selezionaBando">
+			<a href="{{ path("selezione_soggetti", {'contesto':"richieste_nuova"}) }}">Nuova richiesta</a>
+        </li>
+        <li id="consultaBandi">
+            <a href="{{ path("elenco_bandi") }}">Consultazione bandi/manifestazioni d'interesse</a>
+        </li>
+    </ul>
+</li>
+<li class="">
+    <a href="javascript:">
+        <span class="fa fa-file"></span>
+        <span class="title">Gestione</span>
+        <span class="arrow "></span>
+    </a>
+    <ul class="sub-menu">
+        <li id="elencoRichiesteGestione">
+			<a href="{{ path("selezione_soggetti", {'contesto':"elenco_gestione_beneficiario"}) }}">Elenco progetti finanziati</a>
+        </li>
+    </ul>
+</li>
+<li class="">
+    <a href="javascript:">
+        <span class="fa fa-file"></span>
+        <span class="title">Comunicazioni</span>
+        <span class="arrow "></span>
+    </a>
+    <ul class="sub-menu">
+        <li id="elencoComunicazioni">
+			<a href="{{ path("selezione_soggetti", {'contesto':"comunicazioni_elenco"}) }}">Comunicazioni</a>
+        </li>
+        <li id="elencoIntegrazioni">
+			<a href="{{ path("selezione_soggetti", {'contesto':"integrazioni_elenco"}) }}">Integrazioni</a>
+        </li>		
+    </ul>
+</li>
+
+
+

@@ -1,0 +1,68 @@
+{% extends '::base.html.twig' %}
+
+{% block intestazione %}
+	{{ parent() }}
+	{{ mostra_soggetto_rappresentato() }}
+{% endblock %}
+
+{% form_theme form _self %}
+
+{% block date_widget %}
+    {% spaceless %}
+		{% set type = type|default('text') %}
+		<td class="date-picker">
+			<input class="form-control" type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+		</td>
+    {% endspaceless %}
+{% endblock date_widget %}
+
+{% block body %}
+	{{form_errors(form)}}
+	{{ form_start(form) }}
+	{% set firstElement = form.voci_fase_procedurale.children|first %}
+	<table class="table table-bordered table-striped">
+		<thead>
+			<tr>
+				<th rowspan="2" style="width: 25%; text-align:center; ">
+					Fasi procedurali
+				</th>
+			</tr>
+			<tr>
+				<th colspan="{{ firstElement|length }}" style="text-align:center; ">
+					Date previste o effettive
+				</th>
+			</tr>
+			<tr>
+				<th></th>
+					{% for child in form.voci_fase_procedurale.children|first %}
+					<th>
+						{{ form_label(child)}}
+					</th>
+				{% endfor %}
+			</tr>
+		</thead>
+		<tbody>
+			{% for voci_fase_procedurale in form.voci_fase_procedurale.children %}
+				<tr>
+					<th>
+						{{ voci_fase_procedurale.vars.value.faseprocedurale.titolo ? 
+							voci_fase_procedurale.vars.value.faseprocedurale.titolo : 
+							voci_fase_procedurale.vars.value.faseprocedurale.fasenatura.descrizione
+						}}
+					</th>
+					{% for child in voci_fase_procedurale %}
+						{{ form_widget(child) }}
+					{% endfor %}
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+		
+	{% if nota_footer is defined and nota_footer is not null %}
+		<p class="well">{{ nota_footer }}</p>
+	{% endif %}
+	
+	{{ form_end(form) }}
+
+
+{% endblock %}

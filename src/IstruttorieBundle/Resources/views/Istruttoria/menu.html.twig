@@ -1,0 +1,98 @@
+<ul class="nav nav-tabs">
+	<li role="presentation"{% if menu|default() == "riepilogo" %}class="active"{% endif %}><a href="{{path('riepilogo_richiesta', {'id_richiesta':istruttoria.richiesta.id})}}">Riepilogo</a></li>
+	<li role="presentation"{% if menu|default() == "documenti" %}class="active"{% endif %}><a href="{{path('documenti_richiesta_istruttoria', {'id_richiesta':istruttoria.richiesta.id})}}">Documenti</a></li>  
+	<li role="presentation"{% if menu|default() == "proponenti" %}class="active"{% endif %}><a href="{{path('riepilogo_proponenti', {'id_richiesta':istruttoria.richiesta.id})}}">Proponenti</a></li>
+  
+	{% set richiesta = istruttoria.richiesta %}
+	{% set proponenti_piano_costi = richiesta.proponentiPianoCosto %}
+	{% if proponenti_piano_costi | length > 0 %}
+		<li role="presentation"{% if menu|default() == "piano_costi" %}class="active"{% endif %}>
+			<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+				Piano costi<span class="caret"></span>
+			</a>
+			<ul class="dropdown-menu">
+				{% for proponente in proponenti_piano_costi %}
+					{% set annualita_piano_costi = annualita_piano_costo(proponente.id) %}
+					{% for chiave, valore in annualita_piano_costi %}
+						{% set label = proponenti_piano_costi|length > 1 ? (proponente.soggetto.denominazione ~ " / Annualità " ~ valore) : ("Annualità " ~ valore) %}
+						<li><a href="{{ path('istruttoria_piano_costi', {'id_richiesta':proponente.richiesta.id, 'id_proponente':proponente.id, 'annualita' : chiave}) }}">{{ label }}</a></li>
+					{% endfor %}
+				{% endfor %}
+				<li><a href="{{ path('totali_piano_costi', {'id_richiesta':richiesta.id}) }}">Totali</a></li>
+			</ul>
+		</li>
+	{% endif %}
+	
+	{% for fase in istruttoria.richiesta.procedura.fasiIstruttoria %}
+		{% for checklist in fase.checklist %}
+			{% set valutazioni = istruttoria.valutazioniByChecklist(checklist) %}
+			{% if valutazioni|length > 0 %}
+				{% if not checklist.proponente %}	
+				{% set primaValutazione = valutazioni|first %}
+					{% set corrente = valutazione_checklist is defined and valutazione_checklist == primaValutazione %}
+					<li role="presentation" 
+						{% if corrente %}class="active"{% endif %}>
+						<a href="{{- path("valuta_checklist_istruttoria", { id_valutazione_checklist: primaValutazione.id }) -}}">
+							{{ primaValutazione }}
+						</a>
+					</li>
+				{% else %}
+				
+					{% set corrente = false %}
+					{% for valutazione in valutazioni %}
+						{% set corrente = corrente or (valutazione_checklist is defined and valutazione_checklist.id == valutazione.id)  %}
+					{% endfor %} 
+				
+					<li role="presentation" class="dropdown {% if corrente %}active{% endif %}">						
+						<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+							{{ checklist}}<span class="caret"></span>
+						</a>
+						<ul class="dropdown-menu">
+							{% for valutazione in valutazioni %}
+								<li><a href="{{ path("valuta_checklist_istruttoria", {'id_valutazione_checklist': valutazione.id}) }}">{{ valutazione.proponente.soggetto }}</a></li>
+							{% endfor %} 
+						</ul>
+					</li>			  
+				{% endif %}
+			{% endif %}
+		{% endfor %} 
+	{% endfor %} 
+
+	{% if istruttoria.richiesta.procedura.sezioneIstruttoriaCup %}
+		<li role="presentation" {% if menu|default() == "cup" %}class="active"{% endif %}><a href="{{ path("dati_cup", {"id_richiesta" : istruttoria.richiesta.id}) }}">Cup</a></li>
+	{% endif %}
+	
+	{% set warning =  '' %}
+	{% if richiesta.attuazionecontrollo is not null %}
+		{% if richiesta.attuazionecontrollo.proroghe|length > 0%}
+			{% for proroga in  richiesta.attuazionecontrollo.proroghe %}
+				{% if proroga.gestita == 0 and proroga.stato.codice == 'PROROGA_PROTOCOLLATA' %}
+					{% set warning = 'fa fa-warning' %}
+				{% endif %}
+			{% endfor %}
+			<li role="presentation"{% if menu|default() == "proroghe" %}class="active"{% endif %}>
+			<a href="{{path('riepilogo_proroghe', {'id_richiesta':richiesta.id})}}"><i class='{{warning}}'></i> Proroghe</a></li>
+		{% endif %}
+	{% endif %}
+	<li role="presentation" {% if menu|default() == "esito" %}class="active"{% endif %}><a href="{{ path("esito_finale_istruttoria", {"id_richiesta" : istruttoria.richiesta.id}) }}">Esito Finale</a></li>
+	<li role="presentation" {% if menu|default() == "comunicazioni" %}class="active"{% endif %}><a href="{{ path("elenco_comunicazioni", {"id_istruttoria" : istruttoria.id}) }}">Comunicazioni</a></li>
+	{% if istruttoria.richiesta.procedura.sezioneIstruttoriaCup %}
+		<li role="presentation" {% if menu|default() == "nucleo" %}class="active"{% endif %}><a href="{{ path("nucleo",{"id_richiesta" : istruttoria.richiesta.id}) }}">Nucleo</a></li>
+	{% endif %}
+	
+    <li role="presentation" {% if menu|default() == "atc" %}class="active"{% endif %}><a href="{{ path("avanzamento_atc", {"id_richiesta" : istruttoria.richiesta.id}) }}">ATC</a></li>
+</ul>
+
+{% if istruttoria.sospesa and not is_granted('ROLE_SUPER_ADMIN')%}
+	<div class="alert alert-warning">L'istruttoria è attualmente sospesa </div>
+{% endif %}	
+{% if istruttoria.sospesa and is_granted('ROLE_SUPER_ADMIN')%}
+	<div class="alert alert-warning">
+		L'istruttoria è attualmente sospesa 
+		<a class="btn btn-primary" href="{{ path("sblocca_istruttoria_richiesta", {'id_richiesta':istruttoria.richiesta.id}) }}">
+			<span class="button"></span>Sblocca
+		</a>
+	</div>
+{% endif %}	
+
+

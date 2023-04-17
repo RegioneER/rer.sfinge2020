@@ -1,0 +1,29 @@
+<ul class="nav nav-tabs">
+	<li role="presentation"{% if menu|default() == "autore" %}class="active"{% endif %}><a href="{{path('elenco_referenti_relazione', {'id_pagamento':pagamento.id})}}">Referente</a></li>
+	<li role="presentation"{% if menu|default() == "obiettivi" %}class="active"{% endif %}><a href="{{path('elenco_obiettivi_realizzativi', {'id_pagamento':pagamento.id})}}">Obiettivi realizzativi</a></li>  
+	<li role="presentation"{% if menu|default() == "personale" %}class="active"{% endif %}>
+		<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+			Personale<span class="caret"></span>
+		</a>
+		<ul class="dropdown-menu">
+			<li><a href="{{path('elenco_personale_voce1', {'id_pagamento':pagamento.id})}}">Ricercatori (voce si spesa 1)</a></li>
+			<li><a href="{{path('elenco_personale_voce2', {'id_pagamento':pagamento.id})}}">Personale (voce si spesa 2)</a></li>
+			<li><a href="{{path('elenco_personale_voce3', {'id_pagamento':pagamento.id})}}">Personale (voce si spesa 3)</a></li>
+		</ul>
+	</li>
+	<li role="presentation"{% if menu|default() == "collaborazioni_esterne" %}class="active"{% endif %}>
+		<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+			Collaborazioni esterne<span class="caret"></span>
+		</a>
+		<ul class="dropdown-menu">
+			<li><a href="{{path('elenco_collaborazioni_laboratori', {'id_pagamento':pagamento.id})}}">Collaborazioni laboratori</a></li>
+			<li><a href="{{path('elenco_collaborazioni_consulenze', {'id_pagamento':pagamento.id})}}">Consulenze specialistiche</a></li>
+		</ul>
+	</li>
+	<li role="presentation"{% if menu|default() == "elenco_attrezzature" %}class="active"{% endif %}><a href="{{path('elenco_attrezzature', {'id_pagamento':pagamento.id})}}">Attrezzature e strumentazioni</a></li>
+	<li role="presentation"{% if menu|default() == "elenco_prototipi" %}class="active"{% endif %}><a href="{{path('elenco_prototipi', {'id_pagamento':pagamento.id})}}">Prototipi, dimostratori, impianti pilota</a></li>
+	<li role="presentation"{% if menu|default() == "brevetti" %}class="active"{% endif %}><a href="{{path('elenco_brevetti', {'id_pagamento':pagamento.id})}}">Brevetti</a></li>
+	<li role="presentation"{% if menu|default() == "altre_informazioni" %}class="active"{% endif %}><a href="{{path('altre_informazioni', {'id_pagamento':pagamento.id})}}">Altre informazioni</a></li>
+
+</ul>
+

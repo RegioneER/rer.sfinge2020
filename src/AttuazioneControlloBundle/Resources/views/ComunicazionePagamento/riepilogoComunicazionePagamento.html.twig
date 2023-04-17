@@ -1,0 +1,152 @@
+{% extends '::base_ente.html.twig' %}
+
+{% block body %}
+
+{% include 'AttuazioneControlloBundle:Istruttoria/Pagamenti:menuEventi.html.twig' with {'pagamento' : pagamento } %}
+
+<h4>Comunicazioni</h4>
+
+{% set stato_bottone_crea_comunicazione = '' %}
+
+{% if pagamento.comunicazioni|length > 0 %}
+<br/>
+ <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+    <thead>
+        <tr>
+            <th>Numero</th>
+            <th>Tipologia comunicazione</th>
+            <th>Protocollo PA</th>
+            <th>Stato protocollo</th>
+            <th>Data consegna PEC</th>
+            <th>Documento comunicazione</th>
+            <th>Data invio risposta</th>
+            <th>Protocollo Beneficiario</th>
+            <th>Istruttoria complessiva</th>
+            <th>Documenti istruiti</th>
+            <th>Azioni</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for comunicazione in pagamento.comunicazioni %}
+            {% if comunicazione.stato == 'COM_PAG_INSERITA' or (comunicazione.stato != 'COM_PAG_INSERITA' and comunicazione.isInAttesaRisposta == true)%}
+                {% set stato_bottone_crea_comunicazione = 'disabled' %}
+            {% endif %}
+            <tr>
+                <td>{{comunicazione.id}}</td>
+                <td>{{ comunicazione.tipologiaComunicazione ? comunicazione.tipologiaComunicazione.descrizione }}</td>
+                <td>
+                    {{comunicazione.protocolloComunicazione}}
+                    {% if comunicazione.dataProtocolloComunicazione is not null %}
+                         del {{ comunicazione.dataProtocolloComunicazione|date('d-m-Y') }}
+                    {% endif %}
+                </td>
+                <td>{{comunicazione.statoLeggibile}}</td>
+                
+                {% set data_consegna_pec = '-' %}
+                {% set richieste_protocollo = comunicazione.richiesteprotocollo %}
+                {% if  richieste_protocollo|length != 0 %}
+                    {% set richiesta_protocollo = richieste_protocollo|last %}
+                    {% set emails_protocollo    = richiesta_protocollo.EmailProtocollo %}
+                    {% if  emails_protocollo|length != 0 %}
+                        {% set email_protocollo = emails_protocollo|last %}
+                        {% set data_consegna_pec = email_protocollo.dataconsegna %}
+                    {% endif %}
+                {% endif %}
+                <td>{{data_consegna_pec}}</td>
+                
+                <td>
+                    {% if comunicazione.documento is not null %}
+                        {{ scarica_file(comunicazione.documento, null )}}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+
+                <td>
+                    {% if comunicazione.risposta is not null and comunicazione.risposta.data is not null %}
+                        {{comunicazione.risposta.data|date('d/m/Y')}}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                
+                <td>
+                    {% if comunicazione.risposta is not null and comunicazione.risposta.stato == 'COM_PAG_PROTOCOLLATA' %}
+                        {{ comunicazione.risposta.getProtocolloRispostaComunicazionePagamento }} del {{ comunicazione.risposta.dataProtocolloRispostaComunicazionePagamento|date('d-m-Y') }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>
+                    {% if comunicazione.risposta is not null and comunicazione.risposta.stato == 'COM_PAG_PROTOCOLLATA' %}
+                        {% set istruttoria = comunicazione.istruttoriaOggettoPagamento %}
+                        {% if istruttoria is null %}
+                            <span class="text-danger">Da istruire</span>
+                        {% elseif istruttoria.statoValutazione == 'Completa' %}
+                            <span class="text-success">{{istruttoria.statoValutazione}}</span>
+                        {% elseif istruttoria.statoValutazione == 'Incompleta' %}
+                            <span class="text-warning">{{istruttoria.statoValutazione}}</span>
+                        {% elseif istruttoria.statoValutazione == 'Integrazione' %}
+                            <span class="text-info">{{istruttoria.statoValutazione}}</span>
+                        {% endif %}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>
+                    {% set documenti_risposta_totali   = 0 %}
+                    {% set documenti_risposta_istruiti = 0 %}
+                    {% for documento in comunicazione.risposta.documenti %}
+                        {% set documenti_risposta_totali = documenti_risposta_totali + 1 %}
+                        {% set istruttoria = documento.istruttoriaoggettopagamento %}
+                        {% if istruttoria is not null and istruttoria.statoValutazione == 'Completa' %}
+                            {% set documenti_risposta_istruiti = documenti_risposta_istruiti + 1 %}
+                        {% endif %}
+                    {% endfor %}
+                    {% if comunicazione.risposta is not null and comunicazione.risposta.stato == 'COM_PAG_PROTOCOLLATA' %}
+                        {{documenti_risposta_istruiti}} / {{documenti_risposta_totali}}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>
+                    <div class="dropdown">
+                        <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            Azioni
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                            {% if comunicazione.risposta is not null and comunicazione.risposta.stato == 'COM_PAG_PROTOCOLLATA' %}
+                                <li><a href="{{ path('istruttoria_comunicazione_pagamento', {'id' : comunicazione.id}) }}">Istruisci risposta</a></li>
+                            {% endif %}
+                            {% if comunicazione.stato == 'COM_PAG_INVIATA_PA' or comunicazione.stato == 'COM_PAG_PROTOCOLLATA'  %}
+                                <li><a href="{{ path('gestione_comunicazione_pagamento', {'id' : comunicazione.id}) }}">Dettaglio comunicazione</a></li>
+                            {% else %}
+                                <li><a href="{{ path('gestione_comunicazione_pagamento', {'id' : comunicazione.id}) }}">Gestisci comunicazione</a></li>
+                            {% endif %}
+                            {% if comunicazione.stato == 'COM_PAG_INSERITA' %}
+                                <li><a href="{{ path('cancella_comunicazione_pagamento', {'id' : comunicazione.id}) }}">Cancella comunicazione</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+    <div>Non ci sono comunicazioni.</div>
+{% endif %}
+
+<br/><br/>
+
+{% if is_granted('ROLE_ISTRUTTORE_SUPERVISORE_ATC') or is_granted('ROLE_ISTRUTTORE_ATC') %}
+    <a class="btn btn-info {{stato_bottone_crea_comunicazione}}" href="{{path('crea_comunicazione_pagamento', {'id': pagamento.id})}}">Crea comunicazione</a>
+{% endif %}
+<br><br>
+
+<a class="btn btn-default btn-page-action btn-form-back pull-left" href="{{indietro}}">
+    <span class="fa fa-arrow-left"></span> Indietro
+</a>
+
+{% endblock %}

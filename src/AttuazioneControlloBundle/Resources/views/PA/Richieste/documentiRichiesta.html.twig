@@ -1,0 +1,88 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    {% include 'AttuazioneControlloBundle:PA/Richieste:menu.html.twig' with {'attuazione_controllo' : attuazione_controllo }%}	
+
+
+    {% if richiesta.isProceduraParticolare == false  %}
+        <h4>Documento domanda</h4>
+        <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+            <tbody>
+                {% if domanda is not empty %}
+                    <tr>
+                        <td>{{ mostra_file(domanda, null )}}</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>	
+    {% endif %}
+    <h4>Documenti allegati richiesta</h4>
+    <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+        <tbody>
+            {% for documento in documenti %}
+                <tr>
+                    <td>{{ mostra_file(documento.documentoFile, null )}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if documenti_proponenti|length > 0 %}
+        {% for documenti_proponente in documenti_proponenti %}
+            <h4>Documenti allegati proponente / {{ documenti_proponente["proponente"].soggettoVersion }}</h4>
+            <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+                <tbody>
+                    {% for documento in documenti_proponente["documenti"] %}
+                        <tr>
+                            <td>{{ mostra_file(documento.documentoFile, null )}}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>			
+        {% endfor %}
+    {% endif %}
+
+    {% if documenti_pagamenti|length > 0 %}
+        <h4>Documenti allegati ai pagamenti</h4>
+        <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+            <tbody>
+                {% for documento in documenti_pagamenti %}
+                    <tr>
+                        <td>{{ mostra_file(documento.documentoFile, null )}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    {% if documenti_proponenti|length > 0 %}
+        {% for documenti_proponente in documenti_proponenti %}
+            <h4>Documenti allegati proponente / {{ documenti_proponente["proponente"].soggettoVersion }}</h4>
+            <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+                <tbody>
+                    {% for documento in documenti_proponente["documenti"] %}
+                        <tr>
+                            <td>{{ mostra_file(documento.documentoFile, null )}}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>			
+        {% endfor %}
+    {% endif %}
+
+    {% if not is_granted('ROLE_CONSULENTE_FESR') and not is_granted('ROLE_OPERATORE_COGEA')  %}
+        <h4>Carica documento</h4>
+        {{ form(form) }}
+    {% endif %}
+    <h4>Documenti allegati durante la fase di Attuazione</h4>
+    <table class="table table-striped table-hover table-bordered" id="richieste-elenco">
+        <tbody>
+            {% for documento in attuazione_controllo.documenti %}
+                <tr>
+                    <td>{{ mostra_file(documento, path('elimina_documento_attuazione', {'id_documento': documento.id, 'id_richiesta': richiesta.id }) ) }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>	
+{% endblock %}
+

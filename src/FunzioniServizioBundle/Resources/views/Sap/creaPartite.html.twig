@@ -1,0 +1,33 @@
+{% extends '::base.html.twig' %}
+
+    {% block body %}
+        <p class="lead">SAP test suite - Crea partite</p>
+
+        {{ form_start(form) }}
+
+        {{ form_row(form.budat) }}
+        {{ form_row(form.bldat) }}
+        {{ form_row(form.xblnr) }}
+        {{ form_row(form.zz_num_loc) }}
+        {{ form_row(form.lifnr) }}
+        {{ form_row(form.kblnr) }}
+        {{ form_row(form.kblpos) }}
+        {{ form_row(form.kostl) }}
+        {{ form_row(form.wrbtr) }}
+        {{ form_row(form.zzcup) }}
+        {{ form_row(form.zzcig) }}
+        {{ form_row(form.zfbdt) }}
+        {{ form_row(form.gg_scad) }}
+        {{ form_row(form.i_note) }}
+
+        {{ form_end(form) }}
+
+        <a href="{{ path('sap_test_suite') }}">Torna alla suite</a>
+
+        {% if result is not null %}
+            <br /><br />
+            <pre>{{ result|json_encode(constant('JSON_PRETTY_PRINT')) }}
+            </pre>
+        {% endif %}
+
+    {% endblock %}

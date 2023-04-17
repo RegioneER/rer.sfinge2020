@@ -1,0 +1,33 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+
+	{% if istruttoria is defined %}
+		{% include 'AttuazioneControlloBundle:RelazioneTecnica:Istruttoria/menu.html.twig' with {'pagamento' : pagamento } %}
+	{% else %}
+		{% include 'AttuazioneControlloBundle:RelazioneTecnica:menu.html.twig' with {'pagamento' : pagamento } %}
+	{% endif %}	
+
+	{% if tipo == 'LABORATORI' %}
+		<h4>Collaborazione con laboratori di ricerca </h4>			
+	{% elseif tipo == 'CONSULENZE' %}
+		<h4>Consulenze specialistiche</h4>		
+	{% endif %}
+    <div>
+        {{ form_start(form) }}
+        {{ form_end(form) }}
+    </div>
+		
+	<script type="text/javascript">		
+		$(document).ready(function(){
+			var nota = 'Indicare le attività realizzate nel periodo oggetto di rendicontazione.';
+			{% if tipo == 'LABORATORI' %}
+				nota += ' Per contratti con l\'Università indicare i nominativi di eventuali assegnisti di ricerca o dottorandi e impegnati in una borsa di studio riferibile al progetto, con esperienza inferiore ai 5 anni (vedi par.2.5 dei "Criteri di ammissibilità dei costi")';
+			{% endif %}
+
+			$('textarea#collaborazione_esterna_attivita').parent('div').append('<span style="font-style: italic">' + nota + '</span>');
+		});
+		
+	</script>	
+	
+{% endblock %}

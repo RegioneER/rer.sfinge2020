@@ -1,0 +1,14 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+	
+{% include 'AttuazioneControlloBundle:Controlli:menu_principale.html.twig' %}		
+<br>
+				
+<h4>Estrazioni disponibili</h4>
+<a href="{{ path('estrazione_campioni') }}" class="btn btn-primary"><span class="fa"></span>Estrazione campioni</a>
+<a href="{{ path('estrazione_campioni_pagamenti') }}" class="btn btn-primary"><span class="fa"></span>Estrazione campioni pagamenti</a>
+<a href="{{ path('estrazione_campioni_progetti') }}" class="btn btn-primary"><span class="fa"></span>Estrazione campioni progetti</a>
+<a href="{{ path('estrazione_universo_progetti') }}" class="btn btn-primary"><span class="fa"></span>Estrazione universo progetti</a>
+				
+{% endblock %}

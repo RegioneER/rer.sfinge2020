@@ -1,0 +1,19 @@
+services:
+  cert_agrea_esportazioni:
+    class: 'CertificazioniBundle\Service\GestoreEsportazioni'
+    arguments: 
+      - '@doctrine.orm.entity_manager'
+      - '@logger'
+      - '@phpexcel'
+
+  decertificazione.type:
+      class: CertificazioniBundle\Form\DecertificazionePagamentoType
+      arguments: ["@doctrine.orm.entity_manager"]
+      tags:
+      - { name: form.type, alias: decertificazione_pagamento_type } 
+      
+  compensazione.type:
+      class: CertificazioniBundle\Form\CompensazionePagamentoType
+      arguments: ["@doctrine.orm.entity_manager"]
+      tags:
+      - { name: form.type, alias: compensazione_pagamento_type } 

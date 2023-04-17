@@ -1,0 +1,29 @@
+<ul class="nav nav-tabs">
+	<li role="presentation"{% if page_view|default() == "anagraficaProgetto" %}class="active"{% endif %}>
+		<a href="{{path('anagrafica_progetto', {'richiesta_id':richiesta.id})}}">Anagrafica Progetto</a>
+        </li>
+
+	<li role="presentation"{% if page_view|default() == "soggettiCorrelati" %}class="active"{% endif %}>
+		<a href="{{path('soggetti_correlati', {'richiesta_id':richiesta.id})}}">Soggetti collegati</a>
+        </li>
+
+	<li role="presentation"{% if page_view|default() == "sezioneFinanziaria" %}class="active"{% endif %}>
+		<a href="{{path('sezione_finanziaria', {'richiesta_id':richiesta.id})}}">Sezione finanziaria</a>
+        </li>
+        
+        <li role="presentation"{% if page_view|default() == "sezioneProcedurale" %}class="active"{% endif %}>
+		<a href="{{ path('monitoraggio_sezione_procedurale', {'richiesta_id':richiesta.id}) }}">Sezione procedurale</a>
+        </li>
+        
+        <li role="presentation"{% if page_view|default() == "indicatori" %}class="active"{% endif %}>
+		<a href="{{ path('indicatori_elenco', {'richiesta_id':richiesta.id}) }}">Indicatori</a>
+        </li>
+        
+        <li role="presentation"{% if page_view|default() == "procedureAggiudicazione" %}class="active"{% endif %}>
+		<a href="{{ path('monitoraggio_procedure_aggiudicazione', {'richiesta_id':richiesta.id}) }}">Procedure di aggiudicazione</a>
+        </li>
+
+        <li role="presentation"{% if page_view|default() == "validazione" %}class="active"{% endif %}>
+		<a href="{{ path('monitoraggio_validazione_progetto', {'richiesta_id':richiesta.id}) }}">Validazione progetto</a>
+        </li>
+</ul>

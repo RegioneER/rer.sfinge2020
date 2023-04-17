@@ -1,0 +1,7 @@
+<ul class="nav nav-tabs">
+	<li role="presentation"{% if menu|default() == "com_esito" %}class="active"{% endif %}><a href="{{path('elenco_comunicazioni_inviate_da_pa_esito')}}">Comunicazioni esito istruttoria</a></li>
+	<li role="presentation"{% if menu|default() == "com_variazione" %}class="active"{% endif %}><a href="{{path('elenco_comunicazioni_inviate_da_pa_var')}}">Comunicazioni esito variazione</a></li>  
+	<li role="presentation"{% if menu|default() == "com_generica" %}class="active"{% endif %}><a href="{{path('elenco_comunicazioni_inviate_da_pa_prg')}}">Comunicazioni generiche</a></li>  
+</ul>
+
+

@@ -1,0 +1,58 @@
+{% extends '::base.html.twig' %}
+{% block begin_page_level_plugin_style %}
+	<style>
+		#appendice td:nth-child(2), #appendice td:nth-child(3)  {
+			text-align: right;
+		}
+	</style>
+{% endblock %}
+{% block body %}
+	{% include 'CertificazioniBundle:Appendici:menuAppendici.html.twig' with {'id_chiusura' : chiusura.id } %}	
+
+	<h4>APPENDICE 5: Importi irrecuperabili alla chiusura del periodo contabile — articolo 137, paragrafo 1, lettera b), 
+		del regolamento (UE) n. 1303/2013
+	</h4>
+
+	<table class="table table-striped table-hover table-bordered" id="appendice">
+		<thead>
+			<tr>
+				<th></th>
+				<th style="text-align: center" colspan="3">Importi irrecuperabili</th>
+			</tr>
+			<tr>
+				<th>Categoria di regioni</th>				
+				<th>Importo totale ammissibile di spesa</th>					
+				<th>Spesa pubblica corrispondente</th>					
+				<th>Osservazioni</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>Meno sviluppate</td>
+				<td>{{0|number_format(2, ',', '.')}}</td>
+				<td>{{0|number_format(2, ',', '.')}}</td>
+				<td>Nessuna osservazione</td>
+			</tr>
+			<tr>
+				<td>In transizione</td>
+				<td>{{0|number_format(2, ',', '.')}}</td>
+				<td>{{0|number_format(2, ',', '.')}}</td>
+				<td>Nessuna osservazione</td>
+			</tr>
+			<tr>
+				<td>Più sviluppate</td>
+				<td>{{0|number_format(2, ',', '.')}}</td>
+				<td>{{0|number_format(2, ',', '.')}}</td>
+				<td>Nessuna osservazione</td>
+			</tr>
+			<tr>
+				<td>Ultraperiferiche e regioni settentrionali a bassa densità di popolazione</td>
+				<td>{{0|number_format(2, ',', '.')}}</td>
+				<td>{{0|number_format(2, ',', '.')}}</td>
+				<td>Nessuna osservazione</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<a href="{{ path("elenco_certificazioni")}}" class="btn btn-default btn-page-action btn-form-back pull-left">Indietro</a>	
+{% endblock %}

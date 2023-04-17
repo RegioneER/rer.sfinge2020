@@ -1,0 +1,47 @@
+<?php
+namespace {{ namespace }}\Form{{ entity_namespace ? '\\' ~ entity_namespace : '' }};
+
+{% block use_statements %}
+use MonitoraggioBundle\Form\BaseFormType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+{% endblock use_statements %}
+
+{% block class_definition %}
+class {{ form_class }} extends BaseFormType
+{% endblock class_definition %}
+{
+
+{% block class_body %}
+    {%- if fields|length > 0 %}
+    /**
+     * {@inheritdoc}
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder
+        {%- for field in fields if field not in ['data_cancellazione','data_creazione','data_modifica','creato_da','modificato_da'] -%}
+            
+                ->add('{{ field }}', self::text, array(
+                    'label' => '{{field}}',
+                    'disabled' => $options['disabled'],
+                    'required' => {{ field == fields|first ? '!$options[\'disabled\']' : 'false' }} ,
+                ))
+        {% endfor %}
+
+                ->add('submit',self::salva_indietro, array(
+                    "url" => $options["url_indietro"], 
+                    'disabled' => false,
+                ));
+    }    
+    {% endif %}
+
+    /**
+     * {@inheritdoc}
+     */
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        parent::configureOptions($resolver);
+    }
+{% endblock class_body %}
+}

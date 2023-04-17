@@ -1,0 +1,26 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <div class="table-toolbar">
+        <div>
+            <a class="btn btn-info" href="#ricerca-bando-modal" data-toggle="modal">
+                <span class="fa fa-search"></span> Ricerca
+            </a>
+        </div>
+    </div>
+    <div class="count">
+        Numero elementi trovati: {{ procedure.getTotalItemCount }} - Filtro attivo: {{ filtro_attivo ? "Si" : "No" }}
+    </div>
+
+        {% for procedura in procedure %}
+           {{ mostra_procedura(procedura, tipi[procedura.id]) }}
+        {% endfor %}
+
+    {# display navigation #}
+    <div class="navigation">
+        {{ knp_pagination_render(procedure) }}
+    </div>
+
+    {{ modale_ricerca("Bandi e Manifestazioni d'Interesse",form_ricerca_procedure,"elenco_bandi_pulisci","ricerca-bando-modal") }}
+
+{% endblock %}

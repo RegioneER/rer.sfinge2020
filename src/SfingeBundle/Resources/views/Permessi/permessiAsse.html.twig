@@ -1,0 +1,8 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+	{{ form_start(form) }}
+		{{ form_row(form.utente) }}
+		{{ form_row(form.asse) }}
+		{{ form_row(form.solo_lettura) }}	
+	{{ form_end(form) }}
+{% endblock %}
